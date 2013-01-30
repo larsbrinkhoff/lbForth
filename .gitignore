@@ -1,0 +1,5 @@
+*.o
+forth
+kernel.[ch]
+words.c
+*~
