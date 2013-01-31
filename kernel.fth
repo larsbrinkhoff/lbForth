@@ -8,10 +8,10 @@
 ( System implementation words. )
 
 : boot ( -- )
-    \ s" boot.fs" included ;
-    s" core.fs" included
-    s" core-ext.fs" included
-    s" tools.fs" included
+    \ s" boot.fth" included ;
+    s" core.fth" included
+    s" core-ext.fth" included
+    s" tools.fth" included
     quit ;
 
 : 'here ( -- 'here )   C &HERE ;
