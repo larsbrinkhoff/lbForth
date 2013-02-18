@@ -191,9 +191,12 @@
 	(let ((word1 (read-word))
 	      (word2 (read-word))
 	      (word3 (read-word)))
-	  (unless (and (equal word1 "'") (equal word3 ","))
-	    (error "can't handle CREATE data"))
-	  (output "  (cell)&~A_word," (mangle-word word2)))))
+	  (cond ((and (equal word1 "'") (equal word3 ","))
+		 (output "  (cell)&~A_word," (mangle-word word2)))
+		((and (equal word1 "C") (equal word3 ","))
+		 (output "  (cell)~A," word2))
+		(t
+		 (error "can't handle CREATE data"))))))
     (output-line "} };")
     (setq *previous-word* (format nil "&~A_word" mangled))))
 
