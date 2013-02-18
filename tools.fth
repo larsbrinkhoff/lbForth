@@ -75,6 +75,9 @@
 	r> dup >nextxt
     repeat r> 2drop ;
 
+\ traverse-wordlist ( x*i wid xt -- x'*i )
+\   xt execution: ( x*i nt -- x'*i flag[0=stop] )
+
 : words ( -- )
     ['] type-word traverse-dictionary cr ;
 
@@ -126,4 +129,4 @@
 
 : !+ ( x addr -- addr+/cell )   tuck ! cell+ ;
 
-: -rot   swap >r swap r> ;
+: -rot   swap under swap ;

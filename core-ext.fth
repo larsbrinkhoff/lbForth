@@ -107,7 +107,7 @@
   does> ( -- x )
     @ ;
 
-: within   over - >r - r> u< ;
+: within   over - under - u< ;
 
 \ TODO: [compile]
 

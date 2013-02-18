@@ -1,3 +1,5 @@
+\ -*- forth -*- Copyright 2004, 2013 Lars Brinkhoff
+
 ( String words. )
 
 \ -trailing
@@ -13,7 +15,7 @@
     while
 	1-
 	r> 1- >r
-	swap 1- swap
+	under 1-
 	over c@ r@ !
     repeat r> 2drop ;
 

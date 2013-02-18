@@ -132,16 +132,6 @@ code @ ( addr -- x )
     PUSH (*addr);
 end-code
 
-\ code */ ( x y z -- x*y/z )
-\     cell z = POP (cell);
-\     cell y = POP (cell);
-\     cell x = POP (cell);
-\     dcell p = (dcell)x * (dcell)y;
-\     PUSH (p / z);
-\ end-code
-
-\ TODO: */MOD
-
 code + ( x y -- x+y )
     cell y = POP (cell);
     cell x = POP (cell);
@@ -351,15 +341,6 @@ create state C 0 ,
     else
 	drop
     then ;
-
-\ code um* ( x y -- x*y )
-\     ucell y = POP (cell);
-\     ucell x = POP (cell);
-\     udcell z = (udcell)x * (udcell)y;
-\     PUSH (z);
-\ end-code
-
-\ TODO: um/mod
 
 : unloop ( R: loop-sys -- )
     r> r> r> 2drop >r ;

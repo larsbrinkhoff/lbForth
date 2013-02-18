@@ -140,24 +140,23 @@ create squote   128 allot
 \ to the number of bits in a cell", this would be acceptable.
 \ : rshift   0 bits/cell rot do 2* over 0< if 1+ then under 2* loop nip ;
 
-: um/mod ( n d -- r q )
+: u/mod ( n d -- r q )
     0 >r 2>r		\ R: q n
     0 1 begin ?dup while dup 2* repeat
     r> 0 begin		\ S: [...1<<i...] d r
       2*		\ r <<= 1
-      r@ [ -1 1 rshift invert ] literal and
-      if 1+ then	\ if x&msb then r++
-      r> 2* >r	\ d <<= 1
-      2dup > 0= if	\ if d<=r
-        over -		\ r -= d
+      r@ 0< if 1+ then	\ if n&msb then r++
+      r> 2* >r		\ n <<= 1
+      2dup > if rot drop else \ if r>=d
+        over -		      \ r -= d
         rot r> r> rot + >r >r \ q += 1<<i
-      else rot drop then
+      then
       2>r ?dup r> r> swap rot 0= until
-      nip r> drop r> ;
+    nip r> drop r> ;
 
 : /mod   dup 0= abort" Division by zero"
          dup 0< if negate recurse negate else
-         over 0< if under negate recurse negate else um/mod then then ;
+         over 0< if under negate recurse negate else u/mod then then ;
 
 : space   bl emit ;
 
@@ -165,7 +164,7 @@ create squote   128 allot
 
 : digit   [char] 0 + emit ;
 
-: (.)   base @ um/mod  ?dup if recurse then  digit ;
+: (.)   base @ u/mod  ?dup if recurse then  digit ;
 
 : ." ( "string<quote>" -- )   postpone s"  postpone type ; immediate
 
@@ -179,17 +178,14 @@ create squote   128 allot
 
 : 2! ( x1 x2 addr -- )   swap over ! cell+ ! ;
 
+\ This could probably be done faster with something similar to rshift.
 : 2/   dup 0< if 1- then 2 / ;
 
 : 2@ ( addr -- x1 x2 )   dup cell+ @ swap @ ;
 
-\ Kernel: 2drop
-\ Kernel: 2dup
+: 2over   2>r 2dup r> rot rot r> rot rot ;
 
-\ TODO: 2over ( x1 x2 x3 x4 -- x1 x2 x3 x4 x1 x2 )
-\           3 pick 3 pick ;
-
-: 2swap   >r >r r> swap >r swap r> r> swap >r swap r> ;
+: 2swap   >r rot rot r> rot rot ;
 
 \ TODO: <#
 
@@ -233,7 +229,6 @@ create squote   128 allot
 : max ( x y -- max[x,y] )
     2dup > if drop else nip then ;
 
-\ Kernel: min
 \ TODO:   mod
 \ TODO:   move
 
@@ -257,13 +252,11 @@ create squote   128 allot
 : spaces ( n -- )
     0 do space loop ;
 
-\ TODO: u.
-
-: signbit ( -- n )   -1 1 rshift invert ;
+: u.   (.) space ;
 
 : xor ( x y -- x^y )    2dup nand >r r@ nand swap r> nand nand ;
 
-: u<  ( x y -- flag )  signbit xor swap signbit xor > ;
+: u<   [ -1 1 rshift invert ] literal dup rot xor swap rot rot xor > ;
 
 \ TODO: um/mod
 
