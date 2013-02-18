@@ -118,6 +118,8 @@ create interpreters
 
 : header,   align here  bl-word C NAME_LENGTH allot  lastxt dup @ , ! , 0 , ;
 
+: reveal   lastxt @ revealedxt ! ;
+
 \ ----------------------------------------------------------------------
 
 ( Core words. )
@@ -178,7 +180,7 @@ end-code
 
 : :   C enter_code header, ] ;
 
-: ;   postpone exit  postpone [ ; immediate
+: ;   reveal postpone exit postpone [ ; immediate
 
 : <   -	2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/	2/ 2/ 2/ 2/ 2/ 2/ 2/
       2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ ;
@@ -296,8 +298,10 @@ code exit ( R: ret -- )
     IP = RPOP (xt_t *);
 end-code
 
+create revealedxt C &lastxt_word ,
+
 : find ( caddr -- caddr 0 | xt 1 | xt -1 )
-    lastxt @
+    revealedxt @
     begin
 	dup
     while

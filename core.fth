@@ -13,7 +13,7 @@
 
 : postpone-nonimmediate   [ ' literal , ' compile, ] literal , ;
 
-: create   dovariable_code header, ;
+: create   dovariable_code header, reveal ;
 
 create postponers
     ' postpone-nonimmediate ,
