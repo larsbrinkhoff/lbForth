@@ -16,7 +16,9 @@
 
 : 2r@ ( -- x1 x2 ) ( R: x1 x2 -- x1 x2 )   2r> 2dup 2>r ;
 
-\ TODO: :noname
+: :noname   align here  16 allot  lastxt dup @ , !
+            [ ' enter >code @ ] literal , 0 , ] lastxt @ ;
+
 \ Kernel: <>
 
 \ : ?do ( n1 n2 -- ) ( R: -- loop-sys ) ( C: -- do-sys )
@@ -85,7 +87,7 @@
 \ Kernel: tib
 
 : to ( x "word" -- )
-    ;
+    ' >body , ;
 
 : true ( -- -1 )
     -1 ;
@@ -100,12 +102,35 @@
 
 \ TODO: unused
 
-\ : value ( x "word" -- )
-\     create ,
-\   does> ( -- x)
-\     @ ;
+: value ( x "word" -- )
+    create ,
+  does> ( -- x)
+    @ ;
 
-\ TODO: within ( x y z -- flag ) ( ... ) ;
+: within   over - >r - r> u< ;
+
 \ TODO: [compile]
 
 \ Kernel: \
+
+\ ----------------------------------------------------------------------
+
+( Forth2012 core extension words. )
+
+\ TODO: action-of
+
+\ TODO: buffer:
+
+: defer ( "word" -- )   create 0 ,  does> @ execute ;
+
+: defer! ( xt2 xt1 -- )   >body ! ;
+
+: defer@ ( xt1 -- xt2 )   >body @ ;
+
+\ TODO: holds
+
+: is ( xt "word" -- )   ' defer! ;
+
+\ TODO: parse-name
+
+\ TODO: s\"
