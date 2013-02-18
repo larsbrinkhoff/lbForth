@@ -16,9 +16,9 @@ kernel.o: kernel.c kernel.h forth.h
 
 words.o: words.c kernel.h forth.h
 
-kernel.c kernel.h: kernel.fth meta.lisp
+%.c %.h: %.fth meta.lisp
 	$(LISP) --load meta.lisp \
-	        --eval '(progn (compile-forth "kernel.fth") (quit))'
+	        --eval '(progn (compile-forth "$<") (quit))'
 
 clean:
 	rm -f forth *.o kernel.c kernel.h words.c
