@@ -25,16 +25,14 @@
 
 : postpone-nonimmediate   [ ' literal , ' compile, ] literal compile, ;
 
-create postponers
-    ' postpone-nonimmediate ,
-    ' abort ,
-    ' compile, ,
+: finders   create ' , ' , ' ,   does> swap 1+ cells + @ execute ;
+
+finders postpone-xt   postpone-nonimmediate abort compile,
 
 : word \ ( char "<chars>string<char>" -- caddr )
     drop bl-word here ;
 
-: postpone \ ( C: "word" -- )
-    bl word find 1+ cells  postponers + @ execute ; immediate
+: postpone   bl word find postpone-xt ; immediate
 
 : unresolved \ ( C: "word" -- orig )
     postpone postpone  postpone ahead ; immediate
@@ -173,8 +171,7 @@ create squote   128 allot
 : . ( x -- )   ?.- (.) space ;
 
 : postpone-number   ." Undefined: " count type cr abort ;
-
-' postpone-number  postponers cell+  !
+' postpone-number  ' postpone-xt >body cell+ !
 
 : / ( x y -- x/y )   /mod nip ;
 

@@ -105,12 +105,9 @@ create interpreters
     ' number ,
     ' execute ,
 
-: interpret ( ... "words..." -- ... )
-    begin
-	source?
-    while
-	bl-word here find 1+ cells  interpreters + @ execute
-    repeat ;
+: interpret-xt   1+ cells  interpreters + @ execute ;
+
+: interpret   begin source? while bl-word here find interpret-xt repeat ;
 
 : bounds ( addr1 n -- addr2 addr1)   over + swap ;
 
