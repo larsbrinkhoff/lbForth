@@ -356,16 +356,6 @@ end-code
 
 : rot ( x y z -- y z x )   >r swap r> swap ;
 
-\ : high-bit   1 2 begin dup dup + ?dup while rot drop repeat nip ;
-
-\ : 1rshift 2/ [ high-bit invert ] literal and ;
-
-code rshift ( x n -- x>>n )
-    cell n = POP (cell);
-    ucell x = POP (cell);
-    PUSH (x >> n);
-end-code
-
 \ TODO: sm/rem
 
 variable ''source

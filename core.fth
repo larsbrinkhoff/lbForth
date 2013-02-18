@@ -107,24 +107,26 @@ create squote   128 allot
 
 : and  ( x y -- x&y )   nand invert ;
 
-: mult-step   1 and if swap over + swap then dup + ;
-
-: *   >r 0 swap begin r@ while r@ mult-step r> 1 rshift >r repeat r> 2drop ;
+: *   1 2>r 0 swap begin r@ while
+         r> r> swap 2dup dup + 2>r and if swap over + swap then dup +
+      repeat r> r> 2drop drop ;
 
 \ TODO: */mod
 
 : +loop ( -- ) ( C: nest-sys -- )
     postpone (+loop)  postpone 0branch  ,  postpone unloop ; immediate
 
+: space   bl emit ;
+
 : ?.-  dup 0 < if [char] - emit negate then ;
 
 : digit   [char] 0 + emit ;
 
-: (.)   ?.-  base @ /mod  ?dup if recurse then  digit ;
+: (.)   base @ /mod  ?dup if recurse then  digit ;
 
 : ." ( "string<quote>" -- )   postpone s"  postpone type ; immediate
 
-: . ( x -- )   (.) ."  " ;
+: . ( x -- )   ?.- (.) space ;
 
 : postpone-number ( caddr -- )
     0 0 rot count >number dup 0= if
@@ -201,6 +203,11 @@ create squote   128 allot
 
 : lshift   begin ?dup while 1- swap dup + swap repeat ;
 
+: rshift   1 begin over while dup + swap 1- swap repeat nip
+           2>r 0 1 begin r@ while
+              r> r> 2dup swap dup + 2>r and if swap over + swap then dup +
+           repeat r> r> 2drop drop ;
+
 : max ( x y -- max[x,y] )
     2dup > if drop else nip then ;
 
@@ -224,9 +231,6 @@ create squote   128 allot
 \ TODO: s>d
 \ TODO: sign
 \ TODO: sm/rem
-
-: space ( -- )
-    bl emit ;
 
 : spaces ( n -- )
     0 do space loop ;
