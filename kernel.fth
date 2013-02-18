@@ -152,9 +152,20 @@ end-code
 
 : 2dup ( x y -- x y x y )   over over ;
 
-: :   C enter_code header, ] ;
+create csp
+    C 0 ,
 
-: ;   reveal postpone exit postpone [ ; immediate
+: !csp   csp @ if ." Nested definition: "
+         lastxt @ count type cr abort then
+         'SP @ csp ! ;
+
+: ?csp   'SP @ csp @ <> if ." Unbalanced definition: "
+         lastxt @ count type cr abort then
+         0 csp ! ;
+
+: :   C enter_code header, ] !csp ;
+
+: ;   reveal postpone exit postpone [ ?csp ; immediate
 
 : <   - C ~(((ucell)-1)>>1) nand invert if -1 else 0 then ;
 
@@ -390,11 +401,9 @@ create state C 0 ,
 \ : word ( char "<chars>string<char>" -- caddr )
 \     skip parse  C NAME_LENGTH-1 min  dup here c!  here 1+ swap cmove  here ;
 
-: [ ( -- )
-    0 state ! ; immediate
+: [   0 state ! ; immediate
 
-: ] ( -- )
-    1 state ! ;
+: ]   1 state ! ;
 
 \ ----------------------------------------------------------------------
 
