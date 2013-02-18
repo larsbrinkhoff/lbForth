@@ -1,6 +1,5 @@
 \ -*- forth -*- Copyright 2004, 2013 Lars Brinkhoff
 
-\ Kernel: #tib
 \ TODO:   .r
 
 : .( ( "<string><paren>" -- )
@@ -10,16 +9,12 @@
 
 : 0> ( n -- flag )   0 > ;
 
-\ Kernel: 2>r
-
 : 2r> ( -- x1 x2 ) ( R: x1 x2 -- )   r> r> r> rot >r swap ;
 
 : 2r@ ( -- x1 x2 ) ( R: x1 x2 -- x1 x2 )   2r> 2dup 2>r ;
 
 : :noname   align here  0 c, 15 allot  lastxt dup @ , !
             [ ' enter >code @ ] literal , 0 , ] lastxt @ ;
-
-\ Kernel: <>
 
 \ : ?do ( n1 n2 -- ) ( R: -- loop-sys ) ( C: -- do-sys )
 \     here  postpone 2>r  unresolved branch  here ;
@@ -61,30 +56,19 @@
     16 base ! ;
 
 \ TODO:   marker
-\ Kernel: nip
 
 : of ( x x -- | x y -- x ) ( C: -- of-sys )
     postpone over  postpone =  postpone if  postpone drop ;
 
-\ Kernel: pad
-\ Kernel: parse
-
-: pick ( xn ... x0 n -- xn ... x0 xn )
-    2 + cells 'SP @ + @ ;
+: pick   1+ cells sp@ + @ ;
 
 : query ( -- )
     tib ''source !  #tib ''#source !  0 'source-id !
     refill drop ;
 
-\ Kernel: refill
-\ Kernel: restore-input
-
 \ TODO: roll ( xn xn-1 ... x0 n -- xn-1 ... x0 xn ) ;
 
-\ Kernel: save-input
-\ Kernel: source-id
 \ TODO:   span
-\ Kernel: tib
 
 : to ( x "word" -- )
     ' >body , ;
@@ -110,8 +94,6 @@
 : within   over - under - u< ;
 
 \ TODO: [compile]
-
-\ Kernel: \
 
 \ ----------------------------------------------------------------------
 

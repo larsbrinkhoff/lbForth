@@ -205,8 +205,7 @@ create squote   128 allot
 : decimal ( -- )
     10 base ! ;
 
-: depth ( -- n )
-    data_stack 100 cells +  'SP @  - /cell /  2 - ;
+: depth   data_stack 100 cells +  sp@  - /cell /  1- ;
 
 : do ( n1 n2 -- ) ( R: -- loop-sys ) ( C: -- do-sys )
     postpone 2>r  here ; immediate

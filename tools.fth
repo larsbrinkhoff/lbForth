@@ -2,15 +2,11 @@
 
 ( Tools words. )
 
-: .s ( -- )
-    [char] < emit  depth (.)  ." > "
-    'SP @ >r r@ depth 1- cells +
-    begin
-	dup r@ <>
-    while
-	dup @ .
-	/cell -
-    repeat r> 2drop ;
+: .s   [char] < emit  depth (.)  ." > "
+       sp@ /cell - >r r@ depth 1- cells +
+       begin dup r@ <> while
+         dup @ . /cell -
+       repeat r> 2drop ;
 
 : ?   @ . ;
 

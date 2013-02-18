@@ -12,7 +12,9 @@
 
 create 'here C word_area ,
 
-: 'SP ( -- 'sp )   C &SP ;
+: sp@   C &SP @ C sizeof(cell) + ;
+
+: sp!   C &SP ! ;
 
 : 'RP ( -- 'rp )   C &RP ;
 
@@ -63,7 +65,6 @@ create 'exit
 : branch   r> @ >r ;
 
 \ Possible, but slow, implementation of 0branch.
-\ : select   0= 3 + cells 'SP @ + @ nip nip ;
 \ : select   0= dup invert swap rot nand invert rot rot nand invert + ;
 \ : 0branch   r> dup cell+ swap @ rot select >r ;
 
@@ -157,9 +158,9 @@ create csp
 
 : !csp   csp @ if ." Nested definition: "
          lastxt @ count type cr abort then
-         'SP @ csp ! ;
+         sp@ csp ! ;
 
-: ?csp   'SP @ csp @ <> if ." Unbalanced definition: "
+: ?csp   sp@ csp @ <> if ." Unbalanced definition: "
          lastxt @ count type cr abort then
          0 csp ! ;
 
@@ -228,7 +229,7 @@ end-code
 
 : ?dup ( 0 -- 0 | x - x x )   dup if dup then ;
 
-: abort ( ... -- ) ( R: ... -- )   C data_stack 100 cells + 'SP !  quit ;
+: abort ( ... -- ) ( R: ... -- )   C data_stack 100 cells + sp!  quit ;
 
 : align ( -- )   'here @ aligned 'here ! ;
 
@@ -271,7 +272,7 @@ variable sink
 
 : drop   sink ! ;
 
-: dup ( x -- x x )   >r r@ r> ;
+: dup   sp@ @ ;
 
 code emit ( c -- )
     cell c = POP (cell);
