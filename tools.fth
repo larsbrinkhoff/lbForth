@@ -12,11 +12,13 @@
 	/cell -
     repeat r> 2drop ;
 
-: ? ( addr -- )
-    @ . ;
+: ?   @ . ;
 
-: dump ( addr n -- )
-    over + swap do ? loop cr ;
+: c?   c@ . ;
+
+: dump   over + swap do i ? 4 +loop cr ;
+
+: cdump   over + swap do i c? loop cr ;
 
 : see-find ( caddr -- end xt | 0 )
     >r here lastxt @
@@ -32,22 +34,16 @@
 : xt. ( xt -- )
     ( >name ) count cabs type ;
 
-create disassembly-table
-\    ' 0branch ,  disassemble-0branch
-here constant disassembly-table-end
-
-: special-disassembly ( xt -- flag )
-    0 ;
+: xt?   dup 134500000 > swap 134600000 < and ;
 
 : disassemble ( x -- )
-    dup special-disassembly if drop else
-    dup 268500000 > over 268600000 < and if
+    dup xt? if
         ( >name ) count
         dup 127 > if ." postpone " then
         cabs type
     else
         .
-    then then ;
+    then ;
 
 : see-line ( addr -- )
     cr ."     ( " dup . ." ) "  @ disassemble ;

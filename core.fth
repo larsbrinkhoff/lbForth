@@ -10,8 +10,7 @@
 
 : ahead  here 0 , ;
 
-: postpone-nonimmediate \ ( xt -- )
-    [ ' literal , ] [ ' compile, ] literal , ;
+: postpone-nonimmediate   [ ' literal , ' compile, ] literal , ;
 
 : create   dovariable_code header, ;
 
@@ -121,7 +120,11 @@ create postponers
 : +loop ( -- ) ( C: nest-sys -- )
     postpone (+loop)  postpone 0branch  ,  postpone unloop ; immediate
 
-: (.) ( x -- )   base @ /mod  ?dup if recurse then  [char] 0 + emit ;
+: ?.-  dup 0 < if [char] - emit negate then ;
+
+: digit   [char] 0 + emit ;
+
+: (.)   ?.-  base @ /mod  ?dup if recurse then  digit ;
 
 : ." ( "string<quote>" -- )   postpone s"  postpone type ; immediate
 
