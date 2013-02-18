@@ -19,15 +19,18 @@
 		      (words-file (words-name input-file)))
   (with-open-file (*input* input-file)
 
-    (with-open-file (*output* output-file :direction :output)
+    (with-open-file (*output* output-file :direction :output
+					  :if-exists :supersede)
       (output-line "#include \"forth.h\"")
       (output "#include \"~A\"" (namestring header-file))
 
-      (with-open-file (*header* header-file :direction :output)
+      (with-open-file (*header* header-file :direction :output
+					    :if-exists :supersede)
 	(format *header* "~&void enter_code (struct word *);~%")
 	(format *header* "~&void dovariable_code (struct word *);~%")
 
-	(with-open-file (*words* words-file :direction :output)
+	(with-open-file (*words* words-file :direction :output
+				            :if-exists :supersede)
 	  (format *words* "~&#include \"forth.h\"~%")
 	  (format *words* "~&#include \"~A\"~%" (namestring header-file))
 	  (format *words* "~&xt_t words[1000] = {~%")
