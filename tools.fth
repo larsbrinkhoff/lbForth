@@ -16,9 +16,9 @@
 
 : c?   c@ . ;
 
-: dump   over + swap do i ? 4 +loop cr ;
+: dump   bounds do i ? 4 +loop cr ;
 
-: cdump   over + swap do i c? loop cr ;
+: cdump   bounds do i c? loop cr ;
 
 : see-find ( caddr -- end xt | 0 )
     >r here lastxt @
@@ -125,3 +125,11 @@
 : [undefined]   bl-word find nip 0= ; immediate
 
 : [defined]   postpone [undefined] invert ; immediate
+
+\ ----------------------------------------------------------------------
+
+: @+ ( addr -- addr+/cell x )   dup cell+ swap @ ;
+
+: !+ ( x addr -- addr+/cell )   tuck ! cell+ ;
+
+: -rot   swap >r swap r> ;
