@@ -135,14 +135,7 @@ create squote   128 allot
 
 : . ( x -- )   ?.- (.) space ;
 
-: postpone-number ( caddr -- )
-    0 0 rot count >number dup 0= if
-	2drop nip
-	postpone (literal)  postpone (literal)  postpone ,
-	postpone literal  postpone ,
-    else
-	." Undefined: " type cr abort
-    then ;
+: postpone-number   ." Undefined: " count type cr abort ;
 
 ' postpone-number  postponers cell+  !
 
@@ -203,10 +196,8 @@ create squote   128 allot
 
 \ TODO: leave
 
-: loop ( -- ) ( C: nest-sys -- )
-    postpone 1  postpone (+loop)
-    postpone 0branch  ,
-    postpone unloop ; immediate
+: loop   1 postpone literal  postpone (+loop)
+         postpone 0branch  ,  postpone unloop ; immediate
 
 : lshift   begin ?dup while 1- swap dup + swap repeat ;
 
