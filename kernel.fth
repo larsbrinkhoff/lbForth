@@ -180,11 +180,8 @@ end-code
 
 : ;   postpone exit  postpone [ ; immediate
 
-code < ( x y -- flag )
-    cell y = POP (cell);
-    cell x = POP (cell);
-    PUSH ((x < y) ? -1 : 0);
-end-code
+: <   -	2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/	2/ 2/ 2/ 2/ 2/ 2/ 2/
+      2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ ;
 
 : = ( x y -- flag )   2dup < >r > r> or invert ;
 
@@ -254,12 +251,6 @@ code nand ( x y -- ~(x&y) )
     PUSH (~(x & y));
 end-code
 
-\ code and ( x y -- x&y )
-\     cell y = POP (cell);
-\     cell x = POP (cell);
-\     PUSH (x & y);
-\ end-code
-
 create base C 10 ,
 
 : bl ( -- <space> )   32 ;
@@ -296,11 +287,6 @@ code emit ( c -- )
     putchar (c);
 end-code
 
-\ code execute ( xt -- )
-\     xt_t xt = POP (xt_t);
-\     EXECUTE (xt);
-\ end-code
-
 : unex   r> r> r> drop drop drop ;
 
 \ Put xt and 'unex on return stack, then jump to that.
@@ -309,8 +295,6 @@ end-code
 code exit ( R: ret -- )
     IP = RPOP (xt_t *);
 end-code
-
-\ : immediate? ( xt -- 1 | -1 )   ( >name ) c@ 127 > if 1 else -1 then ;
 
 : find ( caddr -- caddr 0 | xt 1 | xt -1 )
     lastxt @
@@ -369,6 +353,10 @@ end-code
 : r@ ( -- x) ( R: x -- x )   'RP @ cell+ @ ;
 
 : rot ( x y z -- y z x )   >r swap r> swap ;
+
+\ : high-bit   1 2 begin dup dup + ?dup while rot drop repeat nip ;
+
+\ : 1rshift 2/ [ high-bit invert ] literal and ;
 
 code rshift ( x n -- x>>n )
     cell n = POP (cell);
@@ -596,8 +584,6 @@ code read-file ( addr n1 fileid -- n2 ior )
     PUSH (n2);
     PUSH (ferror (fileid) ? errno : 0);
 end-code
-
-\ : read-file ( addr n1 fileid -- n2 ior )   -1 file-io ;
 
 \ : write-file ( addr n fileid -- ior )   0 file-io nip ;
 
