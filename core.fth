@@ -162,7 +162,7 @@ create squote   128 allot
 
 : ?.-  dup 0< if [char] - emit negate then ;
 
-: digit   [char] 0 + emit ;
+: digit   dup 9 > if [ char a 10 - ] literal else [char] 0 then + emit ;
 
 : (.)   base @ u/mod  ?dup if recurse then  digit ;
 
