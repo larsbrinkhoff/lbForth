@@ -13,21 +13,22 @@ cell sink;
 xt_t *IP;
 cell *SP = data_stack + 100;
 cell *RP = return_stack + 100;
-char *HERE = (char *)word_area;
-cell state = 0;
-cell base = 10;
 cell to_in = 0;
 
 #if 1
 #define TRACE(XT)
 #else
-#define TRACE(XT)
-  do {
-    struct word *word = XT_WORD (XT);
-    cell *p;
-    for (p =  return_stack + 100 - 1; p >= RP; p--)
-      putchar (' ');
-    printf ("Executing %s\n", word->name);
+#define TRACE(XT)					\
+  do {							\
+    extern struct word tracing_word;			\
+    struct word *word = XT_WORD (XT);			\
+    cell *p;						\
+    if (tracing_word.param[0])				\
+      {							\
+        for (p =  return_stack + 100 - 1; p >= RP; p--)	\
+          putchar (' ');				\
+        printf ("Executing %s\n", word->name);		\
+      }							\
   } while (0)
 #endif
 

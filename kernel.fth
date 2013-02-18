@@ -9,7 +9,9 @@
     s" tools.fth" included
     quit ;
 
-: 'here ( -- 'here )   C &HERE ;
+create 'here C word_area ,
+
+: 'IP   C &IP ;
 
 : 'SP ( -- 'sp )   C &SP ;
 
@@ -219,7 +221,7 @@ code >number ( d1 addr1 n1 -- d2 addr2 n2 )
 	int m = *addr - '0';
 	if (m < 0 || m >= 10)
 	  break;
-	d = base * d + negate * m;
+	d = base_word.param[0] * d + negate * m;
 	addr++;
 	n--;
       }
@@ -264,7 +266,7 @@ end-code
 \     PUSH (x & y);
 \ end-code
 
-: base ( -- 'base )   C &base ;
+create base C 10 ,
 
 : bl ( -- <space> )   32 ;
 
@@ -380,7 +382,7 @@ variable ''#source
 
 : source ( -- addr n )   ''source @  ''#source @ @ ;
 
-: state ( -- addr )   C &state ;
+create state C 0 ,
 
 : swap ( x y -- y x )   >r >r 'RP @ cell+ @ r> r> drop ;
 
@@ -530,18 +532,6 @@ variable 'source-id
 
 \ ----------------------------------------------------------------------
 
-( Tools words. )
-
-\ code .s ( -- )
-\     cell *p;
-\     printf ("<%d>", data_stack + 100 - SP);
-\     for (p =  data_stack + 100 - 1; p >= SP; p--)
-\       printf (" %d", *p);
-\     putchar ('\n');
-\ end-code
-
-\ ----------------------------------------------------------------------
-
 ( Tools extension words. )
 
 code bye ( ... -- <no return> )
@@ -621,3 +611,6 @@ end-code
 \     PUSH (n2);
 \     PUSH (ferror (fileid) ? errno : 0);
 \ end-code
+
+create tracing C 0 ,
+
