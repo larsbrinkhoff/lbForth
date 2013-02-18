@@ -156,7 +156,7 @@ create squote   128 allot
 
 : 2* ( n -- 2n )   dup + ;
 
-\ Kernel: 2/
+: 2/   dup 0< if 1- then 2 / ;
 
 : 2@ ( addr -- x1 x2 )   dup cell+ @ swap @ ;
 

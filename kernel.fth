@@ -47,6 +47,10 @@ code enter ( -- ) ( R: -- ret )
     IP = (xt_t *)(word->param);
 end-code
 
+code exit ( R: ret -- )
+    IP = RPOP (xt_t *);
+end-code
+
 code dodoes ( -- addr ) ( R: -- ret )
     PUSH (word->param);
     RPUSH (IP);
@@ -124,11 +128,10 @@ code ! ( x addr -- )
     *addr = x;
 end-code
 
-\ code * ( x y -- x*y )
-\     cell y = POP (cell);
-\     cell x = POP (cell);
-\     PUSH (x * y);
-\ end-code
+code @ ( addr -- x )
+    cell *addr = POP (cell *);
+    PUSH (*addr);
+end-code
 
 \ code */ ( x y z -- x*y/z )
 \     cell z = POP (cell);
@@ -159,14 +162,9 @@ code /mod ( x y -- x%y x/y )
     PUSH (x / y);
 end-code
 
-: 0= ( n -- flag )   0 = ;
+: 0=   if 0 else -1 then ;
 
 : 1+ ( n -- n+1 )   1 + ;
-
-code 2/ ( n -- n/2 )
-    cell n = POP (cell);
-    PUSH (n >> 1);
-end-code
 
 : 2drop ( x y -- )   drop drop ;
 
@@ -176,10 +174,9 @@ end-code
 
 : ;   reveal postpone exit postpone [ ; immediate
 
-: <   -	2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/	2/ 2/ 2/ 2/ 2/ 2/ 2/
-      2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ 2/ ;
+: <   - C ~(((ucell)-1)>>1) nand invert if -1 else 0 then ;
 
-: = ( x y -- flag )   2dup < >r > r> or invert ;
+: =   - if 0 else -1 then ;
 
 : > ( x y -- flag )   swap < ;
 
@@ -226,12 +223,17 @@ code >r  ( x -- ) ( R: -- x )
     RPUSH (x);
 end-code
 
-: ?dup ( 0 -- 0 | x - x x )   dup if dup then ;
+\ This works, but is too slow.
+\ : r> ( -- x ) ( R: x -- )    'RP @ 4 + @ r@ 'RP @ 4 + 'RP ! 'RP @ ! ;
 
-code @ ( addr -- x )
-    cell *addr = POP (cell *);
-    PUSH (*addr);
+code r> ( -- x ) ( R: x -- )
+    cell x = RPOP (cell);
+    PUSH (x);
 end-code
+
+: r@ ( -- x) ( R: x -- x )   'RP @ cell+ @ ;
+
+: ?dup ( 0 -- 0 | x - x x )   dup if dup then ;
 
 : abort ( ... -- ) ( R: ... -- )   C data_stack 100 cells + 'SP !  quit ;
 
@@ -288,10 +290,6 @@ end-code
 \ Put xt and 'unex on return stack, then jump to that.
 : execute   ['] unex >r >r 'RP @ >r ;
 
-code exit ( R: ret -- )
-    IP = RPOP (xt_t *);
-end-code
-
 create revealedxt C &lastxt_word ,
 
 : find ( caddr -- caddr 0 | xt 1 | xt -1 )
@@ -339,16 +337,6 @@ end-code
 
 \ The literal 0 will be patched when loading core.
 : quit ( R: ... -- )   0 execute ;
-
-\ This works, but is too slow.
-\ : r> ( -- x ) ( R: x -- )    'RP @ 4 + @ r@ 'RP @ 4 + 'RP ! 'RP @ ! ;
-
-code r> ( -- x ) ( R: x -- )
-    cell x = RPOP (cell);
-    PUSH (x);
-end-code
-
-: r@ ( -- x) ( R: x -- x )   'RP @ cell+ @ ;
 
 : rot ( x y z -- y z x )   >r swap r> swap ;
 
@@ -429,12 +417,6 @@ create state C 0 ,
 \ : word ( char "<chars>string<char>" -- caddr )
 \     skip parse  C NAME_LENGTH-1 min  dup here c!  here 1+ swap cmove  here ;
 
-\ code xor ( x y -- x^y )
-\     cell y = POP (cell);
-\     cell x = POP (cell);
-\     PUSH (x ^ y);
-\ end-code
-
 : [ ( -- )
     0 state ! ; immediate
 
@@ -455,15 +437,6 @@ create #tib C 0 ,
 : compile, ( xt -- )   state @ if , else execute then ;
 
 : nip ( x y -- y )   swap drop ;
-
-\ : parse ( char "string<char>" -- addr n )
-\     pad >r  begin
-\ 	source? if <source 2dup <> else 0 0 then
-\     while
-\ 	r@ c!  r> 1+ >r
-\     repeat  2drop  pad r> over - ;
-
-\ : pad ( -- addr )   here 100 + ;
 
 : refill ( -- flag )
     source-id dup 0= if
