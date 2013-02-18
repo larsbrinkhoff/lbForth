@@ -34,7 +34,13 @@
 : xt. ( xt -- )
     ( >name ) count cabs type ;
 
-: xt?   dup 134500000 > swap 134600000 < and ;
+: xt? ( xt -- flag )
+    >r lastxt @ begin
+	?dup
+    while
+	dup r@ = if r> 2drop -1 exit then
+	>nextxt
+    repeat r> drop 0 ;
 
 : disassemble ( x -- )
     dup xt? if
@@ -45,8 +51,10 @@
         .
     then ;
 
+: .addr  dup . ;
+
 : see-line ( addr -- )
-    cr ."     ( " dup . ." ) "  @ disassemble ;
+    cr ."     ( " .addr ." ) "  @ disassemble ;
 
 : see-word ( end xt -- )
     >r ." : " r@ xt.
@@ -103,3 +111,17 @@
 \ [if]
 
 \ [then]
+
+\ ----------------------------------------------------------------------
+
+( Forth2012 tools extension words. )
+
+\ TODO: n>r
+
+\ TODO: nr>
+
+\ TODO: synonym
+
+: [undefined]   bl-word find nip 0= ; immediate
+
+: [defined]   postpone [undefined] invert ; immediate
