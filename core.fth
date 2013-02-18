@@ -63,7 +63,7 @@ create postponers
 : recurse   lastxt @ compile, ; immediate
 
 : pad \ ( -- addr )
-    here 100 + ;
+    here 1024 + ;
 
 : parse \ ( char "string<char>" -- addr n )
     pad >r  begin

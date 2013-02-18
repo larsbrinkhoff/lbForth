@@ -1,11 +1,13 @@
+/* Copyright 2004, 2012 Lars Brinkhoff */
+
 #include <stdio.h>
 #include "forth.h"
 
 cell word_area[10000];
 cell data_stack[100];
 cell return_stack[100];
-char tib[100];
-char fib[100];
+char tib[256];
+char fib[256];
 
 xt_t *IP;
 cell *SP = data_stack + 100;

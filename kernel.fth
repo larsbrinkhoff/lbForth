@@ -1,4 +1,4 @@
-\ -*- forth -*-
+\ -*- forth -*- Copyright 2004, 2012 Lars Brinkhoff
 
 ( System implementation words. )
 
@@ -11,8 +11,6 @@
     quit ;
 
 create 'here C word_area ,
-
-: 'IP   C &IP ;
 
 : 'SP ( -- 'sp )   C &SP ;
 
@@ -494,7 +492,7 @@ create #tib C 0 ,
     0 >in !
     0 #tib !
     -1
-    source drop 100 bounds do
+    source drop 256 bounds do
 	key dup 10 = if drop leave then
 	i c!
 	1 #tib +!
@@ -504,7 +502,7 @@ create #tib C 0 ,
     0 >in !
     0 #fib !
     -1
-    source drop 100 bounds do
+    source drop 256 bounds do
 	i 1 source-id read-file  if ." Read error." abort then
 	dup 0=  i c@ 10 =  or  if #fib @ or 0= if drop 0 then leave then
 	drop  1 #fib +!
