@@ -77,6 +77,17 @@
 : words ( -- )
     ['] type-word traverse-dictionary cr ;
 
+: find-xt   begin dup xt? 0= while /cell - repeat ;
+
+: -rot   swap under swap ;
+
+: in-body?   rot 2dup 2>r -rot >body swap within 2r> rot
+  	     if dup rot dup xt. ."  +" >body - . -1 else nip 0 then ;
+
+: backtrace   return_stack 100 cells + 'RP @ do ."  > " i ?
+              i @ ['] in-body? traverse-dictionary cr drop
+              /cell +loop ;
+
 \ ----------------------------------------------------------------------
 
 ( Tools extension words. )
@@ -123,8 +134,6 @@
 
 : @+ ( addr -- addr+/cell x )   dup cell+ swap @ ;
 : !+ ( x addr -- addr+/cell )   tuck ! cell+ ;
-
-: -rot   swap under swap ;
 
 : (redefine-does>)   [ ' dodoes >code @ ] literal over >code !
 		     r> swap >does ! ;
