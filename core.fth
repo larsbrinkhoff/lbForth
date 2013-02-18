@@ -1,6 +1,6 @@
 : immediate   lastxt @ dup c@ negate swap c! ;
 
-: \   source nip >in ! ; immediate
+: \   source nip >in ! ; immediate \ Copyright 2004, 2012 Lars Brinkhoff
 
 : char \ ( "word" -- char )
     bl-word here 1+ c@ ;
@@ -105,18 +105,11 @@ create squote   128 allot
 \ TODO: #>
 \ TODO: #s
 
-\ : ' ( "word" -- xt )
-\     bl word find 0= abort" Undefined word" ;
+: and  ( x y -- x&y )   nand invert ;
 
-\ : * ( x y -- x*y )
-\     >r 0 swap
-\     begin
-\ 	r@
-\     while
-\ 	r> dup 2/ >r 1 nand invert if
-\ 	    dup 2* rot rot + swap
-\ 	then
-\     repeat r> 2drop ;
+: mult-step   1 and if swap over + swap then dup + ;
+
+: *   >r 0 swap begin r@ while r@ mult-step r> 1 rshift >r repeat r> 2drop ;
 
 \ TODO: */mod
 
@@ -173,8 +166,6 @@ create squote   128 allot
 
 \ TODO: accept
 
-: and  ( x y -- x&y )   nand invert ;
-
 : c, ( n -- )
     here c!  1 chars allot ;
 
@@ -208,8 +199,7 @@ create squote   128 allot
     postpone 0branch  ,
     postpone unloop ; immediate
 
-: lshift ( x n -- x<<n )
-    0 do dup + loop ;
+: lshift   begin ?dup while 1- swap dup + swap repeat ;
 
 : max ( x y -- max[x,y] )
     2dup > if drop else nip then ;
