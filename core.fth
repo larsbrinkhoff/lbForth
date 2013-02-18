@@ -49,9 +49,6 @@ finders postpone-xt   postpone-nonimmediate abort compile,
 : then \ ( -- ) ( C: orig -- )
     resolve ; immediate
 
-: [char] \ ( "word" -- )
-    char  postpone literal ; immediate
-
 : begin \ ( -- ) ( C: -- dest )
     here ; immediate
 
@@ -76,9 +73,13 @@ finders postpone-xt   postpone-nonimmediate abort compile,
 	r@ c!  r> 1+ >r
     repeat  2drop  pad r> over - ;
 
-: ( \ ( "string<paren>" -- )
-    [ char ) ] literal parse 2drop ; immediate
-    \ TODO: If necessary, refill and keep parsing.
+: [char]   char  postpone literal ; immediate
+
+: 1-   -1 + ;
+
+: (   begin [char] ) parse 2drop
+      source drop >in @ 1- + c@ [char] ) <> while
+      refill while repeat then ; immediate
 
 : string, ( addr n -- )
     here over allot align  swap cmove ;
@@ -94,6 +95,9 @@ create squote   128 allot
     else
 	[char] " parse  >r squote r@ cmove  squote r>
     then ; immediate
+
+\ : s"   [char] " parse  >r squote r@ cmove  squote r> ;
+\ : s"   postpone (s")  [char] " parse  dup ,  string, ; compile-only
 
 : (abort") ( ... addr n -- ) ( R: ... -- )
     cr type cr abort ;
@@ -121,8 +125,6 @@ create squote   128 allot
 
 : +loop ( -- ) ( C: nest-sys -- )
     postpone (+loop)  postpone 0branch  ,  postpone unloop ; immediate
-
-: 1-   -1 + ;
 
 : msb   1 2 begin ?dup while nip dup 2* repeat postpone literal ; immediate
 
