@@ -1,10 +1,5 @@
 \ -*- forth -*-
 
-\ Reminder: ! does ( x addr -- )
-\ Reminder: cmove does ( from to length -- )
-
-\ ----------------------------------------------------------------------
-
 ( System implementation words. )
 
 : boot ( -- )
@@ -48,7 +43,7 @@
 
 : lastxt ( -- addr )   C &lastxt ;
 
-code docolon ( -- ) ( R: -- ret )
+code enter ( -- ) ( R: -- ret )
     RPUSH (IP);
     IP = (xt_t *)(word->param);
 end-code
@@ -195,7 +190,7 @@ end-code
 variable thisxt
 
 : : ( "word" -- colon-sys )
-    header, thisxt !  C docolon_code ,  ] ;
+    header, thisxt !  C enter_code ,  ] ;
 
 : ; ( colon-sys -- )
     thisxt @ lastxt !  postpone exit  postpone [ ; immediate

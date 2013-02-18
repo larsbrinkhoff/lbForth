@@ -24,7 +24,7 @@
       (output "#include \"~A\"" (namestring header-file))
 
       (with-open-file (*header* header-file :direction :output)
-	(format *header* "~&void docolon_code (struct word *);~%")
+	(format *header* "~&void enter_code (struct word *);~%")
 	(format *header* "~&void dovariable_code (struct word *);~%")
 
 	(with-open-file (*words* words-file :direction :output)
@@ -148,7 +148,7 @@
 	(next-word (peek-word)))
     (when (equal next-word "immediate")
       (setq len (- len)))
-    (output "struct word ~A = { ~D, \"~A\", ~A, docolon_code, {"
+    (output "struct word ~A = { ~D, \"~A\", ~A, enter_code, {"
 	    *this-word* len (quoted *this-name*) *previous-word*))
   (setq *previous-word* (concatenate 'string "&" *this-word*))
   (do ((end (fill-pointer *code*))
