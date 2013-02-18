@@ -1,6 +1,12 @@
 : immediate   lastxt @ dup c@ negate swap c! ;
 
-: \   source nip >in ! ; immediate \ Copyright 2004, 2012 Lars Brinkhoff
+: \   source nip >in ! ; immediate
+
+
+
+\ Copyright 2004, 2013 Lars Brinkhoff
+
+
 
 : char \ ( "word" -- char )
     bl-word here 1+ c@ ;
@@ -11,14 +17,19 @@
 
 : '   bl-word here find 0branch [ ahead ] exit [ resolve ] 0 ;
 
-: postpone-nonimmediate   [ ' literal , ' compile, ] literal , ;
+: (does>)   lastxt @ [ ' dodoes >code @ ] literal over >code !
+            r> swap >does ! ;
 
-: create   dovariable_code header, reveal ;
+: does>   [ ' (does>) ] literal compile, ; immediate
+
+: create   0 header, reveal (does>) ;
+
+: postpone-nonimmediate   [ ' literal , ' compile, ] literal compile, ;
 
 create postponers
     ' postpone-nonimmediate ,
     ' abort ,
-    ' , ,
+    ' compile, ,
 
 : word \ ( char "<chars>string<char>" -- caddr )
     drop bl-word here ;
@@ -43,10 +54,6 @@ create postponers
 
 : [char] \ ( "word" -- )
     char  postpone literal ; immediate
-
-: (does>)   lastxt @ dodoes_code over >code ! r> swap >does ! ;
-
-: does>   postpone (does>) ; immediate
 
 : begin \ ( -- ) ( C: -- dest )
     here ; immediate

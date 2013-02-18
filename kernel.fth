@@ -1,4 +1,4 @@
-\ -*- forth -*- Copyright 2004, 2012 Lars Brinkhoff
+\ -*- forth -*- Copyright 2004, 2013 Lars Brinkhoff
 
 ( System implementation words. )
 
@@ -47,15 +47,15 @@ code enter ( -- ) ( R: -- ret )
     IP = (xt_t *)(word->param);
 end-code
 
-code dovariable ( -- addr )
-    PUSH (word->param);
-end-code
-
 code dodoes ( -- addr ) ( R: -- ret )
     PUSH (word->param);
     RPUSH (IP);
     IP = (xt_t *)(word->does);
 end-code
+
+\ This is for meta compiler convenience.
+create 'exit
+    ' exit ,
 
 : branch   r> @ >r ;
 
@@ -107,10 +107,6 @@ create interpreters
     while
 	bl-word here find 1+ cells  interpreters + @ execute
     repeat ;
-
-: dodoes_code   C dodoes_code ;
-
-: dovariable_code   C dovariable_code ;
 
 : bounds ( addr1 n -- addr2 addr1)   over + swap ;
 

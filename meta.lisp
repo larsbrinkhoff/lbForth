@@ -27,7 +27,7 @@
       (with-open-file (*header* header-file :direction :output
 					    :if-exists :supersede)
 	(format *header* "~&void enter_code (struct word *);~%")
-	(format *header* "~&void dovariable_code (struct word *);~%")
+	(format *header* "~&void dodoes_code (struct word *);~%")
 
 	(with-open-file (*words* words-file :direction :output
 				            :if-exists :supersede)
@@ -182,7 +182,7 @@
   (let* ((word (read-word))
 	 (mangled (mangle-word word)))
     (declare-word word)
-    (output "struct word ~A_word = { ~D, \"~A\", ~A, dovariable_code, 0, {"
+    (output "struct word ~A_word = { ~D, \"~A\", ~A, dodoes_code, &tickexit_word.param[0], {"
 	    mangled (length word) (quoted word) *previous-word*)
     (do ((line (read-line *input*) (read-line *input*)))
 	((equalp (string-trim " " line) ""))
@@ -310,7 +310,7 @@
   (let* ((word (read-word))
 	 (mangled (mangle-word word)))
     (declare-word word)
-    (output "struct word ~A_word = { ~D, \"~A\", ~A, dovariable_code, 0, { 0 } };"
+    (output "struct word ~A_word = { ~D, \"~A\", ~A, dodoes_code, &tickexit_word.param[0], { 0 } };"
 	    mangled (length word) (quoted word) *previous-word*)
     (setq *previous-word* (format nil "&~A_word" mangled))))
 
