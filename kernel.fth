@@ -3,10 +3,11 @@
 ( System implementation words. )
 
 : boot ( -- )
-    \ s" boot.fth" included ;
+    ." lbForth" cr
     s" core.fth" included
     s" core-ext.fth" included
     s" tools.fth" included
+    ." ok" cr
     quit ;
 
 create 'here C word_area ,
