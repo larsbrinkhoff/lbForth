@@ -41,7 +41,6 @@
 	      (compile-word word))
 
 	    (format *words* "~&};~%")
-	    (output "struct word *lastxt = ~A;" *previous-word*)
 	    (format t "~&Non-immediate words used:~%")
 	    (dolist (cons (sort *non-immediate-words*
 				(lambda (x y) (< (cdr x) (cdr y)))))

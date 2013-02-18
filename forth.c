@@ -6,14 +6,10 @@ cell data_stack[100];
 cell return_stack[100];
 char tib[100];
 char fib[100];
-char squote[100];
-cell ntib = 0;
-cell sink;
 
 xt_t *IP;
 cell *SP = data_stack + 100;
 cell *RP = return_stack + 100;
-cell to_in = 0;
 
 #if 1
 #define TRACE(XT)

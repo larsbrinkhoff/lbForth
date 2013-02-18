@@ -44,8 +44,6 @@ create 'here C word_area ,
 
 : >nextxt ( xt1 -- xt2 )   C TO_NEXT + @ ;
 
-: lastxt ( -- addr )   C &lastxt ;
-
 code enter ( -- ) ( R: -- ret )
     RPUSH (IP);
     IP = (xt_t *)(word->param);
@@ -115,8 +113,6 @@ create interpreters
 : dodoes_code   C dodoes_code ;
 
 : dovariable_code   C dovariable_code ;
-
-: squote   C squote ;
 
 : bounds ( addr1 n -- addr2 addr1)   over + swap ;
 
@@ -200,7 +196,7 @@ end-code
 
 : >body ( xt -- pfa )   C TO_BODY + ;
 
-: >in ( -- addr )   C &to_in ;
+create >in C 0 ,
 
 code >number ( d1 addr1 n1 -- d2 addr2 n2 )
     cell n = POP (cell);
@@ -289,7 +285,9 @@ end-code
 
 : cr ( -- )   10 emit ;
 
-: drop ( x -- )   C &sink ! ;
+variable sink
+
+: drop   sink ! ;
 
 : dup ( x -- x x )   >r r@ r> ;
 
@@ -471,8 +469,7 @@ create state C 0 ,
 
 ( Core extension words. )
 
-: #tib ( -- addr )
-    C &ntib ;
+create #tib C 0 ,
 
 : <>  ( x y -- flag )
     = 0= ;
@@ -616,4 +613,7 @@ end-code
 \ end-code
 
 create tracing C 0 ,
+
+\ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
+create lastxt C &lastxt_word ,
 

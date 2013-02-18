@@ -35,15 +35,10 @@ struct word
 };
 
 extern xt_t *IP;
-extern struct word *lastxt;
 extern cell *SP;
 extern cell *RP;
 extern char tib[];
 extern char fib[];
-extern char squote[];
-extern cell ntib;
-extern cell to_in;
-extern cell sink;
 extern cell data_stack[];
 extern cell return_stack[];
 extern cell word_area[];

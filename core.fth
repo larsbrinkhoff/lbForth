@@ -62,7 +62,7 @@ create postponers
 : until \ ( x -- ) ( C: dest -- )
     postpone 0branch , ; immediate
 
-: recurse   lastxt @ , ; immediate
+: recurse   lastxt @ compile, ; immediate
 
 : pad \ ( -- addr )
     here 100 + ;
@@ -83,6 +83,8 @@ create postponers
 
 : (s") ( -- addr n ) ( R: ret1 -- ret2 )
     r> dup @ swap cell+ 2dup + aligned >r swap ;
+
+create squote   128 allot
 
 : s" ( "string<quote>" -- addr n )
     state @ if
