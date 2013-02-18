@@ -122,7 +122,13 @@
 \ ----------------------------------------------------------------------
 
 : @+ ( addr -- addr+/cell x )   dup cell+ swap @ ;
-
 : !+ ( x addr -- addr+/cell )   tuck ! cell+ ;
 
 : -rot   swap under swap ;
+
+: (redefine-does>)   [ ' dodoes >code @ ] literal over >code !
+		     r> swap >does ! ;
+: redefine   tuck >body !  (redefine-does>) @ execute ;
+: (redefi)   immediate redefine ;
+finders redefine-xt   redefine redefine (redefi)
+: :redefine   : lastxt @ dup find redefine-xt ;
