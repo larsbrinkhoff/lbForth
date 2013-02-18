@@ -161,7 +161,7 @@
   (output-line "} };"))
 
 (defimmediate does> ()
-  (emit-word "exit"))
+  (emit-word "(does>)"))
 
 (defimmediate code ()
   (let* ((name (read-word))
@@ -314,6 +314,10 @@
     (output "struct word ~A_word = { ~D, \"~A\", ~A, dodoes_code, &tickexit_word.param[0], { 0 } };"
 	    mangled (length word) (quoted word) *previous-word*)
     (setq *previous-word* (format nil "&~A_word" mangled))))
+
+(defimmediate |rp!| ()
+  (emit-literal "&RP")
+  (emit-word "!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

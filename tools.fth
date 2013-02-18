@@ -86,7 +86,7 @@
 : in-body?   rot 2dup 2>r -rot >body swap within 2r> rot
   	     if dup rot dup xt. ."  +" >body - . -1 else nip 0 then ;
 
-: backtrace   return_stack 100 cells + 'RP @ do ."  > " i ?
+: backtrace   return_stack 100 cells + rp@ do ."  > " i ?
               i @ ['] in-body? traverse-dictionary cr drop
               /cell +loop ;
 

@@ -13,10 +13,10 @@
 create 'here C word_area ,
 
 : sp@   C &SP @ C sizeof(cell) + ;
-
 : sp!   C &SP ! ;
 
-: 'RP ( -- 'rp )   C &RP ;
+: rp@   C &RP @ C sizeof(cell) + ;
+: rp!   postpone (literal) C &RP , postpone ! ; immediate
 
 : data_stack ( -- addr )   C data_stack ;
 
@@ -207,7 +207,7 @@ code >number ( d1 addr1 n1 -- d2 addr2 n2 )
 end-code
 
 \ This works, but is too slow.
-\ : >r ( x -- ) ( R: -- x )   r@ 'RP @ -4 + 'RP ! 'RP @ ! 'RP @ 4 + ! ;
+\ : >r   r@ rp@ -4 + rp! rp@ ! rp@ 4 + ! ;
 
 code >r  ( x -- ) ( R: -- x )
     cell x = POP (cell);
@@ -215,14 +215,14 @@ code >r  ( x -- ) ( R: -- x )
 end-code
 
 \ This works, but is too slow.
-\ : r> ( -- x ) ( R: x -- )    'RP @ 4 + @ r@ 'RP @ 4 + 'RP ! 'RP @ ! ;
+\ : r>   rp@ 4 + @ r@ rp@ 4 + rp! rp@ ! ;
 
 code r> ( -- x ) ( R: x -- )
     cell x = RPOP (cell);
     PUSH (x);
 end-code
 
-: r@ ( -- x) ( R: x -- x )   'RP @ cell+ @ ;
+: r@   rp@ cell+ @ ;
 
 : ?dup ( 0 -- 0 | x - x x )   dup if dup then ;
 
@@ -277,9 +277,8 @@ code emit ( c -- )
 end-code
 
 : unex   r> r> r> drop drop drop ;
-
 \ Put xt and 'unex on return stack, then jump to that.
-: execute   ['] unex >r >r 'RP @ >r ;
+: execute   ['] unex >r >r rp@ >r ;
 
 create revealedxt C &lastxt_word ,
 
@@ -332,7 +331,7 @@ variable ''#source
 
 create state C 0 ,
 
-: swap ( x y -- y x )   >r >r 'RP @ cell+ @ r> r> drop ;
+: swap   >r >r rp@ cell+ @ r> r> drop ;
 
 : type ( addr n -- )
     ?dup if

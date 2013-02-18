@@ -217,8 +217,7 @@ create squote   128 allot
 \ TODO: fm/mod )
 \ TODO: hold
 
-: j ( -- x1 ) ( R: x1 x2 x3 -- x1 x2 x3 )
-    'RP @ 3 cells + @ ;
+: j   rp@ 3 cells + @ ;
 
 \ TODO: leave
 
@@ -233,7 +232,7 @@ create squote   128 allot
 \ TODO:   move
 
 : (quit) ( R: ... -- )
-    return_stack 100 cells + 'RP !  0 csp !
+    return_stack 100 cells + rp!  0 csp !
     0 'source-id !  tib ''source !  #tib ''#source !
     postpone [
     begin
