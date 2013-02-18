@@ -1,4 +1,4 @@
-/* Copyright 2004, 2012 Lars Brinkhoff */
+/* Copyright 2004, 2013 Lars Brinkhoff */
 
 #include <stdio.h>
 #include "forth.h"
@@ -9,7 +9,6 @@ cell return_stack[100];
 char tib[256];
 char fib[256];
 
-xt_t *IP;
 cell *SP = data_stack + 100;
 cell *RP = return_stack + 100;
 
@@ -34,7 +33,7 @@ int
 main (int argc, char **argv)
 {
   extern struct word boot_word;
-  IP = (xt_t *)boot_word.param;
+  xt_t *IP = (xt_t *)boot_word.param;
 
   for (;;)
     {

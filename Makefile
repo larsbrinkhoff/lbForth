@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -m32 -O2
+CFLAGS = -g -m32 -fomit-frame-pointer -O2
 LISP = sbcl
 LDFLAGS = -g -m32 
 

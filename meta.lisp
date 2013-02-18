@@ -1,4 +1,4 @@
-;;;; -*- lisp -*-
+;;;; -*- lisp -*- Copyright 2004, 2013 Lars Brinkhoff
 
 (defvar *this-word*)
 (defvar *this-name*)
@@ -26,8 +26,8 @@
 
       (with-open-file (*header* header-file :direction :output
 					    :if-exists :supersede)
-	(format *header* "~&void enter_code (struct word *);~%")
-	(format *header* "~&void dodoes_code (struct word *);~%")
+	(format *header* "~&xt_t * enter_code (xt_t *, struct word *) REGPARM;~%")
+	(format *header* "~&xt_t * dodoes_code (xt_t *, struct word *) REGPARM;~%")
 
 	(with-open-file (*words* words-file :direction :output
 				            :if-exists :supersede)
@@ -167,11 +167,12 @@
   (let* ((name (read-word))
 	 (mangled (mangle-word name)))
     (read-line *input*)
-    (output "void ~A_code (struct word *word)" mangled)
+    (output "xt_t * REGPARM ~A_code (xt_t *IP, struct word *word)" mangled)
     (output-line "{")
     (do ((line (read-line *input*) (read-line *input*)))
 	((equalp (string-trim " " line) "end-code"))
       (output-line line))
+    (output-line "    return IP;")
     (output-line "}")
     (declare-word name)
     (output "struct word ~A_word = { ~D, \"~A\", ~A, ~A_code, 0, {} };"

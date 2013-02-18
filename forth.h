@@ -1,3 +1,5 @@
+/* Copyright 2004, 2013 Lars Brinkhoff */
+
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
@@ -24,17 +26,22 @@ typedef struct word *xt_t;
 #define TO_DOES offsetof (struct word, does)
 #define TO_BODY offsetof (struct word, param)
 
+#if defined(__GNUC__) && defined (__i386__)
+#define REGPARM __attribute__((regparm(2)))
+#else
+#define REGPARM
+#endif
+
 struct word
 {
   char nlen;
   char name[NAME_LENGTH - 1];
   struct word *next;
-  void (*code) (struct word *);
+  xt_t * (*code) (xt_t *, struct word *) REGPARM;
   cell *does;
   cell param[];
 };
 
-extern xt_t *IP;
 extern cell *SP;
 extern cell *RP;
 extern char tib[];
@@ -53,7 +60,7 @@ extern struct word *words[];
 #define EXECUTE(XT)				\
   do {						\
     struct word *word = XT_WORD (XT);		\
-    word->code (word);				\
+    IP = word->code (IP, word);			\
   } while (0)
 
 #define POP(TYPE)	((TYPE)(*SP++))
