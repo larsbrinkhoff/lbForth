@@ -111,7 +111,7 @@ create squote   128 allot
 \ TODO: #>
 \ TODO: #s
 
-: and  ( x y -- x&y )   nand invert ;
+: and   nand invert ;
 
 : 2*   dup + ;
 
@@ -126,7 +126,9 @@ create squote   128 allot
 
 : 1-   -1 + ;
 
-: 0< ( n -- flag )   0 < ;
+: msb   1 2 begin ?dup while nip dup 2* repeat postpone literal ; immediate
+
+: 0<   msb and if -1 else 0 then ;
 
 : under   postpone >r ' compile, postpone r> ; immediate
 
@@ -232,7 +234,7 @@ create squote   128 allot
 \ TODO:   move
 
 : (quit) ( R: ... -- )
-    return_stack 100 cells + 'RP !
+    return_stack 100 cells + 'RP !  0 csp !
     0 'source-id !  tib ''source !  #tib ''#source !
     postpone [
     begin
@@ -255,7 +257,7 @@ create squote   128 allot
 
 : xor ( x y -- x^y )    2dup nand >r r@ nand swap r> nand nand ;
 
-: u<   [ -1 1 rshift invert ] literal dup rot xor swap rot rot xor > ;
+: u<   2dup 0< swap 0< over <> if nip nip else drop - 0< then ;
 
 \ TODO: um/mod
 

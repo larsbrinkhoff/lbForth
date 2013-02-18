@@ -5,7 +5,7 @@
 : .( ( "<string><paren>" -- )
     [char] ) parse type ; immediate
 
-: 0<> ( n -- flag )   0 <> ;
+: 0<>   if -1 else 0 then ;
 
 : 0> ( n -- flag )   0 > ;
 
@@ -81,8 +81,7 @@
 
 \ TODO: u.r
 
-: u> ( x y -- flag )
-    2dup u< if 2drop false else <> then ;
+: u>   swap u< ;
 
 \ TODO: unused
 
