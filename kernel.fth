@@ -20,11 +20,10 @@ create 'here C word_area ,
 
 : return_stack ( -- addr )   C return_stack ;
 
-\ : cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
+: cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
 
 : word= ( caddr xt -- flag )
-    2dup ( >name ) c@
-    ( cabs ) dup 127 > if 256 swap - then
+    2dup ( >name ) c@ cabs
     swap c@ = if
 	-1 swap rot
 	dup c@ 1+ 1 do

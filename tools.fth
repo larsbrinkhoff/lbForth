@@ -20,17 +20,13 @@
 
 : cdump   bounds do i c? loop cr ;
 
-: again   postpone branch , ; immediate
-
 : see-find ( caddr -- end xt )
     >r here lastxt @
     begin
 	dup 0= abort" Undefined word"
-	dup r@ word= if r> drop exit then
+	r@ over word= if r> drop exit then
 	nip dup >nextxt
     again ;
-
-: cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
 
 : xt. ( xt -- )
     ( >name ) count cabs type ;
