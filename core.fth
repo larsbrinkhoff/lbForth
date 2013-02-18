@@ -113,8 +113,10 @@ create squote   128 allot
 
 : and  ( x y -- x&y )   nand invert ;
 
+: 2*   dup + ;
+
 : *   1 2>r 0 swap begin r@ while
-         r> r> swap 2dup dup + 2>r and if swap over + swap then dup +
+         r> r> swap 2dup 2* 2>r and if swap over + swap then 2*
       repeat r> r> 2drop drop ;
 
 \ TODO: */mod
@@ -124,30 +126,42 @@ create squote   128 allot
 
 : 1-   -1 + ;
 
-: rshift   1 begin over while dup + swap 1- swap repeat nip
-           2>r 0 1 begin r@ while
-              r> r> 2dup swap dup + 2>r and if swap over + swap then dup +
-           repeat r> r> 2drop drop ;
+: 0< ( n -- flag )   0 < ;
 
-: um/mod
-    0 >r 2>r
-    0 1 begin ?dup while dup dup + repeat
-    r> 0 begin
-      dup +
+: under   postpone >r ' compile, postpone r> ; immediate
+
+: bits/cell   0 1 begin ?dup while 2* under 1+ repeat
+              postpone literal ; immediate
+
+: rshift   >r 0 begin r> dup bits/cell < while 1+ >r
+           2* over 0< if 1+ then under 2* repeat drop nip ;
+
+\ Since "an ambiguous condition exists if u is greater than or equal
+\ to the number of bits in a cell", this would be acceptable.
+\ : rshift   0 bits/cell rot do 2* over 0< if 1+ then under 2* loop nip ;
+
+: um/mod ( n d -- r q )
+    0 >r 2>r		\ R: q n
+    0 1 begin ?dup while dup 2* repeat
+    r> 0 begin		\ S: [...1<<i...] d r
+      2*		\ r <<= 1
       r@ [ -1 1 rshift invert ] literal and
-      if 1+ then
-      r> dup + >r
-      2dup > 0= if over - rot r> r> rot + >r >r else rot drop then
+      if 1+ then	\ if x&msb then r++
+      r> 2* >r	\ d <<= 1
+      2dup > 0= if	\ if d<=r
+        over -		\ r -= d
+        rot r> r> rot + >r >r \ q += 1<<i
+      else rot drop then
       2>r ?dup r> r> swap rot 0= until
       nip r> drop r> ;
 
 : /mod   dup 0= abort" Division by zero"
-         dup 0 < if negate recurse negate else
-         over 0 < if swap negate swap recurse negate else um/mod then then ;
+         dup 0< if negate recurse negate else
+         over 0< if under negate recurse negate else um/mod then then ;
 
 : space   bl emit ;
 
-: ?.-  dup 0 < if [char] - emit negate then ;
+: ?.-  dup 0< if [char] - emit negate then ;
 
 : digit   [char] 0 + emit ;
 
@@ -163,11 +177,7 @@ create squote   128 allot
 
 : / ( x y -- x/y )   /mod nip ;
 
-: 0< ( n -- flag )   0 < ;
-
 : 2! ( x1 x2 addr -- )   swap over ! cell+ ! ;
-
-: 2* ( n -- 2n )   dup + ;
 
 : 2/   dup 0< if 1- then 2 / ;
 
@@ -216,10 +226,9 @@ create squote   128 allot
 
 \ TODO: leave
 
-: loop   1 postpone literal  postpone (+loop)
-         postpone 0branch  ,  postpone unloop ; immediate
+: loop   1 postpone literal  postpone +loop ; immediate
 
-: lshift   begin ?dup while 1- swap dup + swap repeat ;
+: lshift   begin ?dup while 1- under 2* repeat ;
 
 : max ( x y -- max[x,y] )
     2dup > if drop else nip then ;
