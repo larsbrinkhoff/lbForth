@@ -1,4 +1,4 @@
-\ -*- forth -*-
+\ -*- forth -*- Copyright 2004, 2013 Lars Brinkhoff
 
 ( Tools words. )
 
@@ -16,18 +16,19 @@
 
 : c?   c@ . ;
 
-: dump   bounds do i ? 4 +loop cr ;
+: dump   bounds do i ? /cell +loop cr ;
 
 : cdump   bounds do i c? loop cr ;
 
-: see-find ( caddr -- end xt | 0 )
+: again   postpone branch , ; immediate
+
+: see-find ( caddr -- end xt )
     >r here lastxt @
     begin
-	dup
-    while
-	r@ over word= if r> drop exit then
+	dup 0= abort" Undefined word"
+	dup r@ word= if r> drop exit then
 	nip dup >nextxt
-    repeat nip r> drop ;
+    again ;
 
 : cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
 
@@ -61,8 +62,9 @@
     r@ >body do i see-line /cell +loop
     ."  ;" r> c@ 127 > if ."  immediate" then ;
 
-: see ( "word" -- )
-    bl word see-find ?dup if see-word else ." Undefined word" then cr ;
+: see   bl word see-find see-word cr ;
+
+: #body   bl word see-find >body - ;
 
 : type-word ( end xt -- flag )
     xt. space drop 0 ;
@@ -86,9 +88,6 @@
 
 \ ;code
 
-: ahead ( C: -- orig )
-    here 0 , ;
-
 \ assembler
 
 \ in kernel: bye
@@ -101,8 +100,7 @@
 
 \ editor
 
-: forget ( "word" -- )
-    ' dup >nextxt lastxt !  'here ! ;
+: forget   ' dup >nextxt lastxt !  'here !  reveal ;
 
 \ Kernel: state
 
