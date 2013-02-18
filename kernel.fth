@@ -306,19 +306,11 @@ create revealedxt C &lastxt_word ,
 
 : invert ( x -- ~x )   -1 nand ;
 
-code key ( -- c )
-    PUSH (getchar ());
-end-code
+: key   here dup 1 0 read-file 0 = 1 = nand
+        if c@ else ." Read error" abort then ;
 
 : literal ( -- n ) ( C: n -- )
     state @ if postpone (literal) , then ; immediate
-
-\ code m* ( x y -- x*y )
-\     cell y = POP (cell);
-\     cell x = POP (cell);
-\     dcell z = (dcell)x * (dcell)y;
-\     PUSH (z);
-\ end-code
 
 : min ( x y -- min[x,y] )
     2dup < if drop else nip then ;
@@ -521,6 +513,8 @@ end-code
 
 code read-file ( addr n1 fileid -- n2 ior )
     FILE *fileid = POP (FILE *);
+    if (fileid == 0)
+      fileid = stdin;
     cell n1 = POP (cell);
     char *addr = POP (char *);
     size_t n2;
