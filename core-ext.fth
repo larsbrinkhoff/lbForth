@@ -1,4 +1,4 @@
-\ -*- forth -*-
+\ -*- forth -*- Copyright 2004, 2013 Lars Brinkhoff
 
 \ Kernel: #tib
 \ TODO:   .r
@@ -16,7 +16,7 @@
 
 : 2r@ ( -- x1 x2 ) ( R: x1 x2 -- x1 x2 )   2r> 2dup 2>r ;
 
-: :noname   align here  16 allot  lastxt dup @ , !
+: :noname   align here  0 c, 15 allot  lastxt dup @ , !
             [ ' enter >code @ ] literal , 0 , ] lastxt @ ;
 
 \ Kernel: <>
@@ -104,7 +104,7 @@
 
 : value ( x "word" -- )
     create ,
-  does> ( -- x)
+  does> ( -- x )
     @ ;
 
 : within   over - >r - r> u< ;
@@ -121,7 +121,7 @@
 
 \ TODO: buffer:
 
-: defer ( "word" -- )   create 0 ,  does> @ execute ;
+: defer   create ['] abort ,  does> @ execute ;
 
 : defer! ( xt2 xt1 -- )   >body ! ;
 
