@@ -8,6 +8,8 @@
          dup @ . /cell -
        repeat r> 2drop ;
 
+: empty   begin depth while drop repeat ;
+
 : ?   @ . ;
 
 : c?   c@ . ;
