@@ -123,6 +123,13 @@ create squote   128 allot
 : +loop ( -- ) ( C: nest-sys -- )
     postpone (+loop)  postpone 0branch  ,  postpone unloop ; immediate
 
+: +/mod   >r 0 swap begin dup r@ < 0= while
+          r@ - swap 1+ swap repeat r> drop swap ;
+
+: /mod   dup 0= abort" Division by zero"
+         dup 0 < if negate recurse negate else
+         over 0 < if swap negate swap recurse negate else +/mod then then ;
+
 : space   bl emit ;
 
 : ?.-  dup 0 < if [char] - emit negate then ;

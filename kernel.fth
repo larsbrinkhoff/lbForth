@@ -154,13 +154,6 @@ end-code
 
 : - ( x y -- x-y )   negate + ;
 
-code /mod ( x y -- x%y x/y )
-    cell y = POP (cell);
-    cell x = POP (cell);
-    PUSH (x % y);
-    PUSH (x / y);
-end-code
-
 : 0=   if 0 else -1 then ;
 
 : 1+ ( n -- n+1 )   1 + ;
