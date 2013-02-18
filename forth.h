@@ -21,6 +21,7 @@ typedef struct word *xt_t;
 #define NAME_LENGTH 16
 #define TO_NEXT offsetof (struct word, next)
 #define TO_CODE offsetof (struct word, code)
+#define TO_DOES offsetof (struct word, does)
 #define TO_BODY offsetof (struct word, param)
 
 struct word
@@ -29,6 +30,7 @@ struct word
   char name[NAME_LENGTH - 1];
   struct word *next;
   void (*code) (struct word *);
+  cell *does;
   cell param[];
 };
 

@@ -13,8 +13,7 @@
 : postpone-nonimmediate \ ( xt -- )
     [ ' literal , ] [ ' compile, ] literal , ;
 
-: create \ ( "word" -- )
-    header, lastxt !  dovariable_code , ;
+: create   dovariable_code header, ;
 
 create postponers
     ' postpone-nonimmediate ,
@@ -48,12 +47,9 @@ create postponers
 : [char] \ ( "word" -- )
     char  postpone literal ; immediate
 
-\ : (does>) ( ... )
-\     here 2 cells +  lastxt @ >body  ! ;
+: (does>)   lastxt @ dodoes_code over >code ! r> swap >does ! ;
 
-\ : does> ( ... )
-\     dodoes_code lastxt @ >cfa !
-\     postpone (does>)  postpone exit ; immediate
+: does>   postpone (does>) ; immediate
 
 : begin \ ( -- ) ( C: -- dest )
     here ; immediate
@@ -67,8 +63,7 @@ create postponers
 : until \ ( x -- ) ( C: dest -- )
     postpone 0branch , ; immediate
 
-: recurse \ ( ... -- ... )
-    thisxt @ , ; immediate
+: recurse   lastxt @ , ; immediate
 
 : pad \ ( -- addr )
     here 100 + ;
@@ -180,13 +175,7 @@ create postponers
 : char+ ( n1 -- n2 )
     1+ ;
 
-: constant ( x "word" -- )
-    header, lastxt !  doconstant_code ,   , ;
-
-\ : constant ( x "word" -- )
-\     create ,
-\   does> ( -- x )
-\     @ ;
+: constant   create , does> @ ;
 
 : decimal ( -- )
     10 base ! ;

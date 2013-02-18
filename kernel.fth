@@ -52,15 +52,11 @@ code dovariable ( -- addr )
     PUSH (word->param);
 end-code
 
-code doconstant ( -- addr )
-    PUSH (word->param[0]);
+code dodoes ( -- addr ) ( R: -- ret )
+    PUSH (word->param);
+    RPUSH (IP);
+    IP = (xt_t *)(word->does);
 end-code
-
-\ code dodoes ( -- addr ) ( R: -- ret )
-\     PUSH (&word->param[1]);
-\     RPUSH (IP);
-\     IP = (xt_t *)(word->param[0]);
-\ end-code
 
 code branch ( -- )
     xt_t *addr = *(xt_t **)IP;
@@ -116,18 +112,16 @@ create interpreters
 	bl-word here find 1+ cells  interpreters + @ execute
     repeat ;
 
-\ : dodoes_code ( -- addr )   C dodoes_code ;
+: dodoes_code   C dodoes_code ;
 
-: dovariable_code ( -- addr )   C dovariable_code ;
+: dovariable_code   C dovariable_code ;
 
-: doconstant_code ( -- addr )   C doconstant_code ;
-
-: squote ( -- addr )   C squote ;
+: squote   C squote ;
 
 : bounds ( addr1 n -- addr2 addr1)   over + swap ;
 
-: header, ( "word" -- addr )
-    align here  bl-word C NAME_LENGTH allot  lastxt @ , ;
+: header,   align here  bl-word C NAME_LENGTH allot
+            lastxt @ ,  lastxt ! , 0 , ;
 
 \ ----------------------------------------------------------------------
 
@@ -187,13 +181,9 @@ end-code
 
 : 2dup ( x y -- x y x y )   over over ;
 
-variable thisxt
+: :   C enter_code header, ] ;
 
-: : ( "word" -- colon-sys )
-    header, thisxt !  C enter_code ,  ] ;
-
-: ; ( colon-sys -- )
-    thisxt @ lastxt !  postpone exit  postpone [ ; immediate
+: ;   postpone exit  postpone [ ; immediate
 
 code < ( x y -- flag )
     cell y = POP (cell);
@@ -204,6 +194,10 @@ end-code
 : = ( x y -- flag )   2dup < >r > r> or invert ;
 
 : > ( x y -- flag )   swap < ;
+
+: >code ( xt -- cfa )   C TO_CODE + ;
+
+: >does ( xt -- dfa )   C TO_DOES + ;
 
 : >body ( xt -- pfa )   C TO_BODY + ;
 
@@ -295,8 +289,6 @@ end-code
 : count ( caddr -- addr n )   dup 1+ swap c@ ;
 
 : cr ( -- )   10 emit ;
-
-\ : create ( "word" -- )   header, lastxt !  C dovariable_code , ;
 
 : drop ( x -- )   C &sink ! ;
 

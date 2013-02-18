@@ -151,7 +151,7 @@
 	(next-word (peek-word)))
     (when (equal next-word "immediate")
       (setq len (- len)))
-    (output "struct word ~A = { ~D, \"~A\", ~A, enter_code, {"
+    (output "struct word ~A = { ~D, \"~A\", ~A, enter_code, 0, {"
 	    *this-word* len (quoted *this-name*) *previous-word*))
   (setq *previous-word* (concatenate 'string "&" *this-word*))
   (do ((end (fill-pointer *code*))
@@ -175,7 +175,7 @@
       (output-line line))
     (output-line "}")
     (declare-word name)
-    (output "struct word ~A_word = { ~D, \"~A\", ~A, ~A_code, {} };"
+    (output "struct word ~A_word = { ~D, \"~A\", ~A, ~A_code, 0, {} };"
 	    mangled (length name) (quoted name) *previous-word* mangled)
     (setq *previous-word* (format nil "&~A_word" mangled))))
 
@@ -183,7 +183,7 @@
   (let* ((word (read-word))
 	 (mangled (mangle-word word)))
     (declare-word word)
-    (output "struct word ~A_word = { ~D, \"~A\", ~A, dovariable_code, {"
+    (output "struct word ~A_word = { ~D, \"~A\", ~A, dovariable_code, 0, {"
 	    mangled (length word) (quoted word) *previous-word*)
     (do ((line (read-line *input*) (read-line *input*)))
 	((equalp (string-trim " " line) ""))
@@ -292,7 +292,7 @@
   (emit-branch "0branch" (pop *control-stack*)))
 
 (defimmediate |[| ()
-  (error "can't handle literal"))
+  (error "can't handle ["))
 
 (defimmediate [char] ()
   (let ((char (char (read-word) 0)))
@@ -308,7 +308,7 @@
   (let* ((word (read-word))
 	 (mangled (mangle-word word)))
     (declare-word word)
-    (output "struct word ~A_word = { ~D, \"~A\", ~A, dovariable_code, { 0 } };"
+    (output "struct word ~A_word = { ~D, \"~A\", ~A, dovariable_code, 0, { 0 } };"
 	    mangled (length word) (quoted word) *previous-word*)
     (setq *previous-word* (format nil "&~A_word" mangled))))
 
