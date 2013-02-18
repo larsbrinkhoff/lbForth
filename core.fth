@@ -81,6 +81,9 @@ create postponers
 : string, ( addr n -- )
     here over allot align  swap cmove ;
 
+: (s") ( -- addr n ) ( R: ret1 -- ret2 )
+    r> dup @ swap cell+ 2dup + aligned >r swap ;
+
 : s" ( "string<quote>" -- addr n )
     state @ if
 	postpone (s")  [char] " parse  dup ,  string,

@@ -89,9 +89,6 @@ code (+loop) ( n -- flag ) ( R: limit index -- limit index+n )
     PUSH (index >= limit);
 end-code
 
-: (s") ( -- addr n ) ( R: ret1 -- ret2 )
-    r> dup @ swap cell+ 2dup + aligned >r swap ;
-
 : number ( caddr -- ... )
     0 0 rot count ?dup if
 	>number ?dup if
