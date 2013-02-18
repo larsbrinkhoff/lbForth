@@ -100,12 +100,20 @@ end-code
 	2drop drop
     then ;
 
+: dummy-catch   execute 0 ;
+
+create catcher
+    ' dummy-catch ,
+
+: catch   catcher @ execute ;
+
 create interpreters
     ' compile, ,
     ' number ,
     ' execute ,
 
-: interpret-xt   1+ cells  interpreters + @ execute ;
+: interpret-xt   1+ cells  interpreters + @ catch
+                 if ." Exception" cr then ;
 
 : interpret   begin source? while bl-word here find interpret-xt repeat ;
 
