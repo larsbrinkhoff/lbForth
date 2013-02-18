@@ -2,13 +2,14 @@
 
 : \   source nip >in ! ; immediate
 
-: ' \ ( "word" -- xt )
-    bl-word here find drop ;
-
 : char \ ( "word" -- char )
     bl-word here 1+ c@ ;
 
 : ahead  here 0 , ;
+
+: resolve   here swap ! ;
+
+: '   bl-word here find 0branch [ ahead ] exit [ resolve ] 0 ;
 
 : postpone-nonimmediate   [ ' literal , ' compile, ] literal , ;
 
@@ -27,9 +28,6 @@ create postponers
 
 : unresolved \ ( C: "word" -- orig )
     postpone postpone  postpone ahead ; immediate
-
-: resolve \ ( orig -- )
-    here swap ! ;
 
 : chars \ ( n1 -- n2 )
     ;
