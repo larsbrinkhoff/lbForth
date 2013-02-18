@@ -17,12 +17,11 @@
 
 : '   bl-word here find 0branch [ ahead ] exit [ resolve ] 0 ;
 
-: (does>)   lastxt @ [ ' dodoes >code @ ] literal over >code !
-            r> swap >does ! ;
+: (does>)   r> lastxt @ >does ! ;
 
 : does>   [ ' (does>) ] literal compile, ; immediate
 
-: create   0 header, reveal (does>) ;
+: create   [ ' dodoes >code @ ] literal header, reveal (does>) ;
 
 : postpone-nonimmediate   [ ' literal , ' compile, ] literal compile, ;
 
@@ -123,12 +122,28 @@ create squote   128 allot
 : +loop ( -- ) ( C: nest-sys -- )
     postpone (+loop)  postpone 0branch  ,  postpone unloop ; immediate
 
-: +/mod   >r 0 swap begin dup r@ < 0= while
-          r@ - swap 1+ swap repeat r> drop swap ;
+: 1-   -1 + ;
+
+: rshift   1 begin over while dup + swap 1- swap repeat nip
+           2>r 0 1 begin r@ while
+              r> r> 2dup swap dup + 2>r and if swap over + swap then dup +
+           repeat r> r> 2drop drop ;
+
+: um/mod
+    0 >r 2>r
+    0 1 begin ?dup while dup dup + repeat
+    r> 0 begin
+      dup +
+      r@ [ -1 1 rshift invert ] literal and
+      if 1+ then
+      r> dup + >r
+      2dup > 0= if over - rot r> r> rot + >r >r else rot drop then
+      2>r ?dup r> r> swap rot 0= until
+      nip r> drop r> ;
 
 : /mod   dup 0= abort" Division by zero"
          dup 0 < if negate recurse negate else
-         over 0 < if swap negate swap recurse negate else +/mod then then ;
+         over 0 < if swap negate swap recurse negate else um/mod then then ;
 
 : space   bl emit ;
 
@@ -136,7 +151,7 @@ create squote   128 allot
 
 : digit   [char] 0 + emit ;
 
-: (.)   base @ /mod  ?dup if recurse then  digit ;
+: (.)   base @ um/mod  ?dup if recurse then  digit ;
 
 : ." ( "string<quote>" -- )   postpone s"  postpone type ; immediate
 
@@ -149,8 +164,6 @@ create squote   128 allot
 : / ( x y -- x/y )   /mod nip ;
 
 : 0< ( n -- flag )   0 < ;
-
-: 1- ( n -- n-1 )   -1 + ;
 
 : 2! ( x1 x2 addr -- )   swap over ! cell+ ! ;
 
@@ -166,7 +179,7 @@ create squote   128 allot
 \ TODO: 2over ( x1 x2 x3 x4 -- x1 x2 x3 x4 x1 x2 )
 \           3 pick 3 pick ;
 
-\ TODO: 2swap
+: 2swap   >r >r r> swap >r swap r> r> swap >r swap r> ;
 
 \ TODO: <#
 
@@ -207,11 +220,6 @@ create squote   128 allot
          postpone 0branch  ,  postpone unloop ; immediate
 
 : lshift   begin ?dup while 1- swap dup + swap repeat ;
-
-: rshift   1 begin over while dup + swap 1- swap repeat nip
-           2>r 0 1 begin r@ while
-              r> r> 2dup swap dup + 2>r and if swap over + swap then dup +
-           repeat r> r> 2drop drop ;
 
 : max ( x y -- max[x,y] )
     2dup > if drop else nip then ;
