@@ -61,10 +61,12 @@ code dodoes ( -- addr ) ( R: -- ret )
     IP = (xt_t *)(word->does);
 end-code
 
-code branch ( -- )
-    xt_t *addr = *(xt_t **)IP;
-    IP = addr;
-end-code
+: branch   r> @ >r ;
+
+\ Possible, but slow, implementation of 0branch.
+\ : select   0= 3 + cells 'SP @ + @ nip nip ;
+\ : select   0= dup invert swap rot nand invert rot rot nand invert + ;
+\ : 0branch   r> dup cell+ swap @ rot select >r ;
 
 code 0branch ( x -- )
     xt_t *addr = *(xt_t **)IP;
@@ -75,19 +77,17 @@ code 0branch ( x -- )
       IP++;
 end-code
 
-\ It's difficult to implement (literal) in Forth without creating a loop.
+\ This works, but is too slow.
+\ create '/cell   C sizeof(cell) ,
+\ variable temp
+\ : (literal)   r> temp ! temp @ temp @ '/cell @ + >r @ ;
+
 code (literal) ( -- n )
     PUSH (*(cell *)IP);
     IP++;
 end-code
 
-\ It's possible to implement (+loop) in Forth, but it's such a pain!
-code (+loop) ( n -- flag ) ( R: limit index -- limit index+n )
-    cell n = POP (cell);
-    cell index = (RP[0] += n);
-    cell limit = RP[1];
-    PUSH (index >= limit);
-end-code
+: (+loop)   r> swap r> + r@ over >r < invert swap >r ;
 
 : number ( caddr -- ... )
     0 0 rot count ?dup if
@@ -298,10 +298,15 @@ code emit ( c -- )
     putchar (c);
 end-code
 
-code execute ( xt -- )
-    xt_t xt = POP (xt_t);
-    EXECUTE (xt);
-end-code
+\ code execute ( xt -- )
+\     xt_t xt = POP (xt_t);
+\     EXECUTE (xt);
+\ end-code
+
+: unex   r> r> r> drop drop drop ;
+
+\ Put xt and 'unex on return stack, then jump to that.
+: execute   ['] unex >r >r 'RP @ >r ;
 
 code exit ( R: ret -- )
     IP = RPOP (xt_t *);
@@ -472,7 +477,7 @@ create state C 0 ,
 : <>  ( x y -- flag )
     = 0= ;
 
-: 2>r ( x1 x2 -- ) ( R: -- x1 x2 )   r> rot rot swap >r >r >r ;
+: 2>r ( x1 x2 -- ) ( R: -- x1 x2 )   r> swap rot >r >r >r ;
 
 : compile, ( xt -- )   state @ if , else execute then ;
 
