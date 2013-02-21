@@ -193,8 +193,6 @@ create squote   128 allot
 : abs ( n -- |n| )
     dup 0< if negate then ;
 
-\ TODO: accept
-
 : c, ( n -- )
     here c!  1 chars allot ;
 
@@ -264,3 +262,9 @@ create squote   128 allot
 
 : ['] \ ( C: "word" -- )
     ' postpone literal ; immediate
+
+: accept ( caddr u1 -- u2 )
+    2dup bounds do
+       source? if <source i c!
+       else i nip swap - unloop exit then
+    loop nip ;
