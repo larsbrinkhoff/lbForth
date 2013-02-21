@@ -162,17 +162,19 @@ create csp
     C 0 ,
 
 : !csp   csp @ if ." Nested definition: "
-         lastxt @ count type cr abort then
+         lastxt @ count cabs type cr abort then
          sp@ csp ! ;
 
 : ?csp   sp@ csp @ <> if ." Unbalanced definition: "
-         lastxt @ count type cr abort then
+         lastxt @ count cabs type cr abort then
          0 csp ! ;
 
 : :   C enter_code header, ] !csp ;
 
 : ;   reveal postpone exit postpone [ ?csp ; immediate
 
+\ TODO: This is wrong if "-" overflows.  If d=x-y and sX is the
+\ sign bit, this computes "less than":  (sy&sx) ^ (sd&sx) ^ (sd&sy)
 : <   - C ~(((ucell)-1)>>1) nand invert if -1 else 0 then ;
 
 : =   - if 0 else -1 then ;
@@ -432,8 +434,7 @@ create #tib C 0 ,
     -1
     source drop 256 bounds do
 	key dup 10 = if drop leave then
-	i c!
-	1 #tib +!
+	i c!  1 #tib +!
     loop ;
 
 : file-refill ( -- flag )
@@ -457,6 +458,8 @@ variable 'source-id
 : source-id ( -- 0 | -1 | fileid )   'source-id @ ;
 
 : tib ( -- addr )   C tib ;
+
+: sigint   cr C "\11backtrace" find if execute then abort ;
 
 \ ----------------------------------------------------------------------
 
@@ -528,17 +531,6 @@ code read-file ( addr n1 fileid -- n2 ior )
 end-code
 
 \ : write-file ( addr n fileid -- ior )   0 file-io nip ;
-
-\ code file-io ( addr n1 fileid read? -- n2 ior )
-\     cell readp = POP (cell);
-\     FILE *fileid = POP (FILE *);
-\     cell n1 = POP (cell);
-\     char *addr = POP (char *);
-\     size_t n2;
-\     n2 = (readp ? fread : fwrite) (addr, 1, n1, fileid);
-\     PUSH (n2);
-\     PUSH (ferror (fileid) ? errno : 0);
-\ end-code
 
 create tracing C 0 ,
 

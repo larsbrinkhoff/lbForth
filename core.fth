@@ -143,6 +143,7 @@ create squote   128 allot
 \ : rshift   0 bits/cell rot do 2* over 0< if 1+ then under 2* loop nip ;
 
 : u/mod ( n d -- r q )
+    ?dup 0= abort" Division by zero"
     0 >r 2>r		\ R: q n
     0 1 begin ?dup while dup 2* repeat
     r> 0 begin		\ S: [...1<<i...] d r
@@ -234,7 +235,7 @@ create squote   128 allot
     0 'source-id !  tib ''source !  #tib ''#source !
     postpone [
     begin
-	refill
+	[ ' refill ] literal catch if ." Exception" cr -1 then
     while
 	interpret  state @ 0= if ." ok" cr then
     repeat
