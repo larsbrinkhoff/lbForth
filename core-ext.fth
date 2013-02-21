@@ -70,8 +70,7 @@
 
 \ TODO:   span
 
-: to ( x "word" -- )
-    ' >body , ;
+: to   ' >body postpone literal postpone ! ; immediate
 
 : true ( -- -1 )
     -1 ;
@@ -85,10 +84,7 @@
 
 \ TODO: unused
 
-: value ( x "word" -- )
-    create ,
-  does> ( -- x )
-    @ ;
+: value   create ,  does> @ ;
 
 : within   over - under - u< ;
 
