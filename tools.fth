@@ -27,7 +27,8 @@
     again ;
 
 : xt. ( xt -- )
-    ( >name ) count cabs type ;
+    ( >name ) count ?dup if cabs type
+    else ." :noname@" 1- (.) then ;
 
 : xt? ( xt -- flag )
     >r lastxt @ begin
@@ -39,9 +40,8 @@
 
 : disassemble ( x -- )
     dup xt? if
-        ( >name ) count
-        dup 127 > if ." postpone " then
-        cabs type
+        dup c@ 127 > if ." postpone " then
+        xt.
     else
         .
     then ;
