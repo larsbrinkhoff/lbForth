@@ -18,3 +18,13 @@
     does> tuck @ + cells + @ ;
 
 : foo   if begin repeat ;
+\       begin while while repeat then ;
+
+: (redef)   create immediate here 0 , 0 ,
+            does> here swap @+ compile, ! ;
+: :redef?   (redef) :noname swap ! ;
+: :redef!   :noname dup  ' >body !+  @ ! ;
+
+( Usage:   :redef? foo 42 + ;
+           : bar foo ;
+           :redef! foo 42 - ; )
