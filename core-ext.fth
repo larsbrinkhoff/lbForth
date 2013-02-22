@@ -13,8 +13,8 @@
 
 : 2r@ ( -- x1 x2 ) ( R: x1 x2 -- x1 x2 )   2r> 2dup 2>r ;
 
-: :noname   align here  0 c, 15 allot  lastxt dup @ , !
-            [ ' enter >code @ ] literal , 0 , ] lastxt @ ;
+: :noname   align here  0 c, 15 allot  link,
+            [ ' enter >code @ ] literal , 0 , ] lastxt @ !csp ;
 
 \ : ?do ( n1 n2 -- ) ( R: -- loop-sys ) ( C: -- do-sys )
 \     here  postpone 2>r  unresolved branch  here ;

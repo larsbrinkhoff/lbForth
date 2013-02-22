@@ -119,7 +119,9 @@ create interpreters
 
 : bounds ( addr1 n -- addr2 addr1)   over + swap ;
 
-: header,   align here  bl-word C NAME_LENGTH allot  lastxt dup @ , ! , 0 , ;
+: link,   ( nt -- )   lastxt @ ,  lastxt ! ;
+
+: header,   align here  bl-word C NAME_LENGTH allot  link, ( code ) , 0 , ;
 
 : reveal   lastxt @ revealedxt ! ;
 
