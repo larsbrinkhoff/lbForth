@@ -20,6 +20,7 @@
 : foo   if begin repeat ;
 \       begin while while repeat then ;
 
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
 : (redef)   create immediate here 0 , 0 ,
             does> here swap @+ compile, ! ;
 : :redef?   (redef) :noname swap ! ;
@@ -28,3 +29,15 @@
 ( Usage:   :redef? foo 42 + ;
            : bar foo ;
            :redef! foo 42 - ; )
+
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+variable inner-xt   variable outer-xt
+: (outer)    outer-xt @ execute ;
+: (inner)    inner-xt @ ;
+: [:noname   postpone (outer) postpone ; :noname ; immediate
+: [:         postpone (outer) postpone ; 0 : ; immediate
+: ;]         postpone ; ?dup if inner-xt ! :noname postpone (inner)
+             else :noname then ; immediate
+: ;          postpone ; outer-xt ! ; immediate
+
+( Usage:   : foo 100 [:noname 42 + ;] execute ; )
