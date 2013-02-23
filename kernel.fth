@@ -24,20 +24,14 @@ create 'here C word_area ,
 
 : cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
 
+: >name ( xt -- caddr u )   count cabs ;
+
 : word= ( caddr xt -- flag )
-    2dup ( >name ) c@ cabs
-    swap c@ = if
-	-1 swap rot
-	dup c@ 1+ 1 do
-	    2dup i + c@
-	    swap ( >name ) i + c@
-	    <> if rot drop 0 rot rot leave then
-	loop
-	2drop
-    else
-	2drop
-        0
-    then ;
+    >name 2>r >name r@ <> r> r> swap rot if 2drop drop 0 exit then
+    bounds do
+      dup c@ i c@ <> if drop unloop 0 exit then
+      1+
+    loop drop -1 ;
 
 \ : >name ( xt -- addr )   ;
 
@@ -164,11 +158,11 @@ create csp
     C 0 ,
 
 : !csp   csp @ if ." Nested definition: "
-         lastxt @ count cabs type cr abort then
+         lastxt @ >name type cr abort then
          sp@ csp ! ;
 
 : ?csp   sp@ csp @ <> if ." Unbalanced definition: "
-         lastxt @ count cabs type cr abort then
+         lastxt @ >name type cr abort then
          0 csp ! ;
 
 : :   C enter_code header, ] !csp ;

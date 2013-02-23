@@ -26,9 +26,7 @@
 	nip dup >nextxt
     again ;
 
-: xt. ( xt -- )
-    ( >name ) count ?dup if cabs type
-    else ." :noname@" 1- (.) then ;
+: .xt ( xt -- )   >name ?dup if type else ." :noname@" 1- (.) then ;
 
 : xt? ( xt -- flag )
     >r lastxt @ begin
@@ -41,7 +39,7 @@
 : disassemble ( x -- )
     dup xt? if
         dup c@ 127 > if ." postpone " then
-        xt.
+        .xt
     else
         .
     then ;
@@ -52,7 +50,7 @@
     cr ."     ( " .addr ." ) "  @ disassemble ;
 
 : see-word ( end xt -- )
-    >r ." : " r@ xt.
+    >r ." : " r@ .xt
     r@ >body do i see-line /cell +loop
     ."  ;" r> c@ 127 > if ."  immediate" then ;
 
@@ -61,7 +59,7 @@
 : #body   bl word see-find >body - ;
 
 : type-word ( end xt -- flag )
-    xt. space drop 0 ;
+    .xt space drop 0 ;
 
 : traverse-dictionary ( in.. xt -- out.. )
     \ xt execution: ( in.. end xt2 -- in.. 0 | in.. end xt2 -- out.. true )
@@ -84,7 +82,7 @@
 : -rot   swap under swap ;
 
 : in-body?   rot 2dup 2>r -rot >body swap within 2r> rot
-  	     if dup rot dup xt. ."  +" >body - . -1 else nip 0 then ;
+  	     if dup rot dup .xt ."  +" >body - . -1 else nip 0 then ;
 
 : backtrace   return_stack 100 cells + rp@ do ."  > " i ?
               i @ ['] in-body? traverse-dictionary cr drop
