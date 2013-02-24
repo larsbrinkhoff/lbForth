@@ -28,9 +28,9 @@
 
 : only   forth-wordlist forth-wordlist 2 set-order ;
 
-: also   get-order 1+ over swap set-order ;
+:redefine also   get-order 1+ over swap set-order ;
 
-: previous   get-order 1- nip set-order ;
+:redefine previous   get-order 1- nip set-order ;
 
 : order   ." Order:"
           context begin dup @ ?dup while

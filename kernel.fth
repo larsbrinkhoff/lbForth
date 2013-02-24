@@ -33,9 +33,9 @@ create 'here C word_area ,
       1+
     loop drop -1 ;
 
-\ : >name ( xt -- addr )   ;
+: >lfa   C TO_NEXT + ;
 
-: >nextxt ( xt1 -- xt2 )   C TO_NEXT + @ ;
+: >nextxt   >lfa @ ;
 
 code enter ( -- ) ( R: -- ret )
     RPUSH (IP);
@@ -297,6 +297,8 @@ create context
     C 0 ,
     C 0 ,
 
+create compiler-words   C 0 ,
+
 \ TODO: search-wordlist ( caddr u wl -- 0 | xt 1 | xt -1 )
 : wl-find ( caddr wl -- caddr 0 | xt 1 | xt -1 )
     begin
@@ -408,9 +410,13 @@ create state C 0 ,
 \ : word ( char "<chars>string<char>" -- caddr )
 \     skip parse  C NAME_LENGTH-1 min  dup here c!  here 1+ swap cmove  here ;
 
-: [   0 state ! ; immediate
+: previous   ['] forth context ! ;
 
-: ]   1 state ! ;
+: also   ;
+
+: [   0 state !  previous ; immediate
+
+: ]   1 state !  also ['] compiler-words context ! ;
 
 \ ----------------------------------------------------------------------
 
