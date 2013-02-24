@@ -21,7 +21,7 @@
 : cdump   bounds do i c? loop cr ;
 
 : see-find ( caddr -- end xt )
-    >r here lastxt @
+    >r here context @ >body @
     begin
 	dup 0= abort" Undefined word"
 	r@ over word= if r> drop exit then
@@ -31,7 +31,7 @@
 : .xt ( xt -- )   >name ?dup if type else ." :noname@" 1- (.) then ;
 
 : xt? ( xt -- flag )
-    >r lastxt @ begin
+    >r context @ >body @ begin
 	?dup
     while
 	dup r@ = if r> 2drop -1 exit then
@@ -65,7 +65,7 @@
 
 : traverse-dictionary ( in.. xt -- out.. )
     \ xt execution: ( in.. end xt2 -- in.. 0 | in.. end xt2 -- out.. true )
-    >r  here lastxt @  begin
+    >r  here context @ >body @  begin
 	?dup
     while
 	r> 2dup >r >r execute
@@ -108,7 +108,7 @@
 
 \ editor
 
-: forget   ' dup >nextxt lastxt !  'here !  reveal ;
+: forget   ' dup >nextxt context @ >body !  'here !  reveal ;
 
 \ Kernel: state
 

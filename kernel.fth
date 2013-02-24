@@ -113,11 +113,11 @@ create interpreters
 
 : bounds ( addr1 n -- addr2 addr1)   over + swap ;
 
-: link,   ( nt -- )   lastxt @ ,  lastxt ! ;
+: link,   ( nt -- )   current @ >body @ ,  lastxt ! ;
 
 : header,   align here  bl-word C NAME_LENGTH allot  link, ( code ) , 0 , ;
 
-: reveal   lastxt @ revealedxt ! ;
+: reveal   lastxt @ current @ >body ! ;
 
 \ ----------------------------------------------------------------------
 
@@ -286,10 +286,19 @@ end-code
 \ Put xt and 'unex on return stack, then jump to that.
 : execute   ['] unex >r >r rp@ >r ;
 
-create revealedxt C &lastxt_word ,
+create forth   C &lastxt_word ,
 
-: find ( caddr -- caddr 0 | xt 1 | xt -1 )
-    revealedxt @
+create current   ' forth ,
+
+create context
+    ' forth ,
+    ' forth ,
+    C 0 ,
+    C 0 ,
+    C 0 ,
+
+\ TODO: search-wordlist ( caddr u wl -- 0 | xt 1 | xt -1 )
+: wl-find ( caddr wl -- caddr 0 | xt 1 | xt -1 )
     begin
 	dup
     while
@@ -300,7 +309,10 @@ create revealedxt C &lastxt_word ,
 	>nextxt
     repeat ;
 
-\ TODO: fm/mod
+: find   context swap
+         begin >r dup cell+ swap @ r> swap ?dup
+         while >body @ wl-find ?dup if rot drop exit then
+         repeat nip 0 ;
 
 : here ( -- addr )   'here @ ;
 
