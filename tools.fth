@@ -60,34 +60,31 @@
 
 : #body   bl word see-find >body - ;
 
-: type-word ( end xt -- flag )
-    .xt space drop 0 ;
-
-: traverse-dictionary ( in.. xt -- out.. )
-    \ xt execution: ( in.. end xt2 -- in.. 0 | in.. end xt2 -- out.. true )
-    >r  here context @ >body @  begin
-	?dup
-    while
-	r> 2dup >r >r execute
-	if r> r> 2drop exit then
-	r> dup >nextxt
-    repeat r> 2drop ;
-
-\ traverse-wordlist ( x*i wid xt -- x'*i )
-\   xt execution: ( x*i nt -- x'*i flag[0=stop] )
-
-: words ( -- )
-    ['] type-word traverse-dictionary cr ;
-
-: find-xt   begin dup xt? 0= while /cell - repeat ;
+: traverse-wordlist ( wid xt -- ) ( xt: nt -- continue? )
+    >r >body @ begin ?dup while
+       r@ over >r execute
+       if r> >nextxt else 2r> 2drop exit then
+    repeat r> drop ;
 
 : -rot   swap under swap ;
 
-: in-body?   rot 2dup 2>r -rot >body swap within 2r> rot
-  	     if dup rot dup .xt ."  +" >body - . -1 else nip 0 then ;
+: execute-xt   -rot 2>r r@ execute 2r> rot if nip -1 swap then over ;
+: traverse-order   context begin dup @ ?dup while swap >r
+                   0 -rot ['] execute-xt traverse-wordlist
+                   r> rot if cell+ else 2drop exit then
+         	   repeat 2drop ;
 
+: ?end   2dup < if rot drop swap -1 else drop 0 then ;
+: >end   here swap context @ ['] ?end traverse-wordlist drop ;
+
+: type-word   .xt space -1 ;
+: words   context @ ['] type-word traverse-wordlist ;
+
+: body?   dup >body swap >end within ;
+: .offset   dup .xt ."  +" >body - . ;
+: ?.offset   2dup body? if .offset 0 else drop -1 then ;
 : backtrace   return_stack 100 cells + rp@ do ."  > " i ?
-              i @ ['] in-body? traverse-dictionary cr drop
+              i @ context @ ['] ?.offset traverse-wordlist cr drop
               /cell +loop ;
 
 \ ----------------------------------------------------------------------
@@ -109,8 +106,6 @@
 \ editor
 
 : forget   ' dup >nextxt context @ >body !  'here !  reveal ;
-
-\ Kernel: state
 
 \ [else]
 
