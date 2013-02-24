@@ -81,6 +81,11 @@ finders postpone-xt   postpone-nonimmediate abort compile,
       source drop >in @ 1- + c@ [char] ) <> while
       refill while repeat then ; immediate
 
+: hide   lastxt @ >nextxt  current @ >body ! ;
+
+: compile-only   hide  current @  [ ' compiler-words ] literal current !
+                 reveal  current ! ;
+
 : string, ( addr n -- )
     here over allot align  swap cmove ;
 
@@ -89,15 +94,8 @@ finders postpone-xt   postpone-nonimmediate abort compile,
 
 create squote   128 allot
 
-: s" ( "string<quote>" -- addr n )
-    state @ if
-	postpone (s")  [char] " parse  dup ,  string,
-    else
-	[char] " parse  >r squote r@ cmove  squote r>
-    then ; immediate
-
-\ : s"   [char] " parse  >r squote r@ cmove  squote r> ;
-\ : s"   postpone (s")  [char] " parse  dup ,  string, ; compile-only
+: s"   [char] " parse  >r squote r@ cmove  squote r> ;
+: s"   postpone (s")  [char] " parse  dup ,  string, ; immediate compile-only
 
 : (abort") ( ... addr n -- ) ( R: ... -- )
     cr type cr abort ;
@@ -237,7 +235,7 @@ create squote   128 allot
     begin
 	[ ' refill ] literal catch if ." Exception" cr -1 then
     while
-	interpret  state @ 0= if ." ok" cr then
+	interpret  state @ 0= if ."  ok" cr then
     repeat
     bye ;
 
@@ -261,8 +259,7 @@ create squote   128 allot
 : variable ( "word" -- )
     create /cell allot ;
 
-: ['] \ ( C: "word" -- )
-    ' postpone literal ; immediate
+: [']   ' postpone literal ; immediate
 
 : accept ( caddr u1 -- u2 )
     2dup bounds do
