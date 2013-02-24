@@ -8,6 +8,8 @@
          dup @ . /cell -
        repeat r> 2drop ;
 
+: .s"   postpone s" postpone type postpone .s postpone cr ; immediate
+
 : empty   begin depth while drop repeat ;
 
 : ?   @ . ;
@@ -120,9 +122,15 @@
 
 ( Forth2012 tools extension words. )
 
-\ TODO: n>r
+: n>r ( x1 ... xn n -- ) ( R: -- x1 ... xn n )
+   r> over >r swap begin ?dup while
+     rot r> 2>r 1-
+   repeat >r ;
 
-\ TODO: nr>
+: nr> ( -- x1 ... xn n ) ( R: x1 ... xn n -- )
+   r> r@ begin ?dup while
+      2r> >r -rot 1-
+   repeat r> swap >r ;
 
 \ TODO: synonym
 
