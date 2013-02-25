@@ -20,45 +20,7 @@
 
 : cdump   bounds do i c? loop cr ;
 
-: see-find ( caddr -- end xt )
-    >r here context @ >body @
-    begin
-	dup 0= abort" Undefined word"
-	r@ over word= if r> drop exit then
-	nip dup >nextxt
-    again ;
-
 : .xt ( xt -- )   >name ?dup if type else ." :noname@" 1- (.) then ;
-
-: xt? ( xt -- flag )
-    >r context @ >body @ begin
-	?dup
-    while
-	dup r@ = if r> 2drop -1 exit then
-	>nextxt
-    repeat r> drop 0 ;
-
-: disassemble ( x -- )
-    dup xt? if
-        dup c@ 127 > if ." postpone " then
-        .xt
-    else
-        .
-    then ;
-
-: .addr  dup . ;
-
-: see-line ( addr -- )
-    cr ."     ( " .addr ." ) "  @ disassemble ;
-
-: see-word ( end xt -- )
-    >r ." : " r@ .xt
-    r@ >body do i see-line /cell +loop
-    ."  ;" r> c@ 127 > if ."  immediate" then ;
-
-: see   bl word see-find see-word cr ;
-
-: #body   bl word see-find >body - ;
 
 : traverse-wordlist ( wid xt -- ) ( xt: nt -- continue? )
     >r >body @ begin ?dup while
@@ -86,6 +48,31 @@
 : backtrace   return_stack 100 cells + rp@ do ."  > " i ?
               i @ context @ ['] ?.offset traverse-wordlist cr drop
               /cell +loop ;
+
+: xt??   rot drop over <> tuck ;
+: xt?    0 swap context @ ['] xt?? traverse-wordlist drop 0= ;
+
+: disassemble ( x -- )
+    dup xt? if
+        dup c@ 127 > if ." postpone " then
+        .xt
+    else
+        .
+    then ;
+
+: .addr  dup . ;
+
+: see-line ( addr -- )
+    cr ."     ( " .addr ." ) "  @ disassemble ;
+
+: see-word ( end xt -- )
+    >r ." : " r@ .xt
+    r@ >body do i see-line /cell +loop
+    ."  ;" r> c@ 127 > if ."  immediate" then ;
+
+: see   ' dup >end swap see-word cr ;
+
+: #body   ' dup >end swap >body - ;
 
 \ ----------------------------------------------------------------------
 
