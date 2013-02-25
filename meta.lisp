@@ -1,7 +1,6 @@
 ;;;; -*- lisp -*- Copyright 2004, 2013 Lars Brinkhoff
 
 (defvar *this-word*)
-(defvar *this-name*)
 (defvar *previous-word*)
 (defvar *non-immediate-words* nil)
 (defvar *control-stack* nil)
@@ -56,6 +55,9 @@
   (vector-push-extend string *code*)
   (incf *ip*))
 
+(defun trunc-word (word)
+  (subseq word 0 (min (length word) 15)))
+
 (defun emit-word (word)
   (emit (format nil "&~A_word" (mangle-word word))))
 
@@ -67,12 +69,13 @@
   (emit-word word)
   (if (eq dest :unresolved)
       (push *ip* *control-stack*)
-      (setq dest (format nil "&~A.param[~D]" *this-word* dest)))
+      (setq dest (format nil "&~A_word.param[~D]"
+			 (mangle-word *this-word*) dest)))
   (emit dest))
 
 (defun resolve-branch (dest &key (orig (pop *control-stack*)))
   (setf (aref *code* orig)
-	(format nil "&~A.param[~D]" *this-word* dest)))
+	(format nil "&~A_word.param[~D]" (mangle-word *this-word*) dest)))
 
 (defun output (format &rest args)
   (output-line (apply #'format nil format args)))
@@ -101,7 +104,7 @@
 		 (lambda (char) (eql char delimiter))
 		 (progn
 		   (peek-char t *input* nil)
-		   (lambda (char) (whitespacep char))))))
+		   #'whitespacep))))
 	(do ((word nil)
 	     (char (read-char *input* nil) (read-char *input* nil)))
 	    ((or (null char)
@@ -110,8 +113,7 @@
 	  (setq word (concatenate 'string word (string char)))))))
 
 (defun peek-word (&rest args)
-  (let ((word (apply #'read-word args)))
-    (setq *peeked-word* word)))
+  (setq *peeked-word* (apply #'read-word args)))
 
 (defun whitespacep (char)
   (or (char= char #\Tab)
@@ -133,26 +135,27 @@
   (format *header* "~&struct word ~A_word;~%" (mangle-word word))
   (format *words* "~&  &~A_word,~%" (mangle-word word)))
 
+(defun output-header (name code does &optional immediatep)
+  (declare-word name)
+  (let* ((mangled (mangle-word name))
+	 (name (trunc-word name))
+	 (len (length name)))
+    (when immediatep
+      (setq len (- len)))
+    (output "struct word ~A_word = { ~D, \"~A\", ~A, ~A, ~A, {"
+	    mangled len (quoted name) *previous-word* code does)
+    (setq *previous-word* (format nil "&~A_word" mangled))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defimmediate |:| ()
-  (let* ((name (read-word))
-	 (mangled (mangle-word name)))
-    (setf (fill-pointer *code*) 0)
-    (setq *ip* 0)
-    (setq *this-name* name)
-    (setq *this-word* (format nil "~A_word" mangled))
-    (declare-word name)))
+  (setf (fill-pointer *code*) 0)
+  (setq *ip* 0)
+  (setq *this-word* (read-word)))
   
 (defimmediate |;| ()
   (emit-word "exit")
-  (let ((len (length *this-name*))
-	(next-word (peek-word)))
-    (when (equal next-word "immediate")
-      (setq len (- len)))
-    (output "struct word ~A = { ~D, \"~A\", ~A, enter_code, 0, {"
-	    *this-word* len (quoted *this-name*) *previous-word*))
-  (setq *previous-word* (concatenate 'string "&" *this-word*))
+  (output-header *this-word* "enter_code" "0" (equal (peek-word) "immediate"))
   (do ((end (fill-pointer *code*))
        (i 0 (1+ i)))
       ((= i end))
@@ -174,31 +177,24 @@
       (output-line line))
     (output-line "    return IP;")
     (output-line "}")
-    (declare-word name)
-    (output "struct word ~A_word = { ~D, \"~A\", ~A, ~A_code, 0, {} };"
-	    mangled (length name) (quoted name) *previous-word* mangled)
-    (setq *previous-word* (format nil "&~A_word" mangled))))
+    (output-header name (format nil "~A_code" mangled) "0")
+    (output-line "} };")))
 
 (defimmediate create ()
-  (let* ((word (read-word))
-	 (mangled (mangle-word word)))
-    (declare-word word)
-    (output "struct word ~A_word = { ~D, \"~A\", ~A, dodoes_code, &tickexit_word.param[0], {"
-	    mangled (length word) (quoted word) *previous-word*)
-    (do ((line (read-line *input*) (read-line *input*)))
-	((equalp (string-trim " " line) ""))
-      (with-input-from-string (*input* line)
-	(let ((word1 (read-word))
-	      (word2 (read-word))
-	      (word3 (read-word)))
-	  (cond ((and (equal word1 "'") (equal word3 ","))
-		 (output "  (cell)&~A_word," (mangle-word word2)))
-		((and (equal word1 "C") (equal word3 ","))
-		 (output "  (cell)~A," word2))
-		(t
-		 (error "can't handle CREATE data"))))))
-    (output-line "} };")
-    (setq *previous-word* (format nil "&~A_word" mangled))))
+  (output-header (read-word) "dodoes_code" "&tickexit_word.param[0]")
+  (do ((line (read-line *input*) (read-line *input*)))
+      ((equalp (string-trim " " line) ""))
+    (with-input-from-string (*input* line)
+      (let ((word1 (read-word))
+	    (word2 (read-word))
+	    (word3 (read-word)))
+	(cond ((and (equal word1 "'") (equal word3 ","))
+	       (output "  (cell)&~A_word," (mangle-word word2)))
+	      ((and (equal word1 "C") (equal word3 ","))
+	       (output "  (cell)~A," word2))
+	      (t
+	       (error "can't handle CREATE data"))))))
+  (output-line "} };"))
 
 (defimmediate |(| ()
   (do ()
@@ -308,12 +304,9 @@
   (emit-literal (format nil "&~A_word" (mangle-word (read-word)))))
 
 (defimmediate variable ()
-  (let* ((word (read-word))
-	 (mangled (mangle-word word)))
-    (declare-word word)
-    (output "struct word ~A_word = { ~D, \"~A\", ~A, dodoes_code, &tickexit_word.param[0], { 0 } };"
-	    mangled (length word) (quoted word) *previous-word*)
-    (setq *previous-word* (format nil "&~A_word" mangled))))
+  (output-header (read-word) "dodoes_code" "&tickexit_word.param[0]")
+  (output-line "  0")
+  (output-line "} };"))
 
 (defimmediate |rp!| ()
   (emit-literal "&RP")
@@ -364,6 +357,8 @@
     (#\0	"zero")
     (#\1	"one")
     (#\2	"two")
+    (#\3	"three")
+    (#\4	"four")
     (#\:	"colon")
     (#\;	"semicolon")
     (#\<	"lt")
