@@ -83,8 +83,10 @@ finders postpone-xt   postpone-nonimmediate abort compile,
 
 : hide   lastxt @ >nextxt  current @ >body ! ;
 
+: link   current @ >body @  lastxt @ >lfa ! ;
+
 : compile-only   hide  current @  [ ' compiler-words ] literal current !
-                 reveal  current ! ;
+                 link  reveal  current ! ;
 
 : string, ( addr n -- )
     here over allot align  swap cmove ;
