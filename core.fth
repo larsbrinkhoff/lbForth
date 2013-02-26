@@ -119,7 +119,7 @@ create squote   128 allot
 
 : *   1 2>r 0 swap begin r@ while
          r> r> swap 2dup 2* 2>r and if swap over + swap then 2*
-      repeat r> r> 2drop drop ;
+      repeat r> r> 3drop ;
 
 \ TODO: */mod
 

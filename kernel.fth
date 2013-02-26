@@ -27,7 +27,7 @@ create 'here C word_area ,
 : >name ( xt -- caddr u )   count cabs ;
 
 : word= ( caddr xt -- flag )
-    >name 2>r >name r@ <> r> r> swap rot if 2drop drop 0 exit then
+    >name 2>r >name r@ <> r> r> swap rot if 3drop 0 exit then
     bounds do
       dup c@ i c@ <> if drop unloop 0 exit then
       1+
@@ -91,7 +91,7 @@ end-code
 	    drop nip  postpone literal
 	then
     else
-	2drop drop
+	3drop
     then ;
 
 : dummy-catch   execute 0 ;
@@ -113,9 +113,9 @@ create interpreters
 
 : bounds ( addr1 n -- addr2 addr1)   over + swap ;
 
-: link,   ( nt -- )   current @ >body @ ,  lastxt ! ;
-
-: header,   align here  bl-word C NAME_LENGTH allot  link, ( code ) , 0 , ;
+: link, ( nt -- )      lastxt !  current @ >body @ , ;
+: name, ( "name" -- )  bl-word C NAME_LENGTH allot ;
+: header, ( code -- )  align here  name,  link, ( code ) , 0 , ;
 
 : reveal   lastxt @ current @ >body ! ;
 
@@ -153,6 +153,8 @@ end-code
 : 2drop ( x y -- )   drop drop ;
 
 : 2dup ( x y -- x y x y )   over over ;
+
+: 3drop   2drop drop ;
 
 create csp
     C 0 ,
@@ -424,8 +426,7 @@ create state C 0 ,
 
 create #tib C 0 ,
 
-: <>  ( x y -- flag )
-    = 0= ;
+: <>   = 0= ;
 
 : 2>r ( x1 x2 -- ) ( R: -- x1 x2 )   r> swap rot >r >r >r ;
 
