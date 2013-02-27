@@ -9,8 +9,6 @@
 
 : 0> ( n -- flag )   0 > ;
 
-: 2r> ( -- x1 x2 ) ( R: x1 x2 -- )   r> r> r> rot >r swap ;
-
 : 2r@ ( -- x1 x2 ) ( R: x1 x2 -- x1 x2 )   2r> 2dup 2>r ;
 
 : :noname   align here  0 c, 15 allot  link,
@@ -66,7 +64,8 @@
     tib ''source !  #tib ''#source !  0 'source-id !
     refill drop ;
 
-\ TODO: roll ( xn xn-1 ... x0 n -- xn-1 ... x0 xn ) ;
+\ TODO: roll ( xn xn-1 ... x0 n -- xn-1 ... x0 xn )
+\     n>r r> begin ?dup while r> -rot 1- repeat ;
 
 \ TODO:   span
 

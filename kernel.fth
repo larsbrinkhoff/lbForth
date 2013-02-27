@@ -150,14 +150,14 @@ variable  sink
 
 : swap   >r >r rp@ cell+ @ r> r> drop ;
 
-: over   >r >r r@ r> r> swap ;
+: over   >r >r r@ 2r> ;
 
 : dup    sp@ @ ;
 : 2dup   over over ;
-: 3dup   >r >r r@ over r> r> swap over >r rot swap r> ;
+: 3dup   >r >r r@ over 2r> over >r rot swap r> ;
 
 : nip    swap drop ;
-: 2nip   >r >r 2drop r> r> ;
+: 2nip   2>r 2drop 2r> ;
 
 create csp
     C 0 ,
@@ -281,7 +281,7 @@ code emit ( c -- )
     putchar (c);
 end-code
 
-: unex   r> r> r> 3drop ;
+: unex   2r> r> 3drop ;
 \ Put xt and 'unex on return stack, then jump to that.
 : execute   ['] unex >r >r rp@ >r ;
 
@@ -299,7 +299,7 @@ create context
 create compiler-words   C 0 ,
 
 : nt= ( ca u nt -- flag )
-    >name 2>r r@ <> r> r> swap rot if 3drop 0 exit then
+    >name 2>r r@ <> 2r> rot if 3drop 0 exit then
     bounds do
       dup c@ i c@ <> if drop unloop 0 exit then
       1+
@@ -313,7 +313,7 @@ create compiler-words   C 0 ,
 : traverse-wordlist ( wid xt -- ) ( xt: nt -- continue? )
     >r >body @ begin ?dup while
        r@ over >r execute
-       if r> >nextxt else r> r> 2drop exit then
+       if r> >nextxt else 2r> 2drop exit then
     repeat r> drop ;
 
 : ?nt>xt ( ca u -1 nt -- xt i? 0 0 | ca u -1 -1 )
@@ -372,7 +372,7 @@ create state C 0 ,
     then ;
 
 : unloop ( R: loop-sys -- )
-    r> r> r> 2drop >r ;
+    r> 2r> 2drop >r ;
 
 : source? ( -- flag )   >in @ source nip < ;
 
@@ -436,6 +436,8 @@ create #tib C 0 ,
 : <>   = 0= ;
 
 : 2>r   r> swap rot >r >r >r ;
+
+: 2r>   r> r> r> rot >r swap ;
 
 : compile, ( xt -- )   state @ if , else execute then ;
 

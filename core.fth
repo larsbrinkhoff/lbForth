@@ -118,8 +118,8 @@ create squote   128 allot
 : 2*   dup + ;
 
 : *   1 2>r 0 swap begin r@ while
-         r> r> swap 2dup 2* 2>r and if swap over + swap then 2*
-      repeat r> r> 3drop ;
+         2r> 2dup 2* 2>r and if swap over + swap then 2*
+      repeat 2r> 3drop ;
 
 \ TODO: */mod
 
@@ -154,7 +154,7 @@ create squote   128 allot
         over -		      \ r -= d
         rot r> r> rot + >r >r \ q += 1<<i
       then
-      2>r ?dup r> r> swap rot 0= until
+      2>r ?dup 2r> rot 0= until
     nip r> drop r> ;
 
 : /mod   dup 0= abort" Division by zero"
