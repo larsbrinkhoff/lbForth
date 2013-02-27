@@ -22,12 +22,6 @@
 
 : .xt ( xt -- )   >name ?dup if type else ." :noname@" 1- (.) then ;
 
-: traverse-wordlist ( wid xt -- ) ( xt: nt -- continue? )
-    >r >body @ begin ?dup while
-       r@ over >r execute
-       if r> >nextxt else 2r> 2drop exit then
-    repeat r> drop ;
-
 : -rot   swap under swap ;
 
 : execute-xt   -rot 2>r r@ execute 2r> rot if nip -1 swap then over ;
@@ -36,11 +30,11 @@
                    r> rot if cell+ else 2drop exit then
          	   repeat 2drop ;
 
-: ?end   2dup < if rot drop swap -1 else drop 0 then ;
-: >end   here swap context @ ['] ?end traverse-wordlist drop ;
+: ?nt>end   2dup < if rot drop swap -1 else drop 0 then ;
+: >end   here swap context @ ['] ?nt>end traverse-wordlist drop ;
 
-: type-word   .xt space -1 ;
-: words   context @ ['] type-word traverse-wordlist ;
+: .nt   .xt space -1 ;
+: words   context @ ['] .nt traverse-wordlist ;
 
 : body?   dup >body swap >end within ;
 : .offset   dup .xt ."  +" >body - . ;

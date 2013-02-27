@@ -26,13 +26,6 @@ create 'here C word_area ,
 
 : >name ( xt -- caddr u )   count cabs ;
 
-: word= ( caddr xt -- flag )
-    >name 2>r >name r@ <> r> r> swap rot if 3drop 0 exit then
-    bounds do
-      dup c@ i c@ <> if drop unloop 0 exit then
-      1+
-    loop drop -1 ;
-
 : >lfa   C TO_NEXT + ;
 
 : >nextxt   >lfa @ ;
@@ -150,11 +143,21 @@ end-code
 
 : 1+ ( n -- n+1 )   1 + ;
 
-: 2drop ( x y -- )   drop drop ;
-
-: 2dup ( x y -- x y x y )   over over ;
-
+variable  sink
+: drop    sink ! ;
+: 2drop   drop drop ;
 : 3drop   2drop drop ;
+
+: swap   >r >r rp@ cell+ @ r> r> drop ;
+
+: over   >r >r r@ r> r> swap ;
+
+: dup    sp@ @ ;
+: 2dup   over over ;
+: 3dup   >r >r r@ over r> r> swap over >r rot swap r> ;
+
+: nip    swap drop ;
+: 2nip   >r >r 2drop r> r> ;
 
 create csp
     C 0 ,
@@ -273,18 +276,12 @@ end-code
 
 : cr ( -- )   10 emit ;
 
-variable sink
-
-: drop   sink ! ;
-
-: dup   sp@ @ ;
-
 code emit ( c -- )
     cell c = POP (cell);
     putchar (c);
 end-code
 
-: unex   r> r> r> drop drop drop ;
+: unex   r> r> r> 3drop ;
 \ Put xt and 'unex on return stack, then jump to that.
 : execute   ['] unex >r >r rp@ >r ;
 
@@ -301,22 +298,36 @@ create context
 
 create compiler-words   C 0 ,
 
-\ TODO: search-wordlist ( caddr u wl -- 0 | xt 1 | xt -1 )
-: wl-find ( caddr wl -- caddr 0 | xt 1 | xt -1 )
-    begin
-	dup
-    while
-	2dup word= if
-	    nip dup ( immediate? ) c@ 127 > if 1 else -1 then
-	    exit
-	then
-	>nextxt
-    repeat ;
+: nt= ( ca u nt -- flag )
+    >name 2>r r@ <> r> r> swap rot if 3drop 0 exit then
+    bounds do
+      dup c@ i c@ <> if drop unloop 0 exit then
+      1+
+    loop drop -1 ;
 
-: find   context swap
-         begin >r dup cell+ swap @ r> swap ?dup
-         while >body @ wl-find ?dup if rot drop exit then
-         repeat nip 0 ;
+: immediate?   c@ 127 > if 1 else -1 then ;
+
+\ TODO: nt>string nt>interpret nt>compile
+\ F83: >name >link body> name> link> n>link l>name
+
+: traverse-wordlist ( wid xt -- ) ( xt: nt -- continue? )
+    >r >body @ begin ?dup while
+       r@ over >r execute
+       if r> >nextxt else r> r> 2drop exit then
+    repeat r> drop ;
+
+: ?nt>xt ( ca u -1 nt -- xt i? 0 0 | ca u -1 -1 )
+    nip 3dup nt= if nip nip dup immediate? 0 0
+    else drop -1 -1 then ;
+: search-wordlist ( ca u wl -- 0 | xt 1 | xt -1 )
+    -1 swap ['] ?nt>xt traverse-wordlist
+    if 2drop 0 then ;
+
+: find ( caddr -- caddr 0 | xt ? )
+    count context >r begin r> dup cell+ >r @ ?dup while
+       >r 2dup r> search-wordlist ?dup
+       if 2nip r> drop exit then
+    repeat r> 2drop 1 - 0 ;
 
 : here ( -- addr )   'here @ ;
 
@@ -337,8 +348,6 @@ create compiler-words   C 0 ,
 
 : or ( x y -- x|y )   invert swap invert nand ;
 
-: over ( x y -- x y x )   >r >r r@ r> r> swap ;
-
 \ The literal 0 will be patched when loading core.
 : quit ( R: ... -- )   0 execute ;
 
@@ -352,8 +361,6 @@ variable ''#source
 : source ( -- addr n )   ''source @  ''#source @ @ ;
 
 create state C 0 ,
-
-: swap   >r >r rp@ cell+ @ r> r> drop ;
 
 : type ( addr n -- )
     ?dup if
@@ -428,11 +435,9 @@ create #tib C 0 ,
 
 : <>   = 0= ;
 
-: 2>r ( x1 x2 -- ) ( R: -- x1 x2 )   r> swap rot >r >r >r ;
+: 2>r   r> swap rot >r >r >r ;
 
 : compile, ( xt -- )   state @ if , else execute then ;
-
-: nip ( x y -- y )   swap drop ;
 
 : refill ( -- flag )
     source-id dup 0= if
