@@ -469,8 +469,8 @@ create #tib C 0 ,
 	drop  1 #fib +!
     loop ;
 
-: restore-input ( xn .. x1 n -- )
-    drop  'source-id !  ''#source !  ''source !  >in ! ;
+: restore-input ( xn .. x1 n -- flag )
+    drop  'source-id !  ''#source !  ''source !  >in !  0 ;
 
 : save-input ( -- xn .. x1 n )
     >in @  ''source @  ''#source @  source-id  4 ;
@@ -518,7 +518,7 @@ variable #fib
 	interpret
     repeat
     source-id close-file drop
-    restore-input ;
+    restore-input if ." Bad restore-input" cr abort then ;
 
 : included ( ... addr n -- ... )
     r/o open-file if cr ." Read error." cr abort then include-file ;

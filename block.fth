@@ -19,7 +19,7 @@ variable current-block
     0 >in !
     blk @ block ''source !  1024 ''#source !
     ( interpret )
-    restore-input ;
+    restore-input abort" Bad restore-input" ;
 
 \ save-buffers ( -- )
 \ update ( -- )
