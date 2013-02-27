@@ -11,11 +11,11 @@
 : char \ ( "word" -- char )
     bl-word here 1+ c@ ;
 
-: ahead  here 0 , ;
+: orig   here 0 , ;
 
 : resolve   here swap ! ;
 
-: '   bl-word here find 0branch [ ahead ] exit [ resolve ] 0 ;
+: '   bl-word here find 0branch [ orig ] exit [ resolve ] drop 0 ;
 
 : (does>)   r> lastxt @ >does ! ;
 
@@ -35,13 +35,13 @@ finders postpone-xt   postpone-nonimmediate abort compile,
 : postpone   bl word find postpone-xt ; immediate
 
 : unresolved \ ( C: "word" -- orig )
-    postpone postpone  postpone ahead ; immediate
+    postpone postpone  postpone orig ; immediate
 
 : chars \ ( n1 -- n2 )
     ;
 
-: else \ ( -- ) ( C: orig1 -- orig2 )
-    unresolved branch swap resolve ; immediate
+: ahead  \ ( C: -- orig )
+    unresolved branch ; immediate
 
 : if \ ( flag -- ) ( C: -- orig )
     unresolved 0branch ; immediate
@@ -52,14 +52,15 @@ finders postpone-xt   postpone-nonimmediate abort compile,
 : begin \ ( -- ) ( C: -- dest )
     here ; immediate
 
-: while \ ( x -- ) ( C: dest -- orig dest )
-    unresolved 0branch swap ; immediate
-
-: repeat \ ( -- ) ( C: orig dest -- )
-    postpone branch ,  resolve ; immediate
+: again \ ( x -- ) ( C: dest -- )
+    postpone branch , ; immediate
 
 : until \ ( x -- ) ( C: dest -- )
     postpone 0branch , ; immediate
+
+: else     postpone ahead swap postpone then ; immediate
+: while    postpone if swap ; immediate
+: repeat   postpone again postpone then ; immediate
 
 : recurse   lastxt @ compile, ; immediate
 
