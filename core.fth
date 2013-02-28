@@ -124,9 +124,6 @@ create squote   128 allot
 
 \ TODO: */mod
 
-: +loop ( -- ) ( C: nest-sys -- )
-    postpone (+loop)  postpone 0branch  ,  postpone unloop ; immediate
-
 : msb   1 2 begin ?dup while nip dup 2* repeat postpone literal ; immediate
 
 : 0<   msb and if -1 else 0 then ;
@@ -209,7 +206,17 @@ create squote   128 allot
 : depth   data_stack 100 cells +  sp@  - /cell /  1- ;
 
 : do ( n1 n2 -- ) ( R: -- loop-sys ) ( C: -- do-sys )
-    postpone 2>r  here ; immediate
+    postpone 2>r  postpone begin  0 ; immediate
+
+: r+   r> r> rot + >r >r ;
+
+: +loop ( -- ) ( C: do-sys -- )
+    ?dup if swap postpone r+ postpone again postpone then
+    else postpone (+loop) postpone until then
+    postpone unloop ; immediate
+
+: loop
+    1 postpone literal postpone +loop ; immediate
 
 \ TODO: environment?
 \ TODO: evaluate
@@ -220,8 +227,6 @@ create squote   128 allot
 : j   rp@ 3 cells + @ ;
 
 \ TODO: leave
-
-: loop   1 postpone literal  postpone +loop ; immediate
 
 : lshift   begin ?dup while 1- under 2* repeat ;
 

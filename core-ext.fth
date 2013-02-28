@@ -14,11 +14,10 @@
 : :noname   align here  0 c, 15 allot  link,
             [ ' enter >code @ ] literal , 0 , ] lastxt @ !csp ;
 
-\ : ?do ( n1 n2 -- ) ( R: -- loop-sys ) ( C: -- do-sys )
-\     here  postpone 2>r  unresolved branch  here ;
+: (?do)   r> 2r> 2dup > rot rot 2>r swap >r ;
 
-: again ( -- ) ( C: dest -- )
-    postpone branch , ; immediate
+: ?do ( n1 n2 -- ) ( R: -- loop-sys ) ( C: -- do-sys )
+     postpone 2>r  postpone begin postpone (?do) postpone if ; immediate
 
 : string+ ( caddr -- addr )
     count + aligned ;
