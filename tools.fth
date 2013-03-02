@@ -20,7 +20,7 @@
 
 : cdump   bounds do i c? loop cr ;
 
-: .xt ( xt -- )   >name ?dup if type else ." :noname@" 1- (.) then ;
+: id. ( xt -- )   >name ?dup if type else ." :noname@" 1- (.) then ;
 
 : -rot   swap under swap ;
 
@@ -33,11 +33,11 @@
 : ?nt>end   2dup < if rot drop swap -1 else drop 0 then ;
 : >end   here swap context @ ['] ?nt>end traverse-wordlist drop ;
 
-: .nt   .xt space -1 ;
+: .nt   id. space -1 ;
 : words   context @ ['] .nt traverse-wordlist ;
 
 : body?   dup >body swap >end within ;
-: .offset   dup .xt ."  +" >body - . ;
+: .offset   dup id. ."  +" >body - . ;
 : ?.offset   2dup body? if .offset 0 else drop -1 then ;
 : backtrace   return_stack 100 cells + rp@ do ."  > " i ?
               i @ context @ ['] ?.offset traverse-wordlist cr drop
@@ -48,8 +48,8 @@
 
 : disassemble ( x -- )
     dup xt? if
-        dup c@ 127 > if ." postpone " then
-        .xt
+        dup c@ 127 > if ." ( postpone ) " then
+        id.
     else
         .
     then ;
@@ -59,12 +59,13 @@
 : see-line ( addr -- )
     cr ."     ( " .addr ." ) "  @ disassemble ;
 
-: see-word ( end xt -- )
-    >r ." : " r@ .xt
+: see-xt ( xt -- )
+    dup >end swap
+    >r ." : " r@ id.
     r@ >body do i see-line /cell +loop
     ."  ;" r> c@ 127 > if ."  immediate" then ;
 
-: see   ' dup >end swap see-word cr ;
+: see   ' see-xt cr ;
 
 : #body   ' dup >end swap >body - ;
 

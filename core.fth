@@ -11,11 +11,12 @@
 : char \ ( "word" -- char )
     bl-word here 1+ c@ ;
 
-: orig   here 0 , ;
+: >mark      here 0 , ;
+: >resolve   here swap ! ;
+: <mark      here ;
+: <resolve   , ;
 
-: resolve   here swap ! ;
-
-: '   bl-word here find 0branch [ orig ] exit [ resolve ] drop 0 ;
+: '   bl-word here find 0branch [ >mark ] exit [ >resolve ] drop 0 ;
 
 : (does>)   r> lastxt @ >does ! ;
 
@@ -23,40 +24,30 @@
 
 : create   [ ' dodoes >code @ ] literal header, reveal (does>) ;
 
-: postpone-nonimmediate   [ ' literal , ' compile, ] literal compile, ;
+: postpone,   [ ' literal , ' compile, ] literal compile, ;
+\ Same as:    postpone literal  postpone compile, ;
 
 : finders   create ' , ' , ' ,   does> swap 1+ cells + @ execute ;
 
-finders postpone-xt   postpone-nonimmediate abort compile,
+finders postpone-xt   postpone, abort compile,
 
 : word \ ( char "<chars>string<char>" -- caddr )
     drop bl-word here ;
 
 : postpone   bl word find postpone-xt ; immediate
 
-: unresolved \ ( C: "word" -- orig )
-    postpone postpone  postpone orig ; immediate
-
 : chars \ ( n1 -- n2 )
     ;
 
-: ahead  \ ( C: -- orig )
-    unresolved branch ; immediate
+: unresolved   postpone postpone  postpone >mark ; immediate
+: ahead        unresolved branch ; immediate
+: if           unresolved 0branch ; immediate
+: then         >resolve ; immediate
 
-: if \ ( flag -- ) ( C: -- orig )
-    unresolved 0branch ; immediate
-
-: then \ ( -- ) ( C: orig -- )
-    resolve ; immediate
-
-: begin \ ( -- ) ( C: -- dest )
-    here ; immediate
-
-: again \ ( x -- ) ( C: dest -- )
-    postpone branch , ; immediate
-
-: until \ ( x -- ) ( C: dest -- )
-    postpone 0branch , ; immediate
+: resolving   postpone postpone  postpone <resolve ; immediate
+: begin       <mark ; immediate
+: again       resolving branch ; immediate
+: until       resolving 0branch ; immediate
 
 : else     postpone ahead swap postpone then ; immediate
 : while    postpone if swap ; immediate
@@ -157,7 +148,7 @@ create squote   128 allot
 
 : /mod   dup 0= abort" Division by zero"
          dup 0< if negate recurse negate else
-         over 0< if under negate recurse negate else u/mod then then ;
+         over 0< if under negate u/mod negate else u/mod then then ;
 
 : space   bl emit ;
 
