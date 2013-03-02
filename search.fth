@@ -13,7 +13,10 @@
 
 : definitions   context @ set-current ;
 
-\ TODO: wordlist
+: does-code!   [ ' dodoes >code @ ] literal  swap >code ! ;
+: noname-create   :noname ?csp does-code! reveal lastxt @ postpone [ ;
+
+: wordlist   noname-create 0 , does> abort" Anonymous wordlist"  ;
 
 ( Search-Order extension words. )
 
@@ -34,9 +37,9 @@
 
 : order   ." Order:"
           context begin dup @ ?dup while
-             bl emit >name type cell+
+             space id. cell+
           repeat drop cr
-          ." Current: " current @ >name type ;
+          ." Current: " current @ id. cr ;
 
 ( Traditional vocabulary words. )
 
