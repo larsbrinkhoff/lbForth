@@ -43,8 +43,8 @@
               i @ context @ ['] ?.offset traverse-wordlist cr drop
               /cell +loop ;
 
-: xt??   rot drop over <> tuck ;
-: xt?    0 swap context @ ['] xt?? traverse-wordlist drop 0= ;
+: xt??   nip over <> dup ;
+: xt?    1 context @ ['] xt?? traverse-wordlist nip 0= ;
 
 : disassemble ( x -- )
     dup xt? if
