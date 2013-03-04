@@ -213,28 +213,29 @@ create squote   128 allot
 
 : depth   data_stack 100 cells +  sp@  - /cell /  1- ;
 
-: do ( n1 n2 -- ) ( R: -- loop-sys ) ( C: -- do-sys )
-    postpone 2>r  postpone begin  0 ; immediate
+: variable   create /cell allot ;
+
+variable leaves
+
+: >mark!      here swap dup @ , ! ;
+: >resolve@   @ begin ?dup while dup @ here rot ! repeat ;
 
 : r+   r> r> rot + >r >r ;
 
-: +loop ( -- ) ( C: do-sys -- )
-    ?dup if swap postpone r+ postpone again postpone then
-    else postpone (+loop) postpone until then
-    postpone unloop ; immediate
+: do      leaves @  0 leaves !  postpone 2>r  postpone begin  0 ; immediate
+: leave   postpone branch  leaves >mark! ; immediate
+: +loop   ?dup if swap postpone r+ postpone again postpone then
+          else postpone (+loop) postpone until then
+          leaves >resolve@  leaves !  postpone unloop ; immediate
+: loop    1 postpone literal postpone +loop ; immediate
 
-: loop
-    1 postpone literal postpone +loop ; immediate
+: j   rp@ 3 cells + @ ;
 
 \ TODO: environment?
 \ TODO: evaluate
 \ TODO: fill
 \ TODO: fm/mod )
 \ TODO: hold
-
-: j   rp@ 3 cells + @ ;
-
-\ TODO: leave
 
 : lshift   begin ?dup while 1- under 2* repeat ;
 
@@ -271,9 +272,6 @@ create squote   128 allot
 : u<   2dup 0< swap 0< over <> if nip nip else drop - 0< then ;
 
 \ TODO: um/mod
-
-: variable ( "word" -- )
-    create /cell allot ;
 
 : [']   ' postpone literal ; immediate
 

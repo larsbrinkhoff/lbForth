@@ -15,9 +15,8 @@
             [ ' enter >code @ ] literal , 0 , ] lastxt @ !csp ;
 
 : (?do)   r> 2r> 2dup > rot rot 2>r swap >r ;
-
-: ?do ( n1 n2 -- ) ( R: -- loop-sys ) ( C: -- do-sys )
-     postpone 2>r  postpone begin postpone (?do) postpone if ; immediate
+: ?do     leaves @  0 leaves !
+          postpone 2>r postpone begin postpone (?do) postpone if ; immediate
 
 : string+ ( caddr -- addr )
     count + aligned ;
