@@ -24,27 +24,27 @@
 
 : -rot   swap under swap ;
 
-: execute-xt   -rot 2>r r@ execute 2r> rot if nip -1 swap then over ;
-: traverse-order   context begin dup @ ?dup while swap >r
-                   0 -rot ['] execute-xt traverse-wordlist
-                   r> rot if cell+ else 2drop exit then
-         	   repeat 2drop ;
+: execute-xt       nip swap dup >r execute r> swap dup ;
+: traverse-order   context >r begin r@ @ ?dup while
+		      1 swap ['] execute-xt traverse-wordlist
+		      /cell r+ while
+		   repeat then r> 2drop ;
 
 : ?nt>end   2dup < if rot drop swap -1 else drop 0 then ;
 : >end   here swap context @ ['] ?nt>end traverse-wordlist drop ;
 
-: .nt   id. space -1 ;
+: .nt     id. space -1 ;
 : words   context @ ['] .nt traverse-wordlist ;
 
-: body?   dup >body swap >end within ;
-: .offset   dup id. ."  +" >body - . ;
-: ?.offset   2dup body? if .offset 0 else drop -1 then ;
+: body?       dup >body swap >end within ;
+: .offset     dup id. ."  +" >body - . ;
+: ?.offset    2dup body? if .offset 0 else drop -1 then ;
 : backtrace   return_stack 100 cells + rp@ do ."  > " i ?
               i @ context @ ['] ?.offset traverse-wordlist cr drop
               /cell +loop ;
 
 : xt??   nip over <> dup ;
-: xt?    1 context @ ['] xt?? traverse-wordlist nip 0= ;
+: xt?    1 ['] xt?? traverse-order nip 0= ;
 
 : disassemble ( x -- )
     dup xt? if
