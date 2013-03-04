@@ -16,11 +16,28 @@
 : <mark      here ;
 : <resolve   , ;
 
-: '   bl-word here find 0branch [ >mark ] exit [ >resolve ] drop 0 ;
+: '   bl-word here find 0branch [ >mark ] exit [ >resolve ]
+      [ char U ] literal emit
+      [ char n ] literal emit
+      [ char d ] literal emit
+      [ char e ] literal emit
+      [ char f ] literal emit
+      [ char i ] literal emit
+      [ char n ] literal emit
+      [ char e ] literal emit
+      [ char d ] literal emit
+      bl emit
+      [ char w ] literal emit
+      [ char o ] literal emit
+      [ char r ] literal emit
+      [ char d ] literal emit
+      [ char : ] literal emit
+      bl emit
+      count type cr abort ;
 
-: (does>)   r> lastxt @ >does ! ;
-
-: does>   [ ' (does>) ] literal compile, ; immediate
+: does!     lastxt @ >does ! ;
+: (does>)   r> does! ;
+: does>     [ ' (does>) ] literal compile, ; immediate
 
 : create   [ ' dodoes >code @ ] literal header, reveal (does>) ;
 
