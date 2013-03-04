@@ -31,9 +31,6 @@
 : case ( -- ) ( C: -- case-sys )
     0 ;
 
-: compile, ( xt -- )
-    , ;
-
 \ TODO: convert
 
 : endcase ( x -- ) ( C: case-sys -- )
@@ -92,20 +89,18 @@
 
 ( Forth2012 core extension words. )
 
-\ TODO: action-of
-
 \ TODO: buffer:
 
-: defer   create ['] abort ,  does> @ execute ;
-
-: defer! ( xt2 xt1 -- )   >body ! ;
-
-: defer@ ( xt1 -- xt2 )   >body @ ;
+: defer       create ['] abort ,  does> @ execute ;
+: defer!      >body ! ;
+: defer@      >body @ ;
+: is          ' defer! ;
+: is          postpone ['] postpone defer! ; immediate compile-only
+: action-of   ' defer@ ; immediate
+: action-of   postpone ['] postpone defer@ ; immediate compile-only
 
 \ TODO: holds
 
-: is ( xt "word" -- )   ' defer! ;
-
-\ TODO: parse-name
+\ TODO: parse-name ( "name" -- caddr u )
 
 \ TODO: s\"
