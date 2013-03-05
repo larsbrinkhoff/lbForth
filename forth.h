@@ -4,7 +4,9 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <stddef.h>
+#include <unistd.h>
 #include <string.h>
+#include <sys/mman.h>
 
 #undef TOKEN_THREADED
 

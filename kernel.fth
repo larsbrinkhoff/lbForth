@@ -555,6 +555,18 @@ code read-file ( addr n1 fileid -- n2 ior )
     PUSH (ferror (fileid) ? errno : 0);
 end-code
 
+code rwx! ( start end -- ior )
+    size_t end = POP (size_t);
+    size_t start = POP (size_t);
+    long page_size = sysconf (_SC_PAGESIZE);
+    start &= -page_size;
+    end = (end + page_size - 1) & -page_size;
+    if (mprotect ((void *)start, end - start, PROT_READ | PROT_WRITE | PROT_EXEC))
+      PUSH (-3);
+    else
+      PUSH (0);
+end-code
+
 \ : write-file ( addr n fileid -- ior )   0 file-io nip ;
 
 create tracing C 0 ,
