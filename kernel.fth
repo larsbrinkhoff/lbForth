@@ -204,8 +204,11 @@ code >number ( d1 addr1 n1 -- d2 addr2 n2 )
       }
     while (n > 0)
       {
-	int m = *addr - '0';
-	if (m < 0 || m >= 10)
+	char c = *addr;
+	int m = (c >= '0' && c <= '9') ? (c - '0') :
+                (c >= 'A' && c <= 'A') ? (c - 'A' + 10) :
+                (c >= 'a' && c <= 'z') ? (c - 'a' + 10) : 36;
+	if (m < 0 || m >= base_word.param[0])
 	  break;
 	d = base_word.param[0] * d + negate * m;
 	addr++;
@@ -308,7 +311,7 @@ create compiler-words   C 0 ,
 : immediate?   c@ 127 > if 1 else -1 then ;
 
 \ TODO: nt>string nt>interpret nt>compile
-\ F83: >name >link body> name> link> n>link l>name
+\ Forth83: >name >link body> name> link> n>link l>name
 
 : traverse-wordlist ( wid xt -- ) ( xt: nt -- continue? )
     >r >body @ begin ?dup while
