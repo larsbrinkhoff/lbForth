@@ -1,4 +1,4 @@
-\ s" experiments/asm-x86.fth" included
+s" experiments/asm-x86.fth" included
 
 also assembler definitions
 
@@ -8,73 +8,84 @@ variable there
 : h^   c^ c^ 8 lshift + ;
 : ^    there @ @ /cell there +! ;
 
-defer i^
-
 base @  hex
 
-: reg-table:   create , , , , , , , ,
-   does> -rot rshift 07 and cells + @ execute ;
+: 4chars,      here 4 cmove  4 allot ;
+: >regname     [ 4 cell+ ] literal * + dup 4 + @ ;
+: reg-table:   create  8 0 do bl word count swap 4chars, , loop
+               does> -rot rshift 7 and >regname type ;
 
-:noname ." bh" ; :noname ." dh" ; :noname ." ch" ; :noname ." ah" ;
-:noname ." bl" ; :noname ." dl" ; :noname ." cl" ; :noname ." al" ;
-reg-table: reg-name8 ( reg/rm pos -- )
+reg-table: reg-name8     al  cl  dl  bl  ah  ch  dh  bh
+reg-table: reg-name16    ax  cx  dx  bx  sp  bp  si  di
+reg-table: reg-name32   eax ecx edx ebx esp ebp esi edi
 
-:noname ." di" ; :noname ." si" ; :noname ." bp" ; :noname ." sp" ;
-:noname ." bx" ; :noname ." dx" ; :noname ." cx" ; :noname ." ax" ;
-reg-table: reg-name16 ( reg/rm pos -- )
+defer operand-reg
+defer address-reg
+defer segment-reg
+defer ?segment-reg
+defer i^
+defer a^
 
-:noname ." edi" ; :noname ." esi" ; :noname ." ebp" ; :noname ." esp" ;
-:noname ." ebx" ; :noname ." edx" ; :noname ." ecx" ; :noname ." eax" ;
-reg-table: reg-name32 ( reg/rm pos -- )
+: operand!   is i^ is operand-reg ;
+: !op8       ['] reg-name8  ['] c^ operand! ;
+: !op16      ['] reg-name16 ['] h^ operand! ;
+: !op32      ['] reg-name32 ['] ^  operand! ;
 
-defer reg-name
-' reg-name32 is reg-name
-\ : reg-name reg-name32 ;
+: address!   is a^ is address-reg ;
+: !ad16      ['] reg-name16 ['] h^ address! ;
+: !ad32      ['] reg-name32 ['] ^  address! ;
+
+: nop ;
+: segment! is ?segment-reg is segment-reg ;
+: .ds ." ds:" ;   : !ds ['] .ds ['] nop segment! ;
+: .es ." es:" ;   : !es ['] .es dup segment! ;
+: .cs ." cs:" ;   : !cs ['] .cs dup segment! ;
+: .ss ." ss:" ;   : !ss ['] .ss dup segment! ;
+: .fs ." fs:" ;   : !fs ['] .fs dup segment! ;
+: .gs ." gs:" ;   : !gs ['] .gs dup segment! ;
 
 : displacement ( s/i/b mod/reg/rm -- s/i/b )
    c0 and 
    dup 00 = if else
    dup 40 = if c^ (.) ." +" else
-   dup 80 = if ^ (.) ." +" else
+   dup 80 = if a^ (.) ." +" else
    then then then drop ;
 
 : base-reg ( s/i/b -- flag )
-   dup 07 and 05 = if drop 0 else 0 reg-name32 1 then ;
+   dup 07 and 05 = if drop 0 else 0 address-reg 1 then ;
 
 : index-reg ( s/i/b flag -- )
    swap dup 38 and 20 = if 2drop else
    swap if ." +" then
-   dup 3 reg-name32 ." *" 6 rshift 1 swap lshift (.) then ;
+   dup 3 address-reg ." *" 6 rshift 1 swap lshift (.) then ;
 
 : s/i/b ( mod/reg/rm -- )
    ." [" c^ swap displacement dup base-reg index-reg ." ]" ;
 
 : mod/rm ( mod/reg/rm )
-   dup c0 and c0 = if 0 reg-name else
-   dup c7 and 05 = if drop ." [" ^ (.) ." ]" else
+   dup c0 and c0 = if 0 operand-reg else ?segment-reg
+   dup c7 and 05 = if drop ." [" a^ (.) ." ]" else
    dup 07 and 04 = if s/i/b else
-   dup c0 and 00 = if ." [" 0 reg-name32 ." ]" else
-   dup c0 and 40 = if ." [" 0 reg-name32 ." +" c^ (.) ." ]" else
-   dup c0 and 80 = if ." [" 0 reg-name32 ." +" ^ (.) ." ]" else drop
+   dup c0 and 00 = if ." [" 0 address-reg ." ]" else
+   dup c0 and 40 = if ." [" 0 address-reg ." +" c^ (.) ." ]" else
+   dup c0 and 80 = if ." [" 0 address-reg ." +" a^ (.) ." ]" else drop
    then then then then then then ;
 
-: ?byte        01 and 0= if ['] reg-name8 is reg-name then ;
-: ?direction   02 and ;
+: ?op8         01 and 0= if !op8 then ;
+: direction?   02 and ;
+: .,           ." , " ;
 
 : mod/reg/rm ( op-code )
-   dup ?byte  ?direction  c^ dup rot
-   if 3 reg-name ." , " mod/rm
-   else mod/rm ." , " 3 reg-name then ;
+   dup ?op8 direction?  c^ dup rot
+   if 3 operand-reg ., mod/rm else mod/rm ., 3 operand-reg then ;
 
 defer decode
 
-: prefix-66   ['] reg-name16 is reg-name  decode ;
-
 : opcode-c6 ( op-code )
-   drop c^ mod/rm ." , " ^ u. ; \ TODO: imm8/16
+   ?op8  c^ mod/rm ., i^ u. ;
 
 : opcode-70 ( op-code )
-   04 and
+   0f and
    dup 00 = if ." jo " else
    dup 01 = if ." jno " else
    dup 02 = if ." jc " else
@@ -96,7 +107,7 @@ defer decode
    drop c^ u. ;
 
 : opcode-80 ( op-code )
-   drop c^ dup 38 and
+   ?op8 c^ dup 38 and
    dup 00 = if ." add " else
    dup 08 = if ." or "  else
    dup 10 = if ." adc " else
@@ -106,12 +117,12 @@ defer decode
    dup 30 = if ." xor " else
    dup 38 = if ." cmp "
    then then then then then then then then
-   drop mod/rm ." , " c^ u. ;
+   drop mod/rm ., c^ u. ;
 
 : opcode-f6 ( op-code )
-   ?byte  c^ dup 38 and
-   dup 00 = if ." test " ^ (.) ." , " else
-   dup 08 = if ." test " ^ (.) ." , " else
+   ?op8  c^ dup 38 and
+   dup 00 = if ." test " ^ (.) ., else
+   dup 08 = if ." test " ^ (.) ., else
    dup 10 = if ." not "  else
    dup 18 = if ." neg "  else
    dup 20 = if ." mul "  else
@@ -121,34 +132,33 @@ defer decode
    then then then then then then then then
    drop mod/rm ;
 
-: moffset^ ( op-code -- moffset )   01 and if ^ else c^ then ;
-: .moffset ( moffset op-code -- )
-   02 and if ." ds:" (.) ." , eax" else ." eax, ds:" (.) then ;
-: eax/moff ( op-code )   dup moffset^ swap .moffset ;
-
-: prefix       ;
+: prefix       drop decode ;
 : no-d/s       fc and 3 or ;
 : no-direction fd and ;
-: reg          0 reg-name ;
-: eax/reg      ." eax, " 0 reg-name ;
-: eax/imm      drop ." eax, " ^ u. ;
+: eax          0 0 operand-reg ;
+: reg          0 operand-reg ;
+: eax/reg      eax ., reg ;
+: eax/imm      ?op8 eax ., i^ u. ;
+: moff         segment-reg (.) ;
+: moff         if moff ., eax else eax ., moff then ;
+: eax/moff     dup ?op8 direction?  i^ swap moff ;
 : imm8         drop c^ u. ;
 : imm16        drop h^ u. ;
 : imm32        drop ^ u. ;
-: cs           ." cs" ;
-: ds           ." ds" ;
-: es           ." es" ;
-: ss           ." ss" ;
+: cs           drop ." cs" ;
+: ds           drop ." ds" ;
+: es           drop ." es" ;
+: ss           drop ." ss" ;
 : none         drop ;
 : aam/aad      c^ dup 0a =
                if drop 01 and if ." aad" else ." aam" then
                else ." unknown " swap . . then ;
 : unknown      u. ;
-: nop          ;
 
 : => ( op m "str w1 w2" -- )   , , bl parse ' , ' ,       dup , string, ;
 : -> ( op m "str w" -- )       , , bl parse ' , ['] nop , dup , string, ;
 : ---> ( op m "w" -- )         , ,          ' , ['] nop , 0 , ;
+: ===> ( op m "w1 w2" -- )     , ,          ' , ' ,       0 , ;
 
 0 value table-start  here to table-start
 \  op mask  name     xt
@@ -158,7 +168,7 @@ defer decode
    07 ff -> pop      es
    08 fc -> or       mod/reg/rm
    0e ff -> push     cs
-\  0f ff --->        op
+\  0f ff --->        op...
    16 ff -> push     ss
    17 ff -> pop      ss
    18 fc -> sbb      mod/reg/rm
@@ -167,19 +177,19 @@ defer decode
    1f ff -> pop      ds
    20 fc -> and      mod/reg/rm
    24 fe -> and      eax/imm
-   26 ff -> es       prefix
+   26 ff => es       prefix !es
    27 ff -> daa      none
    28 fc -> sub      mod/reg/rm
    2c fe -> sub      eax/imm
-   2e ff -> cs       prefix
+   2e ff => cs       prefix !cs
    2f ff -> das      none
    30 fc -> xor      mod/reg/rm
    34 fe -> xor      eax/imm
-   36 ff -> ss       prefix
+   36 ff => ss       prefix !ss
    37 ff -> aaa      none
    38 fc -> cmp      mod/reg/rm
    3c fe -> cmp      eax/imm
-   3e ff -> ds       prefix
+   3e ff => ds       prefix !ds
    3f ff -> aas      none
    40 f8 -> inc      reg        \ rex
    48 f8 -> dec      reg        \ rex
@@ -187,13 +197,13 @@ defer decode
    58 f8 -> pop      reg
    60 ff -> pusha    none
    61 ff -> popa     none
-   64 ff -> fs       prefix
-   65 ff -> gs       prefix
-   66 ff --->        prefix-66	\ operand size
-   67 ff --->        prefix	\ address size
-\  68 fd -> push     imm
+   64 ff => fs       prefix !fs
+   65 ff => gs       prefix !gs
+   66 ff ===>        prefix !op16
+   67 ff ===>        prefix !ad16
+   68 ff -> push     imm32
 \  69 fd -> imul     ?
-\  6a ff -> push     imm8
+   6a ff -> push     imm8
 \  6c fe -> ins      ?
 \  6e fe -> outs     ?
    70 f0 --->        opcode-70  \ jcc
@@ -255,7 +265,7 @@ defer decode
 \  ec fe -> in       ?
 \  ee fe -> out      ?
    f0 ff -> lock     none
-   f2 fe -> rep      none \ prefix
+   f2 fe -> rep      prefix
    f5 ff -> cmc      none
    f6 fe --->        opcode-f6 \ test/not/neg/mul/imul/div/idiv
    f8 ff -> clc      none
@@ -283,7 +293,8 @@ here value table-end
    i tab>cells +loop ;
 is decode
 
-: disassemble-one   ['] reg-name32 is reg-name  ['] ^ is i^  decode ;
+: reset-prefixes    !op32 !ad32 !ds ;
+: disassemble-one   reset-prefixes decode ;
 
 base !  previous definitions  also assembler
 
@@ -291,10 +302,6 @@ base !  previous definitions  also assembler
    swap there !  begin there @ over u< while
       ."   " there @ u. space  disassemble-one cr
    repeat drop ;
-
-create test-code hex
-  90 c, 0 c, 0 c, c3 c,
-decimal
 
 previous
 
