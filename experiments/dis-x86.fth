@@ -145,6 +145,7 @@ defer decode
 : imm8         drop c^ u. ;
 : imm16        drop h^ u. ;
 : imm32        drop ^ u. ;
+: imm32/48     drop h^ u. ." :" a^ u. ;
 : cs           drop ." cs" ;
 : ds           drop ." ds" ;
 : es           drop ." es" ;
@@ -160,7 +161,7 @@ defer decode
 : ---> ( op m "w" -- )         , ,          ' , ['] nop , 0 , ;
 : ===> ( op m "w1 w2" -- )     , ,          ' , ' ,       0 , ;
 
-0 value table-start  here to table-start
+create table-start
 \  op mask  name     xt
    00 fc -> add      mod/reg/rm
    04 fe -> add      eax/imm
@@ -169,6 +170,22 @@ defer decode
    08 fc -> or       mod/reg/rm
    0e ff -> push     cs
 \  0f ff --->        op...
+\  0f31 ffff -> rdtsc
+\  0f34 ffff -> sysenter
+\  0f35 ffff -> sysexit
+\  0f40 fff0 -> cmov
+\  0f90 ffff -> seto
+\  0f91 ffff -> setno
+\  0f92 ffff -> setb
+\  0f93 ffff -> setnb
+\  0f94 ffff -> setz
+\  0f95 ffff -> setnz
+\  0f96 ffff -> setbe
+\  0f97 ffff -> setnbe
+\  0fa0 ffff -> push fs
+\  0fa1 ffff -> pop fs
+\  0fa2 ffff -> cpuid
+\  0fb0 fffe -> cmpxchg
    16 ff -> push     ss
    17 ff -> pop      ss
    18 fc -> sbb      mod/reg/rm
@@ -208,6 +225,14 @@ defer decode
 \  6e fe -> outs     ?
    70 f0 --->        opcode-70  \ jcc
    80 fc --->        opcode-80  \ immediate add/or/adc/sbb/and/sub/xor/cmp
+\  8000 fc38 -> add  mod/rm/imm8
+\  8008 fc38 -> or   mod/rm/imm8
+\  8010 fc38 -> adc  mod/rm/imm8
+\  8018 fc38 -> sbb  mod/rm/imm8
+\  8020 fc38 -> and  mod/rm/imm8
+\  8028 fc38 -> sub  mod/rm/imm8
+\  8030 fc38 -> xor  mod/rm/imm8
+\  8038 fc38 -> cmp  mod/rm/imm8
    84 fe => test     mod/reg/rm no-direction
    86 fe => xchg     mod/reg/rm no-direction
    88 fc -> mov      mod/reg/rm
@@ -217,11 +242,11 @@ defer decode
 \  8f ff -> pop      mem	\ op=0
    90 ff -> nop      none
    90 f8 -> xchg     eax/reg
-\  98 ff -> cbw      none
-\  99 ff -> cdq      none
-\  9a ff -> call     far-direct
-\  9c ff -> pushf    none
-\  9d ff -> popf     none
+   98 ff -> cwde     none
+   99 ff -> cdq      none
+   9a ff -> callf    imm32/48
+   9c ff -> pushf    none
+   9d ff -> popf     none
    9e ff -> sahf     none
    9f ff -> lahf     none
    a0 fc -> mov      eax/moff
@@ -233,7 +258,14 @@ defer decode
 \  ad fe --->        scas
 \  b0 f0 -> mov      reg/imm
 \  c0 fe --->        mod/op/rm?
-\        0 rol, 1 ror, 2 rcl, 3 rcr, 4 shl/sal, 5 shr, 6 sar/shl, 7 sar
+\  c000 fe38 -> rol
+\  c008 fe38 -> ror
+\  c010 fe38 -> rcl
+\  c018 fe38 -> rcr
+\  c020 fe38 -> shl/sal
+\  c028 fe38 -> shr
+\  c030 fe38 -> sar/shl
+\  c038 fe38 -> sar
    c2 ff -> ret      imm16
    c3 ff -> ret      none
 \  c4 ff => les      mod/reg/rm no-d/s
@@ -248,7 +280,14 @@ defer decode
    ce ff -> int      imm8
    cf ff -> iret     none
 \  d0 fe --->        mod/op/rm?
-\        0 rol, 1 ror, 2 rcl, 3 rcr, 4 shl/sal, 5 shr, 6 sar/shl, 7 sar
+\  d000 fe38 -> rol
+\  d008 fe38 -> ror
+\  d010 fe38 -> rcl
+\  d018 fe38 -> rcr
+\  d020 fe38 -> shl/sal
+\  d028 fe38 -> shr
+\  d030 fe38 -> sar/shl
+\  d038 fe38 -> sar
 \  d2 fe --->        cl/op/rm
    d4 fe --->        aam/aad
    d7 ff -> xlat     none
@@ -266,17 +305,20 @@ defer decode
 \  ee fe -> out      ?
    f0 ff -> lock     none
    f2 fe -> rep      prefix
+   f4 ff -> hlt      none
    f5 ff -> cmc      none
    f6 fe --->        opcode-f6 \ test/not/neg/mul/imul/div/idiv
    f8 ff -> clc      none
    f9 ff -> stc      none
+   fa ff -> cli      none
+   fb ff -> sti      none
    fc ff -> cld      none
    fd ff -> std      none
 \  fe ff --->        inc/dec
 \  ff ff --->        inc/dec/call/jmp/push
 \        0 inc, 1 dec, 2 call, 3 callf, 4 jmp, 5 jmpf, 6 push, 7 ?
    00 00 -> ???      unknown
-here value table-end
+here constant table-end
 
 : tab>mask    @ ;
 : tab>op      cell+ @ ;
