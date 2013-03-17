@@ -314,10 +314,10 @@ create compiler-words   C 0 ,
 \ Forth83: >name >link body> name> link> n>link l>name
 
 : traverse-wordlist ( wid xt -- ) ( xt: nt -- continue? )
-    >r >body @ begin ?dup while
-       r@ over >r execute
-       if r> >nextxt else 2r> 2drop exit then
-    repeat r> drop ;
+    >r >body @ begin dup while
+       r@ over >r execute r> swap
+       while >nextxt
+    repeat then r> 2drop ;
 
 : ?nt>xt ( ca u -1 nt -- xt i? 0 0 | ca u -1 -1 )
     nip 3dup nt= if nip nip dup immediate? 0 0

@@ -73,9 +73,9 @@
 			 (mangle-word *this-word*) dest)))
   (emit dest))
 
-(defun resolve-branch (dest &key (orig (pop *control-stack*)))
+(defun resolve-branch (&optional (orig (pop *control-stack*)))
   (setf (aref *code* orig)
-	(format nil "&~A_word.param[~D]" (mangle-word *this-word*) dest)))
+	(format nil "&~A_word.param[~D]" (mangle-word *this-word*) *ip*)))
 
 (defun output (format &rest args)
   (output-line (apply #'format nil format args)))
@@ -230,6 +230,13 @@
     (emit-literal (concatenate 'string "\"" (quoted string) "\""))
     (emit-literal (length string))))
 
+(defun roll (n list)
+  (let ((tail (nthcdr n list)))
+    (append (list (first tail)) (ldiff list tail) (rest tail))))
+
+(defun cs-roll (n)
+  (setq *control-stack* (roll n *control-stack*)))
+
 (defimmediate unresolved ()
   (emit-literal (format nil "&~A_word" (mangle-word (read-word))))
   (emit-word ",")
@@ -241,11 +248,12 @@
   (emit-branch "0branch" :unresolved))
 
 (defimmediate else ()
-  (resolve-branch (+ *ip* 2))
-  (emit-branch "branch" :unresolved))
+  (emit-branch "branch" :unresolved)
+  (cs-roll 1)
+  (resolve-branch))
 
 (defimmediate then ()
-  (resolve-branch *ip*))
+  (resolve-branch))
 
 (defvar *leave*)
 
@@ -263,7 +271,7 @@
   (emit-word word)
   (emit-branch "0branch" (pop *control-stack*))
   (when *leave*
-    (resolve-branch *ip* :orig *leave*)
+    (resolve-branch *leave*)
     (setq *leave* nil))
   (emit-word "unloop"))
   
@@ -281,11 +289,12 @@
   (emit-branch "branch" (pop *control-stack*)))
 
 (defimmediate while ()
-  (emit-branch "0branch" :unresolved))
+  (emit-branch "0branch" :unresolved)
+  (cs-roll 1))
 
 (defimmediate repeat ()
-  (resolve-branch (+ *ip* 2))
-  (emit-branch "branch" (pop *control-stack*)))
+  (emit-branch "branch" (pop *control-stack*))
+  (resolve-branch))
 
 (defimmediate until ()
   (emit-branch "0branch" (pop *control-stack*)))
