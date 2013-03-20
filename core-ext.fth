@@ -18,59 +18,42 @@
 : ?do     leaves @  0 leaves !
           postpone 2>r postpone begin postpone (?do) postpone if ; immediate
 
-: string+ ( caddr -- addr )
-    count + aligned ;
+: string+ ( c-addr -- a-addr )   count + aligned ;
 
-: (c") ( -- caddr ) ( R: ret1 -- ret2 )
-    r> dup string+ >r ;
-
-: c" ( "<string><quote>" -- caddr )
-    postpone (c")  [char] " parse  dup c,  string, ; immediate
-
-: case ( -- ) ( C: -- case-sys )
-    0 ;
+: (c")   r> dup string+ >r ;
+: c"     postpone (c")  [char] " parse  dup c,  string, ; immediate
 
 \ TODO: convert
 
-: endcase ( x -- ) ( C: case-sys -- )
-    0 do  postpone then  loop
-    postpone drop ;
-
-: endof ( -- ) ( C: case-sys1 of-sys -- case-sys2 )
-    postpone else  swap 1+ ;
+: case      0 ;
+: of        postpone over  postpone =  postpone if  postpone drop ;
+: endof     postpone else  swap 1+ ;
+: endcase   0 do  postpone then  loop postpone drop ;
 
 \ TODO: erase
 \ TODO: expect
 
-: false ( -- 0 )
-    0 ;
+: true    -1 ;
+: false   0 ;
 
-: hex ( -- )
-    16 base ! ;
+: hex   16 base ! ;
 
 \ TODO:   marker
 
-: of ( x x -- | x y -- x ) ( C: -- of-sys )
-    postpone over  postpone =  postpone if  postpone drop ;
-
-: pick   1+ cells sp@ + @ ;
+: pick   ?dup if swap >r 1- recurse r> swap exit then dup ;
+: roll   ?dup if swap >r 1- recurse r> swap then ;
 
 : query ( -- )
     tib ''source !  #tib ''#source !  0 'source-id !
     refill drop ;
 
-\ TODO: roll ( xn xn-1 ... x0 n -- xn-1 ... x0 xn )
-\     n>r r> begin ?dup while r> -rot 1- repeat ;
-
 \ TODO:   span
 
-: to   ' >body postpone literal postpone ! ; immediate
+: value   create ,  does> @ ;
+: to      ' >body ! ;
+: to      ' >body postpone literal postpone ! ; immediate compile-only
 
-: true ( -- -1 )
-    -1 ;
-
-: tuck ( x y -- y x y )
-    swap over ;
+: tuck    swap over ;
 
 \ TODO: u.r
 
@@ -78,17 +61,15 @@
 
 \ TODO: unused
 
-: value   create ,  does> @ ;
-
 : within   over - under - u< ;
 
-\ TODO: [compile]
+: [compile]   ' compile, ; immediate
 
 \ ----------------------------------------------------------------------
 
 ( Forth2012 core extension words. )
 
-\ TODO: buffer:
+: buffer:   create allot ;
 
 : defer       create ['] abort ,  does> @ execute ;
 : defer!      >body ! ;
