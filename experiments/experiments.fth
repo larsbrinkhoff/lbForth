@@ -3,7 +3,7 @@
 
 : factorial   dup 2 < if drop 1 else  dup 1- recurse * then ;
 
-: ([ex])   r@ find 0= abort" not found" execute  r> count + aligned >r ;
+: ([ex])   r@ find 0= abort" not found" execute  r> string+ >r ;
 : [execute]   postpone ([ex])  bl word count nip 1+ allot align ; immediate
 
 : make-accumulator   create ,  does> tuck +! @ ;
@@ -13,12 +13,9 @@
 \ : :inline   create immediate ] does> @ compile, ;
 
 : dispatch ( low high "name words..." -- )
-           ( name execution: index -- )
+           ( name execution: index -- i*x )
     create  1+ swap  dup negate 1+ ,  do ' , loop
     does> tuck @ + cells + @ ;
-
-: foo   if begin repeat ;
-\       begin while while repeat then ;
 
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
 : (redef)   create immediate here 0 , 0 ,
@@ -31,13 +28,38 @@
            :redef! foo 42 - ; )
 
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
-variable inner-xt   variable outer-xt
-: (outer)    outer-xt @ execute ;
-: (inner)    inner-xt @ ;
-: [:noname   postpone (outer) postpone ; :noname ; immediate
-: [:         postpone (outer) postpone ; 0 : ; immediate
-: ;]         postpone ; ?dup if inner-xt ! :noname postpone (inner)
-             else :noname then ; immediate
-: ;          postpone ; outer-xt ! ; immediate
+: rev   dup begin ?dup while dup 1+ roll >r 1- repeat >r nr> drop ;
+( Usage:   1 2 3 4 4 rev )
 
-( Usage:   : foo 100 [:noname 42 + ;] execute ; )
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+vocabulary inline   also inline definitions
+: ;   postpone ; previous ; immediate
+previous definitions
+: ';        [ also inline ' ; previous ] literal ;
+: :inline   : immediate also inline '; (]]) ;
+
+
+: inline ( "name" -- )
+   ' ( xt ) dup >end swap >body ( body end )
+   do
+      i @ ( do something special with exit ) compile,
+   /cell +loop ; immediate
+
+: nt>xt ( nt -- xt )
+   dup nt>compile swap nt>interpret ( cxt ixt )
+   over 0= if ( no compile semantics ) nip exit then
+   dup  0= if ( no interpret semantics ) drop exit then
+   2dup =  if ( both same semantics ) drop exit then
+   ( two different semantics ) ... ;
+
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+
+\ input>r   postpone save-input postpone n>r ; immediate
+\ r>input   postpone nr> postpone restore-input postpone drop ; immediate
+
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+
+\ E.g. ?? exit.
+
+: ?? ( x "word" -- )    postpone if  ' compile,  postpone then ; immediate
+: 0?? ( x "word" -- )   postpone 0=  postpone ?? ; immediate
