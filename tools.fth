@@ -27,7 +27,7 @@
 : execute-xt       nip swap dup >r execute r> swap dup ;
 : traverse-order   context >r begin r@ @ ?dup while
 		      1 swap ['] execute-xt traverse-wordlist
-		      /cell r+ while
+		      while /cell r+
 		   repeat then r> 2drop ;
 
 : ?nt>end   2dup < if rot drop swap -1 else drop 0 then ;
@@ -54,10 +54,10 @@
         .
     then ;
 
-: .addr  dup . ;
+: .addr   ."     ( " u. ." ) " ;
 
 : see-line ( addr -- )
-    cr ."     ( " .addr ." ) "  @ disassemble ;
+    cr dup .addr  @ disassemble ;
 
 : see-xt ( xt -- )
     dup >end swap

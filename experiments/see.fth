@@ -6,16 +6,29 @@
 
 : postpone?     over @ ['] compile, = ;
 : see-tick      postpone? if ." postpone " id. cell+ else ." ['] " id. then ;
-: see-literal   drop @+ dup xt? if see-tick else . then ;
-: see-branch    drop dup @+ rot < if ." again" else ." ahead" then ;
-: see-0branch   drop dup @+ rot < if ." until" else ." if" then ;
+: body>         [ 0 >body ] literal - ;
+: to?           body> xt? ;
+: see-to        ." to " body> id. cell+ ;
+: see-literal   @+ dup xt? if see-tick else
+                dup to? if see-to else . then then ;
+: see-branch    dup @+ rot < if ." again" else ." ahead" then ;
+: see-0branch   dup @+ rot < if ." until" else ." if" then ;
+: .s"           [char] s emit [char] " emit bl emit ;
+: .."           [char] . emit [char] " emit bl emit ;
+: type?         dup @ ['] type = if .." cell+ else .s" then ;
+: see-s"        @+ 2dup + aligned type? >r type [char] " emit r> ;
 
 create see-xts
+   \ n (+loop) until unloop => n loop
+   \ n r+ again unloop => n loop
    ' (literal) ,  ' see-literal ,
    ' branch ,     ' see-branch ,
+   \ 0branch (s") ... (abort") => abort"
    ' 0branch ,    ' see-0branch ,
- \ ' (s") ,       ' see-s" ,
+   ' (s") ,       ' see-s" ,
+ \ ' 2>r ,        ' see-do , \ check for 2>r (?do)
  \ ' (+loop) ,    ' see-loop ,
+ \ ' r+ ,         ' see-loop ,
  \ ' exit ,       ' see-exit ,
 here constant see-end
 
@@ -24,7 +37,7 @@ here constant see-end
 
 : see-xt ( addr -- addr' )
     @+ see-end see-xts do
-       dup i @ = if i cell+ @ execute unloop exit then
+       dup i @ = if drop i cell+ @ execute unloop exit then
     2 cells +loop .xt ;
 
 : see-line ( addr -- addr' )    cr dup .addr  see-xt ;
