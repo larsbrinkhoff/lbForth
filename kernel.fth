@@ -76,6 +76,8 @@ end-code
 
 : (+loop)   r> swap r> + r@ over >r < invert swap >r ;
 
+: ?stack   data_stack 99 cells + sp@  < if ." Stack underflow" cr abort then ;
+
 : number ( caddr -- ... )
     0 0 rot count ?dup if
 	>number ?dup if
@@ -102,7 +104,7 @@ create interpreters
 : interpret-xt   1+ cells  interpreters + @ catch
                  if ." Exception" cr then ;
 
-: interpret   begin source? while bl-word here find interpret-xt repeat ;
+: interpret  begin source? while bl-word here find interpret-xt ?stack repeat ;
 
 : bounds ( addr1 n -- addr2 addr1)   over + swap ;
 
