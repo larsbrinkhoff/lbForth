@@ -126,3 +126,9 @@
 : (redefi)   immediate redefine ;
 finders redefine-xt   redefine redefine (redefi)
 : :redefine   : lastxt @ dup find redefine-xt ;
+
+: xt-bounds ( xt -- end start)   dup >end swap >body ;
+: .nt ( nt -- nt )   dup id. space ;
+: xref-foo ( xt nt -- xt flag )
+   dup xt-bounds do over i @ = if .nt leave then /cell +loop drop 1 ;
+: xref ( "name" -- )   ' context @ ['] xref-foo traverse-wordlist drop ;

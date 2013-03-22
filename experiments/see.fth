@@ -44,7 +44,6 @@ here constant see-end
 : see-cell ( x -- )             dup xt? if ." ' " id. else . then ;
 : see-data ( end start -- )     do cr i .addr i @ see-cell ."  ," /cell +loop ;
 : see-thread ( end start --)    begin see-line 2dup = until 2drop ;
-: xt-bounds ( xt -- end start)  dup >end swap >body ;
 \ TODO: end of does>
 : does-bounds ( xt--end start)  >does @ dup 40 + swap ;
 : .immediate ( xt -- )          immediate? 0> if ."  immediate" then ;
