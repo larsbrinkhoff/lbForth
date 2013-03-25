@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <signal.h>
+#include <setjmp.h>
 #include "forth.h"
 
 cell word_area[10000];
@@ -30,34 +31,35 @@ cell *RP = return_stack + sizeof return_stack / sizeof (cell);
   } while (0)
 #endif
 
-static volatile sig_atomic_t signal_raised = 0;
+static jmp_buf env;
 
 static void signal_handler (int i)
 {
-  signal_raised = i;
+  longjmp (env, i);
 }
 
 int
 main (int argc, char **argv)
 {
+  extern struct word sigint_word;
   extern struct word boot_word;
   xt_t *IP = (xt_t *)boot_word.param;
 
   siginterrupt (SIGINT, 1);
   signal (SIGINT, signal_handler);
+  siginterrupt (SIGSEGV, 1);
+  signal (SIGSEGV, signal_handler);
 
   for (;;)
     {
-      xt_t xt = NEXT_XT;
-      TRACE (xt);
-      EXECUTE (xt);
+      if (setjmp (env))
+        EXECUTE (&sigint_word);
 
-      if (signal_raised)
-	{
-	  extern xt_t *enter_code (xt_t *, struct word *);
-	  extern struct word sigint_word;
-	  signal_raised = 0;
-	  EXECUTE (&sigint_word);
-	}
+      for (;;)
+        {
+          xt_t xt = NEXT_XT;
+          TRACE (xt);
+          EXECUTE (xt);
+        }
     }
 }
