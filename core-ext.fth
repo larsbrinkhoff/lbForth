@@ -52,6 +52,8 @@
 : value   create ,  does> @ ;
 : to      ' >body ! ;
 : to      ' >body postpone literal postpone ! ; immediate compile-only
+: +to     ' >body +! ;
+: +to     ' >body postpone literal postpone +! ; immediate compile-only
 
 : tuck    swap over ;
 
