@@ -18,9 +18,8 @@ variable handler   0 handler !  \ last exception handler
 
 ( Exception extension words. )
 
-:redefine abort   -1 throw ;
-
-:redefine (abort")   cr type cr -2 throw ;
+re: abort      -1 throw ;
+re: (abort")   cr type cr -2 throw ;
 
 ( -1   ABORT
   -2   ABORT"
