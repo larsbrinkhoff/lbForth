@@ -35,6 +35,11 @@ static jmp_buf env;
 
 static void signal_handler (int i)
 {
+  sigset_t set;
+  sigemptyset (&set);
+  sigaddset (&set, i);
+  sigprocmask (SIG_UNBLOCK, &set, 0);
+  signal (i, signal_handler);
   longjmp (env, i);
 }
 
