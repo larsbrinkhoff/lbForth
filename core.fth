@@ -35,11 +35,16 @@
       bl emit
       count type cr abort ;
 
-: does!     lastxt @ >does ! ;
-: (does>)   r> does! ;
-: does>     [ ' (does>) ] literal compile, ; immediate
+: here!   here - allot ;
+: >h      here >r here! ;
+: h>      r> here! ;
 
-: create   [ ' dodoes >code @ ] literal header, reveal (does>) ;
+: code!     lastxt @ >code ! ;
+: does!     lastxt @ >does ! ;
+: does,     ;
+: (does>)   r> does! ;
+: does>     [ ' (does>) ] literal compile, does, ; immediate
+: create    [ ' dodoes >code @ ] literal header, reveal (does>) ;
 
 : postpone,   [ ' literal , ' compile, ] literal compile, ;
 \ Same as:    postpone literal  postpone compile, ;

@@ -25,7 +25,8 @@ variable xt
 \ : "does>"    :noname temp @ postpone literal r> postpone again postpone ; ;
 \ : my-const   "create" , "does>" @ ;
 
-: does-code!   [ ' dodoes >code @ ] literal  swap >code ! ;
+\ TODO: use "code!"
+: does-code!      [ ' dodoes >code @ ] literal  swap >code ! ;
 : noname-create   :noname ?csp does-code! reveal lastxt @ postpone [ ;
 
 0 value q-xt
