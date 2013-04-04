@@ -1,0 +1,206 @@
+start
+
+1000/
+
+define	subi A,B
+	law i A
+	add B
+	dac B
+	termin
+	
+define	move A,B
+	lac A
+	dac B
+	termin
+
+define	push A
+	law i 1
+	add SP
+	dac SP
+	lac A
+	dac i SP
+	termin
+
+define	pushio
+	law i 1
+	add SP
+	dac SP
+	dio i SP
+	termin
+
+define	pop A
+	lac i SP
+	dac A
+	idx SP
+	termin	
+
+define	popio
+	lio i SP
+	idx SP
+	termin	
+
+define	rpush A
+	lac A
+	dac i RP
+	idx RP
+	termin	
+
+define	rpop A
+	law i 1
+	add RP
+	dac RP
+	lac i RP
+	dac A
+	termin
+
+W,	0
+T,	0
+SP,	0
+RP,	0
+
+	repeat 20,0
+sp0,
+
+rp0,	repeat 20,0
+
+cold,	move (sp0,SP
+	move (rp0,RP
+	jsp warm
+
+define	enter
+	dac i RP
+	idx RP
+	termin	/ two instructions, 5 cycles
+
+define	exit
+	law i 1
+	add RP
+	dac RP
+	lac i RP
+	dac W
+	jmp i W
+	termin	/ six instructions, 11 cycles
+
+define	branch X
+	jmp X
+	termin
+
+define	zbranch X
+	lio i SP
+	idx SP
+	rcl 9s
+	rcl 9s
+	sza i
+	jmp X
+	termin
+
+warm,	enter
+	jsp quit
+	jmp bye
+
+quit,	enter
+	jsp hello
+	jsp cr
+	jsp key
+	jsp emit
+	jsp cr
+	exit
+
+bye,	hlt
+	jmp cold
+
+lit,	enter
+	move RP,W
+	subi 1,W
+	lio i W
+	idx i W
+	dio W
+	push i W
+	exit
+
+emit,	enter
+	lio i SP
+	idx SP
+	tyo
+	exit
+
+key,	enter
+	szf i 1
+	jmp .-1
+	tyi
+	clf 1
+	subi 1 SP
+	dio i sp
+	exit
+
+cr,	enter
+	jsp lit
+	77
+	jsp emit
+	exit
+
+hello,	enter
+	jsp lit
+	h
+	jsp lit
+	7
+	jsp type
+	exit
+
+h,	74
+	70
+	72
+	65
+	43
+	43
+	46
+
+type,	enter
+l,	jsp dup
+	zbranch e
+	jsp swap
+	jsp dup
+	jsp fetch
+	jsp emit
+	jsp oneplus
+	jsp swap
+	jsp oneminus
+	branch l
+e,	jsp drop
+	jsp drop
+	exit
+
+fetch,	enter
+	move i SP,W
+	move i W,i SP
+	exit
+
+dup,	enter
+	lio i SP
+	subi 1,SP
+	dio i SP
+	exit
+
+drop,	enter
+	idx SP
+	exit
+
+swap,	enter
+	move SP,W
+	idx W
+	lio i W
+	move i SP,i W
+	dio i SP
+	exit
+
+oneplus, enter
+	law 1
+	add i SP
+	dac i SP
+	exit
+
+oneminus, enter
+	subi 1,i SP
+	exit
+
+start cold
