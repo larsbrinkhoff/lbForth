@@ -73,14 +73,6 @@
 
 ( Tools extension words. )
 
-\ ;code
-
-\ assembler
-
-\ in kernel: bye
-
-\ code
-
 \ cs-pick
 
 \ cs-roll
@@ -89,10 +81,8 @@
 
 : forget   ' dup >nextxt context @ >body !  'here !  reveal ;
 
-\ [else]
-
 \ [if]
-
+\ [else]
 \ [then]
 
 \ ----------------------------------------------------------------------
@@ -111,9 +101,8 @@
 
 \ TODO: synonym
 
-: [undefined]   bl-word find nip 0= ; immediate
-
-: [defined]   postpone [undefined] invert ; immediate
+: [undefined]   here bl-word find nip 0= ; immediate
+: [defined]     postpone [undefined] invert ; immediate
 
 \ ----------------------------------------------------------------------
 
