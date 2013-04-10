@@ -104,7 +104,7 @@ create interpreters
 : interpret-xt   1+ cells  interpreters + @ catch
                  if ." Exception" cr then ;
 
-: interpret  begin source? while bl-word here find interpret-xt ?stack repeat ;
+: interpret  begin bl-word here c@ while here find interpret-xt ?stack repeat ;
 
 : bounds ( addr1 n -- addr2 addr1)   over + swap ;
 
@@ -404,7 +404,7 @@ create state C 0 ,
     repeat ;
 
 : bl-word ( "<blanks>string<blank>" -- )
-    skip
+    skip source? 0= if 0 here c! exit then
     here 1+ <source begin
 	over c! 1+
 	source? if <source dup blank? else 0 -1 then
