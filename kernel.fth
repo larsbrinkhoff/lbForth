@@ -6,6 +6,7 @@
     ." lbForth" cr
     s" core.fth" included
     s" core-ext.fth" included
+    s" string.fth" included
     s" tools.fth" included
     ." ok" cr
     quit ;
