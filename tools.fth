@@ -26,9 +26,9 @@
 
 : execute-xt       nip swap dup >r execute r> swap dup ;
 : traverse-order   context >r begin r@ @ ?dup while
-		      1 swap ['] execute-xt traverse-wordlist
-		      while /cell r+
-		   repeat then r> 2drop ;
+                      1 swap ['] execute-xt traverse-wordlist
+                      while /cell r+
+                   repeat then r> 2drop ;
 
 : ?nt>end   2dup < if rot drop swap -1 else drop 0 then ;
 : >end   here swap context @ ['] ?nt>end traverse-wordlist drop ;
@@ -81,9 +81,19 @@
 
 : forget   ' dup >nextxt context @ >body !  'here !  reveal ;
 
-\ [if]
-\ [else]
-\ [then]
+: must-refill refill 0= abort" End of file when parsing word" ;
+: next-word ( -- a u )
+              begin bl word count dup 0= while 2drop must-refill repeat ;
+: [else]      begin
+                next-word 2dup s" [then]" compare
+              while
+                2dup s" [else]" compare
+              while
+                2drop
+                \ s" [if]" compare 0= if 0= if recurse then then
+              repeat then 2drop ; immediate
+: [if]        0= if postpone [else] then ; immediate
+: [then]      ; immediate
 
 \ ----------------------------------------------------------------------
 
@@ -110,7 +120,7 @@
 : !+ ( x addr -- addr+/cell )   tuck ! cell+ ;
 
 : (redefine-does>)   [ ' dodoes >code @ ] literal over >code !
-		     r> swap >does ! ;
+                     r> swap >does ! ;
 : redefine   tuck >body !  (redefine-does>) @ execute ;
 : (redefi)   immediate redefine ;
 finders redefine-xt   redefine redefine (redefi)
