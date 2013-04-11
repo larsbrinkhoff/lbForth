@@ -83,17 +83,21 @@
 
 : must-refill refill 0= abort" End of file when parsing word" ;
 : next-word ( -- a u )
-              begin bl word count dup 0= while 2drop must-refill repeat ;
-: [else]      begin
-                next-word 2dup s" [then]" compare
-              while
-                2dup s" [else]" compare
-              while
-                2drop
-                \ s" [if]" compare 0= if 0= if recurse then then
-              repeat then 2drop ; immediate
-: [if]        0= if postpone [else] then ; immediate
-: [then]      ; immediate
+           begin bl word count dup 0= while 2drop must-refill repeat ;
+: >[then]  begin
+              next-word 2dup s" [then]" compare
+           while
+              s" [if]" compare 0= if recurse then
+           repeat 2drop ;
+: [else]   begin
+              next-word 2dup s" [then]" compare
+           while
+              2dup s" [else]" compare
+           while
+              s" [if]" compare 0= if >[then] then
+           repeat then 2drop ; immediate
+: [if]     0= if postpone [else] then ; immediate
+: [then]   ; immediate
 
 \ ----------------------------------------------------------------------
 
