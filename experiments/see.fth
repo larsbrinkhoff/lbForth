@@ -1,7 +1,7 @@
 \ Decompiler.
 
 \ For code words.
-\ s" experiments/dis-x86.fth" included
+\ s" targets/x86/asm.fth" included
 : disassemble   2drop ." " ;
 
 : postpone?     over @ ['] compile, = ;

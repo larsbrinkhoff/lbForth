@@ -1,0 +1,205 @@
+start
+
+1000/
+
+define	subi A,B
+	law i A
+	add B
+	dac B
+	termin
+	
+define	move A,B
+	lac A
+	dac B
+	termin
+
+define	push A
+	law i 1
+	add SP
+	dac SP
+	lac A
+	dac i SP
+	termin
+
+define	pushio
+	law i 1
+	add SP
+	dac SP
+	dio i SP
+	termin
+
+define	pop A
+	lac i SP
+	dac A
+	idx SP
+	termin	
+
+define	rpush A
+	law i 1
+	add RP
+	dac RP
+	lac A
+	dac i RP
+	termin
+
+define	rpop A
+	lac i RP
+	dac A
+	idx RP
+	termin	
+
+IP,	0
+W,	0
+T,	0
+SP,	0
+RP,	0
+
+	repeat 20,0
+sp0,
+
+	repeat 20,0
+rp0,
+
+cold,	move (sp0,SP
+	move (rp0,RP
+	move (warm-1,IP
+	jmp next
+
+next,	move i IP,W
+	idx IP
+	move i W,T
+	jmp i T
+
+enter,	rpush IP
+	idx W
+	dac IP
+	jmp next
+
+exit,	.+1
+	rpop IP
+	jmp next
+
+	warm
+warm,	enter
+	quit
+	bye
+
+quit,	enter
+	hello
+	cr
+	key
+	emit
+	cr
+	exit
+
+bye,	.+1
+	hlt
+	jmp cold
+
+lit,	.+1
+	push i IP
+	idx IP
+	jmp next
+
+emit,	.+1
+	lio i SP
+	idx SP
+	tyo
+	jmp next
+
+key,	.+1
+	szf i 1
+	jmp .-1
+	tyi
+	clf 1
+	subi 1 SP
+	dio i sp
+	jmp next
+
+cr,	enter
+	lit
+	77
+	emit
+	exit
+
+hello,	enter
+	lit
+	h
+	lit
+	7
+	type
+	exit
+
+h,	74
+	70
+	72
+	65
+	43
+	43
+	46
+
+type,	enter
+l,	dup
+	zbranch
+	e
+	swap
+	dup
+	fetch
+	emit
+	oneplus
+	swap
+	oneminus
+	branch
+	l	
+e,	drop
+	drop
+	exit
+
+fetch,	.+1
+	move i SP,W
+	move i W,i SP
+	jmp next
+
+dup,	.+1
+	lio i SP
+	subi 1,SP
+	dio i SP
+	jmp next
+
+drop,	.+1
+	idx SP
+	jmp next
+
+swap,	.+1
+	move SP,W
+	idx W
+	lio i W
+	move i SP,i W
+	dio i SP
+	jmp next
+
+oneplus, .+1
+	law 1
+	add i SP
+	dac i SP
+	jmp next
+
+oneminus, .+1
+	subi 1,i SP
+	jmp next
+
+branch,	.+1
+	move i IP,IP
+	jmp next
+
+zbranch, .+1
+	lac i SP
+	sza
+	jmp .+4
+	move i IP,IP
+	jmp .+2
+	idx IP
+	idx SP
+	jmp next
+
+start cold

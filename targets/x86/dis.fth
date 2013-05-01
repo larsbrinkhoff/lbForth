@@ -1,4 +1,4 @@
-s" experiments/asm-x86.fth" included
+s" targets/x86/asm.fth" included
 
 also assembler definitions
 
