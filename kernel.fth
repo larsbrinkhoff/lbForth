@@ -3,11 +3,14 @@
 ( System implementation words. )
 
 code cold \ int main (void)
+  static cell dictionary[10000];
   extern jmp_buf env;
-  extern struct word sigint_word;
-  extern struct word warm_word;
   void signal_handler (int);
   xt_t *IP = (xt_t *)warm_word.param;
+
+  tickhere_word.param[0] = (cell)dictionary;
+  SP = &data_stack_word.param[100];
+  RP = &return_stack_word.param[100];
 
   siginterrupt (SIGINT, 1);
   signal (SIGINT, signal_handler);
@@ -38,7 +41,11 @@ end-code
     ." ok" cr
     quit ;
 
-create 'here C dictionary ,
+create data_stack   100 cells allot
+
+create return_stack   100 cells allot
+
+variable 'here
 
 code signal_handler \ void signal_handler (int i)
   extern jmp_buf env;
@@ -55,10 +62,6 @@ end-code
 
 : rp@   C &RP @ C sizeof(cell) + ;
 : rp!   postpone (literal) C &RP , postpone ! ; immediate
-
-: data_stack ( -- addr )   C data_stack ;
-
-: return_stack ( -- addr )   C return_stack ;
 
 : cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
 
@@ -199,8 +202,7 @@ variable  sink
 : nip    swap drop ;
 : 2nip   2>r 2drop 2r> ;
 
-create csp
-    C 0 ,
+create csp   0 ,
 
 : !csp   csp @ if ." Nested definition: "
          lastxt @ >name type cr abort then
@@ -233,7 +235,7 @@ create csp
 
 : >body ( xt -- pfa )   C TO_BODY + ;
 
-create >in C 0 ,
+create >in   0 ,
 
 code >number ( d1 addr1 n1 -- d2 addr2 n2 )
     cell n = POP (cell);
@@ -285,7 +287,7 @@ end-code
 
 : ?dup ( 0 -- 0 | x - x x )   dup if dup then ;
 
-: abort ( ... -- ) ( R: ... -- )   C data_stack 100 cells + sp!  quit ;
+: abort ( ... -- ) ( R: ... -- )   data_stack 100 cells + sp!  quit ;
 
 : align ( -- )   'here @ aligned 'here ! ;
 
@@ -299,7 +301,7 @@ code nand ( x y -- ~(x&y) )
     PUSH (~(x & y));
 end-code
 
-create base C 10 ,
+create base   10 ,
 
 : bl ( -- <space> )   32 ;
 
@@ -337,14 +339,9 @@ create forth   C &lastxt_word ,
 
 create current   ' forth ,
 
-create context
-    ' forth ,
-    ' forth ,
-    C 0 ,
-    C 0 ,
-    C 0 ,
+create context   ' forth , ' forth , 0 , 0 , 0 ,
 
-create compiler-words   C 0 ,
+create compiler-words   0 ,
 
 : nt= ( ca u nt -- flag )
     >name 2>r r@ <> 2r> rot if 3drop 0 exit then
@@ -408,7 +405,7 @@ variable ''#source
 
 : source ( -- addr n )   ''source @  ''#source @ @ ;
 
-create state C 0 ,
+create state   0 ,
 
 : type ( addr n -- )
     ?dup if
@@ -479,7 +476,12 @@ create state C 0 ,
 
 ( Core extension words. )
 
-create #tib C 0 ,
+variable #tib
+variable #fib
+
+create tib   50 cells allot
+
+create fib   50 cells allot
 
 : <>   = 0= ;
 
@@ -527,8 +529,6 @@ variable 'source-id
 
 : source-id ( -- 0 | -1 | fileid )   'source-id @ ;
 
-: tib ( -- addr )   C tib ;
-
 : sigint   cr C "\11backtrace" find if execute then abort ;
 
 \ ----------------------------------------------------------------------
@@ -554,11 +554,9 @@ code close-file ( fileid -- ior )
     PUSH (fclose (fileid) == 0 ? 0 : errno);
 end-code
 
-variable #fib
-
 : include-file ( fileid -- )
     >r save-input r> 'source-id !
-    C fib ''source !  #fib ''#source !  0 #fib !
+    fib ''source !  #fib ''#source !  0 #fib !
     \ 0 blk !
     begin
 	refill
@@ -614,8 +612,6 @@ end-code
 
 \ : write-file ( addr n fileid -- ior )   0 file-io nip ;
 
-create tracing C 0 ,
-
 \ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
-create lastxt C &lastxt_word ,
+create lastxt   C &lastxt_word ,
 

@@ -120,6 +120,28 @@
      (setf (immediate-word ,(string name))
            (lambda ,lambda-list ,@body))))
 
+(defun compile-word (word)
+  (cond
+    ((immediate-word word)
+     (funcall (immediate-word word)))
+    ((multiple-value-bind (i p) (parse-integer word :junk-allowed t)
+       (when (and i (= p (length word)))
+	 (emit-literal i)
+	 t)))
+    (t
+     (emit-word word))))
+
+(defmacro definterpreted (name lambda-list &body body)
+  `(eval-when (:execute :compile-toplevel :load-toplevel)
+     (setf (get ',name 'interpreted) (lambda ,lambda-list ,@body))))
+
+(defun interpret-word (word)
+  (let* ((sym (find-symbol word))
+	 (fn (and sym (get sym 'interpreted))))
+    (if fn
+	(funcall fn)
+	(push word *control-stack*))))
+
 (defun declare-word (word)
   (format *header* "~&struct word ~A_word;~%" (mangle-word word)))
 
@@ -160,9 +182,10 @@
 	 (special-code-p nil))
     (cond
       ((equal (read-word) "\\")
-       (setq special-code-p t
-	     mangled "0")
-       (output (read-line *input*)))
+       (let ((ret-type (read-word)))
+	 (setq special-code-p t
+	       mangled (read-word))
+	 (output "~A ~A ~A" ret-type mangled (read-line *input*))))
       (t
        (read-line *input*)
        (output "xt_t * REGPARM ~A (xt_t *IP, struct word *word)" mangled)))
@@ -176,20 +199,31 @@
     (output-header name mangled "0")
     (output-line "} };")))
 
+(definterpreted |allot| ()
+  (let ((n (pop *control-stack*)))
+    (format *trace-output* "N = ~A " n)
+    (assert (string= n "sizeof(cell)*" :end1 13))
+    (loop repeat (parse-integer n :start 13) do (output "  (cell)0,"))))
+
+(definterpreted |,| ()
+  (output "  (cell)~A," (pop *control-stack*)))
+
+(definterpreted |'| ()
+  (push (format nil "&~A_word" (mangle-word (read-word))) *control-stack*))
+
+(definterpreted |C| ()
+  (push (read-word) *control-stack*))
+
+(definterpreted |cells| ()
+  (push (format nil "sizeof(cell)*~A" (pop *control-stack*)) *control-stack*))
+
 (defimmediate create ()
   (output-header (read-word) "dodoes_code" "&tickexit_word.param[0]")
   (do ((line (read-line *input*) (read-line *input*)))
       ((equalp (string-trim " " line) ""))
     (with-input-from-string (*input* line)
-      (let ((word1 (read-word))
-	    (word2 (read-word))
-	    (word3 (read-word)))
-	(cond ((and (equal word1 "'") (equal word3 ","))
-	       (output "  (cell)&~A_word," (mangle-word word2)))
-	      ((and (equal word1 "C") (equal word3 ","))
-	       (output "  (cell)~A," word2))
-	      (t
-	       (error "can't handle CREATE data"))))))
+      (loop for word = (read-word)
+	    while word do (interpret-word word))))
   (output-line "} };"))
 
 (defimmediate |(| ()
@@ -318,17 +352,6 @@
   (emit-word "!"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun compile-word (word)
-  (cond
-    ((immediate-word word)
-     (funcall (immediate-word word)))
-    ((multiple-value-bind (i p) (parse-integer word :junk-allowed t)
-       (when (and i (= p (length word)))
-	 (emit-literal i)
-	 t)))
-    (t
-     (emit-word word))))
 
 (defun mangle-word (name)
   (cond
