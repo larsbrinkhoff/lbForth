@@ -2,7 +2,34 @@
 
 ( System implementation words. )
 
-: boot ( -- )
+code cold \ int main (void)
+  extern jmp_buf env;
+  extern struct word sigint_word;
+  extern struct word warm_word;
+  void signal_handler (int);
+  xt_t *IP = (xt_t *)warm_word.param;
+
+  siginterrupt (SIGINT, 1);
+  signal (SIGINT, signal_handler);
+  siginterrupt (SIGSEGV, 1);
+  signal (SIGSEGV, signal_handler);
+
+  for (;;)
+    {
+      if (setjmp (env))
+        EXECUTE (&sigint_word);
+
+      for (;;)
+        {
+          xt_t xt = NEXT_XT;
+          EXECUTE (xt);
+        }
+    }
+
+  return 0;
+end-code
+
+: warm ( -- )
     ." lbForth" cr
     s" core.fth" included
     s" core-ext.fth" included
@@ -11,7 +38,17 @@
     ." ok" cr
     quit ;
 
-create 'here C word_area ,
+create 'here C dictionary ,
+
+code signal_handler \ void signal_handler (int i)
+  extern jmp_buf env;
+  sigset_t set;
+  sigemptyset (&set);
+  sigaddset (&set, i);
+  sigprocmask (SIG_UNBLOCK, &set, 0);
+  signal (i, signal_handler);
+  longjmp (env, i);
+end-code
 
 : sp@   C &SP @ C sizeof(cell) + ;
 : sp!   C &SP ! ;
@@ -180,6 +217,11 @@ create csp
 \ TODO: This is wrong if "-" overflows.  If d=x-y and sX is the
 \ sign bit, this computes "less than":  (sy&sx) ^ (sd&sx) ^ (sd&sy)
 : <   - C ~(((ucell)-1)>>1) nand invert if -1 else 0 then ;
+\ : <   2dup xor 0< if drop 0< else - 0< then ;
+\ create numbers -1 1 rshift invert ,  -1 ,  0 ,  1 ,  -1 1 rshift ,
+\ : n   cells numbers + @ ;
+\ : foo ( n -- )   5 0 do dup i n over . ." < " dup . < ." => " . cr loop drop ;
+\ : bar   5 0 do i n foo loop ;
 
 : =   - if 0 else -1 then ;
 

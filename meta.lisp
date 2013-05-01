@@ -156,16 +156,24 @@
 
 (defimmediate code ()
   (let* ((name (read-word))
-	 (mangled (mangle-word name)))
-    (read-line *input*)
-    (output "xt_t * REGPARM ~A_code (xt_t *IP, struct word *word)" mangled)
+	 (mangled (format nil "~A_code" (mangle-word name)))
+	 (special-code-p nil))
+    (cond
+      ((equal (read-word) "\\")
+       (setq special-code-p t
+	     mangled "0")
+       (output (read-line *input*)))
+      (t
+       (read-line *input*)
+       (output "xt_t * REGPARM ~A (xt_t *IP, struct word *word)" mangled)))
     (output-line "{")
     (do ((line (read-line *input*) (read-line *input*)))
 	((equalp (string-trim " " line) "end-code"))
       (output-line line))
-    (output-line "    return IP;")
+    (unless special-code-p
+      (output-line "    return IP;"))
     (output-line "}")
-    (output-header name (format nil "~A_code" mangled) "0")
+    (output-header name mangled "0")
     (output-line "} };")))
 
 (defimmediate create ()

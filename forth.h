@@ -6,6 +6,8 @@
 #include <stddef.h>
 #include <unistd.h>
 #include <string.h>
+#include <setjmp.h>
+#include <signal.h>
 #include <sys/mman.h>
 
 typedef long int cell;
@@ -44,7 +46,7 @@ extern char tib[];
 extern char fib[];
 extern cell data_stack[];
 extern cell return_stack[];
-extern cell word_area[];
+extern cell dictionary[];
 
 #define EXECUTE(XT)  IP = (XT)->code (IP, XT)
 
