@@ -8,18 +8,11 @@
 #include <string.h>
 #include <sys/mman.h>
 
-#undef TOKEN_THREADED
-
 typedef long int cell;
 typedef long unsigned ucell;
 typedef long long dcell;
 typedef unsigned long long udcell;
-
-#ifdef TOKEN_THREADED
-typedef unsigned short xt_t;
-#else
 typedef struct word *xt_t;
-#endif
 
 #define NEXT_XT (*IP++)
 
@@ -53,18 +46,7 @@ extern cell data_stack[];
 extern cell return_stack[];
 extern cell word_area[];
 
-#ifdef TOKEN_THREADED
-extern struct word *words[];
-#define XT_WORD(XT) (words[XT])
-#else
-#define XT_WORD(XT) (XT)
-#endif
-
-#define EXECUTE(XT)				\
-  do {						\
-    struct word *word = XT_WORD (XT);		\
-    IP = word->code (IP, word);			\
-  } while (0)
+#define EXECUTE(XT)  IP = (XT)->code (IP, XT)
 
 #define POP(TYPE)	((TYPE)(*SP++))
 #define PUSH(X)		(*--SP = (cell)(X))

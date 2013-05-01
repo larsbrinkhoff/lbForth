@@ -14,23 +14,6 @@ char fib[256];
 cell *SP = data_stack + sizeof data_stack / sizeof (cell);
 cell *RP = return_stack + sizeof return_stack / sizeof (cell);
 
-#if 1
-#define TRACE(XT)
-#else
-#define TRACE(XT)					\
-  do {							\
-    extern struct word tracing_word;			\
-    struct word *word = XT_WORD (XT);			\
-    cell *p;						\
-    if (tracing_word.param[0])				\
-      {							\
-        for (p =  return_stack + 100 - 1; p >= RP; p--)	\
-          putchar (' ');				\
-        printf ("Executing %s\n", word->name);		\
-      }							\
-  } while (0)
-#endif
-
 static jmp_buf env;
 
 static void signal_handler (int i)
@@ -63,7 +46,6 @@ main (int argc, char **argv)
       for (;;)
         {
           xt_t xt = NEXT_XT;
-          TRACE (xt);
           EXECUTE (xt);
         }
     }

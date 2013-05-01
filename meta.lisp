@@ -7,15 +7,13 @@
 (defvar *input*)
 (defvar *output*)
 (defvar *header*)
-(defvar *words*)
 (defvar *ip* 0)
 (defvar *code* (make-array '(0) :adjustable t :fill-pointer 0))
 
 (defun compile-forth (input-file
 		      &optional
 		      (output-file (output-name input-file))
-		      (header-file (header-name input-file))
-		      (words-file (words-name input-file)))
+		      (header-file (header-name input-file)))
   (with-open-file (*input* input-file)
 
     (with-open-file (*output* output-file :direction :output
@@ -27,23 +25,14 @@
 					    :if-exists :supersede)
 	(format *header* "~&xt_t * enter_code (xt_t *, struct word *) REGPARM;~%")
 	(format *header* "~&xt_t * dodoes_code (xt_t *, struct word *) REGPARM;~%")
-
-	(with-open-file (*words* words-file :direction :output
-				            :if-exists :supersede)
-	  (format *words* "~&#include \"forth.h\"~%")
-	  (format *words* "~&#include \"~A\"~%" (namestring header-file))
-	  (format *words* "~&xt_t words[1000] = {~%")
-
-	  (let ((*previous-word* "0"))
-	    (do ((word (read-word) (read-word)))
-		((null word))
-	      (compile-word word))
-
-	    (format *words* "~&};~%")
-	    (format t "~&Non-immediate words used:~%")
-	    (dolist (cons (sort *non-immediate-words*
-				(lambda (x y) (< (cdr x) (cdr y)))))
-	      (format t "~&~30<~A~> ~D~%" (car cons) (cdr cons)))))))))
+	(let ((*previous-word* "0"))
+	  (do ((word (read-word) (read-word)))
+	      ((null word))
+	    (compile-word word))
+	  (format t "~&Non-immediate words used:~%")
+	  (dolist (cons (sort *non-immediate-words*
+			      (lambda (x y) (< (cdr x) (cdr y)))))
+	    (format t "~&~30<~A~> ~D~%" (car cons) (cdr cons))))))))
 
 (defun emit (string)
   (unless (stringp string)
@@ -132,8 +121,7 @@
            (lambda ,lambda-list ,@body))))
 
 (defun declare-word (word)
-  (format *header* "~&struct word ~A_word;~%" (mangle-word word))
-  (format *words* "~&  &~A_word,~%" (mangle-word word)))
+  (format *header* "~&struct word ~A_word;~%" (mangle-word word)))
 
 (defun output-header (name code does &optional immediatep)
   (declare-word name)
