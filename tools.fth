@@ -124,6 +124,8 @@
 
 \ ----------------------------------------------------------------------
 
+: ((   begin next-word s" ))" compare 0= until ;
+
 : @+ ( addr -- addr+/cell x )   dup cell+ swap @ ;
 : !+ ( x addr -- addr+/cell )   tuck ! cell+ ;
 
