@@ -8,8 +8,8 @@ code cold \ int main (void)
   xt_t *IP = (xt_t *)warm_word.param;
 
   tickhere_word.param[0] = (cell)dictionary;
-  SP = &data_stack_word.param[100];
-  RP = &return_stack_word.param[100];
+  SP_word.param[0] = (cell)(&data_stack_word.param[100]);
+  RP_word.param[0] = (cell)(&return_stack_word.param[100]);
 
   siginterrupt (SIGINT, 1);
   signal (SIGINT, signal_handler);
@@ -57,11 +57,14 @@ code signal_handler \ void signal_handler (int i)
   longjmp ((void *)jmpbuf_word.param, i);
 end-code
 
-: sp@   C &SP @ /cell + ;
-: sp!   C &SP ! ;
+variable SP
+variable RP
 
-: rp@   C &RP @ /cell + ;
-: rp!   postpone (literal) C &RP , postpone ! ; immediate
+: sp@   SP @ /cell + ;
+: sp!   SP ! ;
+
+: rp@   RP @ /cell + ;
+: rp!   postpone (literal) C &RP_word.param[0] , postpone ! ; immediate
 
 : cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
 

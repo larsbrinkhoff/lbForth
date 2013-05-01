@@ -40,17 +40,9 @@ struct word
   cell param[];
 };
 
-extern cell *SP;
-extern cell *RP;
-extern char tib[];
-extern char fib[];
-extern cell data_stack[];
-extern cell return_stack[];
-extern cell dictionary[];
-
 #define EXECUTE(XT)  IP = (XT)->code (IP, XT)
 
-#define POP(TYPE)	((TYPE)(*SP++))
-#define PUSH(X)		(*--SP = (cell)(X))
-#define RPOP(TYPE)	((TYPE)(*RP++))
-#define RPUSH(X)	(*--RP = (cell)(X))
+#define POP(TYPE)	((TYPE)(*(*((cell **)SP_word.param))++))
+#define PUSH(X)		(*--(*((cell **)SP_word.param)) = (cell)(X))
+#define RPOP(TYPE)	((TYPE)(*(*((cell **)RP_word.param))++))
+#define RPUSH(X)	(*--(*((cell **)RP_word.param)) = (cell)(X))
