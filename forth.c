@@ -3,4 +3,3 @@
 #include "forth.h"
 
 cell *SP, *RP;
-jmp_buf env;

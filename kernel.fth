@@ -4,7 +4,6 @@
 
 code cold \ int main (void)
   static cell dictionary[10000];
-  extern jmp_buf env;
   void signal_handler (int);
   xt_t *IP = (xt_t *)warm_word.param;
 
@@ -19,7 +18,7 @@ code cold \ int main (void)
 
   for (;;)
     {
-      if (setjmp (env))
+      if (setjmp ((void *)jmpbuf_word.param))
         EXECUTE (&sigint_word);
 
       for (;;)
@@ -47,20 +46,21 @@ create return_stack   100 cells allot
 
 variable 'here
 
+create jmpbuf   jmp_buf allot
+
 code signal_handler \ void signal_handler (int i)
-  extern jmp_buf env;
   sigset_t set;
   sigemptyset (&set);
   sigaddset (&set, i);
   sigprocmask (SIG_UNBLOCK, &set, 0);
   signal (i, signal_handler);
-  longjmp (env, i);
+  longjmp ((void *)jmpbuf_word.param, i);
 end-code
 
-: sp@   C &SP @ C sizeof(cell) + ;
+: sp@   C &SP @ /cell + ;
 : sp!   C &SP ! ;
 
-: rp@   C &RP @ C sizeof(cell) + ;
+: rp@   C &RP @ /cell + ;
 : rp!   postpone (literal) C &RP , postpone ! ; immediate
 
 : cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
@@ -316,7 +316,7 @@ code c@ ( addr -- c )
     PUSH (*addr);
 end-code
 
-: /cell ( -- n )   C sizeof(cell) ;
+: /cell   /cell ; \ Metacompiler knows what to do.
 
 : cell+ ( n1 -- n2 )   /cell + ;
 
@@ -479,9 +479,9 @@ create state   0 ,
 variable #tib
 variable #fib
 
-create tib   50 cells allot
+create tib   256 allot
 
-create fib   50 cells allot
+create fib   256 allot
 
 : <>   = 0= ;
 

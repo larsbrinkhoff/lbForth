@@ -1,5 +1,7 @@
 ;;;; -*- lisp -*- Copyright 2004, 2013 Lars Brinkhoff
 
+(load "params.lisp")
+
 (defvar *this-word*)
 (defvar *previous-word*)
 (defvar *non-immediate-words* nil)
@@ -200,10 +202,8 @@
     (output-line "} };")))
 
 (definterpreted |allot| ()
-  (let ((n (pop *control-stack*)))
-    (format *trace-output* "N = ~A " n)
-    (assert (string= n "sizeof(cell)*" :end1 13))
-    (loop repeat (parse-integer n :start 13) do (output "  (cell)0,"))))
+  (loop repeat (ceiling (parse-integer (pop *control-stack*)) *sizeof-cell*)
+        do (output "  (cell)0,")))
 
 (definterpreted |,| ()
   (output "  (cell)~A," (pop *control-stack*)))
@@ -214,8 +214,11 @@
 (definterpreted |C| ()
   (push (read-word) *control-stack*))
 
+(defun cells (n)
+  (princ-to-string (* *sizeof-cell* n)))
+
 (definterpreted |cells| ()
-  (push (format nil "sizeof(cell)*~A" (pop *control-stack*)) *control-stack*))
+  (push (cells (parse-integer (pop *control-stack*))) *control-stack*))
 
 (defimmediate create ()
   (output-header (read-word) "dodoes_code" "&tickexit_word.param[0]")
@@ -350,6 +353,12 @@
 (defimmediate |rp!| ()
   (emit-literal "&RP")
   (emit-word "!"))
+
+(defimmediate |/cell| ()
+  (emit-literal (princ-to-string *sizeof-cell*)))
+
+(definterpreted |jmp_buf| ()
+  (push (princ-to-string *sizeof-jmp_buf*) *control-stack*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
