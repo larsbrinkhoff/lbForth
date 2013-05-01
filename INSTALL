@@ -1,0 +1,2 @@
+To build the bootstrap Forth, type "make".  You will have to tweak the
+Makefile if you want to use some Lisp other than SBCL.
