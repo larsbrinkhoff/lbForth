@@ -64,7 +64,7 @@ variable RP
 : sp!   SP ! ;
 
 : rp@   RP @ /cell + ;
-: rp!   postpone (literal) C &RP_word.param[0] , postpone ! ; immediate
+: rp!   postpone (literal) RP , postpone ! ; immediate
 
 : cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
 
@@ -338,7 +338,7 @@ end-code
 \ Put xt and 'unex on return stack, then jump to that.
 : execute   ['] unex >r >r rp@ >r ;
 
-create forth   C &lastxt_word ,
+create forth   ' lastxt ,
 
 create current   ' forth ,
 
@@ -586,8 +586,7 @@ code open-file ( addr n mode -- fileid ior )
     PUSH (fileid == 0 ? errno : 0 );
 end-code
 
-: r/o ( -- mode )
-    C "r" ;
+: r/o   s" r" drop ;
 
 code read-file ( addr n1 fileid -- n2 ior )
     FILE *fileid = POP (FILE *);
@@ -616,5 +615,5 @@ end-code
 \ : write-file ( addr n fileid -- ior )   0 file-io nip ;
 
 \ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
-create lastxt   C &lastxt_word ,
+create lastxt   ' lastxt ,
 
