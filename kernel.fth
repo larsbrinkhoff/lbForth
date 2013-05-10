@@ -33,6 +33,11 @@ end-code
 
 : warm ( -- )
     ." lbForth" cr
+    ['] lastxt lastxt !
+    ['] lastxt forth !
+    0 compiler-words !
+    ['] forth current !
+    10 base !
     s" core.fth" included
     s" core-ext.fth" included
     s" string.fth" included
@@ -90,8 +95,7 @@ code dodoes ( -- addr ) ( R: -- ret )
 end-code
 
 \ This is for meta compiler convenience.
-create 'exit
-    ' exit ,
+create 'exit   ' exit ,
 
 : branch   r> @ >r ;
 
@@ -135,8 +139,7 @@ end-code
 
 : dummy-catch   execute 0 ;
 
-create catcher
-    ' dummy-catch ,
+create catcher   ' dummy-catch ,
 
 : catch   catcher @ execute ;
 
@@ -205,7 +208,7 @@ variable  sink
 : nip    swap drop ;
 : 2nip   2>r 2drop 2r> ;
 
-create csp   0 ,
+variable csp
 
 : !csp   csp @ if ." Nested definition: "
          lastxt @ >name type cr abort then
@@ -238,7 +241,7 @@ create csp   0 ,
 
 : >body ( xt -- pfa )   C TO_BODY + ;
 
-create >in   0 ,
+variable >in
 
 code >number ( d1 addr1 n1 -- d2 addr2 n2 )
     cell n = POP (cell);
@@ -304,7 +307,7 @@ code nand ( x y -- ~(x&y) )
     PUSH (~(x & y));
 end-code
 
-create base   10 ,
+variable base
 
 : bl ( -- <space> )   32 ;
 
@@ -340,11 +343,11 @@ end-code
 
 create forth   ' lastxt ,
 
-create current   ' forth ,
+create compiler-words   0 ,
 
 create context   ' forth , ' forth , 0 , 0 , 0 ,
 
-create compiler-words   0 ,
+variable current
 
 : nt= ( ca u nt -- flag )
     >name 2>r r@ <> 2r> rot if 3drop 0 exit then
@@ -408,7 +411,7 @@ variable ''#source
 
 : source ( -- addr n )   ''source @  ''#source @ @ ;
 
-create state   0 ,
+variable state
 
 : type ( addr n -- )
     ?dup if
@@ -615,5 +618,4 @@ end-code
 \ : write-file ( addr n fileid -- ior )   0 file-io nip ;
 
 \ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
-create lastxt   ' lastxt ,
-
+variable lastxt
