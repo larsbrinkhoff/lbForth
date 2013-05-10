@@ -41,7 +41,7 @@
 : words   context @ ['] .nt traverse-wordlist ;
 
 : body?       dup >body swap >end within ;
-: .offset     dup id. ."  +" >body - . ;
+: .offset     2dup id. swap >body - ."  +" . ;
 : ?.offset    2dup body? if .offset 0 else drop -1 then ;
 : backtrace   return_stack 100 cells + rp@ do ."  > " i ?
               i @ context @ ['] ?.offset traverse-wordlist cr drop
