@@ -10,14 +10,15 @@ forth: kernel.o
 
 kernel.o: kernel.c kernel.h forth.h
 
-%.c %.h: %.fth meta.lisp params.lisp
-	$(LISP) --load meta.lisp \
+%.c %.h: %.fth targets/c/meta.lisp params.lisp
+	$(LISP) --load targets/c/meta.lisp \
 	        --eval '(progn (compile-forth "$<") (quit))'
 
 params.lisp: params
 	./$< > $@
 
-params: params.c
+params: targets/c/params.c
+	$(CC) $(CFLAGS) -I. $^ -o $@
 
 clean:
 	rm -f forth *.o kernel.c kernel.h params params.lisp
