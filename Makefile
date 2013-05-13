@@ -1,7 +1,10 @@
 CC = gcc
-CFLAGS = -g -m32 -fomit-frame-pointer -O2
 LISP = sbcl
+CFLAGS = -g -m32 -fomit-frame-pointer -O2 -I.
 LDFLAGS = -g -m32 
+
+meta = targets/c/meta.lisp
+nucleus = targets/c/nucleus.fth
 
 all: forth
 
@@ -10,9 +13,9 @@ forth: kernel.o
 
 kernel.o: kernel.c kernel.h forth.h
 
-%.c %.h: %.fth targets/c/meta.lisp params.lisp
-	$(LISP) --load targets/c/meta.lisp \
-	        --eval '(progn (compile-forth "$<") (quit))'
+%.c %.h: %.fth $(nucleus) $(meta) params.lisp
+	$(LISP) --noinform --load $(meta) \
+	        --eval '(compile-forth "$(nucleus)" "$<")'
 
 params.lisp: params
 	./$< > $@

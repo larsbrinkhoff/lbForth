@@ -12,29 +12,37 @@
 (defvar *ip* 0)
 (defvar *code* (make-array '(0) :adjustable t :fill-pointer 0))
 
-(defun compile-forth (input-file
-		      &optional
-		      (output-file (output-name input-file))
-		      (header-file (header-name input-file)))
-  (with-open-file (*input* input-file)
+(declaim (ftype function compile-word header-name mangle-char
+		mangle-word output output-line output-name quoted read-word
+		whitespacep))
 
-    (with-open-file (*output* output-file :direction :output
+(defun compile-forth (&rest input-files
+		      &aux
+		      (output-file (output-name input-files))
+		      (header-file (header-name input-files)))
+  (with-open-file (*output* output-file :direction :output
+			                :if-exists :supersede)
+    (output-line "#include \"forth.h\"")
+    (output "#include \"~A\"" (namestring header-file))
+    (with-open-file (*header* header-file :direction :output
 					  :if-exists :supersede)
-      (output-line "#include \"forth.h\"")
-      (output "#include \"~A\"" (namestring header-file))
-
-      (with-open-file (*header* header-file :direction :output
-					    :if-exists :supersede)
-	(format *header* "~&xt_t * enter_code (xt_t *, struct word *) REGPARM;~%")
-	(format *header* "~&xt_t * dodoes_code (xt_t *, struct word *) REGPARM;~%")
-	(let ((*previous-word* "0"))
-	  (do ((word (read-word) (read-word)))
-	      ((null word))
-	    (compile-word word))
-	  (format t "~&Non-immediate words used:~%")
-	  (dolist (cons (sort *non-immediate-words*
-			      (lambda (x y) (< (cdr x) (cdr y)))))
-	    (format t "~&~30<~A~> ~D~%" (car cons) (cdr cons))))))))
+      (format *header* "~&code_t enter_code, dodoes_code;~%")
+      (let ((*previous-word* "0"))
+	(dolist (file input-files)
+	  (with-open-file (*input* file)
+	    (do ((word (read-word) (read-word)))
+		((null word))
+	      (compile-word word))
+	    #+(or)
+	    (format t "~&Non-immediate words used:~%")
+	    #+(or)
+	    (dolist (cons (sort *non-immediate-words*
+				(lambda (x y) (< (cdr x) (cdr y)))))
+	      (format t "~&~30<~A~> ~D~%" (car cons) (cdr cons))))))))
+  #+sbcl
+  (quit)
+  #-sbcl
+  (implementation-dependent-quit))
 
 (defun emit (string)
   (unless (stringp string)
@@ -75,11 +83,11 @@
   (fresh-line *output*)
   (write-line line *output*))
 
-(defun output-name (file)
-  (merge-pathnames (make-pathname :type "c") file))
+(defun output-name (files)
+  (merge-pathnames (make-pathname :type "c") (car (last files))))
 
-(defun header-name (file)
-  (merge-pathnames (make-pathname :type "h") file))
+(defun header-name (files)
+  (merge-pathnames (make-pathname :type "h") (car (last files))))
 
 (defun words-name (file)
   (merge-pathnames (make-pathname :name "words" :type "c") file))
@@ -198,7 +206,7 @@
     (unless special-code-p
       (output-line "    return IP;"))
     (output-line "}")
-    (output-header name mangled "0")
+    (output-header name (format nil "(code_t *)~A" mangled) "0" nil)
     (output-line "} };")))
 
 (definterpreted |allot| ()

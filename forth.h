@@ -30,12 +30,14 @@ typedef struct word *xt_t;
 #define REGPARM
 #endif
 
+typedef xt_t * REGPARM code_t (xt_t *, struct word *);
+
 struct word
 {
   char nlen;
   char name[NAME_LENGTH - 1];
   struct word *next;
-  xt_t * (*code) (xt_t *, struct word *) REGPARM;
+  code_t *code;
   cell *does;
   cell param[];
 };
