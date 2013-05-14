@@ -125,13 +125,13 @@ variable csp
          lastxt @ >name type cr abort then
          0 csp ! ;
 
-: :   C enter_code header, ] !csp ;
+: :   [ ' enter >code @ ] literal header, ] !csp ;
 
 : ;   reveal postpone exit postpone [ ?csp ; immediate
 
 \ TODO: This is wrong if "-" overflows.  If d=x-y and sX is the
 \ sign bit, this computes "less than":  (sy&sx) ^ (sd&sx) ^ (sd&sy)
-: <   - C ~(((ucell)-1)>>1) nand invert if -1 else 0 then ;
+: <   - [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
 \ : <   2dup xor 0< if drop 0< else - 0< then ;
 \ create numbers -1 1 rshift invert ,  -1 ,  0 ,  1 ,  -1 1 rshift ,
 \ : n   cells numbers + @ ;

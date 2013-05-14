@@ -209,8 +209,14 @@
     (output-header name (format nil "(code_t *)~A" mangled) "0" nil)
     (output-line "} };")))
 
+(defun pop-integer ()
+  (let ((x (pop *control-stack*)))
+    (etypecase x
+      (number	x)
+      (string	(parse-integer x)))))
+
 (definterpreted |allot| ()
-  (loop repeat (ceiling (parse-integer (pop *control-stack*)) *sizeof-cell*)
+  (loop repeat (ceiling (pop-integer) *sizeof-cell*)
         do (output "  (cell)0,")))
 
 (definterpreted |,| ()
@@ -223,10 +229,10 @@
   (push (read-word) *control-stack*))
 
 (defun cells (n)
-  (princ-to-string (* *sizeof-cell* n)))
+  (* *sizeof-cell* n))
 
 (definterpreted |cells| ()
-  (push (cells (parse-integer (pop *control-stack*))) *control-stack*))
+  (push (cells (pop-integer)) *control-stack*))
 
 (defimmediate create ()
   (output-header (read-word) "dodoes_code" "&tickexit_word.param[0]")
@@ -249,7 +255,7 @@
   (emit-literal (read-word)))
 
 (defimmediate literal ()
-  (error "can't handle literal"))
+  (emit-literal (pop *control-stack*)))
 
 (defimmediate postpone ()
   (let* ((word (read-word))
@@ -363,10 +369,42 @@
   (emit-word "!"))
 
 (defimmediate |/cell| ()
-  (emit-literal (princ-to-string *sizeof-cell*)))
+  (emit-literal *sizeof-cell*))
 
 (definterpreted |jmp_buf| ()
-  (push (princ-to-string *sizeof-jmp_buf*) *control-stack*))
+  (push *sizeof-jmp_buf* *control-stack*))
+
+(defimmediate |[| ()
+  (loop for word = (read-word)
+        until (string= word "]")
+        do (interpret-word word)))
+
+(defun ends-with-p (string1 string2)
+  (let ((n (- (length string1) (length string2))))
+    (and (>= n 0) (string= string1 string2 :start1 n))))
+
+(definterpreted |>code| ()
+  (let ((x (pop *control-stack*)))
+    (check-type x string)
+    (assert (ends-with-p x "_word"))
+    (push (format nil "~A.code" x) *control-stack*)))
+
+(definterpreted |@| ()
+  (let ((x (pop *control-stack*)))
+    (check-type x string)
+    (assert (ends-with-p x "_word.code"))
+    (let ((y (subseq x 1 (- (length x) 10))))
+      (push (format nil "~A_code" y) *control-stack*))))
+
+(definterpreted |invert| ()
+  (let ((x (pop-integer)))
+    (push (logand (lognot x) (1- (ash 1 (* 8 *sizeof-cell*))))
+	  *control-stack*)))
+
+(definterpreted |rshift| ()
+  (let ((n (pop-integer))
+	(x (pop-integer)))
+    (push (ash x (- n)) *control-stack*)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
