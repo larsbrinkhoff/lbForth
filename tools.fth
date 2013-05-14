@@ -46,6 +46,7 @@
 : backtrace   return_stack 100 cells + rp@ do ."  > " i ?
               i @ context @ ['] ?.offset traverse-wordlist cr drop
               /cell +loop ;
+' backtrace 'bt !
 
 : xt??   nip over <> dup ;
 : xt?    1 ['] xt?? traverse-order nip 0= ;

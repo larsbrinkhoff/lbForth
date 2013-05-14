@@ -374,7 +374,10 @@ variable 'source-id
 
 : source-id ( -- 0 | -1 | fileid )   'source-id @ ;
 
-: sigint   cr C "\11backtrace" find if execute then abort ;
+: nop ;
+create 'bt   ' nop ,
+
+: sigint   cr 'bt @ execute abort ;
 
 \ ----------------------------------------------------------------------
 
