@@ -1,6 +1,6 @@
 CC = gcc
 LISP = sbcl
-CFLAGS = -g -m32 -fomit-frame-pointer -O2 -I.
+CFLAGS = -g -m32 -fomit-frame-pointer -O2 -I. -Itargets/c
 LDFLAGS = -g -m32 
 
 meta = targets/c/meta.lisp
@@ -11,7 +11,7 @@ all: forth
 forth: kernel.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
-kernel.o: kernel.c kernel.h forth.h
+kernel.o: kernel.c kernel.h targets/c/forth.h
 
 %.c %.h: %.fth $(nucleus) $(meta) params.lisp
 	$(LISP) --noinform --load $(meta) \
