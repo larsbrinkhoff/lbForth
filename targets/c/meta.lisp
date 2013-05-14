@@ -225,9 +225,6 @@
 (definterpreted |'| ()
   (push (format nil "&~A_word" (mangle-word (read-word))) *control-stack*))
 
-(definterpreted |C| ()
-  (push (read-word) *control-stack*))
-
 (defun cells (n)
   (* *sizeof-cell* n))
 
@@ -373,6 +370,21 @@
 
 (definterpreted |jmp_buf| ()
   (push *sizeof-jmp_buf* *control-stack*))
+
+(defimmediate |NAME_LENGTH| ()
+  (emit-literal *NAME_LENGTH*))
+
+(defimmediate |TO_NEXT| ()
+  (emit-literal *TO_NEXT*))
+
+(defimmediate |TO_CODE| ()
+  (emit-literal *TO_CODE*))
+
+(defimmediate |TO_DOES| ()
+  (emit-literal *TO_DOES*))
+
+(defimmediate |TO_BODY| ()
+  (emit-literal *TO_BODY*))
 
 (defimmediate |[| ()
   (loop for word = (read-word)

@@ -37,7 +37,7 @@ variable RP
 
 : >name ( xt -- caddr u )   count cabs ;
 
-: >lfa   C TO_NEXT + ;
+: >lfa   TO_NEXT + ;
 
 : >nextxt   >lfa @ ;
 
@@ -80,7 +80,7 @@ create interpreters
 : bounds ( addr1 n -- addr2 addr1)   over + swap ;
 
 : link, ( nt -- )      lastxt !  current @ >body @ , ;
-: name, ( "name" -- )  bl-word C NAME_LENGTH allot ;
+: name, ( "name" -- )  bl-word NAME_LENGTH allot ;
 : header, ( code -- )  align here  name,  link, ( code ) , 0 , ;
 
 : reveal   lastxt @ current @ >body ! ;
@@ -142,11 +142,11 @@ variable csp
 
 : > ( x y -- flag )   swap < ;
 
-: >code ( xt -- cfa )   C TO_CODE + ;
+: >code ( xt -- cfa )   TO_CODE + ;
 
-: >does ( xt -- dfa )   C TO_DOES + ;
+: >does ( xt -- dfa )   TO_DOES + ;
 
-: >body ( xt -- pfa )   C TO_BODY + ;
+: >body ( xt -- pfa )   TO_BODY + ;
 
 variable >in
 
@@ -294,7 +294,7 @@ variable state
 	over c! 1+
 	source? if <source dup blank? else 0 -1 then
     until
-    drop here 1+ - C NAME_LENGTH-1 min here c! ;
+    drop here 1+ - NAME_LENGTH 1 - min here c! ;
 
 \ : skip ( char "<chars>" -- char )
 \     begin
@@ -307,7 +307,7 @@ variable state
 \     repeat ;
 
 \ : word ( char "<chars>string<char>" -- caddr )
-\     skip parse  C NAME_LENGTH-1 min  dup here c!  here 1+ swap cmove  here ;
+\     skip parse  NAME_LENGTH 1 - min  dup here c!  here 1+ swap cmove  here ;
 
 : previous   ['] forth context ! ;
 
