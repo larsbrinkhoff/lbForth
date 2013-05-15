@@ -248,9 +248,6 @@
   (do ()
       ((eql (read-char *input*) #\Newline))))
 
-(defimmediate C ()
-  (emit-literal (read-word)))
-
 (defimmediate literal ()
   (emit-literal (pop *control-stack*)))
 
@@ -280,13 +277,6 @@
 
 (defun cs-roll (n)
   (setq *control-stack* (roll n *control-stack*)))
-
-(defimmediate unresolved ()
-  (emit-literal (format nil "&~A_word" (mangle-word (read-word))))
-  (emit-word ",")
-  (emit-word "here")
-  (emit-literal "0")
-  (emit-word ","))
 
 (defimmediate if ()
   (emit-branch "0branch" :unresolved))
@@ -342,9 +332,6 @@
 
 (defimmediate until ()
   (emit-branch "0branch" (pop *control-stack*)))
-
-(defimmediate |[| ()
-  (error "can't handle ["))
 
 (defimmediate [char] ()
   (let ((char (char (read-word) 0)))
