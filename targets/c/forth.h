@@ -14,6 +14,7 @@ typedef long int cell;
 typedef long unsigned ucell;
 typedef long long dcell;
 typedef unsigned long long udcell;
+typedef struct word *nt_t;
 typedef struct word *xt_t;
 
 #define NEXT_XT (*IP++)
@@ -30,13 +31,13 @@ typedef struct word *xt_t;
 #define REGPARM
 #endif
 
-typedef xt_t * REGPARM code_t (xt_t *, struct word *);
+typedef xt_t * REGPARM code_t (xt_t *, nt_t);
 
 struct word
 {
   char nlen;
   char name[NAME_LENGTH - 1];
-  struct word *next;
+  nt_t next;
   code_t *code;
   cell *does;
   cell param[];
