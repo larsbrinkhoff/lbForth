@@ -227,7 +227,7 @@
       (string	(parse-integer x)))))
 
 (definterpreted allot ()
-  (loop repeat (ceiling (pop-integer) *sizeof-cell*)
+  (loop repeat (ceiling (pop-integer) *cell-size*)
         do (output "  (cell)0,")))
 
 (definterpreted |,| ()
@@ -237,7 +237,7 @@
   (push (format nil "&~A_word" (mangle-word (read-word))) *control-stack*))
 
 (defun cells (n)
-  (* *sizeof-cell* n))
+  (* *cell-size* n))
 
 (definterpreted cells ()
   (push (cells (pop-integer)) *control-stack*))
@@ -353,28 +353,28 @@
   (output-line "  0"))
 
 (definterpreted /cell ()
-  (push *sizeof-cell* *control-stack*))
+  (push *cell-size* *control-stack*))
 
 (defimmediate /cell ()
-  (emit-literal *sizeof-cell*))
+  (emit-literal *cell-size*))
 
 (definterpreted jmp_buf ()
-  (push *sizeof-jmp_buf* *control-stack*))
+  (push *jmp_buf-size* *control-stack*))
 
 (defimmediate name_length ()
-  (emit-literal *NAME_LENGTH*))
+  (emit-literal *name-size*))
 
 (defimmediate to_next ()
-  (emit-literal *TO_NEXT*))
+  (emit-literal *next-offset*))
 
 (defimmediate to_code ()
-  (emit-literal *TO_CODE*))
+  (emit-literal *code-offset*))
 
 (defimmediate to_does ()
-  (emit-literal *TO_DOES*))
+  (emit-literal *does-offset*))
 
 (defimmediate to_body ()
-  (emit-literal *TO_BODY*))
+  (emit-literal *body-offset*))
 
 (defimmediate |[| ()
   (setq *state* 'interpret-word))
@@ -401,7 +401,7 @@
 
 (definterpreted invert ()
   (let ((x (pop-integer)))
-    (push (logand (lognot x) (1- (ash 1 (* 8 *sizeof-cell*))))
+    (push (logand (lognot x) (1- (ash 1 (* 8 *cell-size*))))
 	  *control-stack*)))
 
 (definterpreted rshift ()

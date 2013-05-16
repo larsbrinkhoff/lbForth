@@ -9,6 +9,11 @@ static void check (size_t n)
     }
 }
 
+static void defvar (const char *name, int value)
+{
+  printf ("(defvar %s %d)\n", name, value);
+}
+
 int main (void)
 {
   check (sizeof (cell *));
@@ -16,13 +21,13 @@ int main (void)
   check (sizeof (code_t *));
   check (sizeof (xt_t));
 
-  printf ("(defvar *sizeof-cell* %d)\n", sizeof (cell));
-  printf ("(defvar *sizeof-jmp_buf* %d)\n", sizeof (jmp_buf));
-  printf ("(defvar *NAME_LENGTH* %d)\n", NAME_LENGTH);
-  printf ("(defvar *TO_NEXT* %d)\n", TO_NEXT);
-  printf ("(defvar *TO_CODE* %d)\n", TO_CODE);
-  printf ("(defvar *TO_DOES* %d)\n", TO_DOES);
-  printf ("(defvar *TO_BODY* %d)\n", TO_BODY);
+  defvar ("*cell-size*", sizeof (cell));
+  defvar ("*name-size*", NAME_LENGTH);
+  defvar ("*jmp_buf-size*", sizeof (jmp_buf));
+  defvar ("*next-offset*", offsetof (struct word, next));
+  defvar ("*code-offset*", offsetof (struct word, code));
+  defvar ("*does-offset*", offsetof (struct word, does));
+  defvar ("*body-offset*", offsetof (struct word, param));
 
   return 0;
 }
