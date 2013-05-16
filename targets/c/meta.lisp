@@ -180,9 +180,13 @@
   (setq *this-word* (read-word))
   (setq *state* 'compile-word))
   
+(defun immediatep ()
+  (and (equal (peek-word) "immediate")
+       (read-word)))
+
 (defimmediate |;| ()
   (emit-word "exit")
-  (output-header *this-word* "enter_code" "0" (equal (peek-word) "immediate"))
+  (output-header *this-word* "enter_code" "0" (immediatep))
   (do ((end (fill-pointer *code*))
        (i 0 (1+ i)))
       ((= i end))
@@ -348,6 +352,9 @@
   (output-header (read-word) "dodoes_code" "&tickexit_word.param[0]")
   (output-line "  0"))
 
+(definterpreted /cell ()
+  (push *sizeof-cell* *control-stack*))
+
 (defimmediate /cell ()
   (emit-literal *sizeof-cell*))
 
@@ -401,6 +408,24 @@
   (let ((n (pop-integer))
 	(x (pop-integer)))
     (push (ash x (- n)) *control-stack*)))
+
+(definterpreted = ()
+  (let ((x (pop-integer))
+	(y (pop-integer)))
+    (push (if (= x y) -1 0) *control-stack*)))
+
+(defimmediate .s ()
+  (format *trace-output* "<~D> " (length *control-stack*))
+  (dolist (x (reverse *control-stack*))
+    (format *trace-output* "~A " x)))
+
+(defimmediate [if] ()
+  (when (zerop (pop-integer))
+    (do ((word (read-word) (read-word)))
+	((string-equal word "[then]")))))
+
+(defimmediate [then] ()
+  nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
