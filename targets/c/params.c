@@ -1,7 +1,21 @@
 #include "forth.h"
 
+static void check (size_t n)
+{
+  if (sizeof (cell) < n)
+    {
+      fprintf (stderr, "Cell size too small.\n");
+      exit (1);
+    }
+}
+
 int main (void)
 {
+  check (sizeof (cell *));
+  check (sizeof (char *));
+  check (sizeof (code_t *));
+  check (sizeof (xt_t));
+
   printf ("(defvar *sizeof-cell* %d)\n", sizeof (cell));
   printf ("(defvar *sizeof-jmp_buf* %d)\n", sizeof (jmp_buf));
   printf ("(defvar *NAME_LENGTH* %d)\n", NAME_LENGTH);

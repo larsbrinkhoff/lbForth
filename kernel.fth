@@ -170,7 +170,8 @@ variable base
 
 : cell+ ( n1 -- n2 )   /cell + ;
 
-: cells ( n1 -- n2 )   dup + dup + ;   \ /cell * ;
+/cell 4 = [if] : cells   dup + dup + ; [then]
+/cell 8 = [if] : cells   dup + dup + dup + ; [then]
 
 : count ( caddr -- addr n )   dup 1+ swap c@ ;
 

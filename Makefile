@@ -1,7 +1,8 @@
 CC = gcc
 LISP = sbcl
-CFLAGS = -g -m32 -fomit-frame-pointer -O2 -I. -Itargets/c
-LDFLAGS = -g -m32 
+M32 = -m32
+CFLAGS = -g $(M32) -O2 -fomit-frame-pointer -fno-unit-at-a-time -I. -Itargets/c
+LDFLAGS = -g $(M32)
 
 meta = targets/c/meta.lisp
 nucleus = targets/c/nucleus.fth
@@ -20,8 +21,8 @@ kernel.o: kernel.c kernel.h targets/c/forth.h
 params.lisp: params
 	./$< > $@
 
-params: targets/c/params.c
-	$(CC) $(CFLAGS) -I. $^ -o $@
+params: targets/c/params.c Makefile
+	$(CC) $(CFLAGS) -I. $< -o $@
 
 clean:
 	rm -f forth *.o kernel.c kernel.h params params.lisp
