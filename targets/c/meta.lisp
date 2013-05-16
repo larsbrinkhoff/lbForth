@@ -6,6 +6,7 @@
 (defvar *previous-word*)
 (defvar *non-immediate-words* nil)
 (defvar *control-stack* nil)
+(defvar *state* 'interpret-word)
 (defvar *input*)
 (defvar *output*)
 (defvar *header*)
@@ -13,8 +14,8 @@
 (defvar *code* (make-array '(0) :adjustable t :fill-pointer 0))
 
 (declaim (ftype function compile-word header-name mangle-char
-		mangle-word output output-line output-name quoted read-word
-		whitespacep))
+		mangle-word output output-line output-name output-end-of-word
+		quoted read-word whitespacep))
 
 (defun compile-forth (&rest input-files
 		      &aux
@@ -32,13 +33,14 @@
 	  (with-open-file (*input* file)
 	    (do ((word (read-word) (read-word)))
 		((null word))
-	      (compile-word word))
+	      (funcall *state* word))
 	    #+(or)
 	    (format t "~&Non-immediate words used:~%")
 	    #+(or)
 	    (dolist (cons (sort *non-immediate-words*
 				(lambda (x y) (< (cdr x) (cdr y)))))
-	      (format t "~&~30<~A~> ~D~%" (car cons) (cdr cons))))))))
+	      (format t "~&~30<~A~> ~D~%" (car cons) (cdr cons)))))
+	(output-end-of-word))))
   #+sbcl
   (quit)
   #-sbcl
@@ -86,6 +88,10 @@
 (defun output-name (files)
   (merge-pathnames (make-pathname :type "c") (car (last files))))
 
+(defun output-end-of-word ()
+  (unless (string= *previous-word* "0")
+    (output-line "} };")))
+
 (defun header-name (files)
   (merge-pathnames (make-pathname :type "h") (car (last files))))
 
@@ -95,9 +101,7 @@
 (defvar *peeked-word* nil)
 
 (defun read-word (&optional (delimiter nil delimp))
-  (if *peeked-word*
-      (prog1 *peeked-word*
-	(setq *peeked-word* nil))
+  (or (shiftf *peeked-word* nil)
       (let ((word-end-p
 	     (if delimp
 		 (lambda (char) (eql char delimiter))
@@ -136,8 +140,7 @@
      (funcall (immediate-word word)))
     ((multiple-value-bind (i p) (parse-integer word :junk-allowed t)
        (when (and i (= p (length word)))
-	 (emit-literal i)
-	 t)))
+	 (emit-literal i))))
     (t
      (emit-word word))))
 
@@ -146,32 +149,36 @@
      (setf (get ',name 'interpreted) (lambda ,lambda-list ,@body))))
 
 (defun interpret-word (word)
-  (let* ((sym (find-symbol word))
+  (let* ((sym (find-symbol (string-upcase word)))
 	 (fn (and sym (get sym 'interpreted))))
-    (if fn
-	(funcall fn)
-	(push word *control-stack*))))
+    (cond
+      (fn			(funcall fn))
+      ((immediate-word word)	(funcall (immediate-word word)))
+      (t			(push word *control-stack*)))))
 
 (defun declare-word (word)
   (format *header* "~&struct word ~A_word;~%" (mangle-word word)))
 
-(defun output-header (name code does &optional immediatep)
+(defun output-header (name code does &optional immediatep codep)
   (declare-word name)
   (let* ((mangled (mangle-word name))
 	 (name (trunc-word name))
 	 (len (length name)))
     (when immediatep
       (setq len (- len)))
+    (unless codep
+      (output-end-of-word))
     (output "struct word ~A_word = { ~D, \"~A\", ~A, ~A, ~A, {"
 	    mangled len (quoted name) *previous-word* code does)
     (setq *previous-word* (format nil "&~A_word" mangled))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defimmediate |:| ()
+(definterpreted |:| ()
   (setf (fill-pointer *code*) 0)
   (setq *ip* 0)
-  (setq *this-word* (read-word)))
+  (setq *this-word* (read-word))
+  (setq *state* 'compile-word))
   
 (defimmediate |;| ()
   (emit-word "exit")
@@ -181,15 +188,16 @@
       ((= i end))
     (output "  (cell)~A~:[~;,~] /* ~D */"
 	    (aref *code* i) (/= (1+ i) end) i))
-  (output-line "} };"))
+  (setq *state* 'interpret-word))
 
 (defimmediate does> ()
   (emit-word "(does>)"))
 
-(defimmediate code ()
+(definterpreted code ()
   (let* ((name (read-word))
 	 (mangled (format nil "~A_code" (mangle-word name)))
 	 (special-code-p nil))
+    (output-end-of-word)
     (cond
       ((equal (read-word) "\\")
        (let ((ret-type (read-word)))
@@ -206,8 +214,7 @@
     (unless special-code-p
       (output-line "    return IP;"))
     (output-line "}")
-    (output-header name (format nil "(code_t *)~A" mangled) "0" nil)
-    (output-line "} };")))
+    (output-header name (format nil "(code_t *)~A" mangled) "0" nil t)))
 
 (defun pop-integer ()
   (let ((x (pop *control-stack*)))
@@ -215,7 +222,7 @@
       (number	x)
       (string	(parse-integer x)))))
 
-(definterpreted |allot| ()
+(definterpreted allot ()
   (loop repeat (ceiling (pop-integer) *sizeof-cell*)
         do (output "  (cell)0,")))
 
@@ -228,17 +235,11 @@
 (defun cells (n)
   (* *sizeof-cell* n))
 
-(definterpreted |cells| ()
+(definterpreted cells ()
   (push (cells (pop-integer)) *control-stack*))
 
-(defimmediate create ()
-  (output-header (read-word) "dodoes_code" "&tickexit_word.param[0]")
-  (do ((line (read-line *input*) (read-line *input*)))
-      ((equalp (string-trim " " line) ""))
-    (with-input-from-string (*input* line)
-      (loop for word = (read-word)
-	    while word do (interpret-word word))))
-  (output-line "} };"))
+(definterpreted create ()
+  (output-header (read-word) "dodoes_code" "&tickexit_word.param[0]"))
 
 (defimmediate |(| ()
   (do ()
@@ -343,46 +344,42 @@
 (defimmediate |[']| ()
   (emit-literal (format nil "&~A_word" (mangle-word (read-word)))))
 
-(defimmediate variable ()
+(definterpreted variable ()
   (output-header (read-word) "dodoes_code" "&tickexit_word.param[0]")
-  (output-line "  0")
-  (output-line "} };"))
+  (output-line "  0"))
 
-(defimmediate |rp!| ()
-  (emit-literal "&RP")
-  (emit-word "!"))
-
-(defimmediate |/cell| ()
+(defimmediate /cell ()
   (emit-literal *sizeof-cell*))
 
-(definterpreted |jmp_buf| ()
+(definterpreted jmp_buf ()
   (push *sizeof-jmp_buf* *control-stack*))
 
-(defimmediate |NAME_LENGTH| ()
+(defimmediate name_length ()
   (emit-literal *NAME_LENGTH*))
 
-(defimmediate |TO_NEXT| ()
+(defimmediate to_next ()
   (emit-literal *TO_NEXT*))
 
-(defimmediate |TO_CODE| ()
+(defimmediate to_code ()
   (emit-literal *TO_CODE*))
 
-(defimmediate |TO_DOES| ()
+(defimmediate to_does ()
   (emit-literal *TO_DOES*))
 
-(defimmediate |TO_BODY| ()
+(defimmediate to_body ()
   (emit-literal *TO_BODY*))
 
 (defimmediate |[| ()
-  (loop for word = (read-word)
-        until (string= word "]")
-        do (interpret-word word)))
+  (setq *state* 'interpret-word))
+
+(definterpreted |]| ()
+  (setq *state* 'compile-word))
 
 (defun ends-with-p (string1 string2)
   (let ((n (- (length string1) (length string2))))
     (and (>= n 0) (string= string1 string2 :start1 n))))
 
-(definterpreted |>code| ()
+(definterpreted >code ()
   (let ((x (pop *control-stack*)))
     (check-type x string)
     (assert (ends-with-p x "_word"))
@@ -395,12 +392,12 @@
     (let ((y (subseq x 1 (- (length x) 10))))
       (push (format nil "~A_code" y) *control-stack*))))
 
-(definterpreted |invert| ()
+(definterpreted invert ()
   (let ((x (pop-integer)))
     (push (logand (lognot x) (1- (ash 1 (* 8 *sizeof-cell*))))
 	  *control-stack*)))
 
-(definterpreted |rshift| ()
+(definterpreted rshift ()
   (let ((n (pop-integer))
 	(x (pop-integer)))
     (push (ash x (- n)) *control-stack*)))
