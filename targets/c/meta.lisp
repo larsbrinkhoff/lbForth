@@ -59,8 +59,17 @@
 (defun trunc-word (word)
   (subseq word 0 (min (length word) 15)))
 
+(defun tick (word)
+  (format nil "&~A_word" (mangle-word word)))
+
+(defun word-body (word &optional (n 0))
+  (format nil "~A.param[~D]" (tick word) n))
+
+(defun branch-target (dest)
+  (word-body *this-word* dest))
+
 (defun emit-word (word)
-  (emit (format nil "&~A_word" (mangle-word word))))
+  (emit (tick word)))
 
 (defun emit-literal (x)
   (emit-word "(literal)")
@@ -70,13 +79,11 @@
   (emit-word word)
   (if (eq dest :unresolved)
       (push *ip* *control-stack*)
-      (setq dest (format nil "&~A_word.param[~D]"
-			 (mangle-word *this-word*) dest)))
+      (setq dest (branch-target dest)))
   (emit dest))
 
 (defun resolve-branch (&optional (orig (pop *control-stack*)))
-  (setf (aref *code* orig)
-	(format nil "&~A_word.param[~D]" (mangle-word *this-word*) *ip*)))
+  (setf (aref *code* orig) (branch-target *ip*)))
 
 (defun output (format &rest args)
   (output-line (apply #'format nil format args)))
@@ -94,9 +101,6 @@
 
 (defun header-name (files)
   (merge-pathnames (make-pathname :type "h") (car (last files))))
-
-(defun words-name (file)
-  (merge-pathnames (make-pathname :name "words" :type "c") file))
 
 (defvar *peeked-word* nil)
 
@@ -162,6 +166,7 @@
 (defun output-header (name code does &optional immediatep codep)
   (declare-word name)
   (let* ((mangled (mangle-word name))
+	 (lastxt (tick name))
 	 (name (trunc-word name))
 	 (len (length name)))
     (when immediatep
@@ -170,7 +175,60 @@
       (output-end-of-word))
     (output "struct word ~A_word = { ~D, \"~A\", ~A, ~A, ~A, {"
 	    mangled len (quoted name) *previous-word* code does)
-    (setq *previous-word* (format nil "&~A_word" mangled))))
+    (setq *previous-word* lastxt)))
+
+(defun mangle-word (name)
+  (cond
+    ((and (char= (char name 0) #\()
+	  (char= (char name (1- (length name))) #\)))
+     (concatenate 'string "do" (mangle-word (string-trim "()" name))))
+    ((equal name "0branch")	"zbranch")
+    ((equal name ">r")		"to_r")
+    ((equal name "2>r")		"two_to_r")
+    ((equal name "r>")		"r_from")
+    ((equal name "2r>")		"two_r_from")
+    ((equal name "0=")		"zero_equals")
+    ((equal name "0<")		"zero_less")
+    ((equal name "0>")		"zero_greater")
+    (t				(apply #'concatenate 'string
+				       (map 'list #'mangle-char name)))))
+
+(defun mangle-char (char)
+  (case char
+    (#\!	"store")
+    (#\"	"quote")
+    (#\#	"number")
+    (#\'	"tick")
+    (#\(	"paren")
+    (#\*	"star")
+    (#\+	"plus")
+    (#\,	"comma")
+    (#\-	"minus")
+    (#\.	"dot")
+    (#\/	"slash")
+    (#\0	"zero")
+    (#\1	"one")
+    (#\2	"two")
+    (#\3	"three")
+    (#\4	"four")
+    (#\:	"colon")
+    (#\;	"semicolon")
+    (#\<	"lt")
+    (#\=	"eq")
+    (#\>	"gt")
+    (#\?	"query")
+    (#\@	"fetch")
+    (#\[	"lbracket")
+    (#\]	"rbracket")
+    (#\\	"backslash")
+    (t		(string char))))
+
+(defun quoted (name)
+  (concatenate 'string
+    (loop for char across name
+	  when (or (eql char #\") (eql char #\\))
+	    collect #\\
+	  collect char)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -183,6 +241,8 @@
 (defun immediatep ()
   (and (equal (peek-word) "immediate")
        (read-word)))
+
+;;;definterpreted immediate
 
 (defimmediate |;| ()
   (emit-word "exit")
@@ -220,6 +280,8 @@
     (output-line "}")
     (output-header name (format nil "(code_t *)~A" mangled) "0" nil t)))
 
+;;;definterpreted end-code
+
 (defun pop-integer ()
   (let ((x (pop *control-stack*)))
     (etypecase x
@@ -234,7 +296,7 @@
   (output "  (cell)~A," (pop *control-stack*)))
 
 (definterpreted |'| ()
-  (push (format nil "&~A_word" (mangle-word (read-word))) *control-stack*))
+  (push (tick (read-word)) *control-stack*))
 
 (defun cells (n)
   (* *cell-size* n))
@@ -243,7 +305,7 @@
   (push (cells (pop-integer)) *control-stack*))
 
 (definterpreted create ()
-  (output-header (read-word) "dodoes_code" "&tickexit_word.param[0]"))
+  (output-header (read-word) "dodoes_code" (word-body "nop" 0)))
 
 (defimmediate |(| ()
   (do ()
@@ -257,12 +319,11 @@
   (emit-literal (pop *control-stack*)))
 
 (defimmediate postpone ()
-  (let* ((word (read-word))
-	 (code (format nil "&~A_word" (mangle-word word))))
+  (let ((word (read-word)))
     (if (immediate-word word)
 	(emit-word word)
 	(progn
-	  (emit-literal code)
+	  (emit-literal (tick word))
 	  (emit-word ",")))))
 
 (defimmediate |."| ()
@@ -346,10 +407,10 @@
 		    (t (format nil "'~A'" char))))))
 
 (defimmediate |[']| ()
-  (emit-literal (format nil "&~A_word" (mangle-word (read-word)))))
+  (emit-literal (tick (read-word))))
 
 (definterpreted variable ()
-  (output-header (read-word) "dodoes_code" "&tickexit_word.param[0]")
+  (output-header (read-word) "dodoes_code" (word-body "nop" 0))
   (output-line "  0"))
 
 (definterpreted /cell ()
@@ -426,58 +487,3 @@
 
 (defimmediate [then] ()
   nil)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun mangle-word (name)
-  (cond
-    ((and (char= (char name 0) #\()
-	  (char= (char name (1- (length name))) #\)))
-     (concatenate 'string "do" (mangle-word (string-trim "()" name))))
-    ((equal name "0branch")	"zbranch")
-    ((equal name ">r")		"to_r")
-    ((equal name "2>r")		"two_to_r")
-    ((equal name "r>")		"r_from")
-    ((equal name "2r>")		"two_r_from")
-    ((equal name "0=")		"zero_equals")
-    ((equal name "0<")		"zero_less")
-    ((equal name "0>")		"zero_greater")
-    (t				(apply #'concatenate 'string
-				       (map 'list #'mangle-char name)))))
-
-(defun mangle-char (char)
-  (case char
-    (#\!	"store")
-    (#\"	"quote")
-    (#\#	"number")
-    (#\'	"tick")
-    (#\(	"paren")
-    (#\*	"star")
-    (#\+	"plus")
-    (#\,	"comma")
-    (#\-	"minus")
-    (#\.	"dot")
-    (#\/	"slash")
-    (#\0	"zero")
-    (#\1	"one")
-    (#\2	"two")
-    (#\3	"three")
-    (#\4	"four")
-    (#\:	"colon")
-    (#\;	"semicolon")
-    (#\<	"lt")
-    (#\=	"eq")
-    (#\>	"gt")
-    (#\?	"query")
-    (#\@	"fetch")
-    (#\[	"lbracket")
-    (#\]	"rbracket")
-    (#\\	"backslash")
-    (t		(string char))))
-
-(defun quoted (name)
-  (concatenate 'string
-    (loop for char across name
-	  when (or (eql char #\") (eql char #\\))
-	    collect #\\
-	  collect char)))

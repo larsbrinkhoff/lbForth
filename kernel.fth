@@ -41,9 +41,6 @@ variable RP
 
 : >nextxt   >lfa @ ;
 
-\ This is for meta compiler convenience.
-create 'exit   ' exit ,
-
 : branch   r> @ >r ;
 
 : (+loop)   r> swap r> + r@ over >r < invert swap >r ;
