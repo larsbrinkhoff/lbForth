@@ -1,5 +1,35 @@
 ;;;; -*- lisp -*- Copyright 2004, 2013 Lars Brinkhoff
 
+;;; Meta compiler to C target.
+;;
+;; Usage: (compile-forth "nucleus.fth" <optionally more sources> "kernel.fth")
+;; Output: kernel.c and kernel.h.
+
+;;; Words (partially) supported by this meta compiler:
+;;
+;; ( \ [if] [then]
+;; : ; immediate does> code end-code
+;; variable create allot , ' cells >code @ invert rshift =
+;; [char] ['] [ ] literal postpone ." s"
+;; if else then do leave loop +loop begin again while repeat until
+;; /cell jmp_buf name_length to_next to_code to_does to_body
+;; .cs
+
+;;; Restrictions and special features:
+;;
+;; Many words are immediate and only work in compilation mode,
+;; i.e. they always append code to the current definition.
+;;
+;; When >CODE is interpeted, the top of the control stack must be the
+;; result of ' (tick).  Likewise, @ only works on the result of >CODE.
+;;
+;; CODE may be followed by a \ comment which specifies the generated C
+;; function declaration.
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;; Retreive some information passed from C.
 (load "params.lisp")
 
 (defvar *this-word*)
@@ -230,6 +260,7 @@
 	    collect #\\
 	  collect char)))
 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (definterpreted |:| ()
@@ -475,11 +506,6 @@
 	(y (pop-integer)))
     (push (if (= x y) -1 0) *control-stack*)))
 
-(defimmediate .s ()
-  (format *trace-output* "<~D> " (length *control-stack*))
-  (dolist (x (reverse *control-stack*))
-    (format *trace-output* "~A " x)))
-
 (defimmediate [if] ()
   (when (zerop (pop-integer))
     (do ((word (read-word) (read-word)))
@@ -487,3 +513,9 @@
 
 (defimmediate [then] ()
   nil)
+
+;;; Print control stack.
+(defimmediate .cs ()
+  (format *trace-output* "<~D> " (length *control-stack*))
+  (dolist (x (reverse *control-stack*))
+    (format *trace-output* "~A " x)))

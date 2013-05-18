@@ -1,6 +1,15 @@
 \ -*- forth -*- Copyright 2004, 2013 Lars Brinkhoff
 
-( System implementation words. )
+\ This kernel needs, at a minimum, these 18 primitives:
+\
+\ Definitions:		enter dodoes exit
+\ Control flow:		0branch
+\ Literals:		(literal)
+\ Memory access:	! @ c! c@
+\ Aritmetic/logic:	+ nand
+\ Return stack:		>r r>
+\ Number conversion:	>number
+\ I/O:			emit open-file read-file close-file
 
 : warm ( -- )
     ." lbForth" cr
