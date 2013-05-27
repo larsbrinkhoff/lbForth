@@ -7,7 +7,7 @@
 
 ;;; Words (partially) supported by this meta compiler:
 ;;
-;; ( \ [if] [then]
+;; ( \ [if] [then] [defined] [undefined]
 ;; : ; immediate does> code end-code
 ;; variable create allot , ' cells >code @ invert rshift =
 ;; [char] ['] [ ] literal postpone ." s"
@@ -34,7 +34,7 @@
 
 (defvar *this-word*)
 (defvar *previous-word*)
-(defvar *non-immediate-words* nil)
+(defvar *vocabulary* nil)
 (defvar *control-stack* nil)
 (defvar *state* 'interpret-word)
 (defvar *input*)
@@ -43,7 +43,7 @@
 (defvar *ip* 0)
 (defvar *code* (make-array '(0) :adjustable t :fill-pointer 0))
 
-(declaim (ftype function compile-word header-name mangle-char
+(declaim (ftype function interpret-file compile-word header-name mangle-char
 		mangle-word output output-line output-name output-end-of-word
 		quoted read-word whitespacep))
 
@@ -60,29 +60,22 @@
       (format *header* "~&code_t enter_code, dodoes_code;~%")
       (let ((*previous-word* "0"))
 	(dolist (file input-files)
-	  (with-open-file (*input* file)
-	    (do ((word (read-word) (read-word)))
-		((null word))
-	      (funcall *state* word))
-	    #+(or)
-	    (format t "~&Non-immediate words used:~%")
-	    #+(or)
-	    (dolist (cons (sort *non-immediate-words*
-				(lambda (x y) (< (cdr x) (cdr y)))))
-	      (format t "~&~30<~A~> ~D~%" (car cons) (cdr cons)))))
+	  (interpret-file file))
 	(output-end-of-word))))
   #+sbcl
   (quit)
   #-sbcl
   (implementation-dependent-quit))
 
+(defun interpret-file (file)
+  (with-open-file (*input* file)
+    (do ((word (read-word) (read-word)))
+	((null word))
+      (funcall *state* word))))
+
 (defun emit (string)
   (unless (stringp string)
     (setq string (format nil "~A" string)))
-  (let ((cons (assoc string *non-immediate-words* :test #'string=)))
-    (if cons
-	(incf (cdr cons))
-	(push (cons string 1) *non-immediate-words*)))
   (vector-push-extend string *code*)
   (incf *ip*))
 
@@ -103,7 +96,9 @@
 
 (defun emit-literal (x)
   (emit-word "(literal)")
-  (emit x))
+  (if (and (integerp x) (plusp x))
+      (emit (format nil "~DU" x))
+      (emit x)))
 
 (defun emit-branch (word dest)
   (emit-word word)
@@ -191,6 +186,7 @@
       (t			(push word *control-stack*)))))
 
 (defun declare-word (word)
+  (push word *vocabulary*)
   (format *header* "~&struct word ~A_word;~%" (mangle-word word)))
 
 (defun output-header (name code does &optional immediatep codep)
@@ -505,6 +501,15 @@
   (let ((x (pop-integer))
 	(y (pop-integer)))
     (push (if (= x y) -1 0) *control-stack*)))
+
+(defun defined (word)
+  (if (member word *vocabulary* :test #'string=) -1 0))
+
+(defimmediate [defined] ()
+  (push (defined (read-word)) *control-stack*))
+
+(defimmediate [undefined] ()
+  (push (lognot (defined (read-word))) *control-stack*))
 
 (defimmediate [if] ()
   (when (zerop (pop-integer))
