@@ -9,7 +9,7 @@
 ;;
 ;; ( \ [if] [then] [defined] [undefined]
 ;; : ; immediate does> code end-code
-;; variable create allot , ' cells >code @ invert rshift =
+;; variable create allot , ' cells >code @ invert rshift = char -
 ;; [char] ['] [ ] literal postpone ." s"
 ;; if else then do leave loop +loop begin again while repeat until
 ;; /cell jmp_buf name_length to_next to_code to_does to_body
@@ -425,6 +425,14 @@
 
 (defimmediate until ()
   (emit-branch "0branch" (pop *control-stack*)))
+
+(definterpreted - ()
+  (let ((n2 (pop *control-stack*))
+	(n1 (pop *control-stack*)))
+    (push (- n1 n2) *control-stack*)))
+
+(definterpreted char ()
+  (push (char-code (char (read-word) 0)) *control-stack*))
 
 (defimmediate [char] ()
   (let ((char (char (read-word) 0)))

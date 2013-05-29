@@ -195,10 +195,14 @@ create context   ' forth , ' forth , 0 , 0 , 0 ,
 
 variable current
 
+: lowercase? ( c -- flag )   dup [char] a < if drop 0 exit then [char] z 1+ < ;
+: upcase ( c1 -- c2 )   dup lowercase? if [ char A char a - ] literal + then ;
+: c<> ( c1 c2 -- flag )   upcase swap upcase <> ;
+
 : nt= ( ca u nt -- flag )
     >name 2>r r@ <> 2r> rot if 3drop 0 exit then
     bounds do
-      dup c@ i c@ <> if drop unloop 0 exit then
+      dup c@ i c@ c<> if drop unloop 0 exit then
       1+
     loop drop -1 ;
 
