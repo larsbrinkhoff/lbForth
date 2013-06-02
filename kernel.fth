@@ -402,17 +402,22 @@ create 'bt   ' nop ,
 
 ( File Access words. )
 
+: n>r ( x1 ... xn n -- ) ( R: -- x1 ... xn n )
+   r> over >r swap begin ?dup while
+     rot r> 2>r 1 -
+   repeat >r ;
+
+: nr> ( -- x1 ... xn n ) ( R: x1 ... xn n -- )
+   r> r@ begin ?dup while
+      2r> >r rot rot 1 -
+   repeat r> swap >r ;
+
 : include-file ( fileid -- )
-    >r save-input r> 'source-id !
-    fib ''source !  #fib ''#source !  0 #fib !
-    \ 0 blk !
-    begin
-	refill
-    while
-	interpret
-    repeat
+    save-input n>r 'source-id !
+    fib ''source !  #fib ''#source !  0 #fib !  \ 0 blk !
+    begin refill while interpret repeat
     source-id close-file drop
-    restore-input if ." Bad restore-input" cr abort then ;
+    nr> restore-input if ." Bad restore-input" cr abort then ;
 
 : included ( ... addr n -- ... )
     r/o open-file if cr ." Read error." cr abort then include-file ;

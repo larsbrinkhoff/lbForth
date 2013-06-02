@@ -109,16 +109,6 @@
 
 ( Forth2012 tools extension words. )
 
-: n>r ( x1 ... xn n -- ) ( R: -- x1 ... xn n )
-   r> over >r swap begin ?dup while
-     rot r> 2>r 1-
-   repeat >r ;
-
-: nr> ( -- x1 ... xn n ) ( R: x1 ... xn n -- )
-   r> r@ begin ?dup while
-      2r> >r -rot 1-
-   repeat r> swap >r ;
-
 \ TODO: synonym
 
 : [undefined]   here bl-word find nip 0= ; immediate
