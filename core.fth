@@ -236,7 +236,8 @@ variable leaves
 
 : j   rp@ 3 cells + @ ;
 
-\ TODO: environment?
+: environment?   2drop 0 ;
+
 \ TODO: evaluate
 \ TODO: fill
 \ TODO: fm/mod )
