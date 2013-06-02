@@ -30,6 +30,7 @@ create data_stack   110 cells allot
 create return_stack   100 cells allot
 
 variable 'here
+variable end_of_dictionary
 
 create jmpbuf   jmp_buf allot
 

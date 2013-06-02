@@ -61,7 +61,7 @@
 
 : u>   swap u< ;
 
-\ TODO: unused
+: unused   end_of_dictionary @ here - ;
 
 : within   over - under - u< ;
 
