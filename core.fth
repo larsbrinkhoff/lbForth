@@ -187,17 +187,15 @@ create squote   128 allot
 : postpone-number   ." Undefined: " count type cr abort ;
 ' postpone-number  ' postpone-xt >body cell+ !
 
-: / ( x y -- x/y )   /mod nip ;
-
-: 2! ( x1 x2 addr -- )   swap over ! cell+ ! ;
+: /     /mod nip ;
+: mod   /mod drop ;
 
 \ This could probably be done faster with something similar to rshift.
 : 2/   dup 0< if 1- then 2 / ;
 
-: 2@ ( addr -- x1 x2 )   dup cell+ @ swap @ ;
-
-: 2over   2>r 2dup r> rot rot r> rot rot ;
-
+: 2@      dup cell+ @ swap @ ;
+: 2!      swap over ! cell+ ! ;
+: 2over   >r >r 2dup r> rot rot r> rot rot ;
 : 2swap   >r rot rot r> rot rot ;
 
 \ TODO: <#
