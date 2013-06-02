@@ -199,12 +199,13 @@ variable current
 : upcase ( c1 -- c2 )   dup lowercase? if [ char A char a - ] literal + then ;
 : c<> ( c1 c2 -- flag )   upcase swap upcase <> ;
 
-: nt= ( ca u nt -- flag )
-    >name 2>r r@ <> 2r> rot if 3drop 0 exit then
+: name= ( ca1 u1 ca2 u2 -- flag )
+    2>r r@ <> 2r> rot if 3drop 0 exit then
     bounds do
       dup c@ i c@ c<> if drop unloop 0 exit then
       1+
     loop drop -1 ;
+: nt= ( ca u nt -- flag )   >name name= ;
 
 : immediate?   c@ 127 > if 1 else -1 then ;
 
