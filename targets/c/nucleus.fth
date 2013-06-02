@@ -110,7 +110,7 @@ code >number ( d1 addr1 n1 -- d2 addr2 n2 )
       {
 	char c = *addr;
 	int m = (c >= '0' && c <= '9') ? (c - '0') :
-                (c >= 'A' && c <= 'A') ? (c - 'A' + 10) :
+                (c >= 'A' && c <= 'Z') ? (c - 'A' + 10) :
                 (c >= 'a' && c <= 'z') ? (c - 'a' + 10) : 36;
 	if (m < 0 || m >= base_word.param[0])
 	  break;
