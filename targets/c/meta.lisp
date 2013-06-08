@@ -7,13 +7,13 @@
 
 ;;; Words (partially) supported by this meta compiler:
 ;;
-;; ( \ [if] [then] [defined] [undefined]
-;; : ; immediate does> code end-code
-;; variable create allot , ' cells >code @ invert rshift = char -
-;; [char] ['] [ ] literal postpone ." s"
-;; if else then do leave loop +loop begin again while repeat until
-;; /cell jmp_buf name_length to_next to_code to_does to_body
-;; .cs
+;; ( \ [IF] [ELSE] [THEN] [DEFINED] [UNDEFINED]
+;; : ; IMMEDIATE DOES> CODE END-CODE
+;; VARIABLE CREATE ALLOT , ' CELLS >CODE @ INVERT RSHIFT = CHAR -
+;; [CHAR] ['] [ ] LITERAL POSTPONE ." S"
+;; IF ELSE THEN DO LEAVE LOOP +LOOP BEGIN AGAIN WHILE REPEAT UNTIL
+;; /CELL JMP_BUF NAME_LENGTH TO_NEXT TO_CODE TO_DOES TO_BODY
+;; .CS
 
 ;;; Restrictions and special features:
 ;;
@@ -519,10 +519,18 @@
 (defimmediate [undefined] ()
   (push (lognot (defined (read-word))) *control-stack*))
 
+(defun skip-until (&rest words)
+  (do ((word (read-word) (read-word)))
+      ((some (lambda (x) (string-equal x word)) words))
+    (when (string-equal word "[if]")
+      (skip-until "[then]" "[else]"))))
+      
 (defimmediate [if] ()
   (when (zerop (pop-integer))
-    (do ((word (read-word) (read-word)))
-	((string-equal word "[then]")))))
+    (skip-until "[then]" "[else]")))
+
+(defimmediate [else] ()
+  (skip-until "[then]"))
 
 (defimmediate [then] ()
   nil)
