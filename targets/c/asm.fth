@@ -10,25 +10,16 @@ also assembler definitions
 
 create code-line 128 allot
 
+: c-function ( a -- )
+   ." xt_t * REGPARM " count type ." _code (xt_t *IP, struct word *word)" cr
+   ." {" cr ;
+
+: c-line ( -- a u flag )    refill 0= abort" End of file inside CODE."
+   code-line dup 128 accept  2dup s" end-code" compare ;
+
 previous definitions  also assembler
 
-: code ( "name" -- )
-   here 0 header,
-   ." xt_t * REGPARM "
-   count type
-   ." _code (xt_t *IP, struct word *word)" cr
-   ." {" cr
-   begin
-      code-line 128 accept
-      code-line over s" end-code" compare 0=
-   while
-      type
-   repeat
-   ." }" cr ;
-
-: C ( "word" -- )
-   bl word
-   \ save string, return addres
-   t-string, ;
+: code ( "name" -- )   here 0 header, reveal  c-function
+   begin c-line while type cr repeat  2drop ." }" cr ;
 
 previous
