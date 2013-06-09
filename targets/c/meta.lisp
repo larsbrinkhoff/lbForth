@@ -12,7 +12,7 @@
 ;; VARIABLE CREATE ALLOT , ' CELLS >CODE @ INVERT RSHIFT = CHAR -
 ;; [CHAR] ['] [ ] LITERAL POSTPONE ." S"
 ;; IF ELSE THEN DO LEAVE LOOP +LOOP BEGIN AGAIN WHILE REPEAT UNTIL
-;; /CELL JMP_BUF NAME_LENGTH TO_NEXT TO_CODE TO_DOES TO_BODY
+;; CELL JMP_BUF NAME_LENGTH TO_NEXT TO_CODE TO_DOES TO_BODY
 ;; .CS
 
 ;;; Restrictions and special features:
@@ -448,10 +448,10 @@
   (output-header (read-word) "dodoes_code" (word-body "nop" 0))
   (output-line "  0"))
 
-(definterpreted /cell ()
+(definterpreted cell ()
   (push *cell-size* *control-stack*))
 
-(defimmediate /cell ()
+(defimmediate cell ()
   (emit-literal *cell-size*))
 
 (definterpreted jmp_buf ()

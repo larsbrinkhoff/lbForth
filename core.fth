@@ -214,9 +214,9 @@ create squote   128 allot
 : decimal ( -- )
     10 base ! ;
 
-: depth   data_stack 100 cells +  sp@  - /cell /  1- ;
+: depth   data_stack 100 cells +  sp@  - cell /  1- ;
 
-: variable   create /cell allot ;
+: variable   create cell allot ;
 
 variable leaves
 
@@ -282,5 +282,5 @@ variable leaves
 : accept ( caddr u1 -- u2 )
     2dup bounds do
        source? if <source i c!
-       else i nip swap - unloop exit then
+       else drop i swap - unloop exit then
     loop nip ;

@@ -12,7 +12,7 @@ base @  8 base !
 7 cells constant w
 10 cells constant t
 
-\ : >page ( a1 -- a2 )    /cell / 7777 + 170000 and cells ;
+\ : >page ( a1 -- a2 )    cell / 7777 + 170000 and cells ;
 \ : const ( x -- addr )   'const >page 'const do
 \                            i @ over = if drop i unloop exit then
 \                          loop -1 cells +to 'const  c 'const !  'const ;
@@ -66,7 +66,7 @@ base @  8 base !
    t i      jmp, ; \ 2=14
 
 : create     header,  ( ['] dovar ) 0 jsp,  reveal ;
-: variable   create /cell allot ;
+: variable   create cell allot ;
 
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \
 \ Target image starts here.

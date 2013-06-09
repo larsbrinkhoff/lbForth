@@ -6,7 +6,7 @@ variable there
 
 : c^   there @ c@ 1 there +! ;
 : h^   c^ c^ 8 lshift + ;
-: ^    there @ @ /cell there +! ;
+: ^    there @ @ cell there +! ;
 
 base @  hex
 

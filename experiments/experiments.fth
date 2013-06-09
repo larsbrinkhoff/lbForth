@@ -43,7 +43,7 @@ previous definitions
    ' ( xt ) dup >end swap >body ( body end )
    do
       i @ ( do something special with exit ) compile,
-   /cell +loop ; immediate
+   cell +loop ; immediate
 
 : nt>xt ( nt -- xt )
    dup nt>compile swap nt>interpret ( cxt ixt )

@@ -42,7 +42,7 @@ here constant see-end
 
 : see-line ( addr -- addr' )    cr dup .addr  see-xt ;
 : see-cell ( x -- )             dup xt? if ." ' " id. else . then ;
-: see-data ( end start -- )     do cr i .addr i @ see-cell ."  ," /cell +loop ;
+: see-data ( end start -- )     do cr i .addr i @ see-cell ."  ," cell +loop ;
 : see-thread ( end start --)    begin see-line 2dup = until 2drop ;
 \ TODO: end of does>
 : does-bounds ( xt--end start)  >does @ dup 40 + swap ;

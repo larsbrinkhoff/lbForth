@@ -3,9 +3,9 @@
 ( Tools words. )
 
 : .s   [char] < emit  depth (.)  ." > "
-       sp@ /cell - >r r@ depth 1- cells +
+       sp@ cell - >r r@ depth 1- cells +
        begin dup r@ <> while
-         dup @ . /cell -
+         dup @ . cell -
        repeat r> 2drop ;
 
 : .s"   postpone s" postpone type postpone .s postpone cr ; immediate
@@ -17,7 +17,7 @@
 : ?dot         dup 32 127 within 0= if drop [char] . then ;
 : dump.        ?dup if swap base @ /mod rot 1- recurse digit else drop then ;
 : dump-chars   dup 16 + swap do i c@ ?dot emit loop ;
-: dump-cells   dup 16 + swap do i @ 10 dump. space /cell +loop ;
+: dump-cells   dup 16 + swap do i @ 10 dump. space cell +loop ;
 : dump-line    dup u. space  dup dump-cells  space dump-chars cr ;
 : dump         bounds do i dump-line 16 +loop ;
 
@@ -31,7 +31,7 @@
 : execute-xt       nip swap dup >r execute r> swap dup ;
 : traverse-order   context >r begin r@ @ ?dup while
                       1 swap ['] execute-xt traverse-wordlist
-                      while /cell r+
+                      while cell r+
                    repeat then r> 2drop ;
 
 : ?nt>end   2dup < if rot drop swap -1 else drop 0 then ;
@@ -45,7 +45,7 @@
 : ?.offset    2dup body? if .offset 0 else drop -1 then ;
 : backtrace   return_stack 100 cells + rp@ do ."  > " i ?
               i @ context @ ['] ?.offset traverse-wordlist cr drop
-              /cell +loop ;
+              cell +loop ;
 ' backtrace 'bt !
 
 : xt??   nip over <> dup ;
@@ -67,7 +67,7 @@
 : see-xt ( xt -- )
     dup >end swap
     >r ." : " r@ id.
-    r@ >body do i see-line /cell +loop
+    r@ >body do i see-line cell +loop
     ."  ;" r> c@ 127 > if ."  immediate" then ;
 
 : see   ' see-xt cr ;
@@ -84,7 +84,7 @@
 
 \ editor
 
-: forget   ' dup >nextxt context @ >body !  'here !  reveal ;
+: forget   ' dup >nextxt context @ >body !  dp !  reveal ;
 
 : must-refill refill 0= abort" End of file when parsing word" ;
 : next-word ( -- a u )
@@ -118,8 +118,8 @@
 
 : ((   begin next-word s" ))" compare 0= until ;
 
-: @+ ( addr -- addr+/cell x )   dup cell+ swap @ ;
-: !+ ( x addr -- addr+/cell )   tuck ! cell+ ;
+: @+ ( addr -- a' x )   dup cell+ swap @ ;
+: !+ ( x addr -- a' )   tuck ! cell+ ;
 
 : (redefine-does>)   [ ' dodoes >code @ ] literal over >code !
                      r> swap >does ! ;
@@ -131,5 +131,5 @@ finders redefine-xt   redefine redefine (redefi)
 : xt-bounds ( xt -- end start)   dup >end swap >body ;
 : .nt ( nt -- nt )   dup id. space ;
 : xref-foo ( xt nt -- xt flag )
-   dup xt-bounds do over i @ = if .nt leave then /cell +loop drop 1 ;
+   dup xt-bounds do over i @ = if .nt leave then cell +loop drop 1 ;
 : xref ( "name" -- )   ' context @ ['] xref-foo traverse-wordlist drop ;

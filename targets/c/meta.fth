@@ -5,7 +5,7 @@ vocabulary target
 0 value image
 0 value image-end
 : >image ( haddr -- iaddr )   image - ;
-: >index ( haddr -- index )   >image /cell / ;
+: >index ( haddr -- index )   >image cell / ;
 : image? ( haddr -- flag )    >index 0 10240 within ;
 
 : image-buffer:   create 10240 allot  does> swap >index + ;
@@ -55,7 +55,7 @@ image-buffer: reloc
       else
    	 ."   " i ? ." ,"
       then cr
-   /cell +loop
+   cell +loop
    ." };" cr ;
 
 : meta-compile   create-image  save-image ;

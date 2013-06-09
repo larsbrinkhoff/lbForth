@@ -21,7 +21,7 @@ base @  8 base !
 
 0 value offset
 
-: >addr ( addr -- u )   offset - /cell / 17777 and ;
+: >addr ( addr -- u )   offset - cell / 17777 and ;
 : mem, ( addr u -- )    swap >addr or , ;
 : i ( a1 -- a2 )        [ 10000 cells offset + ] literal + ;
 : +. ( u -- addr )      cells here + ;

@@ -29,7 +29,7 @@ create data_stack   110 cells allot
 
 create return_stack   100 cells allot
 
-variable 'here
+variable dp
 variable end_of_dictionary
 
 create jmpbuf   jmp_buf allot
@@ -37,10 +37,10 @@ create jmpbuf   jmp_buf allot
 variable SP
 variable RP
 
-: sp@   SP @ /cell + ;
+: sp@   SP @ cell + ;
 : sp!   SP ! ;
 
-: rp@   RP @ /cell + ;
+: rp@   RP @ cell + ;
 : rp!   postpone (literal) RP , postpone ! ; immediate
 
 : cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
@@ -96,15 +96,11 @@ create interpreters
 
 ( Core words. )
 
-: +! ( n addr -- )   swap over @ + swap ! ;
-
-: , ( n -- )   here !  /cell allot ;
-
-: - ( x y -- x-y )   negate + ;
-
+: +!   swap over @ + swap ! ;
+: ,    here !  cell allot ;
+: -    negate + ;
 : 0=   if 0 else -1 then ;
-
-: 1+ ( n -- n+1 )   1 + ;
+: 1+   1 + ;
 
 variable  sink
 : drop    sink ! ;
@@ -146,13 +142,10 @@ variable csp
 \ : bar   5 0 do i n foo loop ;
 
 : =   - if 0 else -1 then ;
-
-: > ( x y -- flag )   swap < ;
+: >   swap < ;
 
 : >code ( xt -- cfa )   TO_CODE + ;
-
 : >does ( xt -- dfa )   TO_DOES + ;
-
 : >body ( xt -- pfa )   TO_BODY + ;
 
 variable >in
@@ -163,22 +156,18 @@ variable >in
 
 : abort ( ... -- ) ( R: ... -- )   data_stack 100 cells + sp!  quit ;
 
-: align ( -- )   'here @ aligned 'here ! ;
-
-: aligned ( addr1 -- addr2 )   /cell + 1 - /cell negate nand invert ;
-
-: allot ( n -- )   'here +! ;
+: align     dp @ aligned dp ! ;
+: aligned   cell + 1 - cell negate nand invert ;
+: allot     dp +! ;
 
 variable base
 
 : bl ( -- <space> )   32 ;
 
-: /cell   /cell ; \ Metacompiler knows what to do.
-
-: cell+ ( n1 -- n2 )   /cell + ;
-
-/cell 4 = [if] : cells   dup + dup + ; [then]
-/cell 8 = [if] : cells   dup + dup + dup + ; [then]
+: cell    cell ; \ Metacompiler knows what to do.
+: cell+   cell + ;
+cell 4 = [if] : cells   dup + dup + ; [then]
+cell 8 = [if] : cells   dup + dup + dup + ; [then]
 
 : count ( caddr -- addr n )   dup 1+ swap c@ ;
 
@@ -232,7 +221,7 @@ variable current
        if 2nip r> drop exit then
     repeat r> 2drop 1 - 0 ;
 
-: here ( -- addr )   'here @ ;
+: here   dp @ ;
 
 : i ( -- x ) ( R: x -- x )   r> r@ swap >r ;
 

@@ -17,7 +17,7 @@
                dup 4 > abort" Max 4 context allowed"
                n>r 0 nr> 1+
                context swap cells bounds
-               do i ! /cell +loop then ;
+               do i ! cell +loop then ;
 : only         forth-wordlist forth-wordlist 2 set-order ;
 re: also       get-order 1+ over swap set-order ;
 re: previous   get-order 1- nip set-order ;

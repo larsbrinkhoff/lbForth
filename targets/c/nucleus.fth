@@ -5,7 +5,7 @@ code cold \ int main (void)
   void signal_handler (int);
   xt_t *IP = (xt_t *)warm_word.param;
 
-  tickhere_word.param[0] = (cell)dictionary;
+  dp_word.param[0] = (cell)dictionary;
   end_of_dictionary_word.param[0] = (cell)&dictionary[10000];
   SP_word.param[0] = (cell)(&data_stack_word.param[100]);
   RP_word.param[0] = (cell)(&return_stack_word.param[100]);
@@ -68,9 +68,9 @@ code 0branch ( x -- )
 end-code
 
 \ This works, but is too slow.
-\ create '/cell   C sizeof(cell) ,
+\ create 'cell   cell ,
 \ variable temp
-\ : (literal)   r> temp ! temp @ temp @ '/cell @ + >r @ ;
+\ : (literal)   r> temp ! temp @ temp @ 'cell @ + >r @ ;
 
 code (literal) ( -- n )
     PUSH (*(cell *)IP);
