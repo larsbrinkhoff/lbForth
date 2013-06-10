@@ -101,13 +101,8 @@ create squote   128 allot
 
 ( Core words. )
 
-\ TODO: #
-\ TODO: #>
-\ TODO: <#
-\ TODO: #s
-\ TODO: hold
-
 : and   nand invert ;
+: xor   2dup nand >r r@ nand swap r> nand nand ;
 : 2*    dup + ;
 
 : *   1 2>r 0 swap begin r@ while
@@ -130,6 +125,7 @@ create squote   128 allot
 \ Since "an ambiguous condition exists if u is greater than or equal
 \ to the number of bits in a cell", this would be acceptable.
 \ : rshift   0 bits/cell rot do 2* over 0< if 1+ then under 2* loop nip ;
+: lshift   begin ?dup while 1- under 2* repeat ;
 
 : u/mod ( n d -- r q )
     ?dup 0= abort" Division by zero"
@@ -152,8 +148,8 @@ create squote   128 allot
 
 : space   bl emit ;
 : ?.-     dup 0< if [char] - emit negate then ;
-: digit   dup 9 > if [ char a 10 - ] literal else [char] 0 then + emit ;
-: (.)     base @ u/mod  ?dup if recurse then  digit ;
+: digit   dup 9 > if [ char a 10 - ] literal else [char] 0 then + ;
+: (.)     base @ u/mod  ?dup if recurse then  digit emit ;
 : u.      (.) space ;
 : .       ?.- u. ;
 
@@ -213,12 +209,10 @@ variable #sib
 : fill   rot rot ?dup if bounds do dup i c! loop drop else 3drop then ;
 
 \ TODO: fm/mod
-
-: lshift   begin ?dup while 1- under 2* repeat ;
+\ TODO: sm/rem
 
 : max   2dup > if drop else nip then ;
 
-\ TODO:   mod
 \ TODO:   move
 
 : (quit) ( R: ... -- )
@@ -234,13 +228,17 @@ variable #sib
 
 ' (quit)  ' quit >body cell+  !
 
-\ TODO: s>d
-\ TODO: sign
-\ TODO: sm/rem
+: s>d   dup 0< swap ;
+
+variable x
+: <#     pad x ! ;
+: hold   x @ 1- dup x ! c! ;
+: #      base @ /mod swap digit hold ;
+: #s     begin dup 0 > while # repeat ;
+: sign   0< if [char] - hold then ;
+: #>     2drop x @  pad x @ - ;
 
 : spaces   0 do space loop ;
-
-: xor   2dup nand >r r@ nand swap r> nand nand ;
 
 : u<   2dup 0< swap 0< over <> if nip nip else drop - 0< then ;
 
