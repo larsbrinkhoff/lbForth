@@ -27,8 +27,8 @@
 
 : erase   bounds ?do 0 i c! loop ;
 
-\ TODO: span
-\ TODO: expect
+variable span
+: expect   accept span ! ;
 
 : true    -1 ;
 : false   0 ;
