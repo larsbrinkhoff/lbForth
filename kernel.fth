@@ -25,34 +25,28 @@
     ." ok" cr
     quit ;
 
-create data_stack   110 cells allot
-
+create data_stack     110 cells allot
 create return_stack   100 cells allot
+create jmpbuf         jmp_buf allot
 
 variable dp
 variable end_of_dictionary
-
-create jmpbuf   jmp_buf allot
 
 variable SP
 variable RP
 
 : sp@   SP @ cell + ;
 : sp!   SP ! ;
-
 : rp@   RP @ cell + ;
 : rp!   postpone (literal) RP , postpone ! ; immediate
 
 : cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
 
-: >name ( xt -- caddr u )   count cabs ;
-
-: >lfa   TO_NEXT + ;
-
+: >name    count cabs ;
+: >lfa     TO_NEXT + ;
 : >nextxt   >lfa @ ;
 
-: branch   r> @ >r ;
-
+: branch    r> @ >r ;
 : (+loop)   r> swap r> + r@ over >r < invert swap >r ;
 
 : ?stack   data_stack 99 cells + sp@  < if ." Stack underflow" cr abort then ;
@@ -69,9 +63,7 @@ variable RP
     then ;
 
 : dummy-catch   execute 0 ;
-
 create catcher   ' dummy-catch ,
-
 : catch   catcher @ execute ;
 
 create interpreters
@@ -86,6 +78,7 @@ create interpreters
    find-name interpret-xt ?stack repeat 2drop ;
 
 : bounds    over + swap ;
+: count     dup 1+ swap c@ ;
 
 : c,   here c!  1 allot ;
 : string, ( addr n -- )    here over allot align  swap cmove ;
@@ -113,12 +106,13 @@ variable  sink
 : 3drop   2drop drop ;
 
 : swap   >r >r rp@ cell+ @ r> r> drop ;
-
 : over   >r >r r@ 2r> ;
+: rot    >r swap r> swap ;
 
 : dup    sp@ @ ;
 : 2dup   over over ;
 : 3dup   >r >r r@ over 2r> over >r rot swap r> ;
+: ?dup   dup if dup then ;
 
 : nip    swap drop ;
 : 2nip   2>r 2drop 2r> ;
@@ -134,9 +128,9 @@ variable csp
          0 csp ! ;
 
 : :   [ ' enter >code @ ] literal header, ] !csp ;
-
 : ;   reveal postpone exit postpone [ ?csp ; immediate
 
+: =   - if 0 else -1 then ;
 \ TODO: This is wrong if "-" overflows.  If d=x-y and sX is the
 \ sign bit, this computes "less than":  (sy&sx) ^ (sd&sx) ^ (sd&sy)
 : <   - [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
@@ -145,21 +139,18 @@ variable csp
 \ : n   cells numbers + @ ;
 \ : foo ( n -- )   5 0 do dup i n over . ." < " dup . < ." => " . cr loop drop ;
 \ : bar   5 0 do i n foo loop ;
-
-: =   - if 0 else -1 then ;
 : >   swap < ;
 
-: >code ( xt -- cfa )   TO_CODE + ;
-: >does ( xt -- dfa )   TO_DOES + ;
-: >body ( xt -- pfa )   TO_BODY + ;
+: >code   TO_CODE + ;
+: >does   TO_DOES + ;
+: >body   TO_BODY + ;
 
 variable >in
 
 : r@   rp@ cell+ @ ;
+: i    r> r@ swap >r ;
 
-: ?dup ( 0 -- 0 | x - x x )   dup if dup then ;
-
-: abort ( ... -- ) ( R: ... -- )   data_stack 100 cells + sp!  quit ;
+: abort   data_stack 100 cells + sp!  quit ;
 
 : align     dp @ aligned dp ! ;
 : aligned   cell + 1 - cell negate nand invert ;
@@ -167,27 +158,22 @@ variable >in
 
 variable base
 
-: bl ( -- <space> )   32 ;
+: bl   32 ;
+: cr   10 emit ;
 
 : cell    cell ; \ Metacompiler knows what to do.
 : cell+   cell + ;
 cell 4 = [if] : cells   dup + dup + ; [then]
 cell 8 = [if] : cells   dup + dup + dup + ; [then]
 
-: count ( caddr -- addr n )   dup 1+ swap c@ ;
-
-: cr ( -- )   10 emit ;
-
 : unex   2r> r> 3drop ;
 \ Put xt and 'unex on return stack, then jump to that.
 : execute   ['] unex >r >r rp@ >r ;
 
-create forth   ' lastxt ,
-
+create forth            ' lastxt ,
 create compiler-words   0 ,
 
 create context   ' forth , ' forth , 0 , 0 , 0 ,
-
 variable current
 
 : lowercase? ( c -- flag )   dup [char] a < if drop 0 exit then [char] z 1+ < ;
@@ -228,29 +214,20 @@ variable current
 
 : here   dp @ ;
 
-: i ( -- x ) ( R: x -- x )   r> r@ swap >r ;
-
-: invert ( x -- ~x )   -1 nand ;
+: invert   -1 nand ;
+: negate   invert 1+ ;
 
 : key   here dup 1 0 read-file 0 = 1 = nand
         if c@ else ." Read error" abort then ;
 
-: literal ( -- n ) ( C: n -- )
-    state @ if postpone (literal) , then ; immediate
+: literal   state @ if postpone (literal) , then ; immediate
 
-: min ( x y -- min[x,y] )
-    2dup < if drop else nip then ;
-
-: negate ( n -- -n )   invert 1+ ;
+: min   2dup < if drop else nip then ;
 
 : or ( x y -- x|y )   invert swap invert nand ;
 
 \ The literal 0 will be patched when loading core.
 : quit ( R: ... -- )   0 execute ;
-
-: rot ( x y z -- y z x )   >r swap r> swap ;
-
-\ TODO: sm/rem
 
 variable ''source
 variable ''#source
@@ -268,17 +245,11 @@ variable state
 	drop
     then ;
 
-: unloop ( R: loop-sys -- )
-    r> 2r> 2drop >r ;
+: unloop   r> 2r> 2drop >r ;
 
 : source? ( -- flag )   >in @ source nip < ;
-
-: <source ( -- char|-1 )
-    source >in @ dup rot = if
-	2drop -1
-    else
-	+ c@  1 >in +!
-    then ;
+: <source ( -- char|-1 )   source >in @ dup rot = if
+   2drop -1 else + c@  1 >in +! then ;
 
 : blank?   dup bl =  over 8 = or  over 9 = or  over 10 = or  over 13 = or nip ;
 
@@ -293,7 +264,6 @@ variable state
 : also   ;
 
 : [   0 state !  previous ; immediate
-
 : ]   1 state !  also ['] compiler-words context ! ;
 
 \ ----------------------------------------------------------------------
@@ -304,16 +274,14 @@ variable #tib
 variable #fib
 
 create tib   256 allot
-
 create fib   256 allot
 
 : <>   = 0= ;
 
 : 2>r   r> swap rot >r >r >r ;
-
 : 2r>   r> r> r> rot >r swap ;
 
-: compile, ( xt -- )   state @ if , else execute then ;
+: compile,   state @ if , else execute then ;
 
 : refill ( -- flag )
     source-id dup 0= if
@@ -343,14 +311,10 @@ create fib   256 allot
 	drop  1 #fib +!
     loop ;
 
-: restore-input ( xn .. x1 n -- flag )
-    drop  'source-id !  ''#source !  ''source !  >in !  0 ;
-
-: save-input ( -- xn .. x1 n )
-    >in @  ''source @  ''#source @  source-id  4 ;
+: restore-input   drop  'source-id !  ''#source !  ''source !  >in !  0 ;
+: save-input      >in @  ''source @  ''#source @  source-id  4 ;
 
 variable 'source-id
-
 : source-id ( -- 0 | -1 | fileid )   'source-id @ ;
 
 : nop ;
