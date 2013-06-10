@@ -88,7 +88,7 @@
 
 : must-refill refill 0= abort" End of file when parsing word" ;
 : next-word ( -- a u )
-           begin bl word count dup 0= while 2drop must-refill repeat ;
+           begin parse-name dup 0= while 2drop must-refill repeat ;
 : name<>   name= 0= ;
 : >[then]  begin
               next-word 2dup s" [then]" name<>
@@ -111,8 +111,8 @@
 
 \ TODO: synonym
 
-: [undefined]   here bl-word find nip 0= ; immediate
-: [defined]     postpone [undefined] invert ; immediate
+: [undefined]   parse-name find-name if nip 0 else nip nip -1 then ;
+: [defined]     postpone [undefined] 0= ; immediate
 
 \ ----------------------------------------------------------------------
 
@@ -126,7 +126,7 @@
 : redefine   tuck >body !  (redefine-does>) @ execute ;
 : (redefi)   immediate redefine ;
 finders redefine-xt   redefine redefine (redefi)
-: re:        : lastxt @ dup find redefine-xt ;
+: re:        : lastxt @ dup find-name redefine-xt ;
 
 : xt-bounds ( xt -- end start)   dup >end swap >body ;
 : .nt ( nt -- nt )   dup id. space ;

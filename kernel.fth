@@ -57,8 +57,8 @@ variable RP
 
 : ?stack   data_stack 99 cells + sp@  < if ." Stack underflow" cr abort then ;
 
-: number ( caddr -- ... )
-    0 0 rot count ?dup if
+: number ( a u -- ... )
+    0 rot rot 0 rot rot ?dup if
 	>number ?dup if
 	    ." Undefined: " type cr abort
 	else
@@ -82,12 +82,17 @@ create interpreters
 : interpret-xt   1+ cells  interpreters + @ catch
                  if ." Exception" cr then ;
 
-: interpret  begin bl-word here c@ while here find interpret-xt ?stack repeat ;
+: interpret  begin parse-name dup while
+   find-name interpret-xt ?stack repeat 2drop ;
 
-: bounds ( addr1 n -- addr2 addr1)   over + swap ;
+: bounds    over + swap ;
+
+: c,   here c!  1 allot ;
+: string, ( addr n -- )    here over allot align  swap cmove ;
+: #name   NAME_LENGTH 1 - ;
 
 : link, ( nt -- )      lastxt !  current @ >body @ , ;
-: name, ( "name" -- )  bl-word NAME_LENGTH allot ;
+: name, ( "name" -- )  parse-name #name min c,  #name string, ;
 : header, ( code -- )  align here  name,  link, ( code ) , 0 , ;
 
 : reveal   lastxt @ current @ >body ! ;
@@ -215,11 +220,11 @@ variable current
     -1 swap ['] ?nt>xt traverse-wordlist
     if 2drop 0 then ;
 
-: find ( caddr -- caddr 0 | xt ? )
-    count context >r begin r> dup cell+ >r @ ?dup while
+: find-name ( a u -- a u 0 | xt ? )
+    #name min context >r begin r> dup cell+ >r @ ?dup while
        >r 2dup r> search-wordlist ?dup
        if 2nip r> drop exit then
-    repeat r> 2drop 1 - 0 ;
+    repeat r> drop 0 ;
 
 : here   dp @ ;
 
@@ -275,41 +280,13 @@ variable state
 	+ c@  1 >in +!
     then ;
 
-: blank?  ( char -- flag )
-    dup bl =
-    over 8 = or
-    over 9 = or
-    over 10 = or
-    over 13 = or
-    nip ;
+: blank?   dup bl =  over 8 = or  over 9 = or  over 10 = or  over 13 = or nip ;
 
-: skip ( "<blanks>" -- )
-    begin
-	source?
-    while
-	<source blank? 0= if -1 >in +! exit then
-    repeat ;
+: skip ( "<blanks>" -- )   begin source? while
+   <source blank? 0= if -1 >in +! exit then repeat ;
 
-: bl-word ( "<blanks>string<blank>" -- )
-    skip source? 0= if 0 here c! exit then
-    here 1+ <source begin
-	over c! 1+
-	source? if <source dup blank? else 0 -1 then
-    until
-    drop here 1+ - NAME_LENGTH 1 - min here c! ;
-
-\ : skip ( char "<chars>" -- char )
-\     begin
-\ 	source?
-\     while
-\ 	dup <source
-\ 	over bl = if blank? else = then 0= if
-\ 	    -1 >in +! exit
-\ 	then
-\     repeat ;
-
-\ : word ( char "<chars>string<char>" -- caddr )
-\     skip parse  NAME_LENGTH 1 - min  dup here c!  here 1+ swap cmove  here ;
+: parse-name ( "<blanks>name<blank>" -- a u )   skip  source drop >in @ +
+    0 begin source? while 1+ <source blank? until 1 - then ;
 
 : previous   ['] forth context ! ;
 

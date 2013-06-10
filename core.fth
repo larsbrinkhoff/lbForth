@@ -1,39 +1,28 @@
+refill   Copyright 2004, 2013 Lars Brinkhoff
+drop
+
+
 : immediate   lastxt @ dup c@ negate swap c! ;
 
 : \   source nip >in ! ; immediate
 
-
-
-\ Copyright 2004, 2013 Lars Brinkhoff
-
-
-
-: char \ ( "word" -- char )
-    bl-word here 1+ c@ ;
+: char   parse-name drop c@ ;
 
 : >mark      here 0 , ;
 : >resolve   here swap ! ;
 : <mark      here ;
 : <resolve   , ;
 
-: '   bl-word here find 0branch [ >mark ] exit [ >resolve ]
-      [ char U ] literal emit
-      [ char n ] literal emit
-      [ char d ] literal emit
-      [ char e ] literal emit
-      [ char f ] literal emit
-      [ char i ] literal emit
-      [ char n ] literal emit
-      [ char e ] literal emit
-      [ char d ] literal emit
-      bl emit
-      [ char w ] literal emit
-      [ char o ] literal emit
-      [ char r ] literal emit
-      [ char d ] literal emit
-      [ char : ] literal emit
-      bl emit
-      count type cr abort ;
+: '   parse-name find-name 0branch [ >mark ] exit [ >resolve ]
+   [ char U ] literal emit  [ char n ] literal emit
+   [ char d ] literal emit  [ char e ] literal emit
+   [ char f ] literal emit  [ char i ] literal emit
+   [ char n ] literal emit  [ char e ] literal emit
+   [ char d ] literal emit  bl emit
+   [ char w ] literal emit  [ char o ] literal emit
+   [ char r ] literal emit  [ char d ] literal emit
+   [ char : ] literal emit  bl emit
+   count type cr abort ;
 
 : here!   here - allot ;
 : >h      here >r here! ;
@@ -53,13 +42,7 @@
 
 finders postpone-xt   postpone, abort compile,
 
-: word \ ( char "<chars>string<char>" -- caddr )
-    drop bl-word here ;
-
-: postpone   bl word find postpone-xt ; immediate
-
-: chars \ ( n1 -- n2 )
-    ;
+: postpone   parse-name find-name postpone-xt ; immediate
 
 : unresolved   postpone postpone  postpone >mark ; immediate
 : ahead        unresolved branch ; immediate
@@ -100,8 +83,6 @@ finders postpone-xt   postpone, abort compile,
 
 : compile-only   hide  current @  [ ' compiler-words ] literal current !
                  link  reveal  current ! ;
-
-: string, ( addr n -- )    here over allot align  swap cmove ;
 
 : (s") ( -- addr n ) ( R: ret1 -- ret2 )
     r> dup @ swap cell+ 2dup + aligned >r swap ;
@@ -192,9 +173,8 @@ create squote   128 allot
 
 : abs   dup 0< if negate then ;
 
-: c,   here c!  1 chars allot ;
-
-: char+   1+ ;
+: chars   ;
+: char+   1 chars + ;
 
 : constant   create , does> @ ;
 
@@ -273,3 +253,7 @@ variable #sib
        source? if <source i c!
        else drop i swap - unloop exit then
     loop nip ;
+
+: uncount   swap 1 - swap over c! ;
+: word   drop parse-name uncount ; \ TODO: accept any delimiter.
+: find   count find-name ?dup 0= if uncount 0 then ;
