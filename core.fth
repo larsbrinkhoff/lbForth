@@ -77,8 +77,7 @@ finders postpone-xt   postpone, abort compile,
 
 : recurse   lastxt @ compile, ; immediate
 
-: pad \ ( -- addr )
-    here 1024 + ;
+: pad   here 1024 + ;
 
 : parse \ ( char "string<char>" -- addr n )
     pad >r  begin
@@ -87,7 +86,7 @@ finders postpone-xt   postpone, abort compile,
 	r@ c!  r> 1+ >r
     repeat  2drop  pad r> over - ;
 
-: [char]   char  postpone literal ; immediate
+: [char]   char postpone literal ; immediate
 
 : 1-   -1 + ;
 
@@ -102,8 +101,7 @@ finders postpone-xt   postpone, abort compile,
 : compile-only   hide  current @  [ ' compiler-words ] literal current !
                  link  reveal  current ! ;
 
-: string, ( addr n -- )
-    here over allot align  swap cmove ;
+: string, ( addr n -- )    here over allot align  swap cmove ;
 
 : (s") ( -- addr n ) ( R: ret1 -- ret2 )
     r> dup @ swap cell+ 2dup + aligned >r swap ;
@@ -113,8 +111,7 @@ create squote   128 allot
 : s"   [char] " parse  >r squote r@ cmove  squote r> ;
 : s"   postpone (s")  [char] " parse  dup ,  string, ; immediate compile-only
 
-: (abort") ( ... addr n -- ) ( R: ... -- )
-    cr type cr abort ;
+: (abort") ( ... addr n -- ) ( R: ... -- )    cr type cr abort ;
 
 : abort" ( ... x "string<quote>" -- ) ( R: ... -- )
     postpone if  postpone s"  postpone (abort")  postpone then ; immediate
@@ -125,11 +122,12 @@ create squote   128 allot
 
 \ TODO: #
 \ TODO: #>
+\ TODO: <#
 \ TODO: #s
+\ TODO: hold
 
 : and   nand invert ;
-
-: 2*   dup + ;
+: 2*    dup + ;
 
 : *   1 2>r 0 swap begin r@ while
          2r> 2dup 2* 2>r and if swap over + swap then 2*
@@ -148,7 +146,6 @@ create squote   128 allot
 
 : rshift   >r 0 begin r> dup bits/cell < while 1+ >r
            2* over 0< if 1+ then under 2* repeat drop nip ;
-
 \ Since "an ambiguous condition exists if u is greater than or equal
 \ to the number of bits in a cell", this would be acceptable.
 \ : rshift   0 bits/cell rot do 2* over 0< if 1+ then under 2* loop nip ;
@@ -173,46 +170,35 @@ create squote   128 allot
          over 0< if under negate u/mod negate else u/mod then then ;
 
 : space   bl emit ;
-
-: ?.-  dup 0< if [char] - emit negate then ;
-
+: ?.-     dup 0< if [char] - emit negate then ;
 : digit   dup 9 > if [ char a 10 - ] literal else [char] 0 then + emit ;
+: (.)     base @ u/mod  ?dup if recurse then  digit ;
+: u.      (.) space ;
+: .       ?.- u. ;
 
-: (.)   base @ u/mod  ?dup if recurse then  digit ;
-
-: ." ( "string<quote>" -- )   postpone s"  postpone type ; immediate
-
-: . ( x -- )   ?.- (.) space ;
+: ."   postpone s"  postpone type ; immediate
 
 : postpone-number   ." Undefined: " count type cr abort ;
 ' postpone-number  ' postpone-xt >body cell+ !
 
 : /     /mod nip ;
 : mod   /mod drop ;
-
-\ This could probably be done faster with something similar to rshift.
-: 2/   dup 0< if 1- then 2 / ;
+: 2/    dup 0< + 2 / ;  \ Could probably be done faster.
 
 : 2@      dup cell+ @ swap @ ;
 : 2!      swap over ! cell+ ! ;
 : 2over   >r >r 2dup r> rot rot r> rot rot ;
 : 2swap   >r rot rot r> rot rot ;
 
-\ TODO: <#
+: abs   dup 0< if negate then ;
 
-: abs ( n -- |n| )
-    dup 0< if negate then ;
+: c,   here c!  1 chars allot ;
 
-: c, ( n -- )
-    here c!  1 chars allot ;
-
-: char+ ( n1 -- n2 )
-    1+ ;
+: char+   1+ ;
 
 : constant   create , does> @ ;
 
-: decimal ( -- )
-    10 base ! ;
+: decimal   10 base ! ;
 
 : depth   data_stack 100 cells +  sp@  - cell /  1- ;
 
@@ -236,15 +222,21 @@ variable leaves
 
 : environment?   2drop 0 ;
 
-\ TODO: evaluate
-\ TODO: fill
-\ TODO: fm/mod )
-\ TODO: hold
+variable #sib
+
+: evaluate ( ... a u -- ... )
+    save-input n>r -1 'source-id !
+    #sib ! ''source !  #sib ''#source ! 0 >in !
+    interpret
+    nr> restore-input if ." Bad restore-input" cr abort then ;
+
+: fill   rot rot ?dup if bounds do dup i c! loop drop else 3drop then ;
+
+\ TODO: fm/mod
 
 : lshift   begin ?dup while 1- under 2* repeat ;
 
-: max ( x y -- max[x,y] )
-    2dup > if drop else nip then ;
+: max   2dup > if drop else nip then ;
 
 \ TODO:   mod
 \ TODO:   move
@@ -266,12 +258,9 @@ variable leaves
 \ TODO: sign
 \ TODO: sm/rem
 
-: spaces ( n -- )
-    0 do space loop ;
+: spaces   0 do space loop ;
 
-: u.   (.) space ;
-
-: xor ( x y -- x^y )    2dup nand >r r@ nand swap r> nand nand ;
+: xor   2dup nand >r r@ nand swap r> nand nand ;
 
 : u<   2dup 0< swap 0< over <> if nip nip else drop - 0< then ;
 
