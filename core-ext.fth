@@ -5,7 +5,7 @@
 : 0<>   if -1 else 0 then ;
 : 0>    0 > ;
 
-: 2r@   2r> 2dup 2>r ;
+: 2r@   r> 2r> 2dup 2>r rot >r ;
 
 : :noname   align here  0 c, 15 allot  link,
    [ ' enter >code @ ] literal , 0 , ] lastxt @ !csp ;
@@ -25,7 +25,7 @@
 : endof     postpone else  swap 1+ ;
 : endcase   0 do  postpone then  loop postpone drop ;
 
-: erase   bounds ?do 0 i c! loop ;
+: erase   0 fill ;
 
 variable span
 : expect   accept span ! ;
