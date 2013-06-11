@@ -2,8 +2,9 @@
 
 ( String words. )
 
-\ -trailing
-\ blank
+: -trailing   begin dup while 2dup + 1- c@ bl = while 1- repeat then ;
+
+: blank   bl fill ;
 
 : cmove> ( addr1 addr2 n -- )
     tuck + >r
@@ -17,8 +18,6 @@
 	over c@ r@ !
     repeat r> 2drop ;
 
-\ search
-
 : sliteral   postpone (s") dup , string, ; immediate
 
 : /string ( caddr u n -- caddr+1 u-1 )   swap over - under + ;
@@ -31,3 +30,6 @@
        1 /string
     loop
     nip 0> negate ;
+
+: search   2>r begin dup while 2dup r@ min 2r@ compare while
+   1 /string repeat 2r> 2drop -1 exit then 2r> 2drop 0 ;
