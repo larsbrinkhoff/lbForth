@@ -23,7 +23,7 @@
 : /string ( caddr u n -- caddr+1 u-1 )   swap over - under + ;
 
 : compare ( a1 u1 a2 u2 -- n )
-    bounds do
+    bounds ?do
        dup 0= if 2drop -1 unloop exit then
        over c@ i c@ - dup 0<>
        if 0< 2* 1+ under 2drop unloop exit else drop then
@@ -31,5 +31,5 @@
     loop
     nip 0> negate ;
 
-: search   2>r begin dup while 2dup r@ min 2r@ compare while
-   1 /string repeat 2r> 2drop -1 exit then 2r> 2drop 0 ;
+: search   2>r begin 2dup r@ min 2r@ compare while dup while
+   1 /string repeat 0 else -1 then 2r> 2drop ;
