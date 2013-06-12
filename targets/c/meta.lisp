@@ -43,6 +43,17 @@
 (defvar *ip* 0)
 (defvar *code* (make-array '(0) :adjustable t :fill-pointer 0))
 
+(defun trivial-quit ()
+  #+sbcl
+  (sb-ext:quit)
+  #+clisp
+  (ext:quit)
+  #+ecl
+  (si:quit)
+  #-(or sbcl clisp ecl)
+  (implementation-dependent-quit))
+
+#-ecl
 (declaim (ftype function interpret-file compile-word header-name mangle-char
 		mangle-word output output-line output-name output-end-of-word
 		quoted read-word whitespacep))
@@ -62,10 +73,7 @@
 	(dolist (file input-files)
 	  (interpret-file file))
 	(output-end-of-word))))
-  #+sbcl
-  (quit)
-  #-sbcl
-  (implementation-dependent-quit))
+  (trivial-quit))
 
 (defun interpret-file (file)
   (with-open-file (*input* file)

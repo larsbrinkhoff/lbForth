@@ -1,5 +1,7 @@
 CC = gcc
-LISP = sbcl
+LISP = sbcl --noinform --eval
+#LISP = clisp -q -x
+#LISP = ecl -eval
 M32 = -m32
 CFLAGS = -g $(M32) -O2 -fomit-frame-pointer -fno-unit-at-a-time -I. -Itargets/c
 LDFLAGS = -g $(M32)
@@ -15,8 +17,7 @@ forth: kernel.o
 kernel.o: kernel.c kernel.h targets/c/forth.h
 
 %.c %.h: %.fth $(nucleus) $(meta) params.lisp
-	$(LISP) --noinform --load $(meta) \
-	        --eval '(compile-forth "$(nucleus)" "$<")'
+	$(LISP) '(progn (load "$(meta)") (compile-forth "$(nucleus)" "$<"))'
 
 params.lisp: params
 	./$< > $@
