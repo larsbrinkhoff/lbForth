@@ -230,13 +230,14 @@ variable #sib
 
 : s>d   dup 0< swap ;
 
-variable x
-: <#     pad x ! ;
-: hold   x @ 1- dup x ! c! ;
+variable hld
+: <#     pad hld ! ;
+: hold   hld @ 1- dup hld ! c! ;
 : #      base @ /mod swap digit hold ;
 : #s     begin dup 0 > while # repeat ;
 : sign   0< if [char] - hold then ;
-: #>     2drop x @  pad x @ - ;
+: holds  bounds swap begin 2dup < while 1- dup c@ hold repeat 2drop ;
+: #>     2drop hld @  pad hld @ - ;
 
 : spaces   0 do space loop ;
 
