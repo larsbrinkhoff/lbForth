@@ -1,0 +1,177 @@
+From http://www.faqs.org/faqs/dec-faq/pdp8-models/
+
+----------------------------------------------------------------------
+
+PDP-5
+
+The core of the PDP-8 instruction set is present, but memory location
+zero is the program counter, and interrupts are handled differently.
+The Group 1 OPR rotate instructions cannot be combined with IAC or
+CMA; this limits the ability of the PDP-5 to support code from later
+models.
+
+The machine does not support 3 cycle data-break (DMA transfers using
+memory to hold buffer address and word-count information), so many
+later PDP-8 peripherals cannot be used on the PDP-5.  In addition, DMA
+transfers are not allowed outside the program's current 4K data field,
+severely limiting software compatability on systems with over 4K of
+memory where either interrupts or software initiated changes to the
+data field during a transfer would cause chaos.
+
+An extended arithmetic element (EAE) was available; this was an I/O
+device, using IOT instructions to evoke EAE operations.  As a result,
+it was not compatable with the later PDP-8 EAEs.
+
+----------------------------------------------------------------------
+
+PDP-8
+
+This machine defines the core of the PDP-8 instruction set, but with
+restrictions that were lifted on later machines.  The Group 1 OPR
+instruction IAC cannot be combined with any of the rotate
+instructions.  If RAR and RAL or RTR and RTL are combined, the results
+are unpredictable (simultaneous set and reset of bits of AC results in
+metastable behavior).  The IOT 0 instruction was used for the internal
+type 189 ADC, and not for the later CAF (clear all flags) instruction.
+As a result, if the ADC option was not present, IOT 6004 (or
+microcoded variants) would hang the machine.
+
+The SWP instruction (exchange AC and MQ) never works, even if the
+extended arithmetic element is present.  This works on later models
+when the EAE is present, although it was only documented with the
+introduction of the PDP-8/E.  Finally, the EAE lacks the SCL (shift
+count load) instruction that is present on later models.
+
+On machines with 8K or more, an attempt to change the data field to a
+non-existant field caused a bizarre double-indirect and skip
+instruction execution that must be accounted for in memory
+diagnostics.
+
+----------------------------------------------------------------------
+
+PDP-8/S
+
+The core of the PDP-8 instruction set is present, but
+there are a sufficient number of incompatabilities that, as with
+the PDP-5, many otherwise portable "family of 8" programs will
+not run on the PDP-8/S.  Perhaps the worst incompatability is
+that the Group 1 OPR instruction CMA cannot be combined with any
+of the rotate instructions; as with the PDP-8, IAC also cannot
+be combined with rotate.
+
+----------------------------------------------------------------------
+
+PDP-8/I
+
+The core of the PDP-8 instruction set is present, and unlike the
+original PDP-8, IAC can be combined with rotate in a single microcoded
+Group 1 OPR instruction.  Combined RAR and RAL or RTR and RTL produce
+the logical and of the expected results from each of the combined
+shifts.
+
+If the extended arithmetic element is present, the SWP (exchange AC
+and MQ) instruction works, but this was not documented.
+
+On large memory configurations, memory fetches from a nonexistant
+memory field take about 30 microseconds (waiting for a bus timeout)
+and then they return either 0000 or 7777 depending on the memory
+configuration and the field that was addressed.
+
+----------------------------------------------------------------------
+
+PDP-8/L
+
+The core of the PDP-8 instruction set is present, and unlike the
+original PDP-8, IAC can be combined with rotate in a single microcoded
+Group 1 OPR instruction.  Combined RAR and RAL or RTR and RTL produce
+the logical and of the expected results from each of the combined
+shifts.
+
+If the extended arithmetic element is present, the SWP (exchange AC
+and MQ) instruction works, but this was not documented.
+
+On large memory configurations, memory fetches from a nonexistant
+memory field take about 30 microseconds (waiting for a bus timeout)
+and then they return either 0000 or 7777 depending on the memory
+configuration and the field that was addressed.
+
+----------------------------------------------------------------------
+
+PDP-8/E
+
+As with the PDP-8/I and PDP-8/L, there are no limits on the
+combination of IAC and rotate instructions.  Unlike the early
+machines, basic Group 3 OPR operations for loading and storing the MQ
+register work even if there is no extended arithmetic element.
+Finally, a new instruction was added, BSW; this swaps the left and
+right bytes in AC, and is encoded as a Group 1 OPR instruction using
+the "double the shift count bit".
+
+An odd quirk of this machine is that the RAL RAR combination ands the
+AC with the op-code, and the RTR RTL combination does an effective
+address computation loading the high 5 bits of AC with the current
+page and the lower bits of AC with the address field of the
+instruction itself!
+
+The EAE has a new mode, mode B.  Previous EAE designs were
+single-mode.  Mode B supports a large set of 24 bit operations and a
+somewhat more rational set of shift operations than the standard EAE.
+All prior EAE designs would hang on the microcoded CLA NMI
+(clear/normalize) instruction applied to a nonzero AC.  This
+instruction is redefined to be a mode changing instruction on the 8/E.
+
+----------------------------------------------------------------------
+
+PDP-8/A
+
+The core of the PDP-8 instruction set is present, and unlike the
+original PDP-8, IAC can be combined with rotate in a single microcoded
+Group 1 OPR instruction.  Combined RAR and RAL or RTR and RTL produce
+the logical and of the expected results from each of the combined
+shifts.
+
+If the extended arithmetic element is present, the SWP (exchange AC
+and MQ) instruction works, but this was not documented.
+
+On large memory configurations, memory fetches from a nonexistant
+memory field take about 30 microseconds (waiting for a bus timeout)
+and then they return either 0000 or 7777 depending on the memory
+configuration and the field that was addressed.
+
+----------------------------------------------------------------------
+
+VT78
+
+As with the PDP-8/I and PDP-8/L, there are no limits on the
+combination of IAC and rotate instructions.  Unlike the early
+machines, basic Group 3 OPR operations for loading and storing the MQ
+register work even if there is no extended arithmetic element.
+Finally, a new instruction was added, BSW; this swaps the left and
+right bytes in AC, and is encoded as a Group 1 OPR instruction using
+the "double the shift count bit".
+
+An odd quirk of this machine is that the RAL RAR combination ands the
+AC with the op-code, and the RTR RTL combination does an effective
+address computation loading the high 5 bits of AC with the current
+page and the lower bits of AC with the address field of the
+instruction itself!
+
+The EAE has a new mode, mode B.  Previous EAE designs were
+single-mode.  Mode B supports a large set of 24 bit operations and a
+somewhat more rational set of shift operations than the standard EAE.
+All prior EAE designs would hang on the microcoded CLA NMI
+(clear/normalize) instruction applied to a nonzero AC.  This
+instruction is redefined to be a mode changing instruction
+
+----------------------------------------------------------------------
+
+DECmate I
+
+A new feature was introduced in the 6120 microprocessor: The Group I
+OPR combination RAL RAR was defined as R3L, or rotate accumulator 3
+places left, so that byte swap (BSW) is equivalent to R3L;R3L.  RTR
+RTL remained a no-op, as in the 6100.
+
+Also, the EAE operations not implemented in the basic CPU cause the
+CPU to hang awaiting completion of the operation by a coprocessor.
+Unfortunately, no EAE coprocessor was ever offered.
