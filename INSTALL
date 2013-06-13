@@ -1,2 +1,6 @@
-To build the bootstrap Forth, type "make".  You will have to tweak the
-Makefile if you want to use some Lisp other than SBCL.
+To build the bootstrap Forth, type "make".  This will metacompile the
+kernel for the C target, then call gcc to generate an executable.
+
+The meta compiler is written in Lisp.  An attempt is made to
+automatically detect an implementation.  Currently, CLISP, ECL, and
+SBCL are supported.
