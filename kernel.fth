@@ -283,14 +283,7 @@ create fib   256 allot
 
 : compile,   state @ if , else execute then ;
 
-: refill ( -- flag )
-    source-id dup 0= if
-	drop terminal-refill
-    else -1 = if
-	0 \ string-refill
-    else
-	file-refill
-    then then ;
+defer refill
 
 : terminal-refill ( -- flag )
     0 >in !
@@ -311,8 +304,10 @@ create fib   256 allot
 	drop  1 #fib +!
     loop ;
 
-: restore-input   drop  'source-id !  ''#source !  ''source !  >in !  0 ;
-: save-input      >in @  ''source @  ''#source @  source-id  4 ;
+: restore-input   drop  is refill  'source-id !  ''#source !  ''source !
+   >in !  0 ;
+: save-input   >in @  ''source @  ''#source @  source-id
+   ['] refill >body @   5 ;
 
 variable 'source-id
 : source-id ( -- 0 | -1 | fileid )   'source-id @ ;
@@ -343,16 +338,19 @@ create 'bt   ' nop ,
    repeat r> swap >r ;
 
 : include-file ( fileid -- )
-    save-input n>r 'source-id !
-    fib ''source !  #fib ''#source !  0 #fib !  \ 0 blk !
-    begin refill while interpret repeat
-    source-id close-file drop
-    nr> restore-input if ." Bad restore-input" cr abort then ;
+   save-input n>r 'source-id !
+   fib ''source !  #fib ''#source !  0 #fib !  \ 0 blk !
+   ['] file-refill is refill
+   begin refill while interpret repeat
+   source-id close-file drop
+   nr> restore-input if ." Bad restore-input" cr abort then ;
 
 : included ( ... addr n -- ... )
-    r/o open-file if cr ." Read error." cr abort then include-file ;
+   r/o open-file if cr ." Read error." cr abort then include-file ;
 
 : r/o   s" r" drop ;
+
+: (defer)   @ execute ;
 
 \ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
 variable lastxt

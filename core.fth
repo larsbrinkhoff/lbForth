@@ -218,6 +218,7 @@ variable #sib
 : (quit) ( R: ... -- )
     return_stack 100 cells + rp!  0 csp !
     0 'source-id !  tib ''source !  #tib ''#source !
+    [ ' terminal-refill ] literal [ ' refill >body ] literal !
     postpone [
     begin
 	[ ' refill ] literal catch if ." Exception" cr -1 then
