@@ -70,7 +70,7 @@
 \ The default action ERROR1 can be used as a factor in the display of
 \ error reports.
 
-\ Loading ttester.fs does not change BASE.  Remember that floating point input
+\ Loading ttester.fth does not change BASE.  Remember that floating point input
 \ is ambiguous if the base is not decimal.
 
 \ The file defines some 70 words in all, but in most cases only the
@@ -342,4 +342,4 @@ VARIABLE VERBOSE
    THEN ;
 
 BASE !
-\ end of ttester.fs
+\ end of ttester.fth

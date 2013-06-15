@@ -1,14 +1,14 @@
 \ ANS Forth tests - run all tests
 
 \ Adjust the file paths as appropriate to your system
-\ Select the appropriate test harness, either the simple tester.fr
-\ or the more complex tester.fs 
+\ Select the appropriate test harness, either the simple tester.fth
+\ or the more complex ttester.fth 
 
 CR .( Running ANS Forth test programs, version 0.9) CR
 
-	S" test/tester.fr" INCLUDED
-\   S" ttester.fs" INCLUDED
-	S" test/core.fr" INCLUDED
+	S" test/tester.fth" INCLUDED
+\   S" ttester.fth" INCLUDED
+	S" test/core.fth" INCLUDED
    S" coreplustest.fth" INCLUDED
 \	S" coreexttest.fth" INCLUDED
 \	S" doubletest.fth" INCLUDED
@@ -22,3 +22,4 @@ CR .( Running ANS Forth test programs, version 0.9) CR
 CR CR .( Forth tests completed ) CR CR
 
 
+\ ffmpeg -i $input -sameq -ac 2 tmp3.mpeg
