@@ -8,9 +8,9 @@
 ;;; Words (partially) supported by this meta compiler:
 ;;
 ;; ( \ [IF] [ELSE] [THEN] [DEFINED] [UNDEFINED]
-;; : ; IMMEDIATE DOES> CODE END-CODE
+;; : ; IMMEDIATE DOES> DEFER CODE END-CODE
 ;; VARIABLE CREATE ALLOT , ' CELLS >CODE @ INVERT RSHIFT = CHAR -
-;; [CHAR] ['] [ ] LITERAL POSTPONE ." S"
+;; [CHAR] ['] [ ] LITERAL POSTPONE IS ." S"
 ;; IF ELSE THEN DO LEAVE LOOP +LOOP BEGIN AGAIN WHILE REPEAT UNTIL
 ;; CELL JMP_BUF NAME_LENGTH TO_NEXT TO_CODE TO_DOES TO_BODY
 ;; .CS
@@ -288,6 +288,14 @@
     (output "  (cell)~A~:[~;,~] /* ~D */"
 	    (aref *code* i) (/= (1+ i) end) i))
   (setq *state* 'interpret-word))
+
+(definterpreted defer ()
+  (output-header (read-word) "dodoes_code" (word-body "(defer)"))
+  (output "  (cell)~A" (tick "abort")))
+
+(defimmediate is ()
+  (emit-literal (word-body (read-word)))
+  (emit-word "!"))
 
 (defimmediate does> ()
   (emit-word "(does>)"))
