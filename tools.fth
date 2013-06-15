@@ -126,7 +126,7 @@
 : redefine   tuck >body !  (redefine-does>) @ execute ;
 : (redefi)   immediate redefine ;
 finders redefine-xt   redefine redefine (redefi)
-: re:        : lastxt @ dup find-name redefine-xt ;
+: re:        : lastxt @ dup count find-name redefine-xt ;
 
 : xt-bounds ( xt -- end start)   dup >end swap >body ;
 : .nt ( nt -- nt )   dup id. space ;
