@@ -305,22 +305,17 @@ defer backtrace
 
 ( File Access words. )
 
-: n>r ( x1 ... xn n -- ) ( R: -- x1 ... xn n )
-   r> over >r swap begin ?dup while
-     rot r> 2>r 1 -
-   repeat >r ;
+: n>r   r> over >r swap begin ?dup while rot r> 2>r 1 - repeat >r ;
+: nr>   r> r@ begin ?dup while 2r> >r rot rot 1 - repeat r> swap >r ;
 
-: nr> ( -- x1 ... xn n ) ( R: x1 ... xn n -- )
-   r> r@ begin ?dup while
-      2r> >r rot rot 1 -
-   repeat r> swap >r ;
+: interpret-loop   >r begin ['] refill catch if ." Exception" cr -1 then while
+   interpret r@ execute repeat r> drop ;
 
-: include-file ( fileid -- )
-   save-input n>r 'source-id !
-   fib ''source !  #fib ''#source !  0 #fib !  \ 0 blk !
-   ['] file-refill is refill
-   begin refill while interpret repeat
-   source-id close-file drop
+: file-input ( fileid -- )    'source-id !  fib ''source !  #fib ''#source !
+   0 #fib !  ( 0 blk ! )  ['] file-refill is refill ;
+
+: include-file ( fileid -- )   save-input n>r  file-input
+   ['] nop interpret-loop  source-id close-file drop
    nr> restore-input if ." Bad restore-input" cr abort then ;
 
 : included ( ... addr n -- ... )

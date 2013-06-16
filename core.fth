@@ -224,20 +224,6 @@ create tib   256 allot
       i c!  1 #tib +!
    loop ;
 
-: (quit) ( R: ... -- )
-    return_stack 100 cells + rp!  0 csp !
-    0 'source-id !  tib ''source !  #tib ''#source !
-    [ ' terminal-refill ] literal [ ' refill >body ] literal !
-    postpone [
-    begin
-	[ ' refill ] literal catch if ." Exception" cr -1 then
-    while
-	interpret  state @ 0= if ."  ok" cr then
-    repeat
-    bye ;
-
-' (quit) ' quit >body !
-
 : s>d   dup 0< swap ;
 
 variable hld
@@ -256,6 +242,16 @@ variable hld
 \ TODO: um/mod
 
 : [']   ' postpone literal ; immediate
+
+: terminal-input   0 'source-id !  tib ''source !  #tib ''#source !
+   ['] terminal-refill ['] refill >body ! ;
+
+: ?prompt   state @ 0= if ."  ok" cr then ;
+
+: (quit)   return_stack 100 cells + rp!  0 csp !  postpone [
+   terminal-input  ['] ?prompt interpret-loop  bye ;
+
+' (quit) ' quit >body !
 
 : accept ( caddr u1 -- u2 )
     2dup bounds do
