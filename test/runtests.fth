@@ -20,6 +20,3 @@ CR .( Running ANS Forth test programs, version 0.9) CR
 \	S" stringtest.fth" INCLUDED
 
 CR CR .( Forth tests completed ) CR CR
-
-
-\ ffmpeg -i $input -sameq -ac 2 tmp3.mpeg
