@@ -215,6 +215,15 @@ variable #sib
 
 \ TODO:   move
 
+variable #tib
+create tib   256 allot
+
+: terminal-refill   0 >in !  0 #tib !  -1
+   source drop 256 bounds do
+      key dup 10 = if drop leave then
+      i c!  1 #tib +!
+   loop ;
+
 : (quit) ( R: ... -- )
     return_stack 100 cells + rp!  0 csp !
     0 'source-id !  tib ''source !  #tib ''#source !

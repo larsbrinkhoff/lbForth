@@ -270,10 +270,7 @@ variable state
 
 ( Core extension words. )
 
-variable #tib
 variable #fib
-
-create tib   256 allot
 create fib   256 allot
 
 : <>   = 0= ;
@@ -284,15 +281,6 @@ create fib   256 allot
 : compile,   state @ if , else execute then ;
 
 defer refill
-
-: terminal-refill ( -- flag )
-    0 >in !
-    0 #tib !
-    -1
-    source drop 256 bounds do
-	key dup 10 = if drop leave then
-	i c!  1 #tib +!
-    loop ;
 
 : file-refill ( -- flag )
     0 >in !
