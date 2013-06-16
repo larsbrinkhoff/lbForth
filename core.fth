@@ -236,7 +236,7 @@ create tib   256 allot
     repeat
     bye ;
 
-' (quit)  ' quit >body cell+  !
+' (quit) ' quit >body !
 
 : s>d   dup 0< swap ;
 

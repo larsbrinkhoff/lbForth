@@ -6,12 +6,11 @@
 
 variable handler   0 handler !  \ last exception handler
 
-: catch ( xt -- exc# | 0 )
+:noname ( xt -- exc# | 0 )
    sp@ >r  handler @ >r  rp@ handler !
    execute
    r> handler !  r> drop  0 ;
-
-' catch catcher !
+is catch
 
 : throw ( ex# -- <no return> )
    ?dup if  handler @ rp!  r> handler ! r> swap >r  sp! drop r>  then ;

@@ -11,19 +11,20 @@
 \ Number conversion:	>number
 \ I/O:			emit open-file read-file close-file
 
-: warm ( -- )
-    ." lbForth" cr
-    ['] lastxt lastxt !
-    ['] lastxt forth !
-    0 compiler-words !
-    ['] forth current !
-    10 base !
-    s" core.fth" included
-    s" core-ext.fth" included
-    s" string.fth" included
-    s" tools.fth" included
-    ." ok" cr
-    quit ;
+: warm
+   ." lbForth" cr
+   ['] nop dup is backtrace is also
+   ['] dummy-catch is catch
+   ['] lastxt dup lastxt ! forth !
+   ['] forth current !
+   0 compiler-words !
+   10 base !
+   s" core.fth" included
+   s" core-ext.fth" included
+   s" string.fth" included
+   s" tools.fth" included
+   ." ok" cr
+   quit ;
 
 create data_stack     110 cells allot
 create return_stack   100 cells allot
@@ -62,14 +63,10 @@ variable RP
 	3drop
     then ;
 
+defer catch
 : dummy-catch   execute 0 ;
-create catcher   ' dummy-catch ,
-: catch   catcher @ execute ;
 
-create interpreters
-    ' compile, ,
-    ' number ,
-    ' execute ,
+create interpreters   ' compile, ,  ' number ,  ' execute ,
 
 : interpret-xt   1+ cells  interpreters + @ catch
                  if ." Exception" cr then ;
@@ -224,10 +221,9 @@ variable current
 
 : min   2dup < if drop else nip then ;
 
-: or ( x y -- x|y )   invert swap invert nand ;
+: or   invert swap invert nand ;
 
-\ The literal 0 will be patched when loading core.
-: quit ( R: ... -- )   0 execute ;
+defer quit
 
 variable ''source
 variable ''#source
@@ -236,14 +232,7 @@ variable ''#source
 
 variable state
 
-: type ( addr n -- )
-    ?dup if
-	bounds do
-	    i c@ emit
-	loop
-    else
-	drop
-    then ;
+: type   ?dup if bounds do i c@ emit loop else drop then ;
 
 : unloop   r> 2r> 2drop >r ;
 
@@ -261,7 +250,7 @@ variable state
 
 : previous   ['] forth context ! ;
 
-: also   ;
+defer also
 
 : [   0 state !  previous ; immediate
 : ]   1 state !  also ['] compiler-words context ! ;
@@ -301,9 +290,10 @@ variable 'source-id
 : source-id ( -- 0 | -1 | fileid )   'source-id @ ;
 
 : nop ;
-create 'bt   ' nop ,
 
-: sigint   cr 'bt @ execute abort ;
+defer backtrace
+
+: sigint   cr backtrace abort ;
 
 \ ----------------------------------------------------------------------
 

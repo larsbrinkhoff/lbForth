@@ -40,13 +40,13 @@
 : .nt     id. space -1 ;
 : words   context @ ['] .nt traverse-wordlist ;
 
-: body?       dup >body swap >end within ;
-: .offset     2dup id. swap >body - ."  +" . ;
-: ?.offset    2dup body? if .offset 0 else drop -1 then ;
-: backtrace   return_stack 100 cells + rp@ do ."  > " i ?
-              i @ context @ ['] ?.offset traverse-wordlist cr drop
-              cell +loop ;
-' backtrace 'bt !
+: body?      dup >body swap >end within ;
+: .offset    2dup id. swap >body - ."  +" . ;
+: ?.offset   2dup body? if .offset 0 else drop -1 then ;
+:noname      return_stack 100 cells + rp@ do ."  > " i ?
+             i @ context @ ['] ?.offset traverse-wordlist cr drop
+             cell +loop ;
+is backtrace
 
 : xt??   nip over <> dup ;
 : xt?    1 ['] xt?? traverse-order nip 0= ;

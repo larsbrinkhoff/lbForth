@@ -19,7 +19,7 @@
                context swap cells bounds
                do i ! cell +loop then ;
 : only         forth-wordlist forth-wordlist 2 set-order ;
-re: also       get-order 1+ over swap set-order ;
+:noname        get-order 1+ over swap set-order ; is also
 re: previous   get-order 1- nip set-order ;
 : order        ." Order:"
                context begin dup @ ?dup while
