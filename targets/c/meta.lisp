@@ -10,7 +10,7 @@
 ;; ( \ [IF] [ELSE] [THEN] [DEFINED] [UNDEFINED]
 ;; : ; IMMEDIATE DOES> DEFER CODE END-CODE
 ;; VARIABLE CREATE ALLOT , ' CELLS >CODE @ INVERT RSHIFT = CHAR -
-;; [CHAR] ['] [ ] LITERAL POSTPONE IS ." S"
+;; [CHAR] ['] [ ] LITERAL POSTPONE IS ." S" ABORT"
 ;; IF ELSE THEN DO LEAVE LOOP +LOOP BEGIN AGAIN WHILE REPEAT UNTIL
 ;; CELL JMP_BUF NAME_LENGTH TO_NEXT TO_CODE TO_DOES TO_BODY
 ;; .CS
@@ -379,6 +379,17 @@
   (let ((string (read-word #\")))
     (emit-literal (concatenate 'string "\"" (quoted string) "\""))
     (emit-literal (length string))))
+
+(defimmediate |abort"| ()
+  (emit-branch "0branch" :unresolved)
+  (let ((string (read-word #\")))
+    (emit-literal (concatenate 'string "\"" (quoted string) "\""))
+    (emit-literal (length string)))
+  (emit-word "cr")
+  (emit-word "type")
+  (emit-word "cr")
+  (emit-word "abort")
+  (resolve-branch))
 
 (defun roll (n list)
   (let ((tail (nthcdr n list)))
