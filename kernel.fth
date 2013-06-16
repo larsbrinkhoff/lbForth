@@ -50,7 +50,7 @@ variable RP
 : branch    r> @ >r ;
 : (+loop)   r> swap r> + r@ over >r < invert swap >r ;
 
-: ?stack   data_stack 99 cells + sp@  < if ." Stack underflow" cr abort then ;
+: ?stack   data_stack 99 cells + sp@ < abort" Stack underflow" ;
 
 : number ( a u -- ... )
     0 rot rot 0 rot rot ?dup if
@@ -116,13 +116,10 @@ variable  sink
 
 variable csp
 
-: !csp   csp @ if ." Nested definition: "
-         lastxt @ >name type cr abort then
-         sp@ csp ! ;
-
-: ?csp   sp@ csp @ <> if ." Unbalanced definition: "
-         lastxt @ >name type cr abort then
-         0 csp ! ;
+: .latest   lastxt @ >name type ;
+: !csp   csp @ if ." Nested definition: " .latest cr abort then  sp@ csp ! ;
+: ?csp   sp@ csp @ <> if ." Unbalanced definition: " .latest cr abort then
+   0 csp ! ;
 
 : :   [ ' enter >code @ ] literal header, ] !csp ;
 : ;   reveal postpone exit postpone [ ?csp ; immediate
@@ -214,8 +211,7 @@ variable current
 : invert   -1 nand ;
 : negate   invert 1+ ;
 
-: key   here dup 1 0 read-file 0 = 1 = nand
-        if c@ else ." Read error" abort then ;
+: key   here dup 1 0 read-file 0 = 1 = nand 0= abort" Read error"  c@ ;
 
 : literal   state @ if postpone (literal) , then ; immediate
 
@@ -225,28 +221,24 @@ variable current
 
 defer quit
 
-variable ''source
-variable ''#source
-
-: source ( -- addr n )   ''source @  ''#source @ @ ;
-
 variable state
 
 : type   ?dup if bounds do i c@ emit loop else drop then ;
 
 : unloop   r> 2r> 2drop >r ;
 
+variable ''source
+variable ''#source
+: source ( -- addr n )   ''source @  ''#source @ @ ;
 : source? ( -- flag )   >in @ source nip < ;
 : <source ( -- char|-1 )   source >in @ dup rot = if
    2drop -1 else + c@  1 >in +! then ;
 
 : blank?   dup bl =  over 8 = or  over 9 = or  over 10 = or  over 13 = or nip ;
-
 : skip ( "<blanks>" -- )   begin source? while
    <source blank? 0= if -1 >in +! exit then repeat ;
-
 : parse-name ( "<blanks>name<blank>" -- a u )   skip  source drop >in @ +
-    0 begin source? while 1+ <source blank? until 1 - then ;
+   0 begin source? while 1+ <source blank? until 1 - then ;
 
 : previous   ['] forth context ! ;
 
@@ -259,9 +251,6 @@ defer also
 
 ( Core extension words. )
 
-variable #fib
-create fib   256 allot
-
 : <>   = 0= ;
 
 : 2>r   r> swap rot >r >r >r ;
@@ -271,20 +260,20 @@ create fib   256 allot
 
 defer refill
 
-: file-refill ( -- flag )
-    0 >in !
-    0 #fib !
-    -1
-    source drop 256 bounds do
-	i 1 source-id read-file  if ." Read error." abort then
-	dup 0=  i c@ 10 =  or  if #fib @ or 0= if drop 0 then leave then
-	drop  1 #fib +!
-    loop ;
+variable #fib
+create fib   256 allot
+
+: file-refill ( -- flag )   0 >in !  0 #fib !  -1
+   source drop 256 bounds do
+      i 1 source-id read-file abort" Read error."
+      dup 0=  i c@ 10 =  or  if #fib @ or 0= if drop 0 then leave then
+      drop  1 #fib +!
+   loop ;
 
 : restore-input   drop  is refill  'source-id !  ''#source !  ''source !
    >in !  0 ;
 : save-input   >in @  ''source @  ''#source @  source-id
-   ['] refill >body @   5 ;
+   ['] refill >body @  5 ;
 
 variable 'source-id
 : source-id ( -- 0 | -1 | fileid )   'source-id @ ;
@@ -316,10 +305,9 @@ defer backtrace
 
 : include-file ( fileid -- )   save-input n>r  file-input
    ['] nop interpret-loop  source-id close-file drop
-   nr> restore-input if ." Bad restore-input" cr abort then ;
+   nr> restore-input abort" Bad restore-input" ;
 
-: included ( ... addr n -- ... )
-   r/o open-file if cr ." Read error." cr abort then include-file ;
+: included   r/o open-file abort" Read error." include-file ;
 
 : r/o   s" r" drop ;
 
