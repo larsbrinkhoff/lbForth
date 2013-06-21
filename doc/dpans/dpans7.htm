@@ -1,0 +1,764 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans6.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpans8.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=7.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>7. The optional Block word set</H1>
+
+<code>
+See:
+<a href=dpansa7.htm#A.7>A.7</a> The optional Block word set
+</code>
+
+<hr>
+<A name=7.1>
+<H2>7.1 Introduction</H2>
+</a>
+
+
+<hr>
+<A name=7.2>
+<H2>7.2 Additional terms</H2>
+</a>
+
+<DL><DT><B>block:</B>  <DD>1024 characters of data on mass
+storage, designated by a block number.
+<DT><B>block buffer:</B> <DD>A block-sized region of data space where a block
+is
+made temporarily available for use.  The current block buffer is the
+block buffer most recently accessed by 
+<a href=dpans7.htm#7.6.1.0800>BLOCK</a>, 
+<a href=dpans7.htm#7.6.1.0820>BUFFER</a>, 
+<a href=dpans7.htm#7.6.1.1790>LOAD</a>, 
+<a href=dpans7.htm#7.6.2.1770>LIST</a>, or
+<a href=dpans7.htm#7.6.2.2280>THRU</a>.
+</DL>
+
+<P>
+<code>
+See:
+<a href=dpansa7.htm#A.7.2>A.7.2</a> Additional terms
+</code>
+
+<hr>
+<A name=7.3>
+<H2>7.3 Additional usage requirements</H2>
+</a>
+
+
+<hr>
+<A name=7.3.1>
+<H3>7.3.1 Environmental queries</H3>
+</a>
+
+Append table 7.1
+to table 3.5.
+<P>
+<code>
+See:
+<A href=dpans3.htm#3.2.6>3.2.6</a> Environmental queries
+</code>
+<P>
+
+Table 7.1 - Environmental Query Strings
+
+
+<PRE>
+String          Value data type  Constant?       Meaning
+------          ---------------  ---------       -------
+BLOCK           flag             no              block word set present
+BLOCK-EXT       flag             no              block extensions word set present
+
+</PRE>
+<P>
+
+<hr>
+<A name=7.3.2>
+<H3>7.3.2 Data space</H3>
+</a>
+
+A program may access memory
+within a valid block buffer.
+<P>
+<code>
+See:
+<A href=dpans3.htm#3.3.3>3.3.3</a> Data Space
+</code>
+
+<P>
+
+<hr>
+<A name=7.3.3>
+<H3>7.3.3 Block buffer regions</H3>
+</a>
+
+The address of a block buffer returned by 
+<a href=dpans7.htm#7.6.1.0800>BLOCK</a> or 
+<a href=dpans7.htm#7.6.1.0820>BUFFER</a> is transient.
+A call to BLOCK or BUFFER may render a previously-obtained block-buffer
+address invalid, as may a call to any word that:
+<P>
+
+<UL>
+<LI>parses:
+<LI>displays characters on the user output device, such as 
+<a href=dpans6.htm#6.1.2310>TYPE</a> or 
+<a href=dpans6.htm#6.1.1320>EMIT</a>;
+<LI>controls the user output device, such as 
+<a href=dpans6.htm#6.1.0990>CR</a> or 
+<a href=dpans10.htm#10.6.1.0742>AT-XY</a>;
+<LI>receives or tests for the presence of characters from the user input
+device such as 
+<a href=dpans6.htm#6.1.0695>ACCEPT</a> or 
+<a href=dpans6.htm#6.1.1750>KEY</a>;
+<LI>waits for a condition or event, such as 
+<a href=dpans10.htm#10.6.2.1905>MS</a> or 
+<a href=dpans10.htm#10.6.2.1305>EKEY</a>;
+<LI>manages the block buffers, such as 
+<a href=dpans7.htm#7.6.1.1559>FLUSH</a>, 
+<a href=dpans7.htm#7.6.1.2180>SAVE-BUFFERS</a>, or
+<a href=dpans7.htm#7.6.2.1330>EMPTY-BUFFERS</a>;
+<LI>performs any operation on a file or file-name directory that implies
+I/O, such as 
+<a href=dpans6.htm#6.2.2125>REFILL</a> or any word that returns an ior;
+<LI>implicitly performs I/O, such as text interpreter nesting and
+un-nesting when files are being used (including un-nesting implied by 
+<a href=dpans9.htm#9.6.1.2275>THROW</a>).
+</UL>
+<P>
+
+If the input source is a block, these restrictions also apply to the address
+returned by 
+<a href=dpans6.htm#6.1.2216>SOURCE</a>.
+<P>
+
+Block buffers are
+uniquely assigned to blocks.
+
+<P>
+
+
+<hr>
+<A name=7.3.4>
+<H3>7.3.4 Parsing</H3>
+</a>
+
+The Block word set implements an alternative input source for the text
+interpreter.  When the input source is a block, 
+<a href=dpans7.htm#7.6.1.0790>BLK</a> shall contain the
+non-zero block number and the input buffer is the 1024-character buffer
+containing that block.
+<P>
+
+A block is conventionally displayed
+as 16 lines of 64 characters.
+<P>
+
+A program may switch the input source to a block by using 
+<a href=dpans7.htm#7.6.1.1790>LOAD</a> or 
+<a href=dpans7.htm#7.6.2.2280>THRU</a>.
+Input sources may be nested using LOAD and 
+<a href=dpans6.htm#6.1.1360>EVALUATE</a> in any order.
+<P>
+
+A program may reposition the parse area within a block by manipulating
+<a href=dpans6.htm#6.1.0560>&gt;IN</a>.  
+More extensive repositioning can be accomplished using 
+<a href=dpans6.htm#6.2.2182>SAVE-INPUT</a>
+and 
+<a href=dpans6.htm#6.2.2148>RESTORE-INPUT</a>.
+<P>
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing
+</code>
+<P>
+
+
+<hr>
+<A name=7.3.5>
+<H3>7.3.5 Possible action on an ambiguous condition</H3>
+</a>
+<p>
+<UL>
+<LI>A system with the Block word set may set interpretation state and interpret
+a block.
+</UL>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.4>3.4.4</a> Possible action on an ambiguous
+condition
+</code>
+<P>
+
+<hr>
+<A name=7.4>
+<H2>7.4 Additional documentation requirements</H2>
+</a>
+
+
+<hr>
+<A name=7.4.1>
+<H3>7.4.1 System documentation</H3>
+</a>
+
+
+<hr>
+<A name=7.4.1.1>
+<H4>7.4.1.1 Implementation-defined options</H4>
+</a>
+
+<UL>
+<LI>the format used for display by 
+<a href=dpans7.htm#7.6.2.1770>7.6.2.1770</a> LIST (if implemented);
+<LI>the length of a line affected by 
+<a href=dpans7.htm#7.6.2.2535>7.6.2.2535</a> \ (if implemented).
+</UL>
+<P>
+
+
+<hr>
+<A name=7.4.1.2>
+<H4>7.4.1.2 Ambiguous conditions</H4>
+</a>
+
+<UL>
+<LI>Correct block read was not possible;
+<LI>I/O exception in block transfer;
+<LI>Invalid block number 
+(<a href=dpans7.htm#7.6.1.0800>7.6.1.0800</a> BLOCK, 
+<a href=dpans7.htm#7.6.1.0820>7.6.1.0820</a> BUFFER, 
+<a href=dpans7.htm#7.6.1.1790>7.6.1.1790</a> LOAD);
+<LI>A program directly alters the contents of 
+<a href=dpans7.htm#7.6.1.0790>7.6.1.0790</a> BLK;
+<LI>No current block buffer for 
+<a href=dpans7.htm#7.6.1.2400>7.6.1.2400</a> UPDATE.
+</UL>
+
+<P>
+
+
+<hr>
+<A name=7.4.1.3>
+<H4>7.4.1.3 Other system documentation</H4>
+</a>
+
+<UL>
+<LI>any restrictions a multiprogramming system places on the use of buffer
+addresses;
+<LI>the number of blocks available for source text and data.
+</UL>
+<P>
+
+
+<hr>
+<A name=7.4.2>
+<H3>7.4.2 Program documentation</H3>
+</a>
+
+<UL>
+<LI>the number of blocks required by the program.
+</UL>
+<P>
+
+
+<hr>
+<A name=7.5>
+<H2>7.5 Compliance and labeling</H2>
+</a>
+
+
+<hr>
+<A name=7.5.1>
+<H3>7.5.1 ANS Forth systems</H3>
+</a>
+
+The phrase <B>Providing the Block word set</B> shall be appended to the
+label of any Standard System that provides all of the Block word set.
+<P>
+
+The phrase <B>Providing name(s) from the Block Extensions word set</B>
+shall be appended to the label of any Standard System that provides
+portions of the Block Extensions word set.
+<P>
+
+The phrase <B>Providing the Block Extensions word set</B> shall be
+appended to the label of any Standard System that provides all of the
+Block and Block Extensions word sets.
+<P>
+
+
+<hr>
+<A name=7.5.2>
+<H3>7.5.2 ANS Forth programs</H3>
+</a>
+
+The phrase <B>Requiring the Block word set</B> shall be appended to the
+label of Standard Programs that require the system to provide the Block
+word set.
+<P>
+
+The phrase <B>Requiring name(s) from the Block Extensions word set</B>
+shall be appended to the label of Standard Programs that require the
+system to provide portions of the Block Extensions word set.
+<P>
+
+The phrase <B>Requiring the Block Extensions word set</B> shall be
+appended to the label of Standard Programs that require the system to
+provide all of the Block and Block Extensions word sets.
+<P>
+
+
+<hr>
+<A name=7.6>
+<H2>7.6 Glossary</H2>
+</a>
+
+
+<hr>
+<A name=7.6.1>
+<H3>7.6.1 Block words</H3>
+</a>
+
+
+<hr>
+<A name=7.6.1.0790>
+<code>
+7.6.1.0790 <b>BLK</b>
+</code>
+</a>
+<BR>
+<B>b-l-k</B> BLOCK
+<BR>
+<pre>
+	( -- a-addr )
+</pre>
+
+<P>
+
+a-addr is the address of a cell containing zero or the number of the
+mass-storage block being interpreted.  If BLK contains zero, the input
+source is not a block and can be identified by 
+<a href=dpans6.htm#6.2.2218>SOURCE-ID</a>, if SOURCE-ID
+is available.  An ambiguous condition exists if a program directly
+alters the contents of BLK.
+
+<p>
+<code>
+See:
+<A href=dpans7.htm#7.3.3>7.3.3</a> Block buffer regions
+</code>
+<p>
+
+<hr>
+<A name=7.6.1.0800>
+<code>
+7.6.1.0800 <b>BLOCK</b>
+</code>
+</a>
+<BR>
+BLOCK
+<BR>
+<pre>
+	( u -- a-addr )
+</pre>
+
+<P>
+
+a-addr is the address of the first character of the block buffer assigned to
+mass-storage block u.  An ambiguous condition exists if u is not an available
+block number.
+<P>
+
+If block u is already in a block buffer, a-addr is the address of that block
+buffer.
+<P>
+
+If block u is not already in memory and there is an unassigned block buffer,
+transfer block u from mass storage to an unassigned block buffer.  a-addr is
+the address of that block buffer.
+<P>
+
+If block u is not already in memory and there are no unassigned block buffers,
+unassign a block buffer.  If the block in that buffer has been 
+<a href=dpans7.htm#7.6.1.2400>UPDATE</a>d,
+transfer the block to mass storage and transfer block u from mass storage into
+that buffer.  a-addr is the address of that block buffer.
+<P>
+
+At the conclusion of the operation, the block buffer pointed to by a-addr is
+the current block buffer and is assigned to u.
+
+<P>
+
+<hr>
+<A name=7.6.1.0820>
+<code>
+7.6.1.0820 <b>BUFFER</b>
+</code>
+</a>
+<BR>
+BLOCK
+<BR>
+<pre>
+	( u -- a-addr )
+</pre>
+
+<P>
+
+a-addr is the address of the first character of the block buffer
+assigned to block u.  The contents of the block are unspecified.  An
+ambiguous condition exists if u is not an available block number.
+<P>
+
+If block u is already in a block buffer, a-addr is the address of that
+block buffer.
+<P>
+
+If block u is not already in memory and there is an unassigned buffer,
+a-addr is the address of that block buffer.
+<P>
+
+If block u is not already in memory and there are no unassigned block
+buffers, unassign a block buffer.  If the block in that buffer has been
+<a href=dpans7.htm#7.6.1.2400>UPDATE</a>d, 
+transfer the block to mass storage.  a-addr is the address of
+that block buffer.
+<P>
+
+At the conclusion of the operation, the block buffer pointed to by
+a-addr is the current block buffer and is assigned to u.
+<P>
+
+<code>
+See:    
+<A href=dpans7.htm#7.6.1.0800>7.6.1.0800 BLOCK</a>
+</code>
+
+<P>
+
+<hr>
+<A name=7.6.1.1360>
+<code>
+7.6.1.1360E <b>EVALUATE</b>
+</code>
+</a>
+<BR>
+BLOCK
+<BR>
+<P>
+
+Extend the semantics of 
+<a href=dpans6.htm#6.1.1360>6.1.1360</a> EVALUATE to include:
+<P>
+
+	Store zero in BLK.
+
+<P>
+
+<hr>
+<A name=7.6.1.1559>
+<code>
+7.6.1.1559 <b>FLUSH</b>
+</code>
+</a>
+<BR>
+BLOCK
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+Perform the function of 
+<a href=dpans7.htm#7.6.1.2180>SAVE-BUFFERS</a>,
+then unassign all block buffers.
+
+<P>
+
+<hr>
+<A name=7.6.1.1790>
+<code>
+7.6.1.1790 <b>LOAD</b>
+</code>
+</a>
+<BR>
+BLOCK
+<BR>
+<pre>
+	( i*x u -- j*x )
+</pre>
+
+<P>
+
+Save the current input-source specification.  Store u in 
+<a href=dpans7.htm#7.6.1.0790>BLK</a> (thus
+making block u the input source and setting the input buffer to
+encompass its contents), set 
+<a href=dpans6.htm#6.1.0560>&gt;IN</a> 
+to zero, and interpret.  When the parse
+area is exhausted, restore the prior input source specification.  Other
+stack effects are due to the words LOADed.
+<P>
+
+An ambiguous condition exists if u is zero or is not a valid block
+number.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4>3.4</a> The Forth text interpreter
+</code>
+
+<P>
+
+<hr>
+<A name=7.6.1.2180>
+<code>
+7.6.1.2180 <b>SAVE-BUFFERS</b>
+</code>
+</a>
+<BR>
+BLOCK
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+Transfer the contents of each 
+<a href=dpans7.htm#7.6.1.2400>UPDATE</a>d block buffer to mass storage.
+Mark all buffers as unmodified.
+
+<P>
+
+<hr>
+<A name=7.6.1.2400>
+<code>
+7.6.1.2400 <b>UPDATE</b>
+</code>
+</a>
+<BR>
+BLOCK
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+Mark the current block buffer as modified.  An ambiguous condition
+exists if there is no current block buffer.
+<P>
+
+UPDATE does not immediately cause I/O.
+<P>
+
+<code>
+See:    
+<A href=dpans7.htm#7.6.1.0800>7.6.1.0800 BLOCK</a> ,
+<A href=dpans7.htm#7.6.1.0820>7.6.1.0820 BUFFER</a> ,
+<A href=dpans7.htm#7.6.1.1559>7.6.1.1559 FLUSH</a> ,
+<A href=dpans7.htm#7.6.1.2180>7.6.1.2180 SAVE-BUFFERS</a>
+</code>
+
+<P>
+
+<hr>
+<A name=7.6.2>
+<H3>7.6.2 Block extension words</H3>
+</a>
+
+<hr>
+<A name=7.6.2.1330>
+<code>
+7.6.2.1330 <b>EMPTY-BUFFERS</b>
+</code>
+</a>
+<BR>
+BLOCK EXT
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+Unassign all block buffers.  Do not transfer the contents of any 
+<a href=dpans7.htm#7.6.1.2400>UPDATE</a>d
+block buffer to mass storage.
+<P>
+
+<code>
+See:    
+<A href=dpans7.htm#7.6.1.0800>7.6.1.0800 BLOCK</a>
+</code>
+
+<P>
+
+<hr>
+<A name=7.6.2.1770>
+<code>
+7.6.2.1770 <b>LIST</b>
+</code>
+</a>
+<BR>
+BLOCK EXT
+<BR>
+<pre>
+	( u -- )
+</pre>
+
+<P>
+
+Display block u in an
+implementation-defined format.  Store u in 
+<a href=dpans7.htm#7.6.2.2190>SCR</a>.
+<P>
+
+<code>
+See:    
+<A href=dpans7.htm#7.6.1.0800>7.6.1.0800 BLOCK</a>
+</code>
+
+<P>
+
+<hr>
+<A name=7.6.2.2125>
+<code>
+7.6.2.2125 <b>REFILL</b>
+</code>
+</a>
+<BR>
+BLOCK EXT
+<BR>
+<pre>
+	( -- flag )
+</pre>
+
+<P>
+
+Extend the execution semantics of 
+<a href=dpans6.htm#6.2.2125>6.2.2125</a> REFILL with the following:
+<P>
+
+When the input source is a block, make the next block the input source
+and current input buffer by adding one to the value of 
+<a href=dpans7.htm#7.6.1.0790>BLK</a> and setting
+<a href=dpans6.htm#6.1.0560>&gt;IN</a> to zero.  Return true if the new value of BLK is a valid block
+number, otherwise false.
+<P>
+
+<code>
+See:    
+<A href=dpans11.htm#11.6.2.2125>11.6.2.2125 REFILL</a>
+</code>
+
+<P>
+
+<hr>
+<A name=7.6.2.2190>
+<code>
+7.6.2.2190 <b>SCR</b>
+</code>
+</a>
+<BR>
+<B>s-c-r</B> BLOCK EXT
+<BR>
+<pre>
+	( -- a-addr )
+</pre>
+
+<P>
+
+a-addr is the address of a cell containing the block number of the block
+most recently 
+<a href=dpans7.htm#7.6.2.1770>LIST</a>ed.
+
+<P>
+<code>
+See:
+<a href=dpansa7.htm#A.7.6.2.2190>A.7.6.2.2190 SCR</a>
+</code>
+<p>
+
+<hr>
+<A name=7.6.2.2280>
+<code>
+7.6.2.2280 <b>THRU</b>
+</code>
+</a>
+<BR>
+BLOCK EXT
+<BR>
+<pre>
+	( i*x u1 u2 -- j*x )
+</pre>
+
+<P>
+
+<a href=dpans7.htm#7.6.1.1790>LOAD</a> 
+the mass storage blocks numbered u1 through u2 in sequence.  Other
+stack effects are due to the words LOADed.
+
+<P>
+
+<hr>
+<A name=7.6.2.2535>
+<code>
+7.6.2.2535 <b>\</b>
+</code>
+</a>
+<BR>
+<B>backslash</B>     BLOCK EXT
+<BR>
+<P>
+
+Extend the semantics of 
+<a href=dpans6.htm#6.2.2535>6.2.2535</a> \ to be:
+<P>
+<pre>
+        Compilation: Perform the execution semantics given below.
+</pre>
+<P>
+<pre>
+        Execution: ( <B>ccc&lt;eol&gt;</B>-- )
+</pre>
+<P>
+
+If 
+<a href=dpans7.htm#7.6.1.0790>BLK</a> 
+contains zero, parse and discard the remainder of the parse area;
+otherwise parse and discard the portion of the parse area corresponding
+to the remainder of the current line.  \ is an immediate word.
+
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpans8.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

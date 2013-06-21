@@ -1,0 +1,111 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpansa4.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpansa6.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=A.5>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+
+<H1>A.5 Compliance and labeling</H1>
+
+
+<hr>
+<a name=A.5.1>
+<H2>A.5.1 ANS Forth systems</H2>
+</a>
+
+<a href=dpans5.htm#5.1>Section 5.1</a> defines the criteria that 
+a system must meet in order to
+justify the label <B>ANS Forth System</B>.  Briefly, the minimum
+requirement is that the system must <B>implement</B> the Core word set.
+There are several ways in which this requirement may be met.  The most
+obvious is that all Core words may be in a pre-compiled kernel.  This is
+not the only way of satisfying the requirement, however.  For example,
+some words may be provided in source blocks or files with instructions
+explaining how to add them to the system if they are needed.  So long as
+the words are provided in such a way that the user can obtain access to
+them with a clear and straightforward procedure, they may be considered
+to be present.
+
+<P>
+
+A Forth cross-compiler has many characteristics in common with an ANS
+Forth System, in that both use similar compiling tools to process a
+program.  However, in order to fully specify an ANS Forth cross compiler
+it would be necessary to address complex issues dealing with compilation
+and execution semantics in both host and target environments as well as
+ROMability issues.  The level of effort to do this properly has proved
+to be impractical at this time.  As a result, although it may be
+possible for a Forth cross-compiler to correctly prepare an ANS Forth
+program for execution in a target environment, it is inappropriate for a
+cross-compiler to be labeled an ANS Forth System.
+
+<P>
+
+<hr>
+<a name=A.5.2>
+<H2>A.5.2 ANS Forth programs</H2>
+</a>
+
+
+<hr>
+<a name=A.5.2.2>
+<H3>A.5.2.2 Program labeling</H3>
+</a>
+
+Declaring an environmental dependency should not be considered
+undesirable, merely an acknowledgment that the author has taken
+advantage of some assumed architecture.  For example, most computers in
+common use are based on two's complement binary arithmetic.  By
+acknowledging an environmental dependency on this architecture, a
+programmer becomes entitled to use the number -1 to represent all bits
+set without significantly restricting the portability of the program.
+
+<P>
+
+Because all programs require space for data and instructions, and time
+to execute those instructions, they depend on the presence of an
+environment providing those resources.  It is impossible to predict how
+little of some of these resources (e.g.  stack space) might be necessary
+to perform some task, so this Standard does not do so.
+
+<P>
+
+On the other hand, as a program requires increasing levels of resources,
+there will probably be sucessively fewer systems on which it will
+execute sucessfully.  An algorithm requiring an array of 109 cells might
+run on fewer computers than one requiring only 103.
+
+<P>
+
+Since there is also no way of knowing what minimum level of resources
+will be implemented in a system useful for at least some tasks, any
+program performing real work labeled simply an <B>ANS Forth Program</B>
+is unlikely to be labeled correctly.
+
+<P>
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpansa6.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

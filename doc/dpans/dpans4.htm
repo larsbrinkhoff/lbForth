@@ -1,0 +1,370 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans3.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpans5.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=4.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>4. Documentation requirements</H1>
+
+When it is impossible or infeasible for a system or program to define a
+particular behavior itself, it is permissible to state that the behavior
+is unspecifiable and to explain the circumstances and reasons why this is so.
+
+<P>
+
+<hr>
+<A name=4.1>
+<H2>4.1 System documentation</H2>
+</a>
+
+
+<hr>
+<A name=4.1.1>
+<H3>4.1.1 Implementation-defined options</H3>
+</a>
+
+The implementation-defined items in the following list represent
+characteristics and choices left to the discretion of the implementor,
+provided that the requirements of this Standard are met.  A system shall
+document the values for, or behaviors of, each item.
+
+<UL>
+<LI>aligned address requirements 
+(<a href=dpans3.htm#3.1.3.3>3.1.3.3</a> Addresses);
+<LI>behavior of 
+<a href=dpans6.htm#6.1.1320>6.1.1320</a> EMIT for non-graphic characters;
+<LI>character editing of 
+<a href=dpans6.htm#6.1.0695>6.1.0695</a> ACCEPT and 
+<a href=dpans6.htm#6.2.1390>6.2.1390</a> EXPECT;
+<LI>character set 
+(<a href=dpans3.htm#3.1.2>3.1.2</a> Character types, 
+<a href=dpans6.htm#6.1.1320>6.1.1320</a> EMIT, 
+<a href=dpans6.htm#6.1.1750>6.1.1750</a> KEY);
+<LI>character-aligned address requirements 
+(<a href=dpans3.htm#3.1.3.3>3.1.3.3</a> Addresses);
+<LI>character-set-extensions matching characteristics 
+(<a href=dpans3.htm#3.4.2>3.4.2</a> Finding
+definition names);
+<LI>conditions under which control characters match a space delimiter 
+(<a href=dpans3.htm#3.4.1.1>3.4.1.1</a> Delimiters);
+<LI>format of the control-flow stack 
+(<a href=dpans3.htm#3.2.3.2>3.2.3.2</a> Control-flow stack);
+<LI>conversion of digits larger than thirty-five 
+(<a href=dpans3.htm#3.2.1.2>3.2.1.2</a> Digit
+conversion);
+<LI>display after input terminates in 
+<a href=dpans6.htm#6.1.0695>6.1.0695</a> ACCEPT and 
+<a href=dpans6.htm#6.2.1390>6.2.1390</a> EXPECT;
+<LI>exception abort sequence (as in 
+<a href=dpans6.htm#6.1.0680>6.1.0680</a> ABORT");
+<LI>input line terminator 
+(<a href=dpans3.htm#3.2.4.1>3.2.4.1</a> User input device);
+<LI>maximum size of a counted string, in characters 
+(<a href=dpans3.htm#3.1.3.4>3.1.3.4</a> Counted
+strings, 
+<a href=dpans6.htm#6.1.2450>6.1.2450</a> WORD);
+<LI>maximum size of a parsed string 
+(<a href=dpans3.htm#3.4.1>3.4.1</a> Parsing);
+<LI>maximum size of a definition name, in characters 
+(<a href=dpans3.htm#3.3.1.2>3.3.1.2</a> Definition
+names);
+<LI>maximum string length for 
+<a href=dpans6.htm#6.1.1345>6.1.1345</a> ENVIRONMENT?, in characters;
+<LI>method of selecting 
+<a href=dpans3.htm#3.2.4.1>3.2.4.1</a> User input device;
+<LI>method of selecting 
+<a href=dpans3.htm#3.2.4.2>3.2.4.2</a> User output device;
+<LI>methods of dictionary compilation 
+(<a href=dpans3.htm#3.3>3.3</a> The Forth dictionary);
+<LI>number of bits in one address unit 
+(<a href=dpans3.htm#3.1.3.3>3.1.3.3</a> Addresses);
+<LI>number representation and arithmetic 
+(<a href=dpans3.htm#3.2.1.1>3.2.1.1</a> Internal number
+representation);
+<LI>ranges for n, +n, u, d, +d, and ud 
+(<a href=dpans3.htm#3.1.3>3.1.3</a> Single-cell types, 
+<a href=dpans3.htm#3.1.4>3.1.4</a> Cell-pair types);
+<LI>read-only data-space regions 
+(<a href=dpans3.htm#3.3.3>3.3.3</a> Data space);
+<LI>size of buffer at 
+<a href=dpans6.htm#6.1.2450>6.1.2450</a> WORD 
+(<a href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other transient regions);
+<LI>size of one cell in address units 
+(<a href=dpans3.htm#3.1.3>3.1.3</a> Single-cell types);
+<LI>size of one character in address units 
+(<a href=dpans3.htm#3.1.2>3.1.2</a> Character types);
+<LI>size of the keyboard terminal input buffer 
+(<a href=dpans3.htm#3.3.3.5>3.3.3.5</a> Input buffers);
+<LI>size of the pictured numeric output string buffer 
+(<a href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other
+transient regions);
+<LI>size of the scratch area whose address is returned by 
+<a href=dpans6.htm#6.2.2000>6.2.2000</a> PAD 
+(<a href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other transient regions);
+<LI>system case-sensitivity characteristics 
+(<a href=dpans3.htm#3.4.2>3.4.2</a> Finding definition
+names);
+<LI>system prompt 
+(<a href=dpans3.htm#3.4>3.4</a> The Forth text interpreter, 
+<a href=dpans6.htm#6.1.2050>6.1.2050</a> QUIT);
+<LI>type of division rounding 
+(<a href=dpans3.htm#3.2.2.1>3.2.2.1</a> Integer division, 
+<a href=dpans6.htm#6.1.0100>6.1.0100</a> */,
+<a href=dpans6.htm#6.1.0110>6.1.0110</a> */MOD, 
+<a href=dpans6.htm#6.1.0230>6.1.0230</a> /, 
+<a href=dpans6.htm#6.1.0240>6.1.0240</a> /MOD, 
+<a href=dpans6.htm#6.1.1890>6.1.1890</a> MOD);
+<LI>values of 
+<a href=dpans6.htm#6.1.2250>6.1.2250</a> STATE when true;
+<LI>values returned after arithmetic overflow 
+(<a href=dpans3.htm#3.2.2.2>3.2.2.2</a> Other integer
+operations);
+<LI>whether the current definition can be found after 
+<a href=dpans6.htm#6.1.1250>6.1.1250</a> DOES&gt; 
+(<a href=dpans6.htm#6.1.0450>6.1.0450</a> :).
+</UL>
+
+<P>
+
+<hr>
+<A name=4.1.2>
+<H3>4.1.2 Ambiguous conditions</H3>
+</a>
+
+A system shall document the system action taken upon each of the general or
+specific ambiguous conditions identified in this Standard.  See 
+<a href=dpans3.htm#3.4.4>3.4.4</a> Possible
+actions on an ambiguous condition.
+
+<P>
+
+The following general ambiguous conditions could occur because of a
+combination of factors:
+
+<UL>
+<LI>a name is neither a valid definition name nor a valid number during
+text interpretation 
+(<a href=dpans3.htm#3.4>3.4</a> The Forth text interpreter);
+<LI>a definition name exceeded the maximum length allowed 
+(<a href=dpans3.htm#3.3.1.2>3.3.1.2</a>
+Definition names);
+<LI>addressing a region not listed in 
+<a href=dpans3.htm#3.3.3>3.3.3</a> Data Space;
+<LI>argument type incompatible with specified input parameter, e.g.,
+passing a flag to a word expecting an n 
+(<a href=dpans3.htm#3.1>3.1</a> Data types);
+<LI>attempting to obtain the execution token, (e.g., with 
+<a href=dpans6.htm#6.1.0070>6.1.0070</a> ',
+<a href=dpans6.htm#6.1.1550>6.1.1550</a> FIND, 
+etc.) of a definition with undefined interpretation semantics;
+<LI>dividing by zero 
+(<a href=dpans6.htm#6.1.0100>6.1.0100</a> */, 
+<a href=dpans6.htm#6.1.0110>6.1.0110</a> */MOD, 
+<a href=dpans6.htm#6.1.0230>6.1.0230</a> /, 
+<a href=dpans6.htm#6.1.0240>6.1.0240</a> /MOD, 
+<a href=dpans6.htm#6.1.1561>6.1.1561</a> FM/MOD, 
+<a href=dpans6.htm#6.1.1890>6.1.1890</a> MOD, 
+<a href=dpans6.htm#6.1.2214>6.1.2214</a> SM/REM, 
+<a href=dpans6.htm#6.1.2370>6.1.2370</a> UM/MOD,
+<a href=dpans8.htm#8.6.1.1820>8.6.1.1820</a> M*/);
+<LI>insufficient data-stack space or return-stack space (stack overflow);
+<LI>insufficient space for loop-control parameters;
+<LI>insufficient space in the dictionary;
+<LI>interpretating a word with undefined interpretation semantics;
+<LI>modifying the contents of the input buffer or a string literal 
+(<a href=dpans3.htm#3.3.3.4>3.3.3.4</a> Text-literal regions, 
+<a href=dpans3.htm#3.3.3.5>3.3.3.5</a> Input buffers);
+<LI>overflow of a pictured numeric output string;
+<LI>parsed string overflow;
+<LI>producing a result out of range, e.g., multiplication (using *)
+results in a value too big to be represented by a single-cell integer 
+(<a href=dpans6.htm#6.1.0090>6.1.0090</a> *, 
+<a href=dpans6.htm#6.1.0100>6.1.0100</a> */, 
+<a href=dpans6.htm#6.1.0110>6.1.0110</a> */MOD, 
+<a href=dpans6.htm#6.1.0570>6.1.0570</a> &gt;NUMBER, 
+<a href=dpans6.htm#6.1.1561>6.1.1561</a> FM/MOD,
+<a href=dpans6.htm#6.1.2214>6.1.2214</a> SM/REM, 
+<a href=dpans6.htm#6.1.2370>6.1.2370</a> UM/MOD, 
+<a href=dpans6.htm#6.2.0970>6.2.0970</a> CONVERT, 
+<a href=dpans8.htm#8.6.1.1820>8.6.1.1820</a> M*/);
+<LI>reading from an empty data stack or return stack (stack underflow);
+<LI>unexpected end of input buffer, resulting in an attempt to use a
+zero-length string as a name;
+</UL>
+<P>
+
+The following specific ambiguous conditions are noted in the glossary entries
+of the relevant words:
+
+<UL>
+<LI>
+<a href=dpans6.htm#6.1.0560>&gt;IN</a> 
+greater than size of input buffer 
+(<a href=dpans3.htm#3.4.1>3.4.1</a> Parsing);
+<LI>
+<a href=dpans6.htm#6.1.2120>6.1.2120</a> RECURSE appears after 
+<a href=dpans6.htm#6.1.1250>6.1.1250</a> DOES&gt;;
+<LI>argument input source different than current input source for 
+<a href=dpans6.htm#6.2.2148>6.2.2148</a> RESTORE-INPUT;
+<LI>data space containing definitions is de-allocated 
+(<a href=dpans3.htm#3.3.3.2>3.3.3.2</a> Contiguous regions);
+<LI>data space read/write with incorrect alignment 
+(<a href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment);
+<LI>data-space pointer not properly aligned 
+(<a href=dpans6.htm#6.1.0150>6.1.0150</a> ,, 
+<a href=dpans6.htm#6.1.0860>6.1.0860</a> C,);
+<LI>less than u+2 stack items 
+(<a href=dpans6.htm#6.2.2030>6.2.2030</a> PICK, 
+<a href=dpans6.htm#6.2.2150>6.2.2150</a> ROLL);
+<LI>loop-control parameters not available (
+<a href=dpans6.htm#6.1.0140>6.1.0140</a> +LOOP, 
+<a href=dpans6.htm#6.1.1680>6.1.1680</a> I,
+<a href=dpans6.htm#6.1.1730>6.1.1730</a> J, 
+<a href=dpans6.htm#6.1.1760>6.1.1760</a> LEAVE, 
+<a href=dpans6.htm#6.1.1800>6.1.1800</a> LOOP, 
+<a href=dpans6.htm#6.1.2380>6.1.2380</a> UNLOOP);
+<LI>most recent definition does not have a name 
+(<a href=dpans6.htm#6.1.1710>6.1.1710</a> IMMEDIATE);
+<LI>name not defined by 
+<a href=dpans6.htm#6.2.2405>6.2.2405</a> VALUE used by 
+<a href=dpans6.htm#6.2.2295>6.2.2295</a> TO;
+<LI>name not found 
+(<a href=dpans6.htm#6.1.0070>6.1.0070</a> ', 
+<a href=dpans6.htm#6.1.2033>6.1.2033</a> POSTPONE, 
+<a href=dpans6.htm#6.1.2510>6.1.2510</a> ['], 
+<a href=dpans6.htm#6.2.2530>6.2.2530</a> [COMPILE]);
+<LI>parameters are not of the same type 
+(<a href=dpans6.htm#6.1.1240>6.1.1240</a> DO, 
+<a href=dpans6.htm#6.2.0620>6.2.0620</a> ?DO,
+<a href=dpans6.htm#6.2.2440>6.2.2440</a> WITHIN);
+<LI>
+<a href=dpans6.htm#6.1.2033>6.1.2033</a> POSTPONE or 
+<a href=dpans6.htm#6.2.2530>6.2.2530</a> [COMPILE] applied to 
+<a href=dpans6.htm#6.2.2295>6.2.2295</a> TO;
+<LI>string longer than a counted string returned by 
+<a href=dpans6.htm#6.1.2450>6.1.2450</a> WORD;
+<LI>u greater than or equal to the number of bits in a cell 
+(<a href=dpans6.htm#6.1.1805>6.1.1805</a> LSHIFT, 
+<a href=dpans6.htm#6.1.2162>6.1.2162</a> RSHIFT);
+<LI>word not defined via 
+<a href=dpans6.htm#6.1.1000>6.1.1000</a> CREATE 
+(<a href=dpans6.htm#6.1.0550>6.1.0550</a> &gt;BODY, 
+<a href=dpans6.htm#6.1.1250>6.1.1250</a> DOES&gt;);
+<LI>words improperly used outside 
+<a href=dpans6.htm#6.1.0490>6.1.0490</a> &lt;# and 
+<a href=dpans6.htm#6.1.0040>6.1.0040</a> #&gt; 
+(<a href=dpans6.htm#6.1.0030>6.1.0030</a> #,
+<a href=dpans6.htm#6.1.0050>6.1.0050</a> #S, 
+<a href=dpans6.htm#6.1.1670>6.1.1670</a> HOLD, 
+<a href=dpans6.htm#6.1.2210>6.1.2210</a> SIGN).
+</UL>
+
+<P>
+
+<hr>
+<A name=4.1.3>
+<H3>4.1.3 Other system documentation</H3>
+</a>
+
+A system shall provide the following information:
+<P>
+
+<UL>
+<LI>list of non-standard words using 
+<a href=dpans6.htm#6.2.2000>6.2.2000</a> PAD 
+(<a href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other transient
+regions);
+<LI>operator's terminal facilities available;
+<LI>program data space available, in address units;
+<LI>return stack space available, in cells;
+<LI>stack space available, in cells;
+<LI>system dictionary space required, in address units.
+</UL>
+
+<P>
+
+<hr>
+<A name=4.2>
+<H2>4.2 Program documentation</H2>
+</a>
+
+
+<hr>
+<A name=4.2.1>
+<H3>4.2.1 Environmental dependencies</H3>
+</a>
+
+A program shall document the following environmental dependencies, where they
+apply, and should document other known environmental dependencies:
+
+<UL>
+<LI>considering the pictured numeric output string buffer a fixed area
+with unchanging access parameters 
+(<a href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other transient regions);
+<LI>depending on the presence or absence of non-graphic characters in a
+received string 
+(<a href=dpans6.htm#6.1.0695>6.1.0695</a> ACCEPT, 
+<a href=dpans6.htm#6.2.1390>6.2.1390</a> EXPECT);
+<LI>relying on a particular rounding direction 
+(<a href=dpans3.htm#3.2.2.1>3.2.2.1</a> Integer division);
+<LI>requiring a particular number representation and arithmetic 
+(<a href=dpans3.htm#3.2.1.1>3.2.1.1</a>
+Internal number representation);
+<LI>requiring non-standard words or techniques 
+(<a href=dpans3.htm#3.>3.</a> Usage requirements);
+<LI>requiring the ability to send or receive control characters 
+(<a href=dpans3.htm#3.1.2.2>3.1.2.2</a> Control characters, 
+<a href=dpans6.htm#6.1.1750>6.1.1750</a> KEY);
+<LI>using control characters to perform specific functions 
+(<a href=dpans6.htm#6.1.1320>6.1.1320</a> EMIT,
+<a href=dpans6.htm#6.1.2310>6.1.2310</a> TYPE);
+<LI>using flags as arithmetic operands 
+(<a href=dpans3.htm#3.1.3.1>3.1.3.1</a> Flags);
+<LI>using lower case for standard definition names or depending on the
+case sensitivity of a system 
+(<a href=dpans3.htm#3.3.1.2>3.3.1.2</a> Definition names);
+<LI>using the graphic character with a value of hex 24 
+(<a href=dpans3.htm#3.1.2.1>3.1.2.1</a> Graphic
+characters).
+</UL>
+
+<P>
+
+<hr>
+<A name=4.2.2>
+<H3>4.2.2 Other program documentation</H3>
+</a>
+
+A program shall also document:
+<P>
+
+<UL>
+<LI>minimum operator's terminal facilities required;
+<LI>whether a Standard System exists after the program is loaded.
+</UL>
+
+
+<HR>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpans5.htm><IMG   src="right.gif" ></A>  Next Section
+<P>
+</BODY>
+</HTML>

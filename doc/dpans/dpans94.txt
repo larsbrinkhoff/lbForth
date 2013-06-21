@@ -1,0 +1,103 @@
+
++-----------------------------------------------+
+| Greetings from the X3J14 Technical Committee. |
+| This message has been prepared on 3 Feb 95    |
+| by direction of TC Chair.  It was revised on  |
+| 3 Jan 96 to correct copyright notice, misuse  |
+| of the acronym ANS, and the section beginning |
+| with NOTE:, as requested by X3 Secretariat.   |
++-----------------------------------------------+
+
+The Technical Committee announces the posting of a file
+known as  dpans94.zip  for retrieval on the Internet.
+
+When expanded this .zip file yields the following three files:
+
+	dpans94.doc   Microsoft Word for Windows 2.0 format,
+                      produced by Word 6.0 for Windows.
+
+	dpans94.txt   This file you are reading now
+
+	notice.txt    a file which reads as follows:
+
+[begin notice.txt]
+==========================================================================
+Copyright (c) 1994 by ITI, X3 Secretariat.  All rights reserved.
+
+This is a working document of Technical Committee X3J14 which represents
+the last draft of American National Standard Forth submitted to ANSI for
+publication.  Permission is hereby granted to copy this document provided
+that it is copied in its entirety without alteration or as altered by
+(1) adding text that is clearly marked as an insertion; (2) shading or
+highlighting existing text; and/or (3) deleting examples.
+
+Specifically, permission is granted to use this working document as the
+foundation for textbooks, system manuals, and online documentation so long
+as the requirements in the preceding paragraph are met and the resulting
+product addresses a technical need that is not practically met by the
+official American National Standard.
+
+NOTE:  The material described herein is taken from the working paper for
+the Draft Proposed American National Standard, Programming Language Forth.
+Approval and technical development work is being conducted by Accredited
+Standards Committee X3 (Information Technology), and by its Technical
+Committee X3J14 (Programming Language Forth), respectively.
+
+This material *is not* intended as a substitute for the official American
+National Standard Forth document published by ANSI.  In the event of
+conflict, only the printed document (X3.215-1994) represents the official
+American National Standard.
+
+To obtain the official standard, please contact:
+   the American National Standards Institute Sales Department,
+   at (212) 642-4900 or FAX (212) 302-1286,
+or Global Engineering Documents,
+   at (800) 854-7179 or FAX (303) 843-9880,
+and request Document X3.215-1994.  Thank you very much for your interest.
+==========================================================================
+[end notice.txt]
+
+If you repost this material, please repost the entire original .zip file
+as you retrieved it so that the original authentication signature is
+preserved and there is some evidence of the integrity of the document.
+
+The original versions of these files are available via anonymous FTP
+(login=anonymous, password=email-address) from ftp.uu.net which is
+accessible 24 hours per day by any host whose IP address has a valid
+domain name that can be determined by the that server using inverse DNS.
+
+The URL for the fille is:
+
+        ftp://ftp.uu.net/vendor/minerva/x3j14/dpans94.zip
+or      file://ftp.uu.net/vendor/minerva/x3j14/dpans94.zip
+
+A WWW (html) page pointing to these files is accessible using the URL:
+
+        HREF=file://ftp.uu.net/vendor/minerva/uathena.htm
+
+This .zip file was produced by PKZIP 2.04g with authentication enabled
+and, when decompressed, will display:
+
+        Authentic files Verified!   # MYD772
+        ATHENA Programming, Inc.
+        [followed by the content of the notice.txt file]
+
+Copies of PKUNZIP are readily available on most archive sites including,
+undoubtedly, ftp.uu.net.
+
+The TC would appreciate your letting us know how you have used this file.
+Comments and suggestions may be sent to either of the following e-mail
+addresses:
+
+        x3j14@minerva.com - TC members only.
+        ANSForth@minerva.com - TC members as well as many people
+           who have subscribed to this mailgroup.  Anything sent
+           to the ansforth list is automatically crossposted onto
+           comp.lang.forth as well.
+
+If you wish to direct mail to individual TC members, the above mailgroup
+lists may be retrieved by fingering the user  ansi  at the host
+med3.minerva.com
+
+Best Wishes to all!
+

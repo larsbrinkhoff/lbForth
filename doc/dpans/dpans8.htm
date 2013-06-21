@@ -1,0 +1,783 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans7.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpans9.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=8.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>8. The optional Double-Number word set</H1>
+
+<p>
+<code>
+See:
+<a href=dpansa8.htm#A.8>A.8</a> The optional Double-Number word set
+</code>
+
+<hr>
+<a name=8.1>
+<H2>8.1 Introduction</H2>
+</a>
+
+Sixteen-bit Forth systems often use double-length numbers.  However,
+many Forths on small embedded systems do not, and many users of Forth on
+systems with a cell size of 32 bits or more find that the use of
+double-length numbers is much diminished.  Therefore, the words that
+manipulate double-length entities have been placed in this optional word
+set.
+
+<P>
+
+<hr>
+<A name=8.2>
+<H2>8.2 Additional terms and notation</H2>
+</a>
+
+None.
+
+<P>
+
+<hr>
+<A name=8.3>
+<H2>8.3 Additional usage requirements</H2>
+</a>
+
+
+<hr>
+<A name=8.3.1>
+<H3>8.3.1 Environmental queries</H3>
+</a>
+
+Append table 8.1
+to table 3.5.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.6>3.2.6</a> Environmental queries
+</code>
+
+<P>
+
+Table 8.1 - Environmental Query Strings
+<P>
+
+
+<PRE>
+String         Value data type   Constant?   Meaning
+------         ---------------   ---------   -------
+DOUBLE          flag             no          double-number word set present
+DOUBLE-EXT      flag             no          double-number extensions word set present
+</PRE>
+
+<P>
+
+
+<hr>
+<A name=8.3.2>
+<H3>8.3.2 Text interpreter input number conversion</H3>
+</a>
+
+When the text interpreter processes a number that is immediately
+followed by a decimal point and is not found as a definition name, the
+text interpreter shall convert it to a double-cell number.
+<P>
+
+For example, entering DECIMAL 1234 leaves the single-cell number 1234 on
+the stack, and entering DECIMAL 1234.  leaves the double-cell number
+1234 0 on the stack.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1.3>3.4.1.3</a> Text interpreter input number
+conversion,
+<a href=a0004.htm>RFI 0004</a> Number Conversion.
+</code>
+
+<P>
+
+<hr>
+<A name=8.4>
+<H2>8.4 Additional documentation requirements</H2>
+</a>
+
+
+<hr>
+<A name=8.4.1>
+<H3>8.4.1 System documentation</H3>
+</a>
+
+
+<hr>
+<A name=8.4.1.1>
+<H4>8.4.1.1 Implementation-defined options</H4>
+</a>
+
+<UL>
+<LI>no additional requirements.
+</UL>
+<P>
+
+<hr>
+<A name=8.4.1.2>
+<H4>8.4.1.2 Ambiguous conditions</H4>
+</a>
+
+<UL>
+<LI>d outside range of n in 
+<a href=dpans8.htm#8.6.1.1140>8.6.1.1140</a> D&gt;S.
+</UL>
+<P>
+
+<hr>
+<A name=8.4.1.3>
+<H4>8.4.1.3 Other system documentation</H4>
+</a>
+
+<UL>
+<LI>no additional requirements.
+</UL>
+<P>
+
+
+<hr>
+<A name=8.4.2>
+<H3>8.4.2 Program documentation</H3>
+</a>
+
+<UL>
+<LI>no additional requirements.
+</UL>
+<P>
+
+
+<hr>
+<A name=8.5>
+<H2>8.5 Compliance and labeling</H2>
+</a>
+
+
+<hr>
+<A name=8.5.1>
+<H3>8.5.1 ANS Forth systems</H3>
+</a>
+
+The phrase <B>Providing the Double-Number word set</B> shall be appended
+to the label of any Standard System that provides all of the
+Double-Number word set.
+<P>
+
+The phrase <B>Providing name(s) from the Double-Number Extensions word
+set</B> shall be appended to the label of any Standard System that
+provides portions of the Double-Number Extensions word set.
+<P>
+
+The phrase <B>Providing the Double-Number Extensions word set</B> shall
+be appended to the label of any Standard System that provides all of the
+Double-Number and Double-Number Extensions word sets.
+
+<P>
+
+
+<hr>
+<A name=8.5.2>
+<H3>8.5.2 ANS Forth programs</H3>
+</a>
+
+The phrase <B>Requiring the Double-Number word set</B> shall be appended
+to the label of Standard Programs that require the system to provide the
+Double-Number word set.
+<P>
+
+The phrase <B>Requiring name(s) from the Double-Number Extensions word
+set</B> shall be appended to the label of Standard Programs that require
+the system to provide portions of the Double-Number Extensions word set.
+<P>
+
+The phrase <B>Requiring the Double-Number Extensions word set</B> shall
+be appended to the label of Standard Programs that require the system to
+provide all of the Double-Number and Double-Number Extensions word sets.
+
+<P>
+
+
+<hr>
+<A name=8.6>
+<H2>8.6 Glossary</H2>
+</a>
+
+
+<hr>
+<A name=8.6.1>
+<H3>8.6.1 Double-Number words</H3>
+</a>
+
+
+
+<hr>
+<A name=8.6.1.0360>
+<code>
+8.6.1.0360 <b>2CONSTANT</b>
+</code>
+</a>
+<BR>
+<B>two-constant</B>  DOUBLE
+<BR>
+<pre>
+	( x1 x2 <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+<P>
+
+Skip leading space delimiters.  Parse name delimited by a space.  Create
+a definition for name with the execution semantics defined below.
+<P>
+
+name is referred to
+as a <B>two-constant</B>.
+<P>
+<pre>
+        <i>name</i> Execution: ( -- x1 x2 )
+</pre>
+<P>
+
+Place cell
+pair x1 x2 on the stack.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<a href=dpansa8.htm#A.8.6.1.0360>A.8.6.1.0360 2CONSTANT</a>
+</code>
+
+<P>
+
+<hr>
+<A name=8.6.1.0390>
+<code>
+8.6.1.0390 <b>2LITERAL</b>
+</code>
+</a>
+<BR>
+  <B>two-literal</B>   DOUBLE
+<BR>
+<P>
+<pre>
+        Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( x1 x2 -- )
+</pre>
+<P>
+
+Append the run-time semantics
+below to the current definition.
+<P>
+<pre>
+        Run-time: ( -- x1 x2 )
+</pre>
+<P>
+
+Place cell pair
+x1 x2 on the stack.
+
+<p>
+<code>
+See:
+<a href=dpansa8.htm#A.8.6.1.0390>A.8.6.1.0390 2LITERAL</a>
+</code>
+
+<P>
+
+<hr>
+<A name=8.6.1.0440>
+<code>
+8.6.1.0440 <b>2VARIABLE</b>
+</code>
+</a>
+<BR>
+<B>two-variable</B>  DOUBLE
+<BR>
+<pre>
+	( <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+
+<P>
+
+Skip leading space delimiters.  Parse name delimited by a space.  Create
+a definition for name with the execution semantics defined below.
+Reserve two consecutive cells of data space.
+<P>
+
+name is referred to
+as a <B>two-variable</B>.
+<P>
+<pre>
+        <i>name</i> Execution: ( -- a-addr )
+</pre>
+<P>
+
+a-addr is the address of the first (lowest address) cell of two
+consecutive cells in data space reserved by 2VARIABLE when it defined
+name.  A program is responsible for initializing the contents.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<A href=dpans6.htm#6.1.2410>6.1.2410 VARIABLE</a> ,
+<a href=dpansa8.htm#A.8.6.1.0440>A.8.6.1.0440 2VARIABLE</a>
+</code>
+
+
+<P>
+
+<hr>
+<A name=8.6.1.1040>
+<code>
+8.6.1.1040 <b>D+</b>
+</code>
+</a>
+<BR>
+<B>d-plus</B>        DOUBLE
+<BR>
+<pre>
+	( d1|ud1 d2|ud2 -- d3|ud3 )
+</pre>
+
+<P>
+
+Add d2|ud2 to d1|ud1,
+giving the sum d3|ud3.
+
+<P>
+
+<hr>
+<A name=8.6.1.1050>
+<code>
+8.6.1.1050 <b>D-</b>
+</code>
+</a>
+<BR>
+<B>d-minus</B>       DOUBLE
+<BR>
+<pre>
+	( d1|ud1 d2|ud2 -- d3|ud3 )
+</pre>
+
+<P>
+
+Subtract d2|ud2 from d1|ud1,
+giving the difference d3|ud3.
+
+<P>
+
+<hr>
+<A name=8.6.1.1060>
+<code>
+8.6.1.1060 <b>D.</b>
+</code>
+</a>
+<BR>
+<B>d-dot</B> DOUBLE
+<BR>
+<pre>
+	( d -- )
+</pre>
+
+<P>
+
+Display d in
+free field format.
+
+<P>
+
+<hr>
+<A name=8.6.1.1070>
+<code>
+8.6.1.1070 <b>D.R</b>
+</code>
+</a>
+<BR>
+<B>d-dot-r</B>       DOUBLE
+<BR>
+<pre>
+	( d n -- )
+</pre>
+
+<P>
+
+Display d right aligned in a field n characters wide.  If the number of
+characters required to display d is greater than n, all digits are
+displayed with no leading spaces in a field as wide as necessary.
+
+<p>
+<code>
+See:
+<a href=dpansa8.htm#A.8.6.1.1070>A.8.6.1.1070 D.R</a>
+</code>
+
+<P>
+
+<hr>
+<A name=8.6.1.1075>
+<code>
+8.6.1.1075 <b>D0&lt;</b>
+</code>
+</a>
+<BR>
+<B>d-zero-less</B>   DOUBLE
+<BR>
+<pre>
+	( d -- flag )
+</pre>
+
+<P>
+
+flag is true if and
+only if d is less than zero.
+
+<P>
+
+<hr>
+<A name=8.6.1.1080>
+<code>
+8.6.1.1080 <b>D0=</b>
+</code>
+</a>
+<BR>
+<B>d-zero-equals</B> DOUBLE
+<BR>
+<pre>
+	( xd -- flag )
+</pre>
+
+<P>
+
+flag is true if and
+only if xd is equal to zero.
+
+<P>
+
+<hr>
+<A name=8.6.1.1090>
+<code>
+8.6.1.1090 <b>D2*</b>
+</code>
+</a>
+<BR>
+<B>d-two-star</B>    DOUBLE
+<BR>
+<pre>
+	( xd1 -- xd2 )
+</pre>
+
+<P>
+
+xd2 is the result of shifting xd1 one bit toward the most-significant bit,
+filling the vacated least-significant bit with zero.
+
+
+<p>
+<code>
+See:
+<a href=dpansa8.htm#A.8.6.1.1090>A.8.6.1.1090 D2*</a>
+</code>
+
+<P>
+
+<hr>
+<A name=8.6.1.1100>
+<code>
+8.6.1.1100 <b>D2/</b>
+</code>
+</a>
+<BR>
+<B>d-two-slash</B>   DOUBLE
+<BR>
+<pre>
+	( xd1 -- xd2 )
+</pre>
+
+<P>
+
+xd2 is the result of shifting xd1 one bit toward the least-significant bit,
+leaving the most-significant bit unchanged.
+
+<p>
+<code>
+See:
+<a href=dpansa8.htm#A.8.6.1.1100>A.8.6.1.1100 D2/</a>
+</code>
+
+<P>
+
+<hr>
+<A name=8.6.1.1110>
+<code>
+8.6.1.1110 <b>D&lt;</b>
+</code>
+</a>
+<BR>
+<B>d-less-than</B>   DOUBLE
+<BR>
+<pre>
+	( d1 d2 -- flag )
+</pre>
+
+<P>
+
+flag is true if and only
+if d1 is less than d2.
+
+<P>
+
+<hr>
+<A name=8.6.1.1120>
+<code>
+8.6.1.1120 <b>D=</b>
+</code>
+</a>
+<BR>
+<B>d-equals</B>      DOUBLE
+<BR>
+<pre>
+	( xd1 xd2 -- flag )
+</pre>
+
+<P>
+
+flag is true if and only if xd1
+is bit-for-bit the same as xd2.
+
+<P>
+
+<hr>
+<A name=8.6.1.1140>
+<code>
+8.6.1.1140 <b>D&gt;S</b>
+</code>
+</a>
+<BR>
+<B>d-to-s</B>        DOUBLE
+<BR>
+<pre>
+	( d -- n )
+</pre>
+
+<P>
+
+n is the equivalent of d.  An ambiguous condition exists if d lies
+outside the range of a signed single-cell number.
+
+
+<p>
+<code>
+See:
+<a href=dpansa8.htm#A.8.6.1.1140>A.8.6.1.1140 D&gt;S</a>
+</code>
+
+<P>
+
+<hr>
+<A name=8.6.1.1160>
+<code>
+8.6.1.1160 <b>DABS</b>
+</code>
+</a>
+<BR>
+<B>d-abs</B> DOUBLE
+<BR>
+<pre>
+	( d -- ud )
+</pre>
+
+<P>
+
+ud is the
+absolute value of d.
+
+<P>
+
+<hr>
+<A name=8.6.1.1210>
+<code>
+8.6.1.1210 <b>DMAX</b>
+</code>
+</a>
+<BR>
+<B>d-max</B> DOUBLE
+<BR>
+<pre>
+	( d1 d2 -- d3 )
+</pre>
+
+<P>
+
+d3 is the
+greater of d1 and d2.
+
+<P>
+
+<hr>
+<A name=8.6.1.1220>
+<code>
+8.6.1.1220 <b>DMIN</b>
+</code>
+</a>
+<BR>
+<B>d-min</B> DOUBLE
+<BR>
+<pre>
+	( d1 d2 -- d3 )
+</pre>
+
+<P>
+
+d3 is the
+lesser of d1 and d2.
+
+<P>
+
+<hr>
+<A name=8.6.1.1230>
+<code>
+8.6.1.1230 <b>DNEGATE</b>
+</code>
+</a>
+<BR>
+<B>d-negate</B>      DOUBLE
+<BR>
+<pre>
+	( d1 -- d2 )
+</pre>
+
+<P>
+
+d2 is
+the negation of d1.
+
+<P>
+
+<hr>
+<A name=8.6.1.1820>
+<code>
+8.6.1.1820 <b>M*/</b>
+</code>
+</a>
+<BR>
+<B>m-star-slash</B>  DOUBLE
+<BR>
+<pre>
+	( d1 n1 +n2 -- d2 )
+</pre>
+
+<P>
+
+Multiply d1 by n1 producing the triple-cell intermediate result t.
+Divide t by +n2 giving the double-cell quotient d2.  An ambiguous
+condition exists if +n2 is zero or negative, or the quotient lies
+outside of the range of a double-precision signed integer.
+
+<p>
+<code>
+See:
+<a href=dpansa8.htm#A.8.6.1.1820>A.8.6.1.1820 M*/</a>
+</code>
+
+<P>
+
+<hr>
+<A name=8.6.1.1830>
+<code>
+8.6.1.1830 <b>M+</b>
+</code>
+</a>
+<BR>
+<B>m-plus</B>        DOUBLE
+<BR>
+<pre>
+	( d1|ud1 n -- d2|ud2 )
+</pre>
+
+<P>
+
+Add n to d1|ud1,
+giving the sum d2|ud2.
+
+<p>
+<code>
+See:
+<a href=dpansa8.htm#A.8.6.1.1830>A.8.6.1.1830 M+</a>
+</code>
+
+<P>
+
+<hr>
+<A name=8.6.2>
+<H3>8.6.2 Double-Number extension words</H3>
+</a>
+
+<hr>
+<A name=8.6.2.0420>
+<code>
+8.6.2.0420 <b>2ROT</b>
+</code>
+</a>
+<BR>
+<B>two-rote</B>      DOUBLE EXT
+<pre>
+	( x1 x2 x3 x4 x5 x6 -- x3 x4 x5 x6 x1 x2 )
+</pre>
+
+<P>
+
+Rotate the top three cell pairs on the stack bringing cell pair x1 x2 to
+the top of the stack.
+
+<P>
+
+<hr>
+<A name=8.6.2.1270>
+<code>
+8.6.2.1270 <b>DU<</b>
+</code>
+</a>
+<BR>
+<B>d-u-less</B>      DOUBLE EXT
+<BR>
+<pre>
+	( ud1 ud2 -- flag )
+</pre>
+<P>
+
+flag is true if
+and only if ud1 is less than ud2.
+
+
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpans9.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

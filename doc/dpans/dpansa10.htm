@@ -1,0 +1,357 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpansa9.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpansa11.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=A.10>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H2>A.<a href=dpans10.htm>10</a> 
+The optional Facility word set</H2>
+
+
+<hr>
+<a name=A.10.6>
+<H3>A.<a href=dpans10.htm#10.6>10.6</a> 
+Glossary</H3>
+</a>
+
+<hr>
+<a name=A.10.6.1.0742>
+A.<a href=dpans10.htm#10.6.1.0742>10.6.1.0742</a> 
+AT-XY
+</a>
+<P>
+
+Most implementors supply a method of positioning a cursor on a CRT
+screen, but there is great variance in names and stack arguments.  This
+version is supported by at least one major vendor.
+
+<P>
+
+<hr>
+<a name=A.10.6.1.1755>
+A.<a href=dpans10.htm#10.6.1.1755>10.6.1.1755</a> 
+KEY?
+</a>
+<P>
+
+The Technical Committee has gone around several times on the stack
+effects.  Whatever is decided will violate somebody's practice and
+penalize some machine.  This way doesn't interfere with type-ahead on
+some systems, while requiring the implementation of a single-character
+buffer on machines where polling the keyboard inevitably results in the
+destruction of the character.
+
+<P>
+
+Use of 
+<a href=dpans6.htm#6.1.1750>KEY</a> 
+or KEY? indicates that the application does not wish to
+bother with non-character events, so they are discarded, in anticipation
+of eventually receiving a valid character.  Applications wishing to
+handle non-character events must use 
+<a href=dpans10.htm#10.6.2.1305>EKEY</a> and 
+<a href=dpans10.htm#10.6.2.1307>EKEY?</a>.  It is possible to
+mix uses of KEY? / KEY and EKEY? / EKEY within a single application, but
+the application must use KEY? and KEY only when it wishes to discard
+non-character events until a valid character is received.
+
+<P>
+
+<hr>
+<a name=A.10.6.2.1305>
+A.<a href=dpans10.htm#10.6.2.1305>10.6.2.1305</a> 
+EKEY
+</a>
+<P>
+
+EKEY provides a standard word to access a system-dependent set of
+<B>raw</B> keyboard events, including events corresponding to members of
+the standard character set, events corresponding to other members of the
+implementation-defined character set, and keystrokes that do not
+correspond to members of the character set.
+
+<P>
+
+EKEY assumes no particular numerical correspondence between particular
+event code values and the values representing standard characters.  On
+some systems, this may allow two separate keys that correspond to the
+same standard character to be distinguished from one another.
+
+<P>
+
+In systems that combine both keyboard and mouse events into a single
+<B>event stream</B>, the single number returned by EKEY may be
+inadequate to represent the full range of input possibilities.  In such
+systems, a single <B>event record</B> may include a time stamp, the x,y
+coordinates of the mouse position, the keyboard state, and the state of
+the mouse buttons.  In such systems, it might be appropriate for EKEY to
+return the address of an <B>event record</B> from which the other
+information could be extracted.
+
+<P>
+
+Also, consider a hypothetical Forth system running under MS-DOS on a
+PC-compatible computer.  Assume that the implementation-defined
+character set is the <B>normal</B> 8-bit PC character set.  In that
+character set, the codes from 0 to 127 correspond to ASCII characters.
+The codes from 128 to 255 represent characters from various non-English
+languages, mathematical symbols, and some graphical symbols used for
+line drawing.  In addition to those characters, the keyboard can
+generate various other <B>scan codes</B>, representing such
+non-character events as arrow keys and function keys.
+
+<P>
+
+There may be multiple keys, with different scan codes, corresponding to
+the same standard character.  For example, the character representing
+the number <B>1</B> often appears both in the row of number keys above
+the alphabetic keys, and also in the separate numeric keypad.
+
+<P>
+
+When a program asks the MS-DOS operating system for a keyboard event, it
+receives either a single non-zero byte, representing a character, or a
+zero byte followed by a <B>scan code</B> byte, representing a
+non-character keyboard event (e.g., a function key).
+
+<P>
+
+EKEY represents each keyboard event as a single number, rather than as a
+sequence of numbers.  For the system described above, the following
+would be a reasonable implementation of EKEY and related words:
+
+<P>
+
+The 
+<a href=dpans3.htm#3.2.6>MAX-CHAR</a>
+environmental query would return 255.
+
+<P>
+
+Assume the existence of a word DOS-KEY ( -- char ) which executes the
+MS-DOS <B>Direct STDIN Input</B> system call (Interrupt 21h, Function
+07h) and a word DOS-KEY? ( -- flag) which executes the MS-DOS <B>Check
+STDIN Status</B> system call (Interrupt 21h, Function 0Bh).
+
+<PRE>
+: EKEY?  ( -- flag )  DOS-KEY?  0&lt;&gt;  ;
+
+: EKEY  ( -- u )  DOS-KEY  ?DUP 0= IF  DOS-KEY 256 +  THEN ;
+
+: EKEY>CHAR  ( u -- u false | char true )
+    DUP 255 &gt; IF          ( u )
+    DUP 259 = IF           \ 259 is Ctrl-@ (ASCII NUL)
+        DROP 0 TRUE EXIT   \ so replace with character
+      THEN FALSE EXIT      \ otherwise extended character
+    THEN  TRUE             \ normal extended ASCII char.
+;
+
+VARIABLE PENDING-CHAR   -1 PENDING-CHAR !
+
+: KEY?  ( -- flag )
+    PENDING-CHAR @ 0&lt; IF
+      BEGIN  EKEY? WHILE
+        EKEY EKEY&gt;CHAR IF
+          PENDING-CHAR !  TRUE EXIT
+        THEN DROP
+      REPEAT  FALSE EXIT
+    THEN  TRUE
+;
+
+: KEY  ( -- char )
+    PENDING-CHAR @ 0&lt; IF
+      BEGIN  EKEY  EKEY>CHAR 0=
+      WHILE
+        DROP
+      REPEAT  EXIT
+    THEN  PENDING-CHAR @  -1 PENDING-CHAR !
+;
+</PRE>
+
+<P>
+
+This is a full-featured implementation, providing the application
+program with an easy way to either handle non-character events (with
+EKEY), or to ignore them and to only consider <B>real</B> characters
+(with 
+<a href=dpans6.htm#6.1.1750>KEY</a>).
+
+<P>
+
+Note that EKEY maps scan codes from 0 to 255 into numbers from 256 to
+511.  EKEY maps the number 259, representing the keyboard combination
+Ctrl-Shift-@, to the character whose numerical value is 0 (ASCII NUL).
+Many ASCII keyboards generate ASCII NUL for Ctrl-Shift-@, so we use that
+key combination for ASCII NUL (which is otherwise unavailable from
+MS-DOS, because the zero byte signifies that another scan-code byte
+follows).
+
+<P>
+
+One consequence of using the <B>Direct STDIN Input</B> system call
+(function 7) instead of the <B>STDIN Input</B> system call (function 8)
+is that the normal DOS <B>Ctrl-C interrupt</B> behavior is disabled when
+the system is waiting for input (Ctrl-C would still cause an interrupt
+while characters are being output).  On the other hand, if the <B>STDIN
+Input</B> system call (function 8) were used to implement EKEY, Ctrl-C
+interrupts would be enabled, but Ctrl-Shift-@ would also cause an
+interrupt, because the operating system would treat the second byte of
+the 0,3 sequence as a Ctrl-C, even though the 3 is really a scan code
+and not a character.  One <B>best of both worlds</B> solution is to use
+function 8 for the first byte received by EKEY, and function 7 for the
+scan code byte.  For example:
+
+<PRE>
+: EKEY  ( -- u )
+    DOS-KEY-FUNCTION-8  ?DUP  0=  IF
+      DOS-KEY-FUNCTION-7 DUP 3  =  IF
+        DROP 0  ELSE  256 +
+      THEN
+    THEN
+;
+</PRE>
+
+<P>
+
+Of course, if the Forth implementor chooses to pass Ctrl-C through to
+the program, without using it for its usual interrupt function, then DOS
+function 7 is appropriate in both cases (and some additional care must
+be taken to prevent a typed-ahead Ctrl-C from interrupting the Forth
+system during output operations).
+
+<P>
+
+A Forth system might also choose a simpler implementation of KEY,
+without implementing EKEY, as follows:
+
+<PRE>
+: KEY   ( -- char )  DOS-KEY  ;
+
+: KEY?  ( -- flag )  DOS-KEY? 0&lt;&gt;  ;
+</PRE>
+
+<P>
+
+The disadvantages of the simpler version are:
+
+<P>
+
+a) An application program that uses KEY, expecting to receive only valid
+characters, might receive a sequence of bytes (e.g., a zero byte
+followed by a byte with the same numerical value as the letter <B>A</B>)
+that appears to contain a valid character, even though the user pressed
+a key (e.g., function key 4) that does not correspond to any valid
+character.
+
+<P>
+
+b) An application program that wishes to handle non-character events
+will have to execute KEY twice if it returns zero the first time.  This
+might appear to be a reasonable and easy thing to do.  However, such
+code is not portable to other systems that do not use a zero byte as an
+<B>escape</B> code.  Using the EKEY approach, the algorithm for handling
+keyboard events can be the same for all systems; the system dependencies
+can be reduced to a table or set of constants listing the
+system-dependent key codes used to access particular application
+functions.  Without EKEY, the algorithm, not just the table, is likely
+to be system dependent.
+
+<P>
+
+Another approach to EKEY on MS-DOS is to use the BIOS <B>Read Keyboard
+Status</B> function (Interrupt 16h, Function 01h) or the related
+<B>Check Keyboard</B> function (Interrupt 16h, Function 11h).  The
+advantage of this function is that it allows the program to distinguish
+between different keys that correspond to the same character (e.g.  the
+two <B>1</B> keys).  The disadvantage is that the BIOS keyboard
+functions read only the keyboard.  They cannot be <B>redirected</B> to
+another <B>standard input</B> source, as can the DOS STDIN Input
+functions.
+
+<P>
+
+
+<hr>
+<a name=A.10.6.2.1306>
+A.<a href=dpans10.htm#10.6.2.1306>10.6.2.1306</a>   
+EKEY&gt;CHAR
+</a>
+<P>
+
+EKEY&gt;CHAR translates a keyboard event into the corresponding member of
+the character set, if such a correspondence exists for that event.
+
+<P>
+
+It is possible that several different keyboard events may correspond to
+the same character, and other keyboard events may correspond to no
+character.
+
+<P>
+
+<hr>
+<a name=A.10.6.2.1325>
+A.<a href=dpans10.htm#10.6.2.1325>10.6.2.1325</a> 
+EMIT?
+</a>
+<P>
+
+An indefinite delay is a device related condition, such as printer
+off-line, that requires operator intervention before the device will
+accept new data.
+
+<P>
+
+<hr>
+<a name=A.10.6.2.1905>
+A.<a href=dpans10.htm#10.6.2.1905>10.6.2.1905</a> 
+MS
+</a>
+<P>
+
+Although their frequencies vary, every system has a clock.  Since many
+programs need to time intervals, this word is offered.  Use of
+milliseconds as an internal unit of time is a practical <B>least common
+denominator</B> external unit.  It is assumed implementors will use
+<B>clock ticks</B> (whatever size they are) as an internal unit and
+convert as appropriate.
+
+<P>
+
+<hr>
+<a name=A.10.6.2.2292>
+A.<a href=dpans10.htm#10.6.2.2292>10.6.2.2292</a> 
+TIME&DATE
+</a>
+<P>
+
+Most systems have a real-time clock/calendar.  This word gives portable
+access to it.
+
+<P>
+
+<hr>
+<a href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<a href=dpansa11.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

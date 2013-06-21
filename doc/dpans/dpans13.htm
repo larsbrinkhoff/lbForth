@@ -1,0 +1,606 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans12.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpans14.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=13.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>13. The optional Locals word set</H1>
+
+
+<hr>
+<A name=13.1>
+<H2>13.1 Introduction</H2>
+</a>
+
+<p>
+<code>
+See:
+<A href=dpansa13.htm>Annex A.13</a> The Locals Word Set
+</code>
+<P>
+
+<hr>
+<A name=13.2>
+<H2>13.2 Additional terms and notation</H2>
+</a>
+
+None.
+<P>
+
+<hr>
+<A name=13.3>
+<H2>13.3 Additional usage requirements</H2>
+</a>
+
+<p>
+<code>
+See:  
+<A href=dpansa13.htm#A.13.3>A.13.3</a> Additional usage requirements
+</code>
+<P>
+
+<hr>
+<A name=13.3.1>
+<H3>13.3.1 Locals</H3>
+</a>
+
+A local is a data object whose execution semantics shall return its
+value, whose scope shall be limited to the definition in which it is
+declared, and whose use in a definition shall not preclude reentrancy or
+recursion.
+
+<P>
+
+<hr>
+<A name=13.3.2>
+<H3>13.3.2 Environmental queries</H3>
+</a>
+
+Append table 13.1 to table 3.5.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.6>3.2.6</a> Environmental queries
+</code>
+
+<P>
+
+Table 13.1 - Environmental query strings
+<P>
+
+
+
+<PRE>
+String          Value data type  Constant?  Meaning
+------          ---------------  ---------  -------
+#LOCALS         n                yes        maximum number of local variables in a definition
+LOCALS          flag             no         locals word set present
+LOCALS-EXT      flag             no         locals extensions word set present
+</PRE>
+
+
+<P>
+
+<hr>
+<A name=13.3.3>
+<H3>13.3.3 Processing locals</H3>
+</a>
+
+To support the locals word set, a system shall provide a mechanism to
+receive the messages defined by 
+<a href=dpans13.htm#13.6.1.0086>(LOCAL)</a> 
+and respond as described here.
+
+<P>
+
+During the compilation of a definition after : 
+(<a href=dpans6.htm#6.1.0450>colon</a>), 
+<a href=dpans6.htm#6.2.0455>:NONAME</a>, or
+<a href=dpans6.htm#6.1.1250>DOES></a>, 
+a program may begin sending local identifier messages to the
+system.  The process shall begin when the first message is sent.  The
+process shall end when the <B>last local</B> message is sent.  The
+system shall keep track of the names, order, and number of identifiers
+contained in the complete sequence.
+
+<P>
+
+<hr>
+<A name=13.3.3.1>
+<H4>13.3.3.1 Compilation semantics</H4>
+</a>
+
+The system, upon receipt of a sequence of local-identifier messages,
+shall take the following actions at compile time:
+
+<P>
+
+a) Create temporary dictionary entries for each of the identifiers
+passed to 
+<a href=dpans13.htm#13.6.1.0086>(LOCAL)</a>, 
+such that each identifier will behave as a local.
+These temporary dictionary entries shall vanish at the end of the
+definition, denoted by ; 
+(<a href=dpans6.htm#6.1.0460>semicolon</a>), 
+<a href=dpans15.htm#15.6.2.0470>;CODE</a>, or 
+<a href=dpans6.htm#6.1.1250>DOES></a>.  The system need
+not maintain these identifiers in the same way it does other dictionary
+entries as long as they can be found by normal dictionary searching
+processes.  Furthermore, if the Search-Order word set is present, local
+identifiers shall always be searched before any of the word lists in any
+definable search order, and none of the Search-Order words shall change
+the locals' privileged position in the search order.  Local identifiers
+may reside in mass storage.
+
+<P>
+
+b) For each identifier passed to (LOCAL), the system shall generate an
+appropriate code sequence that does the following at execution time:
+
+<P>
+
+<OL>
+<LI>Allocate a storage resource adequate to contain the value of a local.
+The storage shall be allocated in a way that does not preclude
+re-entrancy or recursion in the definition using the local.
+<LI>Initialize the value using the top item on the data stack. If more
+than one local is declared, the top item on the stack shall be moved
+into the first local identified, the next item shall be moved into the
+second, and so on.
+</ol>
+
+The storage resource may be the return stack or may be implemented in
+other ways, such as in registers. The storage resource shall not be
+the data stack. Use of locals shall not restrict use of the data
+stack before or after the point of declaration.
+<p>
+
+c) Arrange that any of the legitimate methods of terminating execution
+of a definition, specifically ; (semicolon), ;CODE, DOES> or 
+<a href=dpans6.htm#6.1.1380>EXIT</a>, will
+release the storage resource allocated for the locals, if any, declared
+in that definition.  
+<a href=dpans6.htm#6.1.0670>ABORT</a> 
+shall release all local storage resources,
+and 
+<a href=dpans9.htm#9.6.1.0875>CATCH</a> / 
+<a href=dpans9.htm#9.6.1.2275>THROW</a> 
+(if implemented) shall release such resources for all
+definitions whose execution is being terminated.
+
+<P>
+
+d) Separate sets of locals may be declared in defining words before
+DOES> for use by the defining word, and after DOES> for use by the word
+defined.
+
+<P>
+
+A system implementing the Locals word set shall support the declaration
+of at least eight locals in a definition.
+
+<P>
+
+<hr>
+<A name=13.3.3.2>
+<H4>13.3.3.2 Syntax restrictions</H4>
+</a>
+
+Immediate words in a program may use 
+<a href=dpans13.htm#13.6.1.0086>(LOCAL)</a> to implement syntaxes for
+local declarations with the following restrictions:
+
+<P>
+
+a) A program shall not compile any executable code into the current
+definition between the time (LOCAL) is executed to identify the first
+local for that definition and the time of sending the single required
+<B>last local</B> message;
+
+<P>
+
+b) The position in program source at which the sequence of (LOCAL)
+messages is sent, referred to here as the point at which locals are
+declared, shall not lie within the scope of any control structure;
+
+<P>
+
+c) Locals shall not be declared until values previously placed on the
+return stack within the definition have been removed;
+
+<P>
+
+d) After a definition's locals have been declared, a program may place
+data on the return stack.  However, if this is done, locals shall not be
+accessed until those values have been removed from the return stack;
+
+<P>
+
+e) Words that return execution tokens, such as ' 
+(<a href=dpans6.htm#6.1.0070>tick</a>), 
+<a href=dpans6.htm#6.1.2510>[']</a>, or 
+<a href=dpans6.htm#6.1.1550>FIND</a>,
+shall not be used with local names;
+
+<P>
+
+f) A program that declares more than eight locals in a single definition
+has an environmental dependency;
+
+<P>
+
+g) Locals may be accessed or updated within control structures,
+including do-loops;
+
+<P>
+
+h) Local names shall not be referenced by 
+<a href=dpans6.htm#6.1.2033>POSTPONE</a> and 
+<a href=dpans6.htm#6.2.2530>[COMPILE]</a>.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4>3.4</a> The Forth text interpreter
+</code>
+
+<P>
+
+<hr>
+<A name=13.4>
+<H2>13.4 Additional documentation requirements</H2>
+</a>
+
+
+<hr>
+<A name=13.4.1>
+<H3>13.4.1 System documentation</H3>
+</a>
+
+
+<hr>
+<A name=13.4.1.1>
+<H4>13.4.1.1 Implementation-defined options</H4>
+</a>
+
+<UL>
+<LI>maximum number of locals in a definition 
+(<a href=dpans13.htm#13.3.3>13.3.3</a> Processing locals,
+<a href=dpans13.htm#13.6.2.1795>13.6.2.1795</a> LOCALS|).
+</UL>
+
+<P>
+
+<hr>
+<A name=13.4.1.2>
+<H4>13.4.1.2 Ambiguous conditions</H4>
+</a>
+
+<UL>
+<LI>executing a named local while in interpretation state 
+(<a href=dpans13.htm#13.6.1.0086>13.6.1.0086</a>
+(LOCAL));
+<LI>name not defined by 
+<a href=dpans6.htm#6.2.2405>VALUE</a> or 
+LOCAL 
+(<a href=dpans13.htm#13.6.1.2295>13.6.1.2295</a> TO).
+</ul>
+
+<hr>
+<A name=13.4.1.3>
+<h4>13.4.1.3 Other system documentation</h4>
+</a>
+<ul>
+<LI>no additional requirements.
+</UL>
+<P>
+
+<hr>
+<A name=13.4.2>
+<H3>13.4.2 Program documentation</H3>
+</a>
+
+
+<hr>
+<A name=13.4.2.1>
+<H4>13.4.2.1 Environmental dependencies</H4>
+</a>
+
+<UL>
+<LI>declaring more than eight locals in a single definition 
+(<a href=dpans13.htm#13.3.3>13.3.3</a> Processing locals).
+</UL>
+
+<P>
+
+<hr>
+<A name=13.4.2.2>
+<H4>13.4.2.2 Other program documentation</H4>
+</a>
+
+<UL>
+<LI>no additional requirements.
+</UL>
+
+<P>
+
+<hr>
+<A name=13.5>
+<H2>13.5 Compliance and labeling</H2>
+</a>
+
+
+<hr>
+<A name=13.5.1>
+<H3>13.5.1 ANS Forth systems</H3>
+</a>
+
+The phrase <B>Providing the Locals word set</B> shall be appended to the
+label of any Standard System that provides all of the Locals word set.
+
+<P>
+
+The phrase <B>Providing name(s) from the Locals Extensions word set</B>
+shall be appended to the label of any Standard System that provides
+portions of the Locals Extensions word set.
+
+<P>
+
+The phrase <B>Providing the Locals Extensions word set</B> shall be
+appended to the label of any Standard System that provides all of the
+Locals and Locals Extensions word sets.
+
+<P>
+
+<hr>
+<A name=13.5.2>
+<H3>13.5.2 ANS Forth programs</H3>
+</a>
+
+The phrase <B>Requiring the Locals word set</B> shall be appended to the
+label of Standard Programs that require the system to provide the Locals
+word set.
+
+<P>
+
+The phrase <B>Requiring name(s) from the Locals Extensions word set</B>
+shall be appended to the label of Standard Programs that require the
+system to provide portions of the Locals Extensions word set.
+
+<P>
+
+The phrase <B>Requiring the Locals Extensions word set</B> shall be
+appended to the label of Standard Programs that require the system to
+provide all of the Locals and Locals Extensions word sets.
+
+<P>
+
+<hr>
+<A name=13.6>
+<H2>13.6 Glossary</H2>
+</a>
+
+
+<hr>
+<A name=13.6.1>
+<H3>13.6.1 Locals words</H3>
+</a>
+
+
+<hr>
+<A name=13.6.1.0086>
+<code>
+13.6.1.0086 <b>(LOCAL)</b>
+</code>
+</a>
+<BR>
+<B>paren-local-paren</B>     LOCAL
+<p>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( c-addr u -- )
+</pre>
+<P>
+
+When executed during compilation, (LOCAL) passes a message to the system
+that has one of two meanings.  If u is non-zero, the message identifies
+a new local whose definition name is given by the string of characters
+identified by c-addr u.  If u is zero, the message is <B>last local</B>
+and c-addr has no significance.
+
+<P>
+
+The result of executing (LOCAL) during compilation of a definition is to
+create a set of named local identifiers, each of which is a definition
+name, that only have execution semantics within the scope of that
+definition's source.
+
+<PRE>
+        <i>local</i> Execution: ( -- x )
+</PRE>
+<P>
+
+Push the local's value, x, onto the stack.  The local's value is
+initialized as described in 
+<a href=dpans13.htm#13.3.3>13.3.3</a> Processing locals and may be changed
+by preceding the local's name with 
+<a href=dpans13.htm#13.6.1.2295>TO</a>.  An ambiguous condition exists
+when local is executed while in interpretation state.
+<p>
+
+<b>Note:</b> This word does not have special compilation semantics in
+the
+usual sense because it provides access to a system capability for use
+by other user-defined words that do have them.  However, the locals
+facility as a whole and the sequence of messages passed defines
+specific usage rules with semantic implications that are described in
+detail in section 
+<a href=dpans13.htm#13.3.3>13.3.3</a> Processing locals.
+
+<P>
+
+<b>Note:</b> This word is not intended for direct use in a definition to
+declare that definition's locals.  It is instead used by system or
+user compiling words.  These compiling words in turn define their own
+syntax, and may be used directly in definitions to declare locals.  In
+this context, the syntax for (LOCAL) is defined in terms of a sequence
+of compile-time messages and is described in detail in section 
+<a href=dpans13.htm#13.3.3>13.3.3</a> Processing locals.
+
+<P>
+
+<b>Note:</b> The Locals word set modifies the syntax and semantics of
+<a href=dpans6.htm#6.2.2295>6.2.2295</a> TO 
+as defined in the Core Extensions word set.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4>3.4</a> The Forth text interpreter
+</code>
+
+<P>
+
+<hr>
+<A name=13.6.1.2295>
+<code>
+13.6.1.2295 <b>TO</b>
+</code>
+</a>
+<BR>
+LOCAL
+<BR>
+<P>
+
+Extend the semantics of 
+<a href=dpans6.htm#6.2.2295>6.2.2295</a> TO to be:
+<P>
+
+	
+<PRE>
+        Interpretation: ( x <B>"&lt;spaces&gt;name"</B> -- )
+</PRE>
+<P>
+
+Skip leading spaces and parse name delimited by a space.  Store x in
+name.  An ambiguous condition exists if name was not defined by 
+<a href=dpans6.htm#6.2.2405>VALUE</a>.
+
+
+<PRE>
+        Compilation: ( <B>"&lt;spaces&gt;name"</B> -- )
+</PRE>
+<P>
+
+Skip leading spaces and parse name delimited by a space.  Append the
+run-time semantics given below to the current definition.  An ambiguous
+condition exists if name was not defined by either VALUE or 
+<a href=dpans13.htm#13.6.1.0086>(LOCAL)</a>.
+
+
+<PRE>
+        Run-time:       ( x -- )
+</PRE>
+<P>
+
+Store x in name.
+
+<P>
+
+<b>Note:</b> An ambiguous condition exists if either 
+<a href=dpans6.htm#6.1.2033>POSTPONE</a> or
+<a href=dpans6.htm#6.2.2530>[COMPILE]</a>
+is applied to TO.
+
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<a href=dpansa13.htm#A.13.6.1.2295>A.13.6.1.2295 TO</a>
+</code>
+
+<P>
+
+<hr>
+<A name=13.6.2>
+<H3>13.6.2 Locals extension words</H3>
+</a>
+
+
+<hr>
+<A name=13.6.2.1795>
+<code>
+13.6.2.1795 <b>LOCALS|</b>
+</code>
+</a>
+<BR>
+<B>locals-bar</B>    LOCAL EXT
+<p>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( <B>"&lt;spaces&gt;name1"</B> <B>"&lt;spaces&gt;name2"</B> ... <B>"&lt;spaces&gt;namen"</B> <B>|</B> -- )
+</pre>
+<P>
+
+Create up to eight local identifiers by repeatedly skipping leading
+spaces, parsing name, and executing 
+<a href=dpans13.htm#13.6.1.0086>13.6.1.0086</a> (LOCAL).  The list of
+locals to be defined is terminated by |.  Append the run-time semantics
+given below to the current definition.
+
+<PRE>
+        Run-time:       ( xn ... x2 x1 -- )
+</PRE>
+<P>
+
+Initialize up to eight local identifiers as described in 
+<a href=dpans13.htm#13.6.1.0086>13.6.1.0086</a> (LOCAL), 
+each of which takes as its initial value the top stack item,
+removing it from the stack.  Identifier name1 is initialized with x1,
+identifier name2 with x2, etc.  When invoked, each local will return its
+value.  The value of a local may be changed using 
+<a href=dpans13.htm#13.6.1.2295>13.6.1.2295</a> TO.
+
+<p>
+<code>
+See:  
+<A href=dpansa13.htm#A.13.6.2.1795>A.13.6.2.1795 LOCALS|</a>
+</code>
+<P>
+
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpans14.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

@@ -1,0 +1,372 @@
+<HTML>
+<HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+<body>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans16.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpansa1.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=17.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+
+<H1>17. The optional String word set</H1>
+
+
+<hr>
+<A name=17.1>
+<H2>17.1 Introduction</H2>
+</a>
+
+
+<hr>
+<A name=17.2>
+<H2>17.2 Additional terms and notation</H2>
+</a>
+
+None.
+<P>
+
+
+<hr>
+<A name=17.3>
+<H2>17.3 Additional usage requirements</H2>
+</a>
+
+Append table 17.1 to table 3.5.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.6>3.2.6</a> Environmental queries
+</code>
+<P>
+
+Table 17.1 - Environmental query strings
+
+
+<PRE>
+String         Value data type    Constant?   Meaning
+------         ---------------    ---------   -------
+STRING          flag              no          string word set present
+STRING-EXT      flag              no          string extensions word set present
+</PRE>
+<P>
+
+
+<hr>
+<A name=17.4>
+<H2>17.4 Additional documentation requirements</H2>
+</a>
+
+None.
+<P>
+
+<hr>
+<A name=17.5>
+<H2>17.5 Compliance and labeling</H2>
+</a>
+
+<hr>
+<A name=17.5.1>
+<H3>17.5.1 ANS Forth systems</H3>
+</a>
+
+The phrase <B>Providing the String word set</B> shall be appended to the
+label of any Standard System that provides all of the String word set.
+<P>
+
+The phrase <B>Providing name(s) from the String Extensions word set</B>
+shall be appended to the label of any Standard System that provides
+portions of the String Extensions word set.
+<P>
+
+The phrase <B>Providing the String Extensions word set</B> shall be
+appended to the label of any Standard System that provides all of the
+String and String Extensions word sets.
+<P>
+
+
+<hr>
+<A name=17.5.2>
+<H3>17.5.2 ANS Forth programs</H3>
+</a>
+
+The phrase <B>Requiring the String word set</B> shall be appended to the
+label of Standard Programs that require the system to provide the String
+word set.
+
+<P>
+
+The phrase <B>Requiring name(s) from the String Extensions word set</B>
+shall be appended to the label of Standard Programs that require the
+system to provide portions of the String Extensions word set.
+
+<P>
+
+The phrase <B>Requiring the String Extensions word set</B> shall be
+appended to the label of Standard Programs that require the system to
+provide all of the String and String Extensions word sets.
+
+
+<P>
+
+<hr>
+<A name=17.6>
+<H2>17.6 Glossary</H2>
+</a>
+
+
+<hr>
+<A name=17.6.1>
+<H3>17.6.1 String words</H3>
+</a>
+
+
+<hr>
+<A name=17.6.1.0170>
+<code>
+17.6.1.0170 <b>-TRAILING</b>
+</code>
+</a>
+<BR>
+<B>dash-trailing</B> STRING
+<BR>
+<pre>
+	( c-addr u1 -- c-addr u2 )
+</pre>
+<P>
+
+If u1 is greater than zero, u2 is equal to u1 less the number of spaces
+at the end of the character string specified by c-addr u1.  If u1 is
+zero or the entire string consists of spaces, u2 is zero.
+
+<P>
+
+<hr>
+<A name=17.6.1.0245>
+<code>
+17.6.1.0245 <b>/STRING</b>
+</code>
+</a>
+<BR>
+<B>slash-string</B>  STRING
+<BR>
+<pre>
+	( c-addr1 u1 n -- c-addr2 u2 )
+</pre>
+<P>
+
+Adjust the character string at c-addr1 by n characters.  The resulting
+character string, specified by c-addr2 u2, begins at c-addr1 plus n
+characters and is u1 minus n characters long.
+
+<P>
+<code>
+See:
+<a href=dpansa17.htm#A.17.6.1.0245>A.17.6.1.0245 /STRING</a>
+</code>
+<p>
+
+<hr>
+<A name=17.6.1.0780>
+<code>
+17.6.1.0780 <b>BLANK</b>
+</code>
+</a>
+<BR>
+STRING
+<BR>
+<pre>
+	( c-addr u -- )
+</pre>
+<P>
+
+If u is greater than zero, store the character value for space in u
+consecutive character positions beginning at c-addr.
+<P>
+
+<hr>
+<A name=17.6.1.0910>
+<code>
+17.6.1.0910 <b>CMOVE</b>
+</code>
+</a>
+<BR>
+<B>c-move</B>        STRING
+<BR>
+<pre>
+	( c-addr1 c-addr2 u -- )
+</pre>
+<P>
+
+If u is greater than zero, copy u consecutive characters from the data
+space starting at c-addr1 to that starting at c-addr2, proceeding
+character-by-character from lower addresses to higher addresses.
+
+<P>
+<code>
+See:
+<a href=dpansa17.htm#A.17.6.1.0910>A.17.6.1.0910 CMOVE</a> ,
+<a href=dpans17.htm#17.6.1.0920>17.6.1.0920 CMOVE&gt;</a>
+</code>
+<p>
+
+
+<hr>
+<A name=17.6.1.0920>
+<code>
+17.6.1.0920 <b>CMOVE&gt;</b>
+</code>
+</a>
+<BR>
+<B>c-move-up</B>     STRING
+<BR>
+<pre>
+	( c-addr1 c-addr2 u -- )
+</pre>
+<P>
+
+If u is greater than zero, copy u consecutive characters from the data
+space starting at c-addr1 to that starting at c-addr2, proceeding
+character-by-character from higher addresses to lower addresses.
+
+<P>
+<code>
+See:
+<a href=dpans17.htm#17.6.1.0910>17.6.1.0910 CMOVE</a> ,
+<a href=dpansa17.htm#A.17.6.1.0920>A.17.6.1.0920 CMOVE&gt;</a>
+</code>
+<p>
+
+
+<hr>
+<A name=17.6.1.0935>
+<code>
+17.6.1.0935 <b>COMPARE</b>
+</code>
+</a>
+<BR>
+STRING
+<BR>
+<pre>
+	( c-addr1 u1 c-addr2 u2 -- n )
+</pre>
+<P>
+
+Compare the string specified by c-addr1 u1 to the string specified by
+c-addr2 u2.  The strings are compared, beginning at the given addresses,
+character by character, up to the length of the shorter string or until
+a difference is found.  If the two strings are identical, n is zero.  If
+the two strings are identical up to the length of the shorter string, n
+is minus-one (-1) if u1 is less than u2 and one (1) otherwise.  If the
+two strings are not identical up to the length of the shorter string, n
+is minus-one (-1) if the first non-matching character in the string
+specified by c-addr1 u1 has a lesser numeric value than the
+corresponding character in the string specified by c-addr2 u2 and one
+(1) otherwise.
+
+<P>
+<code>
+See:
+<a href=dpansa17.htm#A.17.6.1.0935>A.17.6.1.0935 COMPARE</a>
+</code>
+<p>
+
+
+<hr>
+<A name=17.6.1.2191>
+<code>
+17.6.1.2191 <b>SEARCH</b>
+</code>
+</a>
+<BR>
+STRING
+<BR>
+<pre>
+	( c-addr1 u1 c-addr2 u2 -- c-addr3 u3 flag )
+</pre>
+<P>
+
+Search the string specified by c-addr1 u1 for the string specified by
+c-addr2 u2.  If flag is true, a match was found at c-addr3 with u3
+characters remaining.  If flag is false there was no match and c-addr3
+is c-addr1 and u3 is u1.
+
+<P>
+<code>
+See:
+<a href=dpansa17.htm#A.17.6.1.2191>A.17.6.1.2191 SEARCH</a>
+</code>
+<p>
+
+
+<hr>
+<A name=17.6.1.2212>
+<code>
+17.6.1.2212 <b>SLITERAL</b>
+</code>
+</a>
+<BR>
+STRING
+<BR>
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<PRE>
+        Compilation: ( c-addr1 u -- )
+</PRE>
+
+<P>
+
+Append the run-time semantics given below to the current definition.
+<P>
+
+
+<PRE>
+        Run-time:       ( -- c-addr2 u )
+</PRE>
+<P>
+
+Return c-addr2 u describing a string consisting of the characters
+specified by c-addr1 u during compilation.  A program shall not alter
+the returned string.
+
+<P>
+<code>
+See:
+<a href=dpansa17.htm#A.17.6.1.2212>A.17.6.1.2212 SLITERAL</a>
+</code>
+<p>
+
+
+<hr>
+<A name=17.6.2>
+<H3>17.6.2 String extension words</H3>
+</a>
+
+None
+<P>
+
+
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>
+Table of Contents 
+<BR>
+<A href=dpansa1.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

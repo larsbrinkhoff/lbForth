@@ -1,0 +1,2395 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans11.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpans13.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=12.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>12. The optional Floating-Point word set</H1>
+
+<hr>
+<A name=12.1>
+<H2>12.1 Introduction</H2>
+</a>
+
+<p>
+<code>
+See:
+<a href=dpansa12.htm#A.12>A.12</a> The optional Floating-Point word set
+</code>
+<p>
+
+<hr>
+<A name=12.2>
+<H2>12.2 Additional terms and notation</H2>
+</a>
+
+
+<hr>
+<A name=12.2.1>
+<H3>12.2.1 Definition of terms</H3>
+</a>
+
+
+<DL>
+<DT><B>float-aligned address:</B>
+<DD>The address of a memory location at which a
+floating-point number can be accessed.
+
+<DT><B>double-float-aligned address:</B>
+<DD>The address of a memory location at which
+a 64-bit IEEE double-precision floating-point number can be accessed.
+
+<DT><B>single-float-aligned address:</B>
+<DD>The address of a memory location at which
+a 32-bit IEEE single-precision floating-point number can be accessed.
+
+<DT><B>IEEE floating-point number:</B>
+<DD>A single- or double-precision floating-point
+number as defined in ANSI/IEEE 754-1985.</DL>
+
+
+<P>
+
+<hr>
+<A name=12.2.2>
+<H3>12.2.2 Notation</H3>
+</a>
+
+
+<hr>
+<A name=12.2.2.1>
+<H4>12.2.2.1 Numeric notation</H4>
+</a>
+
+The following notation is used to define the syntax of the external
+representation of floating-point numbers:
+
+<UL>
+<LI>Each component of a floating-point number is defined with a rule
+consisting of the name of the component (italicized in angle-brackets,
+e.g.,<I>&lt;sign&gt;</I> characters := and a concatenation of tokens and
+metacharacters;
+<LI>Tokens may be literal characters (in bold face, e.g.,<B>E</B>) or rule
+names in angle brackets (e.g.,&lt;digit&gt;);
+<LI>The metacharacter * is used to specify zero or more occurrences
+of the preceding token (e.g.,&lt;digit&gt;*);
+<LI>Tokens enclosed with [ and ] are optional (e.g.,[&lt;sign&gt;]);
+<LI>Vertical bars separate choices from a list of tokens enclosed
+with braces (e.g.,{ + | - }).
+</UL>
+
+<P>
+
+<hr>
+<A name=12.2.2.2>
+<H4>12.2.2.2 Stack notation</H4>
+</a>
+
+Floating-point stack notation when the floating-point stack is separate
+from the data stack is:
+<P>
+
+( F:  before -- after )
+<P>
+
+
+<hr>
+<A name=12.3>
+<H2>12.3 Additional usage requirements</H2>
+</a>
+
+
+<hr>
+<A name=12.3.1>
+<H3>12.3.1 Data types</H3>
+</a>
+
+Append table 12.1 to
+<a href=dpans3.htm#table.3.1>table 3.1</a>.
+
+<P>
+
+Table 12.1 - Data Types
+<P>
+
+
+
+<PRE>
+Symbol    Data type                       Size on stack
+------    ---------                       -------------
+r         floating-point number           implementation-defined
+f-addr    float-aligned address           1 cell
+sf-addr   single-float-aligned address    1 cell
+df-addr   double-float-aligned address    1 cell
+</PRE>
+
+
+<P>
+
+<hr>
+<A name=12.3.1.1>
+<H4>12.3.1.1 Addresses</H4>
+</a>
+
+The set of float-aligned addresses is an implementation-defined subset
+of the set of aligned addresses.  Adding the size of a floating-point
+number to a float-aligned address shall produce a float-aligned address.
+
+<P>
+
+The set of double-float-aligned addresses is an implementation-defined
+subset of the set of aligned addresses.  Adding the size of a 64-bit
+IEEE double-precision floating-point number to a double-float-aligned
+address shall produce a double-float-aligned address.
+
+<P>
+
+The set of single-float-aligned addresses is an implementation-defined
+subset of the set of aligned addresses.  Adding the size of a 32-bit
+IEEE single-precision floating-point number to a single-float-aligned
+address shall produce a single-float-aligned address.
+
+<P>
+
+<hr>
+<A name=12.3.1.2>
+<H4>12.3.1.2 Floating-point numbers</H4>
+</a>
+
+The internal representation of a floating-point number, including the
+format and precision of the significand and the format and range of the
+exponent, is implementation defined.
+
+<P>
+
+Any rounding or truncation of floating-point numbers is implementation
+defined.
+
+<P>
+
+<hr>
+<A name=12.3.2>
+<H3>12.3.2 Floating-point operations</H3>
+</a>
+
+<B>Round to nearest</B> means round the result of a floating-point
+operation to the representable value nearest the result.  If the two
+nearest representable values are equally near the result, the one having
+zero as its least significant bit shall be delivered.
+
+<P>
+
+<B>Round toward negative infinity</B> means round the result of a
+floating-point operation to the representable value nearest to and no
+greater than the result.
+
+<P>
+
+<hr>
+<A name=12.3.3>
+<H3>12.3.3 Floating-point stack</H3>
+</a>
+
+A last in, first out list that shall be used by all floating-point
+operators.
+
+<P>
+
+The width of the floating-point stack is implementation-defined.  By
+default the floating-point stack shall be separate from the data and
+return stacks.  A program may determine whether floating-point numbers
+are kept on the data stack by passing the string 
+<a href=dpans12.htm#12.3.4>FLOATING-STACK</a>
+to 
+<a href=dpans6.htm#6.1.1345>ENVIRONMENT?</a>.
+
+<P>
+
+The size
+of a floating-point stack shall be at least 6 items.
+
+<P>
+
+A program that depends on the floating-point stack being larger than six
+items has an environmental dependency.
+
+<P>
+
+<hr>
+<A name=12.3.4>
+<H3>12.3.4 Environmental queries</H3>
+</a>
+
+Append table 12.2 to
+table 3.5.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.6>3.2.6</a> Environmental queries
+</code>
+<P>
+
+Table 12.2 - Environmental query strings
+<P>
+
+
+
+<PRE>
+String          Value data type  Constant?  Meaning
+------          ---------------  ---------  -------
+FLOATING        flag             no         floating-point word set present
+FLOATING-EXT    flag             no         floating-point extensions word set present
+FLOATING-STACK  n                yes        If n = zero, floating-point numbers are 
+                                            kept on the data stack; otherwise n is 
+                                            the maximum depth of the separate 
+                                            floating-point stack.
+MAX-FLOAT       r                yes        largest usable floating-point number
+
+</PRE>
+
+<P>
+
+<hr>
+<A name=12.3.5>
+<H3>12.3.5 Address alignment</H3>
+</a>
+
+Since the address returned by a 
+<a href=dpans6.htm#6.1.1000>CREATE</a>d word is not necessarily aligned
+for any particular class of floating-point data, a program shall align
+the address (to be float aligned, single-float aligned, or double-float
+aligned) before accessing floating-point data at the address.
+
+<P>
+
+<code>
+See:  
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment,
+<a href=dpansa12.htm#A.12.3.5>A.12.3.5</a> Address alignment,
+<A href=dpans12.htm#12.3.1.1>12.3.1.1</a> Addresses.
+</code>
+<P>
+
+<hr>
+<A name=12.3.6>
+<H3>12.3.6 Variables</H3>
+</a>
+
+A program may address memory in data space regions made available by
+<a href=dpans12.htm#12.6.1.1630>FVARIABLE</a>.  
+These regions may be non-contiguous with regions
+subsequently allocated with , 
+(<a href=dpans6.htm#6.1.0150>comma</a>) or 
+<a href=dpans6.htm#6.1.0710>ALLOT</a>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.3>3.3.3.3</a> Variables
+</code>
+<P>
+
+
+<hr>
+<A name=12.3.7>
+<H3>12.3.7 Text interpreter input number conversion</H3>
+</a>
+
+If the Floating-Point word set is present in the dictionary and the
+current base is 
+<a href=dpans6.htm#6.1.1170>DECIMAL</a>, 
+the input number-conversion algorithm shall be
+extended to recognize floating-point numbers in this form:
+
+<P>
+
+Convertible string := &lt;significand&gt;&lt;exponent&gt;
+
+
+<PRE>
+&lt;significand&gt; := [&lt;sign&gt;]&lt;digits&gt;[.&lt;digits0&gt;]
+&lt;exponent&gt;    := E[&lt;sign&gt;]&lt;digits0&gt;
+&lt;sign&gt;        := { + | - }
+&lt;digits&gt;      := &lt;digit&gt;&lt;digits0&gt;
+&lt;digits0&gt;     := &lt;digit&gt;*
+&lt;digit&gt;       := { 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 }
+</PRE>
+<P>
+
+These are examples of valid representations of floating-point numbers in
+program source:
+
+<PRE>
+	1E   1.E   1.E0   +1.23E-1   -1.23E+1
+</PRE>
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1.3>3.4.1.3</a> Text interpreter input number
+conversion,
+<a href=dpansa12.htm#A.12.3.7>A.12.3.7</a> Text interpreter input number conversion,
+<A href=dpans12.htm#12.6.1.0558>12.6.1.0558 &gt;FLOAT</a>
+</code>
+
+<P>
+
+<hr>
+<A name=12.4>
+<H2>12.4 Additional documentation requirements</H2>
+</a>
+
+
+<hr>
+<A name=12.4.1>
+<H3>12.4.1 System documentation</H3>
+</a>
+
+
+<hr>
+<A name=12.4.1.1>
+<H4>12.4.1.1 Implementation-defined options</H4>
+</a>
+
+
+<UL>
+<LI>format and range of floating-point numbers 
+(<a href=dpans12.htm#12.3.1>12.3.1</a> Data types,
+<a href=dpans12.htm#12.6.1.2143>12.6.1.2143</a> REPRESENT);
+<LI>results of 
+<a href=dpans12.htm#12.6.1.2143>12.6.1.2143</a> REPRESENT 
+when float is out of range;
+<LI>rounding or truncation of floating-point numbers 
+(<a href=dpans12.htm#12.3.1.2>12.3.1.2</a>
+Floating-point numbers);
+<LI>size of floating-point stack 
+(<a href=dpans12.htm#12.3.3>12.3.3</a> Floating-point stack);
+<LI>width of floating-point stack 
+(<a href=dpans12.htm#12.3.3>12.3.3</a> Floating-point stack).
+</UL>
+
+<P>
+
+<hr>
+<A name=12.4.1.2>
+<H4>12.4.1.2 Ambiguous conditions</H4>
+</a>
+<P>
+
+<UL>
+<LI>
+<a href=dpans12.htm#12.6.2.1204>DF@</a> or 
+<a href=dpans12.htm#12.6.2.1203>DF!</a> is 
+used with an address that is not double-float aligned;
+<LI>
+<a href=dpans12.htm#12.6.1.1472>F@</a> or 
+<a href=dpans12.htm#12.6.1.1400>F!</a> is 
+used with an address that is not float aligned;
+<LI>FLOATing point result out of range (e.g., in 
+<a href=dpans12.htm#12.6.1.1430>12.6.1.1430</a> F/);
+<LI>
+<a href=dpans12.htm#12.6.2.2203>SF@</a> or 
+<a href=dpans12.htm#12.6.2.2202>SF!</a> is 
+used with an address that is not single-float aligned;
+<LI>
+<a href=dpans6.htm#6.1.0750>BASE</a> is not decimal 
+(<a href=dpans12.htm#12.6.1.2143>12.6.1.2143</a> REPRESENT, 
+<a href=dpans12.htm#12.6.2.1427>12.6.2.1427</a> F.,
+<a href=dpans12.htm#12.6.2.1513>12.6.2.1513</a> FE., 
+<a href=dpans12.htm#12.6.2.1613>12.6.2.1613</a> FS.);
+<LI>both arguments equal zero 
+(<a href=dpans12.htm#12.6.2.1489>12.6.2.1489</a> FATAN2);
+<LI>cosine of argument is zero for 
+<a href=dpans12.htm#12.6.2.1625>12.6.2.1625</a> FTAN;
+<LI>d can't be precisely represented as float in 
+<a href=dpans12.htm#12.6.1.1130>12.6.1.1130</a> D>F;
+<LI>dividing by zero 
+(<a href=dpans12.htm#12.6.1.1430>12.6.1.1430</a> F/);
+<LI>exponent too big for conversion 
+(<a href=dpans12.htm#12.6.2.1203>12.6.2.1203</a> DF!, 
+<a href=dpans12.htm#12.6.2.1204>12.6.2.1204</a> DF@,
+<a href=dpans12.htm#12.6.2.2202>12.6.2.2202</a> SF!, 
+<a href=dpans12.htm#12.6.2.2203>12.6.2.2203</a> SF@);
+<LI>FLOAT less than one 
+(<a href=dpans12.htm#12.6.2.1477>12.6.2.1477</a> FACOSH);
+<LI>FLOAT less than or equal to minus-one 
+(<a href=dpans12.htm#12.6.2.1554>12.6.2.1554</a> FLNP1);
+<LI>FLOAT less than or equal to zero 
+(<a href=dpans12.htm#12.6.2.1553>12.6.2.1553</a> FLN, 
+<a href=dpans12.htm#12.6.2.1557>12.6.2.1557</a> FLOG);
+<LI>FLOAT less than zero 
+(<a href=dpans12.htm#12.6.2.1487>12.6.2.1487</a> FASINH, 
+<a href=dpans12.htm#12.6.2.1618>12.6.2.1618</a> FSQRT);
+<LI>FLOAT magnitude greater than one 
+(<a href=dpans12.htm#12.6.2.1476>12.6.2.1476</a> FACOS, 
+<a href=dpans12.htm#12.6.2.1486>12.6.2.1486</a> FASIN, 
+<a href=dpans12.htm#12.6.2.1491>12.6.2.1491</a> FATANH);
+<LI>Integer part of float can't be represented by d in 
+<a href=dpans12.htm#12.6.1.1470>12.6.1.1470</a> F>D;
+<LI>string larger than pictured-numeric output area 
+(<a href=dpans12.htm#12.6.2.1427>12.6.2.1427</a> F.,
+<a href=dpans12.htm#12.6.2.1513>12.6.2.1513</a> FE., 
+<a href=dpans12.htm#12.6.2.1613>12.6.2.1613</a> FS.).
+</UL>
+
+<P>
+
+<hr>
+<A name=12.4.1.3>
+<H4>12.4.1.3 Other system documentation</H4>
+</a>
+
+<UL>
+<LI>no additional requirements.
+</UL>
+<P>
+
+<hr>
+<A name=12.4.2>
+<H3>12.4.2 Program documentation</H3>
+</a>
+
+
+<hr>
+<A name=12.4.2.1>
+<H4>12.4.2.1 Environmental dependencies</H4>
+</a>
+
+<UL>
+<LI>requiring the floating-point stack to be larger than six items 
+(<a href=dpans12.htm#12.3.3>12.3.3</a> Floating-point stack).
+</UL>
+
+<P>
+
+<hr>
+<A name=12.4.2.2>
+<H4>12.4.2.2 Other program documentation</H4>
+</a>
+
+<UL>
+<LI>no additional requirements.
+</UL>
+
+<P>
+
+<hr>
+<A name=12.5>
+<H2>12.5 Compliance and labeling</H2>
+</a>
+
+
+<hr>
+<A name=12.5.1>
+<H3>12.5.1 ANS Forth systems</H3>
+</a>
+
+The phrase <B>Providing the Floating-Point word set</B> shall be
+appended to the label of any Standard System that provides all of the
+Floating-Point word set.
+
+<P>
+
+The phrase <B>Providing name(s) from the Floating-Point Extensions word
+set</B> shall be appended to the label of any Standard System that
+provides portions of the Floating-Point Extensions word set.
+
+<P>
+
+The phrase <B>Providing the Floating-Point Extensions word set</B> shall
+be appended to the label of any Standard System that provides all of the
+Floating-Point and Floating-Point Extensions word sets.
+
+<P>
+
+<hr>
+<A name=12.5.2>
+<H3>12.5.2 ANS Forth programs</H3>
+</a>
+
+The phrase <B>Requiring the Floating-Point word set</B> shall be
+appended to the label of Standard Programs that require the system to
+provide the Floating-Point word set.
+
+<P>
+
+The phrase <B>Requiring name(s) from the Floating-Point Extensions word
+set</B> shall be appended to the label of Standard Programs that require
+the system to provide portions of the Floating-Point Extensions word
+set.
+
+<P>
+
+The phrase <B>Requiring the Floating-Point Extensions word set</B> shall
+be appended to the label of Standard Programs that require the system to
+provide all of the Floating-Point and Floating-Point Extensions word
+sets.
+
+<P>
+
+<hr>
+<A name=12.6>
+<H2>12.6 Glossary</H2>
+</a>
+
+
+<hr>
+<A name=12.6.1>
+<H3>12.6.1 Floating-Point words</H3>
+</a>
+
+
+
+<hr>
+<A name=12.6.1.0558>
+<code>
+12.6.1.0558 <b>&gt;FLOAT</b>
+</code>
+</a>
+<BR>
+<B>to-float</B>      FLOATING
+<BR>
+<pre>
+	( c-addr u -- true | false ) ( F: -- r |  )  
+	or ( c-addr u -- r true | false)
+</pre>
+
+<P>
+
+An attempt is made to convert the string specified by c-addr and u to
+internal floating-point representation.  If the string represents a
+valid floating-point number in the syntax below, its value r and true
+are returned.  If the string does not represent a valid floating-point
+number only false is returned.
+
+<P>
+
+A string of blanks should be treated as a special case representing
+zero.
+
+<P>
+
+The syntax of a convertible string := &lt;significand&gt;[&lt;exponent&gt;]
+
+<PRE>
+&lt;significand&gt; := [&lt;sign&gt;]{&lt;digits&gt;[.&lt;digits0&gt;] |
+.&lt;digits&gt; }
+&lt;exponent&gt;    := &lt;marker&gt;&lt;digits0&gt;
+&lt;marker&gt;      := {&lt;e-form&gt; | &lt;sign-form&gt;}
+&lt;e-form&gt;      := &lt;e-char&gt;[&lt;sign-form&gt;]
+&lt;sign-form&gt;   := { + | - }
+&lt;e-char&gt;      := { D | d | E | e }
+</PRE>
+
+<p>
+<code>
+See:
+<a href=dpansa12.htm#A.12.6.1.0558>A.12.6.1.0558 &gt;FLOAT</a>
+</code>
+<p>
+
+
+<hr>
+<A name=12.6.1.1130>
+<code>
+12.6.1.1130 <b>D&gt;F</b>
+</code>
+</a>
+<BR>
+<B>d-to-f</B>        FLOATING
+<BR>
+<pre>
+	( d -- ) ( F: -- r ) 
+        or ( d -- r )
+</pre>
+
+<P>
+
+r is the floating-point equivalent of d.  An ambiguous condition exists
+if d cannot be precisely represented as a floating-point value.
+
+<P>
+
+<hr>
+<A name=12.6.1.1400>
+<code>
+12.6.1.1400 <b>F!</b>
+</code>
+</a>
+<BR>
+<B>f-store</B>       FLOATING
+<BR>
+<pre>
+	( f-addr -- ) ( F: r -- ) 
+        or ( r f-addr -- )
+</pre>
+
+<P>
+
+Store r at
+f-addr.
+
+<P>
+
+<hr>
+<A name=12.6.1.1410>
+<code>
+12.6.1.1410 <b>F*</b>
+</code>
+</a>
+<BR>
+<B>f-star</B>        FLOATING
+<BR>
+<pre>
+	( F: r1 r2 -- r3 ) 
+	or ( r1 r2 -- r3 )
+</pre>
+
+<P>
+
+Multiply r1
+by r2 giving r3.
+
+<P>
+
+<hr>
+<A name=12.6.1.1420>
+<code>
+12.6.1.1420 <b>F+</b>
+</code>
+</a>
+<BR>
+<B>f-plus</B>        FLOATING
+<BR>
+<pre>
+	( F: r1 r2 -- r3 ) 
+	or ( r1 r2 -- r3 )
+</pre>
+
+<P>
+
+Add r1 to r2
+giving the sum r3.
+
+<P>
+
+<hr>
+<A name=12.6.1.1425>
+<code>
+12.6.1.1425 <b>F-</b>
+</code>
+</a>
+<BR>
+<B>f-minus</B>       FLOATING
+<BR>
+<pre>
+	( F: r1 r2 -- r3 ) 
+	or ( r1 r2 -- r3 )
+</pre>
+
+<P>
+
+Subtract r2 from r1,
+giving r3.
+
+<P>
+
+<hr>
+<A name=12.6.1.1430>
+<code>
+12.6.1.1430 <b>F/</b>
+</code>
+</a>
+<BR>
+<B>f-slash</B>       FLOATING
+<BR>
+<pre>
+	( F: r1 r2 -- r3 ) 
+	or ( r1 r2 -- r3 )
+</pre>
+
+<P>
+
+Divide r1 by r2, giving the quotient r3.  An ambiguous condition exists
+if r2 is zero, or the quotient lies outside of the range of a
+floating-point number.
+
+<P>
+
+<hr>
+<A name=12.6.1.1440>
+<code>
+12.6.1.1440 <b>F0<</b>
+</code>
+</a>
+<BR>
+<B>f-zero-less-than</B>      FLOATING
+<BR>
+<pre>
+	( -- flag ) ( F: r -- ) 
+	or ( r -- flag )
+</pre>
+
+<P>
+
+flag is true
+if and only if r is less than zero.
+
+<P>
+
+<hr>
+<A name=12.6.1.1450>
+<code>
+12.6.1.1450 <b>F0=</b>
+</code>
+</a>
+<BR>
+<B>f-zero-equals</B> FLOATING
+<BR>
+<pre>
+	( -- flag ) ( F: r -- ) 
+	or ( r -- flag )
+</pre>
+
+<P>
+
+flag is true
+if and only if r is equal to zero.
+
+<P>
+
+<hr>
+<A name=12.6.1.1460>
+<code>
+12.6.1.1460 <b>F&lt;</b>
+</code>
+</a>
+<BR>
+<B>f-less-than</B>   FLOATING
+<BR>
+<pre>
+	( -- flag ) ( F: r1 r2 -- ) 
+	or ( r1 r2 -- flag )
+</pre>
+
+<P>
+
+flag is true
+<P>
+if and only if r1 is less than
+<P>
+
+<hr>
+<A name=12.6.1.1470>
+<code>
+12.6.1.1460 <b>F&gt;D</b>
+</code>
+</a>
+<BR>
+<B>f-to-d</B>        FLOATING
+<BR>
+<pre>
+	( -- d ) ( F: r -- ) 
+	or ( r -- d )
+</pre>
+
+<P>
+
+d is the double-cell signed-integer equivalent of the integer portion of
+r.  The fractional portion of r is discarded.  An ambiguous condition
+exists if the integer portion of r cannot be precisely represented as a
+double-cell signed integer.
+
+<P>
+
+<hr>
+<A name=12.6.1.1472>
+<code>
+12.6.1.1472 <b>F@</b>
+</code>
+</a>
+<BR>
+<B>f-fetch</B>       FLOATING
+<BR>
+<pre>
+	( f-addr -- ) ( F: -- r )  
+	or  ( f-addr -- r )
+</pre>
+
+<P>
+
+r is
+the value stored at f-addr.
+
+<P>
+
+<hr>
+<A name=12.6.1.1479>
+<code>
+12.6.1.1479 <b>FALIGN</b>
+</code>
+</a>
+<BR>
+<B>f-align</B>       FLOATING
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+If the data-space pointer is not float aligned, reserve enough data
+space to make it so.
+
+<P>
+
+<hr>
+<A name=12.6.1.1483>
+<code>
+12.6.1.1483 <b>FALIGNED</b>
+</code>
+</a>
+<BR>
+<B>f-aligned</B>     FLOATING
+<BR>
+<pre>
+	( addr -- f-addr )
+</pre>
+<P>
+
+f-addr is the first float-aligned address greater than or equal to addr.
+<P>
+
+<hr>
+<A name=12.6.1.1492>
+<code>
+12.6.1.1492 <b>FCONSTANT</b>
+</code>
+</a>
+<BR>
+<B>f-constant</B>    FLOATING
+<BR>
+<pre>
+	( <B>"&lt;spaces&gt;name"</B> -- ) ( F: r -- ) 
+	or ( r <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+
+<P>
+
+Skip leading space delimiters.  Parse name delimited by a space.  Create
+a definition for name with the execution semantics defined below.
+
+<P>
+
+name is
+referred to as an <B>f-constant</B>.
+
+<PRE>
+        <i>name</i> Execution: ( -- ) ( F: -- r ) 
+			       or ( -- r )
+</PRE>
+<P>
+
+Place r
+on the floating-point stack.
+<P>
+
+<code>
+See:
+<a href=dpansa12.htm#A.12.6.1.1492>A.12.6.1.1492 FCONSTANT</a> ,
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing.
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.1.1497>
+<code>
+12.6.1.1497 <b>FDEPTH</b>
+</code>
+</a>
+<BR>
+<B>f-depth</B>       FLOATING
+<BR>
+<pre>
+	( -- +n )
+</pre>
+
+<P>
+
++n is the number of values contained on the default separate
+floating-point stack.  If floating-point numbers are kept on the data
+stack, +n is the current number of possible floating-point values
+contained on the data stack.
+
+<P>
+
+<hr>
+<A name=12.6.1.1500>
+<code>
+12.6.1.1500 <b>FDROP</b>
+</code>
+</a>
+<BR>
+<B>f-drop</B>
+<BR>
+FLOATING
+<pre>
+	( F: r -- ) 
+	or ( r -- )
+</pre>
+
+<P>
+
+Remove r
+from the floating-point stack.
+
+<P>
+
+<hr>
+<A name=12.6.1.1510>
+<code>
+12.6.1.1510 <b>FDUP</b>
+</code>
+</a>
+<BR>
+<B>f-dupe</B>        FLOATING
+<BR>
+<pre>
+	( F: r -- r r ) 
+	or ( r -- r r )
+</pre>
+
+<P>
+
+Duplicate
+r.
+
+<P>
+
+<hr>
+<A name=12.6.1.1552>
+<code>
+12.6.1.1552 <b>FLITERAL</b>
+</code>
+</a>
+<BR>
+<B>f-literal</B>     FLOATING
+<p>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<PRE>
+        Compilation: ( F: r -- ) 
+	or ( r -- )
+</PRE>
+<P>
+
+Append the run-time
+semantics given below to the current definition.
+
+<PRE>
+        Run-time: ( F: -- r ) 
+	or ( -- r )
+</PRE>
+<P>
+
+Place r
+on the floating-point stack.
+
+<p>
+<code>
+See:
+<a href=dpansa12.htm#A.12.6.1.1552>A.12.6.1.1552 FLITERAL</a>
+</code>
+<p>
+
+
+<hr>
+<A name=12.6.1.1555>
+<code>
+12.6.1.1555 <b>FLOAT+</b>
+</code>
+</a>
+<BR>
+<B>FLOAT-plus</B>    FLOATING
+<BR>
+<pre>
+	( f-addr1 -- f-addr2 )
+</pre>
+
+<P>
+
+Add the size in address units of a floating-point number to f-addr1,
+giving f-addr2.
+
+<P>
+
+<hr>
+<A name=12.6.1.1556>
+<code>
+12.6.1.1556 <b>FLOATS</b>
+</code>
+</a>
+<BR>
+FLOATING
+<BR>
+<pre>
+	( n1 -- n2 )
+</pre>
+
+<P>
+
+n2 is the
+size in address units of n1 floating-point numbers.
+
+<P>
+
+<hr>
+<A name=12.6.1.1558>
+<code>
+12.6.1.1558 <b>FLOOR</b>
+</code>
+</a>
+<BR>
+FLOATING
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+Round r1 to an integral value using the <B>round toward negative
+infinity</B> rule, giving r2.
+
+<P>
+
+<hr>
+<A name=12.6.1.1562>
+<code>
+12.6.1.1562 <b>FMAX</b>
+</code>
+</a>
+<BR>
+<B>f-max</B> FLOATING
+<BR>
+<pre>
+	( F: r1 r2 -- r3 ) 
+	or ( r1 r2 -- r3 )
+</pre>
+
+<P>
+
+r3 is
+the greater of r1 and r2.
+
+<P>
+
+<hr>
+<A name=12.6.1.1565>
+<code>
+12.6.1.1565 <b>FMIN</b>
+</code>
+</a>
+<BR>
+<B>f-min</B> FLOATING
+<BR>
+<pre>
+	( F: r1 r2 -- r3 ) 
+	or ( r1 r2 -- r3 )
+</pre>
+
+<P>
+
+r3 is
+the lesser of r1 and r2.
+
+<P>
+
+<hr>
+<A name=12.6.1.1567>
+<code>
+12.6.1.1567 <b>FNEGATE</b>
+</code>
+</a>
+<BR>
+<B>f-negate</B>      FLOATING
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is
+the negation of r1.
+
+<P>
+
+<hr>
+<A name=12.6.1.1600>
+<code>
+12.6.1.1600 <b>FOVER</b>
+</code>
+</a>
+<BR>
+<B>f-over</B>        FLOATING
+<BR>
+<pre>
+	( F: r1 r2 -- r1 r2 r1 ) 
+	or ( r1 r2 -- r1 r2 r1 )
+</pre>
+
+<P>
+
+Place a
+copy of r1 on top of the floating-point stack.
+
+<P>
+
+<hr>
+<A name=12.6.1.1610>
+<code>
+12.6.1.1610 <b>FROT</b>
+</code>
+</a>
+<BR>
+<B>f-rote</B>        FLOATING
+<BR>
+<pre>
+	( F: r1 r2 r3 -- r2 r3 r1 ) 
+	or ( r1 r2 r3 -- r2 r3 r1 )
+</pre>
+
+<P>
+
+Rotate the
+top three floating-point stack entries.
+
+<P>
+
+<hr>
+<A name=12.6.1.1612>
+<code>
+12.6.1.1612 <b>FROUND</b>
+</code>
+</a>
+<BR>
+<B>f-round</B>       FLOATING
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+Round r1 to
+an integral value using the <B>round to nearest</B> rule, giving r2.
+<P>
+
+<code>
+See:
+<A href=dpans12.htm#12.3.2>12.3.2</a> Floating-point operations
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.1.1620>
+<code>
+12.6.1.1620 <b>FSWAP</b>
+</code>
+</a>
+<BR>
+<B>f-swap</B>        FLOATING
+<BR>
+<pre>
+	( F: r1 r2 -- r2 r1 ) 
+	or ( r1 r2 -- r2 r1 )
+</pre>
+
+<P>
+
+Exchange the
+top two floating-point stack items.
+
+<P>
+
+<hr>
+<A name=12.6.1.1630>
+<code>
+12.6.1.1630 <b>FVARIABLE</b>
+</code>
+</a>
+<BR>
+<B>f-variable</B>    FLOATING
+<BR>
+<pre>
+	( <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+
+<P>
+
+Skip leading space delimiters.  Parse name delimited by a space.  Create
+a definition for name with the execution semantics defined below.
+Reserve 1 
+<a href=dpans12.htm#12.6.1.1556>FLOATS</a> 
+address units of data space at a float-aligned address.
+
+<P>
+
+name is
+referred to as an <B>f-variable</B>.
+
+<PRE>
+        <i>name</i> Execution: ( -- f-addr )
+</PRE>
+<P>
+
+f-addr is the address of the data space reserved by FVARIABLE when it
+created name.  A program is responsible for initializing the contents of
+the reserved space.
+<P>
+
+<code>
+See:
+<a href=dpansa12.htm#A.12.6.1.1630>A.12.6.1.1630 FVARIABLE</a> ,
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing.
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.1.2143>
+<code>
+12.6.1.2143 <b>REPRESENT</b>
+</code>
+</a>
+<BR>
+FLOATING
+<BR>
+<pre>
+	( c-addr u -- n flag1 flag2 )  (F: r -- )  
+	or ( r c-addr u -- n flag1 flag2 )
+</pre>
+
+<P>
+
+At c-addr, place the character-string external representation of the
+significand of the floating-point number r.  Return the decimal-base
+exponent as n, the sign as flag1 and <B>valid result</B> as flag2.  The
+character string shall consist of the u most significant digits of the
+significand represented as a decimal fraction with the implied decimal
+point to the left of the first digit, and the first digit zero only if
+all digits are zero.  The significand is rounded to u digits following
+the <B>round to nearest</B> rule; n is adjusted, if necessary, to
+correspond to the rounded magnitude of the significand.  If flag2 is
+true then r was in the implementation-defined range of floating-point
+numbers.  If flag1 is true then r is negative.
+
+<P>
+
+An ambiguous condition exists
+if the value of 
+<a href=dpans6.htm#6.1.0750>BASE</a> is not decimal ten.
+
+<P>
+
+When flag2 is false, n and flag1 are implementation defined, as are the
+contents of c-addr.  Under these circumstances, the string at c-addr
+shall consist of graphic characters.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.1.2>3.2.1.2</a> Digit conversion,
+<A href=dpans12.htm#12.3.2>12.3.2</a> Floating-point operations,
+<a href=dpansa12.htm#A.12.6.1.2143>A.12.6.1.2143 REPRESENT</a>
+</code>
+<P>
+
+
+<hr>
+<a name=12.6.2>
+<H3>12.6.2 Floating-Point extension words</H3>
+</a>
+
+
+<hr>
+<A name=12.6.2.1203>
+<code>
+12.6.2.1203 <b>DF!</b>
+</code>
+</a>
+<BR>
+<B>d-f-store</B>     FLOATING EXT
+<BR>
+<pre>
+	( df-addr -- ) ( F: r -- ) 
+	or ( r df-addr -- )
+</pre>
+
+<P>
+
+Store the floating-point number r as a 64-bit IEEE double-precision
+number at df-addr.  If the significand of the internal representation of
+r has more precision than the IEEE double-precision format, it will be
+rounded using the <B>round to nearest</B> rule.  An ambiguous condition
+exists if the exponent of r is too large to be accommodated in IEEE
+double-precision format.
+<p>
+
+<code>
+See:
+<A href=dpans12.htm#12.3.1.1>12.3.1.1</a> Addresses,
+<A href=dpans12.htm#12.3.2>12.3.2</a> Floating-point operations.
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.2.1204>
+<code>
+12.6.2.1204 <b>DF@</b>
+</code>
+</a>
+<BR>
+<B>d-f-fetch</B>     FLOATING EXT
+<BR>
+<pre>
+	( df-addr -- ) ( F: -- r ) 
+	or ( df-addr -- r )
+</pre>
+
+<P>
+
+Fetch the 64-bit IEEE double-precision number stored at df-addr to the
+floating-point stack as r in the internal representation.  If the IEEE
+double-precision significand has more precision than the internal
+representation it will be rounded to the internal representation using
+the <B>round to nearest</B> rule.  An ambiguous condition exists if the
+exponent of the IEEE double-precision representation is too large to be
+accommodated by the internal representation.
+<p>
+
+<code>
+See:
+<A href=dpans12.htm#12.3.1.1>12.3.1.1</a> Addresses,
+<A href=dpans12.htm#12.3.2>12.3.2</a> Floating-point operations.
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.2.1205>
+<code>
+12.6.2.1205 <b>DFALIGN</b>
+</code>
+</a>
+<BR>
+<B>d-f-align</B>     FLOATING EXT
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+If the data-space pointer is not double-float aligned, reserve enough
+data space to make it so.
+<P>
+
+<code>
+See:
+<A href=dpans12.htm#12.3.1.1>12.3.1.1</a> Addresses
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.2.1207>
+<code>
+12.6.2.1207 <b>DFALIGNED</b>
+</code>
+</a>
+<BR>
+<B>d-f-aligned</B>   FLOATING EXT
+<BR>
+<pre>
+	( addr -- df-addr )
+</pre>
+
+<P>
+
+df-addr is the first double-float-aligned address greater than or equal
+to addr.
+<P>
+
+<code>
+See:
+<A href=dpans12.htm#12.3.1.1>12.3.1.1</a> Addresses
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.2.1208>
+<code>
+12.6.2.1208 <b>DFLOAT+</b>
+</code>
+</a>
+<BR>
+<B>d-float-plus</B>  FLOATING EXT
+<BR>
+<pre>
+	( df-addr1 -- df-addr2 )
+</pre>
+
+<P>
+
+Add the size in address units of a 64-bit IEEE double-precision number
+to df-addr1, giving df-addr2.
+<P>
+
+<code>
+See:
+<A href=dpans12.htm#12.3.1.1>12.3.1.1</a> Addresses
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.2.1209>
+<code>
+2.6.2.1209 <b>DFLOATS</b>
+</code>
+</a>
+<BR>
+<B>d-floats</B>     FLOATING EXT
+<BR>
+<pre>
+	( n1 -- n2 )
+</pre>
+
+<P>
+
+n2 is the size in address units of n1 64-bit IEEE double-precision
+numbers.
+
+<P>
+
+<hr>
+<A name=12.6.2.1415>
+<code>
+12.6.2.1415 <b>F**</b>
+</code>
+</a>
+<BR>
+<B>f-star-star</B>   FLOATING EXT
+<BR>
+<pre>
+	( F: r1 r2 -- r3 ) 
+	or ( r1 r2 -- r3 )
+</pre>
+
+<P>
+
+Raise r1 to
+the power r2, giving the product r3.
+
+<P>
+
+<hr>
+<A name=12.6.2.1427>
+<code>
+12.6.2.1427 <b>F.</b>
+</code>
+</a>
+<BR>
+<B>f-dot</B> FLOATING EXT
+<BR>
+<pre>
+	( -- ) ( F: r -- ) 
+	or ( r -- )
+</pre>
+
+<P>
+
+Display, with a trailing space, the top number on the floating-point
+stack using fixed-point notation:
+
+<PRE>
+	[-] &lt;digits&gt;.&lt;digits0&gt;
+</PRE>
+<P>
+
+An ambiguous condition exists if the value of 
+<a href=dpans6.htm#6.1.0750>BASE</a> is not (decimal) ten
+or if the character string representation exceeds the size of the
+pictured numeric output string buffer.
+<P>
+
+<code>
+See:    
+<A href=dpans12.htm#12.6.1.0558>12.6.1.0558 &gt;FLOAT</a> ,
+<a href=dpansa12.htm#A.12.6.1.1427>A.12.6.1.1427 F.</a>
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.2.1474>
+<code>
+12.6.2.1474 <b>FABS</b>
+</code>
+</a>
+<BR>
+<B>f-abs</B> FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is
+the absolute value of r1.
+
+<P>
+
+<hr>
+<A name=12.6.2.1476>
+<code>
+12.6.2.1476 <b>FACOS</b>
+</code>
+</a>
+<BR>
+<B>f-a-cos</B>       FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is the principal radian angle whose cosine is r1.  An ambiguous
+condition exists if |r1| is greater than one.
+
+<P>
+
+<hr>
+<A name=12.6.2.1477>
+<code>
+12.6.2.1477 <b>FACOSH</b>
+</code>
+</a>
+<BR>
+<B>f-a-cosh</B>      FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is the floating-point value whose hyperbolic cosine is r1.  An
+ambiguous condition exists if r1 is less than one.
+
+<P>
+
+<hr>
+<A name=12.6.2.1484>
+<code>
+12.6.2.1484 <b>FALOG</b>
+</code>
+</a>
+<BR>
+<B>f-a-log</B>       FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+Raise ten
+to the power r1, giving r2.
+
+<P>
+
+<hr>
+<A name=12.6.2.1486>
+<code>
+12.6.2.1486 <b>FASIN</b>
+</code>
+</a>
+<BR>
+<B>f-a-sine</B>      FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is the principal radian angle whose sine is r1.  An ambiguous
+condition exists if |r1| is greater than one.
+
+<P>
+
+<hr>
+<A name=12.6.2.1487>
+<code>
+12.6.2.1487 <b>FASINH</b>
+</code>
+</a>
+<BR>
+<B>f-a-cinch</B>     FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is the floating-point value whose hyperbolic sine is r1.  An
+ambiguous condition exists if r1 is less than zero.
+
+<P>
+
+<hr>
+<A name=12.6.2.1488>
+<code>
+12.6.2.1488 <b>FATAN</b>
+</code>
+</a>
+<BR>
+<B>f-a-tan</B>       FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is
+the principal radian angle whose tangent is r1.
+
+<P>
+
+<hr>
+<A name=12.6.2.1489>
+<code>
+12.6.2.1489 <b>FATAN2</b>
+</code>
+</a>
+<BR>
+<B>f-a-tan-two</B>   FLOATING EXT
+<BR>
+<pre>
+	( F: r1 r2 -- r3 ) 
+	or ( r1 r2 -- r3 )
+</pre>
+
+<P>
+
+r3 is the radian angle whose tangent is r1/r2.  An ambiguous condition
+exists if r1 and r2 are zero.
+
+<p>
+<code>
+See:
+<a href=dpansa12.htm#A.12.6.2.1489>A.12.6.2.1489 FATAN2</a>
+</code>
+<p>
+
+
+<hr>
+<A name=12.6.2.1491>
+<code>
+12.6.2.1491 <b>FATANH</b>
+</code>
+</a>
+<BR>
+<B>f-a-tan-h</B>     FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is the floating-point value whose hyperbolic tangent is r1.  An
+ambiguous condition exists if r1 is outside the range of -1E0 to 1E0.
+
+<P>
+
+<hr>
+<A name=12.6.2.1493>
+<code>
+12.6.2.1493 <b>FCOS</b>
+</code>
+</a>
+<BR>
+<B>f-cos</B> FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is the
+cosine of the radian angle r1.
+
+<P>
+
+<hr>
+<A name=12.6.2.1494>
+<code>
+12.6.2.1494 <b>FCOSH</b>
+</code>
+</a>
+<BR>
+<B>f-cosh</B>        FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is
+the hyperbolic cosine of r1.
+
+<P>
+
+<hr>
+<A name=12.6.2.1513>
+<code>
+12.6.2.1513 <b>FE.</b>
+</code>
+</a>
+<BR>
+<B>f-e-dot</B>       FLOATING EXT
+<BR>
+<pre>
+	( -- ) ( F: r -- ) 
+	or ( r -- )
+</pre>
+
+<P>
+
+Display, with a trailing space, the top number on the floating-point
+stack using engineering notation, where the significand is greater than
+or equal to 1.0 and less than 1000.0 and the decimal exponent is a
+multiple of three.
+
+<P>
+
+An ambiguous condition exists if the value of 
+<a href=dpans6.htm#6.1.0750>BASE</a> is not (decimal) ten
+or if the character string representation exceeds the size of the
+pictured numeric output string buffer.
+
+<P>
+
+<code>
+See:
+<A href=dpans12.htm#12.3.2>12.3.2</a> Floating-point operations,
+<A href=dpans12.htm#12.6.1.2143>12.6.1.2143 REPRESENT</a>
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.2.1515>
+<code>
+12.6.2.1515 <b>FEXP</b>
+</code>
+</a>
+<BR>
+<B>f-e-x-p</B>       FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+Raise e to the power r1, giving r2.
+
+<P>
+
+<hr>
+<A name=12.6.2.1516>
+<code>
+12.6.2.1516 <b>FEXPM1</b>
+</code>
+</a>
+<BR>
+<B>f-e-x-p-m-one</B> FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+Raise e
+to the power r1 and subtract one, giving r2.
+
+<p>
+<code>
+See:
+<a href=dpansa12.htm#A.12.6.2.1516>A.12.6.2.1516 FEXPM1</a>
+</code>
+<p>
+
+
+<hr>
+<A name=12.6.2.1553>
+<code>
+12.6.2.1553 <b>FLN</b>
+</code>
+</a>
+<BR>
+<B>f-l-n</B> FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is the natural logarithm of r1.  An ambiguous condition exists if r1
+is less than or equal to zero.
+
+<P>
+
+<hr>
+<A name=12.6.2.1554>
+<code>
+12.6.2.1554 <b>FLNP1</b>
+</code>
+</a>
+<BR>
+<B>f-l-n-p-one</B>   FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is the natural logarithm of the quantity r1 plus one.  An ambiguous
+condition exists if r1 is less than or equal to negative one.
+
+<p>
+<code>
+See:
+<a href=dpansa12.htm#A.12.6.2.1554>A.12.6.2.1554 FLNP1</a>
+</code>
+<p>
+
+
+<hr>
+<A name=12.6.2.1557>
+<code>
+12.6.2.1557 <b>FLOG</b>
+</code>
+</a>
+<BR>
+<B>f-log</B> FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is the base-ten logarithm of r1.  An ambiguous condition exists if r1
+is less than or equal to zero.
+
+<P>
+
+<hr>
+<A name=12.6.2.1613>
+<code>
+12.6.2.1613 <b>FS.</b>
+</code>
+</a>
+<BR>
+<B>f-s-dot</B>       FLOATING EXT
+<BR>
+<pre>
+	( -- ) ( F: r -- ) 
+	or ( r -- )
+</pre>
+
+<P>
+
+Display, with a trailing space, the top number on the floating-point
+stack in scientific notation:
+
+<PRE>
+	&lt;significand&gt;&lt;exponent&gt;
+</PRE>
+<P>
+
+where:
+<P>
+
+
+<PRE>
+	&lt;significand>  :=  [-]&lt;digit&gt;.&lt;digits0&gt;
+	&lt;exponent>     :=  E[-]&lt;digits&gt;
+</PRE>
+<P>
+
+An ambiguous condition exists if the value of 
+<a href=dpans6.htm#6.1.0750>BASE</a> is not (decimal) ten
+or if the character string representation exceeds the size of the
+pictured numeric output string buffer.
+
+<P>
+
+<code>
+See:
+<A href=dpans12.htm#12.3.2>12.3.2</a> Floating-point operations,
+<A href=dpans12.htm#12.6.1.2143>12.6.1.2143 REPRESENT</a>
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.2.1614>
+<code>
+12.6.2.1614 <b>FSIN</b>
+</code>
+</a>
+<BR>
+<B>f-sine</B>        FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is
+the sine of the radian angle r1.
+
+<P>
+
+<hr>
+<A name=12.6.2.1616>
+<code>
+12.6.2.1616 <b>FSINCOS</b>
+</code>
+</a>
+<BR>
+<B>f-sine-cos</B>    FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 r3 ) 
+	or ( r1 -- r2 r3 )
+</pre>
+
+<P>
+
+r2 is the sine of the radian angle r1.  r3 is the cosine of the radian
+angle r1.
+
+<p>
+<code>
+See:
+<a href=dpansa12.htm#A.12.6.2.1489>A.12.6.2.1489 FATAN2</a>
+</code>
+<p>
+
+
+<hr>
+<A name=12.6.2.1617>
+<code>
+12.6.2.1617 <b>FSINH</b>
+</code>
+</a>
+<BR>
+<B>f-cinch</B>       FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is
+the hyperbolic sine of r1.
+
+<P>
+
+<hr>
+<A name=12.6.2.1618>
+<code>
+12.6.2.1618 <b>FSQRT</b>
+</code>
+</a>
+<BR>
+<B>f-square-root</B> FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is the square root of r1.  An ambiguous condition exists if r1 is
+less than zero.
+
+<P>
+
+<hr>
+<A name=12.6.2.1625>
+<code>
+12.6.2.1625 <b>FTAN</b>
+</code>
+</a>
+<BR>
+<B>f-tan</B> FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is the tangent of the radian angle r1.  An ambiguous condition exists
+if cos(r1) is zero.
+
+<P>
+
+<hr>
+<A name=12.6.2.1626>
+<code>
+12.6.2.1626 <b>FTANH</b>
+</code>
+</a>
+<BR>
+<B>f-tan-h</B>       FLOATING EXT
+<BR>
+<pre>
+	( F: r1 -- r2 ) 
+	or ( r1 -- r2 )
+</pre>
+
+<P>
+
+r2 is
+the hyperbolic tangent of r1.
+
+<P>
+
+<hr>
+<A name=12.6.2.1640>
+<code>
+12.6.2.1640 <b>F~</b>
+</code>
+</a>
+<BR>
+<B>f-proximate</B>   FLOATING EXT
+<BR>(
+<pre>
+	( -- flag ) ( F: r1 r2 r3 -- ) 
+	or ( r1 r2 r3 -- flag )
+</pre>
+
+<P>
+
+If r3 is positive, flag is true if the absolute value of (r1 minus r2)
+is less than r3.
+
+<P>
+
+If r3 is zero, flag is true if the implementation-dependent encoding of
+r1 and r2 are exactly identical (positive and negative zero are unequal
+if they have distinct encodings).
+
+<P>
+
+If r3 is negative, flag is true if the absolute value of (r1 minus r2)
+is less than the absolute value of r3 times the sum of the absolute
+values of r1 and r2.
+
+<p>
+<code>
+See:
+<a href=dpansa12.htm#A.12.6.2.1640>A.12.6.2.1640 F~</a>
+</code>
+<p>
+
+
+<hr>
+<A name=12.6.2.2035>
+<code>
+12.6.2.2035 <b>PRECISION</b>
+</code>
+</a>
+<BR>
+FLOATING EXT
+<BR>
+<pre>
+	( -- u )
+</pre>
+
+<P>
+
+Return the number of significant digits currently used by 
+<a href=dpans12.htm#12.6.2.1427>F.</a>, 
+<a href=dpans12.htm#12.6.2.1513>FE.</a>, or
+<a href=dpans12.htm#12.6.2.1613>FS.</a> as u.
+
+<P>
+
+<hr>
+<A name=12.6.2.2200>
+<code>
+12.6.2.2200 <b>SET-PRECISION</b>
+</code>
+</a>
+<BR>
+FLOATING EXT
+<BR>
+<pre>
+	( u -- )
+</pre>
+
+<P>
+
+Set the number of significant digits currently used by 
+<a href=dpans12.htm#12.6.2.1427>F.</a>, 
+<a href=dpans12.htm#12.6.2.1513>FE.</a>, or
+<a href=dpans12.htm#12.6.2.1613>FS.</a> to u.
+
+<P>
+
+<hr>
+<A name=12.6.2.2202>
+<code>
+12.6.2.2202 <b>SF!</b>
+</code>
+</a>
+<BR>
+<B>s-f-store</B>     FLOATING EXT
+<BR>
+<pre>
+	( sf-addr -- ) ( F: r -- ) 
+	or ( r sf-addr -- )
+</pre>
+
+<P>
+
+Store the floating-point number r as a 32-bit IEEE single-precision
+number at sf-addr.  If the significand of the internal representation of
+r has more precision than the IEEE single-precision format, it will be
+rounded using the <B>round to nearest</B> rule.  An ambiguous condition
+exists if the exponent of r is too large to be accommodated by the IEEE
+single-precision format.
+<p>
+
+<code>
+See:
+<A href=dpans12.htm#12.3.1.1>12.3.1.1</a> Addresses,
+<A href=dpans12.htm#12.3.2>12.3.2</a> Floating-point operations.
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.2.2203>
+<code>
+12.6.2.2203 <b>SF@</b>
+</code>
+</a>
+<BR>
+<B>s-f-fetch</B>     FLOATING EXT
+<BR>
+<pre>
+	( sf-addr -- ) ( F: -- r ) 
+	or ( sf-addr -- r )
+</pre>
+
+<P>
+
+Fetch the 32-bit IEEE single-precision number stored at sf-addr to the
+floating-point stack as r in the internal representation.  If the IEEE
+single-precision significand has more precision than the internal
+representation, it will be rounded to the internal representation using
+the <B>round to nearest</B> rule.  An ambiguous condition exists if the
+exponent of the IEEE single-precision representation is too large to be
+accommodated by the internal representation.
+<p>
+
+<code>
+See:
+<A href=dpans12.htm#12.3.1.1>12.3.1.1</a> Addresses,
+<A href=dpans12.htm#12.3.2>12.3.2</a> Floating-point operations.
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.2.2204>
+<code>
+12.6.2.2204 <b>SFALIGN</b>
+</code>
+</a>
+<BR>
+<B>s-f-align</B>     FLOATING EXT
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+If the data-space pointer is not single-float aligned, reserve enough
+data space to make it so.
+<P>
+
+<code>
+See:
+<A href=dpans12.htm#12.3.1.1>12.3.1.1</a> Addresses
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.2.2206>
+<code>
+12.6.2.2206 <b>SFALIGNED</b>
+</code>
+</a>
+<BR>
+<B>s-f-aligned</B>   FLOATING EXT
+<BR>
+<pre>
+	( addr -- sf-addr )
+</pre>
+
+<P>
+
+sf-addr is the first single-float-aligned address greater than or equal
+to addr.
+<P>
+
+<code>
+See:
+<A href=dpans12.htm#12.3.1.1>12.3.1.1</a> Addresses
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.2.2207>
+<code>
+12.6.2.2207 <b>SFLOAT+</b>
+</code>
+</a>
+<BR>
+<B>s-float-plus</B>  FLOATING EXT
+<BR>
+<pre>
+	( sf-addr1 -- sf-addr2 )
+</pre>
+
+<P>
+
+Add the size in address units of a 32-bit IEEE single-precision number
+to sf-addr1, giving sf-addr2.
+<P>
+
+<code>
+See:
+<A href=dpans12.htm#12.3.1.1>12.3.1.1</a> Addresses
+</code>
+
+<P>
+
+<hr>
+<A name=12.6.2.2208>
+<code>
+12.6.2.2208 <b>SFLOATS</b>
+</code>
+</a>
+<BR>
+<B>s-floats</B>      FLOATING EXT
+<BR>
+<pre>
+	( n1 -- n2 )
+</pre>
+
+<P>
+
+n2 is the size in address units of n1 32-bit IEEE single-precision
+numbers.
+<P>
+
+<code>
+See:
+<A href=dpans12.htm#12.3.1.1>12.3.1.1</a> Addresses
+</code>
+
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpans13.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

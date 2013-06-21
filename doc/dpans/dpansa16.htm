@@ -1,0 +1,287 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpansa15.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpansa17.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=A.16>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+
+<H2>A.16 The optional Search-Order word set</H2>
+
+Search-order specification and control mechanisms vary widely.  The
+FIG-Forth, Forth-79, polyFORTH, and Forth-83 vocabulary and search order
+mechanisms are all mutually incompatible.  The complete list of
+incompatible mechanisms, in use or proposed, is much longer.  The
+<a href=dpans16.htm#16.6.2.0715>ALSO</a>/<a href=dpans16.htm#16.6.2.1965>ONLY</a> 
+scheme described in a Forth-83 Experimental Proposal has
+substantial community support.  However, many consider it to be
+fundamentally flawed, and oppose it vigorously.
+
+<P>
+
+Recognizing this variation, this Standard specifies a new
+<B>primitive</B> set of tools from which various schemes may be
+constructed.  This primitive search-order word set is intended to be a
+portable <B>construction set</B> from which search-order words may be
+built, rather than a user interface.  ALSO/ONLY or the various
+<B>vocabulary</B> schemes supported by the major Forth vendors can be
+defined in terms of the primitive search-order word set.
+
+<P>
+
+The encoding for word list identifiers wid might be a small-integer
+index into an array of word-list definition records, the data-space
+address of such a record, a user-area offset, the execution token of a
+Forth-83 style sealed vocabulary, the link-field address of the first
+definition in a word list, or anything else.  It is entirely up to the
+system implementor.
+
+<P>
+
+In some systems the interpretation of numeric literals is controlled by
+including <B>pseudo word lists</B> that recognize numbers at the end of
+the search order.  This technique is accommodated by the <B>default
+search order</B> behavior of 
+<a href=dpans16.htm#16.6.1.2197>SET-ORDER</a> 
+when given an argument of -1.  In
+a system using the traditional implementation of ALSO/ONLY , the minimum
+search order would be equivalent to the word ONLY.
+
+<P>
+
+There has never been a portable way to restore a saved search order.
+F83 (not Forth-83) introduced the word 
+<a href=dpans16.htm#16.6.2.2037>PREVIOUS</a>, which almost made it
+possible to <B>unload</B> the search order by repeatedly executing the
+phrase <b><code>CONTEXT @ PREVIOUS</code></b>.  
+The search order could be <B>reloaded</B> by
+repeating 
+<b><code>ALSO CONTEXT !</code></b>.  
+Unfortunately there was no portable way to
+determine how many word lists were in the search order.
+
+<P>
+
+ANS Forth has removed the word CONTEXT because in many systems its
+contents refer to more than one word list, compounding portability
+problems.
+
+<P>
+
+Note that : 
+(<a href=dpans6.htm#6.1.0450>colon</a>) 
+no longer affects the search order.  The previous
+behavior, where the compilation word list replaces the first word list
+of the search order, can be emulated with the following redefinition of
+: (colon).
+
+<PRE>
+: :  GET-ORDER SWAP DROP  GET-CURRENT  SWAP SET-ORDER  : ;
+</PRE>
+<P>
+
+
+
+<hr>
+<A name=A.16.2>
+<H3>A.16.2 Additional terms</H3>
+</a>
+
+<DL>
+<DT><b>search order</b>
+<DD>Note that the use of the term <B>list</B> does not necessarily imply
+implementation as a linked list.</DL>
+
+<P>
+
+
+<hr>
+<A name=A.16.3.3>
+<H4>A.16.3.3 Finding definition names</H4>
+</a>
+
+In other words, the following is not guaranteed to work:
+
+<PRE>
+: FOO  ... [ ... SET-CURRENT ] ... RECURSE ... ;  IMMEDIATE
+</PRE>
+
+<a href=dpans6.htm#6.1.2120>RECURSE</a>, 
+; (<a href=dpans6.htm#6.1.0460>semicolon</a>), and 
+<a href=dpans6.htm#6.1.1710>IMMEDIATE</a> 
+may or may not need information stored
+in the compilation word list.
+
+<P>
+
+
+<hr>
+<A name=A.16.6>
+<H3>A.16.6 Glossary</H3>
+</a>
+
+
+
+<hr>
+<A name=A.16.6.1.2192>A.16.6.1.2192 SEARCH-WORDLIST</A>
+<P>
+
+The string argument to SEARCH-WORDLIST is represented by c-addr u,
+rather than by just c-addr as with 
+<a href=dpans6.htm#6.1.1550>FIND</a>.  
+The committee wishes to
+establish c-addr u as the preferred representation of a string on the
+stack, and has adopted that representation for all new functions that
+accept string arguments.  While this decision may cause the
+implementation of SEARCH-WORDLIST to be somewhat more difficult in
+existing systems, the committee feels that the additional difficulty is
+minor.
+
+<P>
+
+When SEARCH-WORDLIST fails to find the word, it does not return the
+string, as does FIND.  This is in accordance with the general principle
+that Forth words consume their arguments.
+
+<P>
+
+<hr>
+<A name=A.16.6.2.0715>A.16.6.2.0715 ALSO</A>
+<P>
+
+Here is an implementation of 
+ALSO/<a href=dpans16.htm#16.6.2.1965>ONLY</a> 
+in terms of the primitive
+search-order word set.
+
+
+<PRE>
+WORDLIST CONSTANT ROOT   ROOT SET-CURRENT
+
+: DO-VOCABULARY  ( -- ) \ Implementation factor
+    DOES>  @ >R           (  ) ( R: widnew )
+     GET-ORDER  SWAP DROP ( wid1 ... widn-1 n )
+     R> SWAP SET-ORDER
+;
+
+: DISCARD  ( x1 .. xu u - ) \ Implementation factor
+   0 ?DO DROP LOOP          \ DROP u+1 stack items
+;
+
+CREATE FORTH  FORTH-WORDLIST , DO-VOCABULARY
+
+: VOCABULARY  ( name -- )  WORDLIST CREATE ,  DO-VOCABULARY ;
+
+: ALSO  ( -- )  GET-ORDER  OVER SWAP 1+ SET-ORDER ;
+
+: PREVIOUS  ( --  )  GET-ORDER  SWAP DROP 1- SET-ORDER ;
+
+: DEFINITIONS  ( -- )  GET-ORDER  OVER SET-CURRENT DISCARD ;
+
+: ONLY ( -- )  ROOT ROOT  2 SET-ORDER ;
+
+\ Forth-83 version; just removes ONLY
+: SEAL  ( -- )  GET-ORDER 1- SET-ORDER DROP ;
+
+\ F83 and F-PC version; leaves only CONTEXT
+: SEAL  ( -- )  GET-ORDER OVER 1 SET-ORDER DISCARD ;
+</PRE>
+
+<P>
+
+The preceding definition of ONLY in terms of a <B>ROOT</B> word list
+follows F83 usage, and assumes that the default search order just
+includes ROOT and 
+<a href=dpans16.htm#16.6.2.1590>FORTH</a>.  
+A more portable definition of FORTH and ONLY,
+without the assumptions, is:
+
+<PRE>
+&lt;omit the  ... WORDLIST CONSTANT ROOT ... line&gt;
+
+CREATE FORTH GET-ORDER OVER , DISCARD DO-VOCABULARY
+
+: ONLY  ( -- )  -1 SET-ORDER ;
+</PRE>
+
+<P>
+
+Here is a simple implementation of 
+<a href=dpans16.htm#16.6.1.1647>GET-ORDER</a> and 
+<a href=dpans16.htm#16.6.1.2197>SET-ORDER</a>, including a
+corresponding definition of 
+<a href=dpans6.htm#6.1.1550>FIND</a>.  The implementations of 
+<a href=dpans16.htm#16.6.1.2460>WORDLIST</a>,
+<a href=dpans16.htm#16.6.1.2192>SEARCH-WORDLIST</a>, 
+<a href=dpans16.htm#16.6.1.1643>GET-CURRENT</a> and 
+<a href=dpans16.htm#16.6.1.2195>SET-CURRENT</a> 
+depend on system details
+and are not given here.
+
+<PRE>
+16 CONSTANT #VOCS
+
+VARIABLE #ORDER
+
+CREATE CONTEXT  #VOCS CELLS ALLOT
+
+: GET-ORDER  ( -- wid1 .. widn n )
+    #ORDER @ 0 ?DO
+      #ORDER @  I - 1- CELLS CONTEXT + @
+    LOOP
+    #ORDER @
+;
+
+: SET-ORDER  ( wid1 .. widn n -- )
+    DUP -1 = IF
+      DROP  &lt;push system default word lists and n&gt;
+    THEN
+    DUP #ORDER !
+    0 ?DO  I CELLS CONTEXT + ! LOOP
+;
+
+: FIND  ( c-addr -- c-addr 0 | w 1 | w -1 )
+    0                     ( c-addr 0 )
+    #ORDER @ 0 ?DO
+      OVER COUNT          ( c-addr 0 c-addr' u )
+      I CELLS CONTEXT + @ ( c-addr 0 c-addr' u wid)
+      SEARCH-WORDLIST     ( c-addr 0; 0 | w 1 | w -1 )
+      ?DUP IF             ( c-addr 0; w 1 | w -1 )
+        2SWAP 2DROP LEAVE ( w 1 | w -1 )
+      THEN                ( c-addr 0 )
+    LOOP                  ( c-addr 0 | w 1 | w -1 )
+;
+</PRE>
+
+<P>
+
+In an implementation where the dictionary search mechanism uses a hash
+table or lookup cache to reduce the search time, SET-ORDER might need to
+reconstruct the hash table or flush the cache.
+
+<P>
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpansa17.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

@@ -1,0 +1,378 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans13.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpans15.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=14.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>14. The optional Memory-Allocation word set</H1>
+
+
+<hr>
+<A name=14.1>
+<H2>14.1 Introduction</H2>
+</a>
+
+<p>
+<code>
+See:
+<a href=dpansa14.htm>A.14</a> The optional Memory-Allocation word set
+</code>
+<p>
+
+<hr>
+<A name=14.2>
+<H2>14.2 Additional terms and notation</H2>
+</a>
+
+None.
+<P>
+
+<hr>
+<A name=14.3>
+<H2>14.3 Additional usage requirements</H2>
+</a>
+
+
+<hr>
+<A name=14.3.1>
+<H3>14.3.1 I/O Results data type</H3>
+</a>
+
+I/O results are single-cell numbers indicating the result of I/O
+operations.  A value of zero indicates that the I/O operation completed
+successfully; other values and their meanings are
+implementation-defined.
+
+<P>
+
+Append table 14.1 to 
+<a href=dpans3.htm#table.3.1>table 3.1</a>.
+<P>
+
+Table 14.1 - Data types
+
+<PRE>
+Symbol  Data type       Size on stack
+------  ---------       -------------
+ior     I/O results     1 cell
+</PRE>
+
+
+<P>
+
+<hr>
+<A name=14.3.2>
+<H3>14.3.2 Environmental queries</H3>
+</a>
+
+Append table 14.2 to table 3.5.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.6>3.2.6</a> Environmental queries
+</code>
+<P>
+
+Table 14.2 - Environmental query strings
+
+<PRE>
+String             Value data type  Constant?  Meaning
+------             ---------------  ---------  -------
+MEMORY-ALLOC       flag             no         memory-allocation word set present
+MEMORY-ALLOC-EXT   flag             no         memory-allocation extensions word set present
+
+</PRE>
+
+<P>
+
+<hr>
+<A name=14.3.3>
+<H3>14.3.3 Allocated regions</H3>
+</a>
+
+A program may address memory in data space regions made available by
+<a href=dpans14.htm#14.6.1.0707>ALLOCATE</a> or 
+<a href=dpans14.htm#14.6.1.2145>RESIZE</a> and not yet released by 
+<a href=dpans14.htm#14.6.1.1605>FREE</a>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3>3.3.3</a> Data space
+</code>
+<P>
+
+
+<hr>
+<A name=14.4>
+<H2>14.4 Additional documentation requirements</H2>
+</a>
+
+
+<hr>
+<A name=14.4.1>
+<H3>14.4.1 System documentation</H3>
+</a>
+
+
+<hr>
+<A name=14.4.1.1>
+<H4>14.4.1.1 Implementation-defined options</H4>
+</a>
+
+<UL>
+<LI>values and meaning of ior 
+(<a href=dpans14.htm#14.3.1>14.3.1</a> I/O Results data type,
+<a href=dpans14.htm#14.6.1.0707>14.6.1.0707</a> ALLOCATE, 
+<a href=dpans14.htm#14.6.1.1605>14.6.1.1605</a> FREE, 
+<a href=dpans14.htm#14.6.1.2145>14.6.1.2145</a> RESIZE).
+</UL>
+
+<P>
+
+<hr>
+<A name=14.4.1.2>
+<H4>14.4.1.2 Ambiguous conditions</H4>
+</a>
+
+<UL>
+<LI>no additional requirements.
+</ul>
+
+<hr>
+<A name=14.4.1.3>
+<h4>14.4.1.3 Other system documentation</h4>
+</a>
+<ul>
+<LI>no additional requirements.
+</ul>
+
+<hr>
+<A name=14.4.2>
+<h3>14.4.2 Program documentation</h3>
+</a>
+<ul>
+<LI>no additional requirements.
+</ul>
+
+<hr>
+<A name=14.5>
+<h2>14.5 Compliance and labeling</h2>
+</a>
+
+
+<P>
+
+<hr>
+<A name=14.5.1>
+<H3>14.5.1 ANS Forth systems</H3>
+</a>
+
+The phrase <B>Providing the Memory-Allocation word set</B> shall be
+appended to the label of any Standard System that provides all of the
+Memory-Allocation word set.
+
+<P>
+
+The phrase <B>Providing name(s) from the Memory-Allocation Extensions
+word set</B> shall be appended to the label of any Standard System that
+provides portions of the Memory-Allocation Extensions word set.
+
+<P>
+
+The phrase <B>Providing the Memory-Allocation Extensions word set</B>
+shall be appended to the label of any Standard System that provides all
+of the Memory-Allocation and Memory-Allocation Extensions word sets.
+
+<P>
+
+<hr>
+<A name=14.5.2>
+<H3>14.5.2 ANS Forth programs</H3>
+</a>
+
+The phrase <B>Requiring the Memory-Allocation word set</B> shall be
+appended to the label of Standard Programs that require the system to
+provide the Memory-Allocation word set.
+
+<P>
+
+The phrase <B>Requiring name(s) from the Memory-Allocation Extensions
+word set</B> shall be appended to the label of Standard Programs that
+require the system to provide portions of the Memory-Allocation
+Extensions word set.
+
+<P>
+
+The phrase <B>Requiring the Memory-Allocation Extensions word set</B>
+shall be appended to the label of Standard Programs that require the
+system to provide all of the Memory-Allocation and Memory-Allocation
+Extensions word sets.
+
+<P>
+
+<hr>
+<A name=14.6>
+<H2>14.6 Glossary</H2>
+</a>
+
+<hr>
+<A name=14.6.1>
+<H3>14.6.1 Memory-Allocation words</H3>
+</a>
+
+<hr>
+<A name=14.6.1.0707>
+<code>
+14.6.1.0707 <b>ALLOCATE</b>
+</code>
+</a>
+<BR>
+MEMORY
+<BR>
+<pre>
+	( u -- a-addr ior )
+</pre>
+<P>
+
+Allocate u address units of contiguous data space.  The data-space
+pointer is unaffected by this operation.  The initial content of the
+allocated space is undefined.
+
+<P>
+
+If the allocation succeeds, a-addr is the aligned starting address of
+the allocated space and ior is zero.
+
+<P>
+
+If the operation fails, a-addr does not represent a valid address and
+ior is the implementation-defined I/O result code.
+
+<p>
+
+<code>
+See:    
+<A href=dpans6.htm#6.1.1650>6.1.1650 HERE</a> ,
+<A href=dpans14.htm#14.6.1.1605>14.6.1.1605 FREE</a> ,
+<A href=dpans14.htm#14.6.1.2145>14.6.1.2145 RESIZE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=14.6.1.1605>
+<code>
+14.6.1.1605 <b>FREE</b>
+</code>
+</a>
+<BR>
+MEMORY
+<BR>
+<pre>
+	( a-addr -- ior )
+</pre>
+<P>
+
+Return the contiguous region of data space indicated by a-addr to the
+system for later allocation.  a-addr shall indicate a region of data
+space that was previously obtained by 
+<a href=dpans14.htm#14.6.1.0707>ALLOCATE</a> or 
+<a href=dpans14.htm#14.6.1.2145>RESIZE</a>.  The
+data-space pointer is unaffected by this operation.
+<P>
+
+If the operation succeeds, ior is zero.  If the operation fails, ior is
+the implementation-defined I/O result code.
+<P>
+
+<code>
+See:    
+<A href=dpans6.htm#6.1.1650>6.1.1650 HERE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=14.6.1.2145>
+<code>
+14.6.1.2145 <b>RESIZE</b>
+</code>
+</a>
+<BR>
+MEMORY
+<BR>
+<pre>
+	( a-addr1 u -- a-addr2 ior )
+</pre>
+<P>
+
+Change the allocation of the contiguous data space starting at the
+address a-addr1, previously allocated by 
+<a href=dpans14.htm#14.6.1.0707>ALLOCATE</a> or RESIZE, to u
+address units.  u may be either larger or smaller than the current size
+of the region.  The data-space pointer is unaffected by this operation.
+
+<P>
+
+If the operation succeeds, a-addr2 is the aligned starting address of u
+address units of allocated memory and ior is zero.  a-addr2 may be, but
+need not be, the same as a-addr1.  If they are not the same, the values
+contained in the region at a-addr1 are copied to a-addr2, up to the
+minimum size of either of the two regions.  If they are the same, the
+values contained in the region are preserved to the minimum of u or the
+original size.  If a-addr2 is not the same as a-addr1, the region of
+memory at a-addr1 is returned to the system according to the operation
+of 
+<a href=dpans14.htm#14.6.1.1605>FREE</a>.
+
+<P>
+
+If the operation fails, a-addr2 equals a-addr1, the region of memory at
+a-addr1 is unaffected, and ior is the implementation-defined I/O result
+code.
+<P>
+
+<code>
+See:    
+<A href=dpans6.htm#6.1.1650>6.1.1650 HERE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=14.6.2>
+<h3>14.6.2   Memory-Allocation extension words</h3>
+</a>
+<p>
+
+None
+<P>
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpans15.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

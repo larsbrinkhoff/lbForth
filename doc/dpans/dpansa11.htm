@@ -1,0 +1,304 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpansa10.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpansa12.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=A.11>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H3>A.11 The optional File-Access word set</H3>
+
+Many Forth systems support access to a host file system, and many of
+these support interpretation of Forth from source text files.  The
+Forth-83 Standard did not address host OS files.  Nevertheless, a degree
+of similarity exists among modern implementations.
+
+<P>
+
+For example, files must be opened and closed, created and deleted.
+Forth file-system implementations differ mostly in the treatment and
+disposition of the exception codes, and in the format of the
+file-identification strings.  The underlying mechanism for creating
+file-control blocks might or might not be visible.  We have chosen to
+keep it invisible.
+
+<P>
+
+Files must also be read and written.  Text files, if supported, must be
+read and written one line at a time.  Interpretation of text files
+implies that they are somehow integrated into the text interpreter input
+mechanism.  These and other requirements have shaped the file-access
+extensions word set.
+
+<P>
+
+Most of the existing implementations studied use simple English words
+for common host file functions: OPEN, CLOSE, READ, etc.  Although we
+would have preferred to do likewise, there were so many minor variations
+in implementation of these words that adopting any particular meaning
+would have broken much existing code.  We have used names with a suffix
+-FILE for most of these words.  We encourage implementors to conform
+their single-word primitives to the ANS behaviors, and hope that if this
+is done on a widespread basis we can adopt better definition names in a
+future standard.
+
+<P>
+
+Specific rationales
+for members of this word set follow.
+
+<P>
+
+<hr>
+<a name=A.11.3>
+<H3>A.11.3 Additional usage requirements</H3>
+</a>
+
+<hr>
+<a name=A.11.3.2>
+<H4>A.11.3.2 Blocks in files</H4>
+</a>
+
+Many systems reuse file identifiers; when a file is closed, a
+subsequently opened file may be given the same identifier.  If the
+original file has blocks still in block buffers, these will be
+incorrectly associated with the newly opened file with disastrous
+results.  The block buffer system must be flushed to avoid this.
+
+<P>
+
+<hr>
+<a name=A.11.6>
+<H3>A.11.6 Glossary</H3>
+</a>
+
+
+<hr>
+<a name=A.11.6.1.0765>
+A.11.6.1.0765 BIN
+</a>
+<P>
+
+Some operating systems require that files be opened in a different mode
+to access their contents as an unstructured stream of binary data rather
+than as a sequence of lines.
+
+<P>
+
+The arguments to 
+<a href=dpans11.htm#11.6.1.2080>READ-FILE</a> and 
+<a href=dpans11.htm#11.6.1.2480>WRITE-FILE</a> are 
+arrays of character
+storage elements, each element consisting of at least 8 bits.  The
+Technical Committee intends that, in BIN mode, the contents of these
+storage elements can be written to a file and later read back without
+alteration.  The Technical Committee has declined to address issues
+regarding the impact of <B>wide</B> characters on the File and Block
+word sets.
+
+<P>
+
+<hr>
+<a name=A.11.6.1.1010>
+A.11.6.1.1010 CREATE-FILE
+</a>
+<P>
+
+Typical use:
+
+<PRE>
+: X .. S" TEST.FTH" R/W CREATE-FILE  ABORT" CREATE-FILE FAILED" ... ;
+</PRE>
+<P>
+
+<hr>
+<a name=A.11.6.1.1717>
+A.11.6.1.1717 INCLUDE-FILE
+</a>
+<P>
+
+Here are two implementation alternatives for saving the input source
+specification in the presence of text file input:
+
+<P>
+
+1)      Save the file position (as returned by 
+<a href=dpans11.htm#11.6.1.1520>FILE-POSITION</a>) of the beginning
+of the line being interpreted.  To restore the input source specification,
+seek to that position and re-read the line into the input buffer.
+
+<P>
+
+2)      Allocate a separate line buffer for each active text input file, using
+that buffer as the input buffer.  This method avoids the <B>seek and reread</B>
+step, and allows the use of <B>pseudo-files</B> such as pipes and other
+sequential-access-only communication channels.
+
+<P>
+
+<hr>
+<a name=A.11.6.1.1718>
+A.11.6.1.1718 INCLUDED
+</a>
+<P>
+
+Typical use:     <code>... S" filename" INCLUDED ...</code>
+
+<P>
+
+<hr>
+<a name=A.11.6.1.1970>
+A.11.6.1.1970 OPEN-FILE
+</a>
+<P>
+
+Typical use:
+
+<PRE>
+: X .. S" TEST.FTH" R/W OPEN-FILE  ABORT" OPEN-FILE FAILED" ... ;
+</PRE>
+<P>
+
+<hr>
+<a name=A.11.6.1.2080>
+A.11.6.1.2080 READ-FILE
+</a>
+<P>
+
+A typical sequential
+file-processing algorithm might look like:
+
+<PRE>
+   BEGIN                (  )
+   ... READ-FILE THROW  ( length )
+   ?DUP WHILE           ( length )
+   ...                  (  )
+   REPEAT               (  )
+</PRE>
+
+<P>
+
+In this example, 
+<a href=dpans9.htm#9.6.1.2275>THROW</a> 
+is used to handle (unexpected) exception
+conditions, which are reported as non-zero values of the ior return
+value from READ-FILE.  End-of-file is reported as a zero value of the
+<B>length</B> return value.
+
+<P>
+
+<hr>
+<a name=A.11.6.1.2090>
+A.11.6.1.2090 READ-LINE
+</a>
+<P>
+
+Implementations are allowed to store the line terminator in the memory
+buffer in order to allow the use of line reading functions provided by
+host operating systems, some of which store the terminator.  Without
+this provision, a temporary buffer might be needed.  The two-character
+limitation is sufficient for the vast majority of existing operating
+systems.  Implementations on host operating systems whose line
+terminator sequence is longer than two characters may have to take
+special action to prevent the storage of more than two terminator
+characters.
+
+<P>
+
+Standard Programs may not depend on the presence of any such terminator
+sequence in the buffer.
+
+<P>
+
+A typical line-oriented sequential file-processing algorithm might look
+like:
+
+<PRE>
+   BEGIN                (  )
+   ... READ-LINE THROW  ( length not-eof-flag )
+   WHILE                ( length )
+   ...                  (  )
+   REPEAT DROP          (  )
+</PRE>
+
+<P>
+
+In this example, 
+<a href=dpans9.htm#9.6.1.2275>THROW</a> 
+is used to handle (unexpected) I/O exception condition,
+which are reported as non-zero values of the <B>ior</B> return value from
+READ-LINE.
+
+<P>
+
+READ-LINE needs a separate end-of-file flag because empty (zero-length) lines
+are a routine occurrence, so a zero-length line cannot be used to signify
+end-of-file.
+
+<P>
+
+<hr>
+<a name=A.11.6.1.2165>
+A.11.6.1.2165 S"
+</a>
+<P>
+
+Typical use:    <code>... S" ccc" ...</code>
+
+<P>
+
+The interpretation semantics for S" are intended to provide a simple
+mechanism for entering a string in the interpretation state.  Since an
+implementation may choose to provide only one buffer for interpreted
+strings, an interpreted string is subject to being overwritten by the
+next execution of S" in interpretation state.  It is intended that no
+standard words other than S" should in themselves cause the interpreted
+string to be overwritten.  However, since words such as 
+<a href=dpans6.htm#6.1.1360>EVALUATE</a>, 
+<a href=dpans7.htm#7.6.1.1790>LOAD</a>,
+<a href=dpans11.htm#11.6.1.1717>INCLUDE-FILE</a> and 
+<a href=dpans11.htm#11.6.1.1718>INCLUDED</a> 
+can result in the interpretation of arbitrary
+text, possibly including instances of S", the interpreted string may be
+invalidated by some uses of these words.
+
+<P>
+
+When the possibility of overwriting a string can arise, it is prudent to
+copy the string to a <B>safe</B> buffer allocated by the application.
+
+<P>
+
+Programs wishing to parse in the fashion of S" are advised to use 
+<a href=dpans6.htm#6.2.2008>PARSE</a>
+or 
+<a href=dpans6.htm#6.1.2450>WORD</a> 
+<a href=dpans6.htm#6.1.0980>COUNT</a> 
+instead of S", preventing the overwriting of the
+interpreted string buffer.
+
+<P>
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpansa12.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

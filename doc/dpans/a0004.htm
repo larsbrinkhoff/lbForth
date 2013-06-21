@@ -1,0 +1,337 @@
+<title>ANS Forth RFI 0004: standard punctuation for double-cell numbers</title>
+
+This document is produced by TC X3J14 as its clarification of questions
+raised about ANSI X3.215-1994, American National Standard for Information
+Systems - Programming Languages - Forth.
+
+<p>The questions covered herein were raised by query
+
+<p>Q0004, regarding standard punctuation for double-cell numbers when
+occurring in programs.
+
+<p>There are four parts in this document:
+
+<ol>
+<li><a href="#query">The original question as received.</a>
+<li><a href="#reply">The TC's reply.</a>
+<li><a href="#ballot">The Letter Ballot issued by TC Chair.</a>
+<li><a href="#results">TC Chair's statement of ballot results.</a>
+</ol>
+
+<h2><a name="query">Q0004 as received</a></h2>
+The following query has been assigned number Q0004 and has been
+tentatively assigned to John Hayes for drafting a response.
+- Greg Bailey, by direction  950516 0400Z
+<hr>
+
+<pre>
+Subject: ANS Forth Clarification Procedures
+To: greg@minerva.com
+From: BiMu@aol.com (Bill Muench)
+Date: Mon, 15 May 1995 15:13:21 -0400
+Message-Id: <950515151319_119428296@aol.com>
+Received: from aol.com by med3.minerva.com <a href=dpans6.htm#6.1.0460>;</a> Mon, 15 May 1995 12:18 PDT
+Request for Clairification.
+</pre>
+
+I have found the following references to *Text interpreter input number
+conversion*.
+
+<p>
+The input of Floating-Point numbers is clear, my need for clairification is
+with double-cell numbers:
+
+<p>
+Will a number with an *embedded* decimal point be converted to a double-cell
+number in a Standard Forth system?
+
+<p>
+If not, what about <a href=dpansa12.htm#A.12.3.7>A.12.3.7</a> *...should treat numbers that have an embedded
+decimal point, but no exponent, as floating-point numbers rather than double
+cell numbers. This suggestion, although it has merit, has always been voted
+down because it would break too much existing code;* ?
+
+<p>
+Is <a href=dpans8.htm#8.3.2>8.3.2</a> an example or the rule? ( a decimal point at the end)
+
+<blockquote>
+<a href=dpans8.htm#8.3.2>8.3.2</a> Text interpreter input number conversion
+
+<p>
+When the text interpreter processes a number that is immediately followed by
+a decimal point and is not found as a definition name, the text interpreter
+shall convert it to a double-cell number.
+For example, entering <a href=dpans6.htm#6.1.1170>DECIMAL</a> 1234 leaves the single-cell number 1234 on the
+stack, and entering <a href=dpans6.htm#6.1.1170>DECIMAL</a> 1234. leaves the double-cell number 1234 0 on the
+stack.
+
+<p>
+See: <a href=dpans3.htm#3.4.1.3>3.4.1.3</a> Text interpreter input number conversion.
+
+<p>
+<a href=dpans12.htm#12.3.7>12.3.7</a> Text interpreter input number conversion
+
+<p>
+If the Floating-Point word set is present in the dictionary and the current
+base is <a href=dpans6.htm#6.1.1170>DECIMAL</a>, the input number-conversion algorithm shall be extended to
+recognize floating-point numbers in this form:
+
+<pre>
+Convertible string := &lt;significand&gt;&lt;exponent&gt;
+&lt;significand&gt; := [&lt;sign&gt;]&lt;digits&gt;[.&lt;digits0&gt;]
+&lt;exponent&gt; := E[&lt;sign&gt;]&lt;digits0&gt;
+&lt;sign&gt; := { + | - }
+&lt;digits&gt; := &lt;digit&gt;&lt;digits0&gt;
+&lt;digits0&gt; := &lt;digit&gt;*
+&lt;digit&gt; := { 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 }
+</pre>
+
+These are examples of valid representations of floating-point numbers in
+program source:
+
+<pre>
+1E   1.E   1.E0   +1.23E-1   -1.23E+1
+</pre>
+
+See: <a href=dpans3.htm#3.4.1.3>3.4.1.3</a> Text interpreter input number conversion, <a href=dpans12.htm#12.6.1.0558>12.6.1.0558</a> <a href=dpans12.htm#12.6.1.0558>>FLOAT</a>.
+
+<p>
+<a href=dpansa12.htm#A.12.3.7>A.12.3.7</a> Text interpreter input number conversion
+
+<p>
+The Technical Committee has more than once received the suggestion that the
+text interpreter in Standard Forth systems should treat numbers that have an
+embedded decimal point, but no exponent, as floating-point numbers rather
+than double cell numbers. This suggestion, although it has merit, has always
+been voted down because it would break too much existing code; many existing
+implementations put the full digit string on the stack as a double number and
+use other means to inform the application of the location of the decimal
+point.
+</blockquote>
+
+<pre>
+( ============================================================ )
+( Bill Muench \ OntoLogic )
+(             \ 3901 Branciforte Drive \ 408 425 8740 )
+(             \ Santa Cruz  CA  95065  \ BiMu@aol.com )
+</pre>
+
+<h2><a name="reply">TC Reply to Q0004</a></h2>
+<pre>
+From: Elizabeth D. Rather
+Subject: Q0004R, Number Conversion, Official Response
+To: X3J14 Technical Committee
+Cc: lbarra@itic.nw.dc.us
+Date: Wed, 31 May 95 17:04:01 PDT  
+Doc#:  X3J14/Q0004R
+Reference Doc#:  X3.215.1994 ANS Forth
+Date:  May 24, 1995
+Title: Response to Request for Interpretation Q0004, Clarification of
+Number Conversion
+</pre>
+
+<i><blockquote>
+<pre>
+Subject: ANS Forth Clarification Procedures
+To: greg@minerva.com
+From: BiMu@aol.com (Identity not yet established)
+Date: Mon, 15 May 1995 15:13:21 -0400
+Message-Id: <950515151319_119428296@aol.com>
+Received: from aol.com by med3.minerva.com ; Mon, 15 May 1995 12:18 PDT
+Request for Clairification.
+</pre>
+
+I have found the following references to *Text interpreter input number
+conversion*.
+
+<p>
+The input of Floating-Point numbers is clear, my need for clairification is
+with double-cell numbers:
+
+<p>
+Will a number with an *embedded* decimal point be converted to a double-cell
+number in a Standard Forth system?
+</blockquote></i>
+
+Not necessarily.  A Standard System is permitted, but not required, to
+convert digit strings with embedded periods as double numbers.
+Consequently, a Standard Program cannot rely on any particular
+interpretation of such digit strings.
+
+<i><blockquote>
+If not, what about <a href=dpansa12.htm#A.12.3.7>A.12.3.7</a> *...should treat numbers that have an embedded
+decimal point, but no exponent, as floating-point numbers rather than double
+cell numbers. This suggestion, although it has merit, has always been voted
+down because it would break too much existing code;* ?
+</blockquote></i>
+
+<a href=dpansa12.htm#A.12.3.7>A.12.3.7</a> would be clearer if it read:
+The Technical Committee has more than once received the suggestion that
+the text interpreter in Standard Forth systems should treat numbers
+that have an embedded decimal point, but no exponent, as floating-point
+numbers.  This suggestion, although it has merit, has always been voted
+down because it would break too much existing code; many existing
+implementations put the full digit string on the stack as a double
+number and use other means to inform the application of the location of
+the decimal point.
+
+Note that the only change I made was to delete the phrase "rather than
+double cell numbers" from the first sentence <a href=dpansa12.htm#A.12.3.7>A.12.3.7</a>.  The original
+sentence implies that numbers with an embedded decimal point and no
+exponent are converted to double numbers in a Standard System.  The
+intent of the committee was to allow this behavior in a Standard
+System, but not to require it.
+
+<i><blockquote>
+Is <a href=dpans8.htm#8.3.2>8.3.2</a> an example or the rule? ( a decimal point at the end)
+</blockquote></i>
+
+It is the rule.
+
+<i><blockquote>
+<a href=dpans8.htm#8.3.2>8.3.2</a> Text interpreter input number conversion
+
+<p>
+When the text interpreter processes a number that is immediately followed by
+a decimal point and is not found as a definition name, the text interpreter
+shall convert it to a double-cell number.
+
+<p>
+For example, entering <a href=dpans6.htm#6.1.1170>DECIMAL</a> 1234 leaves the single-cell number 1234 on the
+stack, and entering <a href=dpans6.htm#6.1.1170>DECIMAL</a> 1234. leaves the double-cell number 1234 0 on
+the stack.
+
+<p>
+See: <a href=dpans3.htm#3.4.1.3>3.4.1.3</a> Text interpreter input number conversion.
+</blockquote></i>
+
+Other excerpts deleted.
+
+<pre>
+        John R. Hayes
+        Applied Physics Laboratory
+        Johns Hopkins University
+        john.hayes@jhuapl.edu
+</pre>
+
+<pre>
+Elizabeth D. Rather             "Forth-based products and
+FORTH, Inc.                      Services for real-time
+111 N. Sepulveda Blvd. #300      applications since 1973"
+Manhattan Beach, CA  90266
+(800) 55FORTH or (310) 372-8493
+FAX (310) 318-7130
+</pre>
+
+<h2><a name="ballot">Letter Ballot</a></h2>
+
+<pre>
+From: Elizabeth D. Rather
+Subject: LB015, RE Q0004, Number Conversion
+To: X3J14 Technical Committee
+Cc: lbarra@itic.nw.dc.us
+Date: Wed, 31 May 95 17:04:23 PDT  
+X3 Subgroup Letter Ballot
+Authorized by X3 Procedures - Distributed by X3 Subgroup X3J14
+Project: X3J14, ANS Forth
+Doc#:  X3J14/LB015
+Reference Doc#s:  X3J14/Q0004R, X3.215.1994 ANS Forth
+Date:  May 31, 1995
+Title: Response to Request for Interpretation Q0004, Number Conversion
+Ballot Period:  30 Days
+Ballot Closes NOON DATE:  June 30, 1995
+Respond to:  greg@minerva.com
+        or:  Elizabeth D. Rather, Chair
+             FORTH, Inc.
+             111 N. Sepulveda Blvd.  Suite 300
+             Manhattan Beach, CA  90266
+             (310) 372-8493    FAX (310) 318-7130
+             erather@forth.com
+
+Statement:
+    Document X3J14/Q0004R contains a proposed Response to Request for
+    Interpretation Q0004.
+
+Question:
+    Do you agree that this response represents the intended interpretation of
+    X3.215.1994 ANS Forth?
+
+
+/------------------------  begin response area----------------------\
+|
+|  YES____ NO____ ABSTAIN____
+|
+|  Signature:  [not required for email ballots]
+|  Name:
+|  Organization:
+|
+|  Explanation (REQUIRED for NO or ABSTAIN votes):
+|    <none>
+\------------------------  end response area  ----------------------/
+
+INSTRUCTIONS:
+Please return the entire letter ballot with your response _either_ by email
+to greg@minerva.com _or_ by regular mail or fax or email to me at the above
+address, before the closing date & time.
+
+   If replying electronically PLEASE edit only within the response area
+   indicated above, inserting any explanatory text in place of <none>.
+   Any changes made outside that area will likely be overlooked.
+
+All TC members must vote.  Failure to vote in two consecutive ballots may
+cause you to lose your voting rights in X3J14.
+
+Thank you for your participation.
+
+Elizabeth D. Rather, Chair, X3J14
+
+Elizabeth D. Rather             "Forth-based products and
+FORTH, Inc.                      Services for real-time
+111 N. Sepulveda Blvd. #300      applications since 1973"
+Manhattan Beach, CA  90266
+(800) 55FORTH or (310) 372-8493
+FAX (310) 318-7130
+</pre>
+
+<h2><a name="results">Results of Letter Ballot</a></h2>
+
+<pre>
+From: Elizabeth D. Rather
+Subject: LBs 14 & 15
+To: X3J14 Technical Committee
+Cc: l.barra@itic.nw.dc.us
+Date: Fri, 07 Jul 95 12:05:04 PDT  
+Letter ballots [14 and] 15 closed at noon July 1 with the following results:
+
+        Y  N  A NV
+[...]
+LB15:  11, 1, 0, 2
+
+Negative vote from Dave Harralson on Letter Ballot 15, with the following
+comment:
+
+     I disagree with the response, "not necessarily...."  Section <a href=dpans8.htm#8.3.2>8.3.2</a> clearly
+     states that a number with a decimal point that is not in the dictionary
+     will be converted to a double-cell number.  If this section is revised,
+     I vote yes.
+
+[8.3.2  Text Interpreter Input number conversion
+        When the text interpreter process a number that is *immediately
+        followed* by a decimal point and is not found as a definition name,
+        the text interpreter shall convert it to a double-cell number.]
+[Standard quoted by editor; emphasis added where appropriate]
+
+[...]
+
+Thank you for your participation.
+
+Regards,
+Elizabeth D. Rather, Chair X3J14
+
+Elizabeth D. Rather             "Forth-based products and
+FORTH, Inc.                      Services for real-time
+111 N. Sepulveda Blvd. #300      applications since 1973"
+Manhattan Beach, CA  90266
+(800) 55FORTH or (310) 372-8493
+FAX (310) 318-7130
+</pre>

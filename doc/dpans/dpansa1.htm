@@ -1,0 +1,234 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans17.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpansa2.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=A.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>A. Rationale (informative annex)</H1>
+
+
+<hr>
+<a name=A.1>
+<H2>A.1 Introduction</H2>
+</a>
+
+<hr>
+<a name=A.1.1></A>
+<H3>A.1.1 Purpose</H3>
+</a>
+
+
+<hr>
+<a name=A.1.2>
+<H3>A.1.2 Scope</H3>
+</a>
+
+This Standard is more extensive than previous industry standards for the Forth
+language.  Several things made this necessary:
+
+<UL>
+<LI>the desire to resolve conflicts between previous standards;
+<LI>the need to eliminate semantic ambiguities and other inadequacies;
+<LI>the requirement to standardize common practice, where possible
+resolving divergences in a way that minimizes the cost of compliance;
+<LI>the desire to standardize common system techniques, including those
+germane to hardware.
+</UL>
+<P>
+
+The result of the effort to satisfy all of these objectives is a
+Standard arranged so that the required word set remains small.  Thus ANS
+Forth can be provided for resource-constrained embedded systems.  Words
+beyond those in the required word set are organized into a number of
+optional word sets and their extensions, enabling implementation of
+tailored systems that are Standard.
+
+<P>
+
+When judging relative merits, the members of the X3J14 Technical
+Committee were guided by the following goals (listed in alphabetic
+order):
+
+<P>
+
+<DL>
+<DT><B>Consistency</B>   
+<DD>The Standard provides a functionally complete
+set of words
+with minimal functional overlap.
+
+<DT><B>Cost of compliance</B>     
+<DD>This goal includes such issues as common
+practice, how
+much existing code would be broken by the proposed change, and the amount of
+effort required to bring existing applications and systems into conformity
+with the Standard.
+
+<DT><B>Efficiency</B>     
+<DD>Execution speed, memory compactness.
+
+<DT><B>Portability</B>    
+<DD>Words chosen for inclusion should be free of
+system-dependent
+features.
+
+<DT><B>Readability</B>    
+<DD>Forth definition names should clearly delineate
+their
+behavior.  That behavior should have an apparent simplicity which supports
+rapid understanding.  Forth should be easily taught and support readily
+maintained code.
+
+<DT><B>Utility</B> 
+<DD>Be judged to have sufficiently essential functionality
+and frequency
+of use to be deemed suitable for inclusion.</DL>
+
+
+<P>
+
+<hr>
+<a name=A.1.3>
+<H3>A.1.3 Document organization</H3>
+</a>
+
+
+<hr>
+<a name=A.1.3.1>
+<H4>A.1.3.1 Word sets</H4>
+</a>
+
+From the beginning, the X3J14 Technical Committee faced not only
+conflicting ideas as to what <B>real</B> Forth is, but also conflicting
+needs of the various groups within the Forth community.  At one extreme
+were those who pressed for a <B>bare</B> Forth.  At the other extreme
+were those who wanted a <B>fat</B> Forth.  Many were somewhere in
+between.  All were convinced of the rightness of their own position and
+of the wrongness of at least one of the two extremes.  The committee's
+composition reflected this full range of interests.
+
+<P>
+
+The approach we have taken is to define a 
+<a href=dpans6.htm#6.1>Core word set</a> 
+establishing a
+greatest lower bound for required system functionality and to provide a
+portfolio of optional word sets for special purposes.  This simple
+approach parallels the fundamental nature of Forth as an extensible
+language, and thereby achieves a kind of meta-extensibility.
+
+<P>
+
+With this key, high-level compromise, regardless of the actual makeup of
+the individual word sets, a firm and workable framework is established
+for the long term.  One may or may not agree that there should be a
+<a href=dpans13.htm>Locals word set</a>, 
+or that the word 
+<a href=dpans6.htm#6.2.0945>COMPILE,</a> 
+belongs in the 
+<a href=dpans6.htm#6.2>Core Extensions word set</a>.  
+But at least there is a mechanism whereby such
+things can be included in a logical and orderly manner.
+
+<P>
+
+Several implications of this scheme of optional word sets are
+significant.
+
+<P>
+
+First, ANS Forth systems can continue to be implemented on a greater
+range of hardware than could be claimed by almost any other single
+language.  Since only the 
+Core word set is required, very limited
+hardware will be able to accommodate an ANS Forth implementation.
+
+<P>
+
+Second, a greater degree of portability of applications, and of
+programmers, is anticipated.  The optional word sets standardize various
+functions (e.g., floating point) that were widely implemented before,
+but not with uniform definition names and methodologies, nor the same
+levels of completeness.  With such words now standardized in the
+optional word sets, communications between programmers - verbally, via
+magazine or journal articles, etc.  - will leap to a new level of
+facility, and the shareability of code and applications should rise
+dramatically.
+
+<P>
+
+Third, ANS Forth systems may be designed to offer the user the power to
+selectively, even dynamically, include or exclude one or more of the
+optional word sets or portions thereof.  Also, lower-priced products may
+be offered for the user who needs the Core word set and not much more.
+Thus, virtually unlimited flexibility will be available to the user.
+
+<P>
+
+But these advantages have a price.  The burden is on the user to decide
+what capabilities are desired, and to select product offerings
+accordingly, especially when portability of applications is important.
+We do not expect most implementors to attempt to provide all word sets,
+but rather to select those most valuable to their intended markets.
+
+<P>
+
+The basic requirement is that if the implementor claims to have a
+particular optional word set the entire required portion of that word
+set must be available.  If the implementor wishes to offer only part of
+an optional word set, it is acceptable to say, for example, <B>This
+system offers portions of the [named] word set</B>, particularly if the
+selected or excluded words are itemized clearly.
+
+<P>
+
+Each optional word set will probably appeal to a particular
+constituency.  For example, scientists performing complex mathematical
+analysis may place a higher value on the 
+<a href=dpans12.htm>Floating-Point word set</a> 
+than
+programmers developing simple embedded controllers.  As in the case of
+the core extensions, we expect implementors to offer those word sets
+they expect will be valued by their users.
+
+<P>
+
+Optional word sets may be offered in source form or otherwise factored
+so that the user may selectively load them.
+
+<P>
+
+The extensions to the optional word sets include words which are deemed
+less essential to performing the primary activity supported by the word
+set, though clearly relevant to it.  As in the case of the Core
+Extensions, implementors may selectively add itemized subsets of a word
+set extension providing the labeling doesn't mislead the user into
+thinking incorrectly that all words are present.
+
+<P>
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpansa2.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

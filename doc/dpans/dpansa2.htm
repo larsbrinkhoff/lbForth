@@ -1,0 +1,104 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpansa1.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpansa3.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=A.2>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+
+<H2>A.2 Terms and notation</H2>
+
+
+<hr>
+<a name=A.2.1>
+<H3>A.2.1 Definitions of terms</H3>
+</a>
+
+<DL>
+<DT><b>ambiguous condition</b>
+<DD>The response of a Standard System to an ambiguous condition is left to
+the discretion of the implementor.  A Standard System need not
+explicitly detect or report the occurrence of ambiguous conditions.
+<p>
+<DT><b>cross compiler</b>
+<DD>Cross-compilers may be used to prepare a program for execution in an
+embedded system, or may be used to generate Forth kernels either for the
+same or a different run-time environment.
+<p>
+<DT><b>data field</b>
+<DD>In earlier standards, data fields were known as <B>parameter fields</B>.
+<P>
+
+On subroutine threaded Forth systems, everything is object code.  There
+are no traditional code or data fields.  Only a word defined by 
+<a href=dpans6.htm#6.1.1000>CREATE</a>
+or by a word that calls 
+CREATE has a data field.  Only a data field
+defined via CREATE can be manipulated portably.
+<p>
+<DT><b>word set</b>
+<DD>This Standard recognizes that some functions, while useful in certain
+application areas, are not sufficiently general to justify requiring
+them in all Forth systems.  Further, it is helpful to group Forth words
+according to related functions.  These issues are dealt with using the
+concept of word sets.
+
+<P>
+
+The <B>Core</B> word set contains the essential body of words in a Forth
+system.  It is the only <B>required</B> word set.  Other word sets
+defined in this Standard are optional additions to make it possible to
+provide Standard Systems with tailored levels of functionality.</DL>
+
+<P>
+
+<hr>
+<a name=A.2.2>
+<H3>A.2.2 Notation</H3>
+</a>
+
+
+<hr>
+<a name=A.2.2.2>
+<H4>A.2.2.2 Stack notation</H4>
+</a>
+
+The use of -sys, orig, and dest data types in stack effect diagrams
+conveys two pieces of information.  First, it warns the reader that many
+implementations use the data stack in unspecified ways for those
+purposes, so that items underneath on either the control-flow or data
+stacks are unavailable.  Second, in cases where orig and dest are used,
+explicit pairing rules are documented on the assumption that all systems
+will implement that model so that its results are equivalent to
+employment of some stack, and that in fact many implementations do use
+the data stack for this purpose.  However, nothing in this Standard
+requires that implementations actually employ the data stack (or any
+other) for this purpose so long as the implied behavior of the model is
+maintained.
+
+<P>
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpansa3.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

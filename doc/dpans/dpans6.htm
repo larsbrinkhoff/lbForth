@@ -1,0 +1,5776 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans5.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpans7.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=6.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>6. Glossary</H1>
+
+<code><p>
+See:
+<a href=dpansa6.htm#A.6>A.6</a> Glossary
+<p>
+</code>
+
+<hr>
+<A name=6.1></A>
+<H2>6.1 Core words</H2>
+</a>
+
+
+
+<hr>
+<A name=6.1.0010>
+<code>
+6.1.0010 <B>!</B>
+</code>
+</a>
+<BR>
+<B>store</B> CORE
+<BR>
+<pre>
+	( x a-addr -- )
+</pre>
+<P>
+
+Store x at
+a-addr.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0030>
+<code>
+6.1.0030 <B>#</B>
+</code>
+</a>
+<BR>
+<B>number-sign</B>   CORE
+<br>
+<pre>
+	( ud1 -- ud2 )
+</pre>
+<P>
+
+Divide ud1 by the number in 
+<a href=dpans6.htm#6.1.0750>BASE</a> 
+giving the quotient ud2 and the
+remainder n. (n is the least-significant digit of ud1.) Convert n to
+external form and add the resulting character to the beginning of the
+pictured numeric output string. An ambiguous condition exists if #
+executes outside of a 
+<a href=dpans6.htm#6.1.0490>&lt;#</a> 
+<a href=dpans6.htm#6.1.0040>#&gt;</a> 
+delimited number conversion.
+
+<P>
+
+<code>
+See:    
+<A href=dpans6.htm#6.1.0050>6.1.0050 #S</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0040>
+<code>
+6.1.0040 <B>#&gt;</B>
+</code>
+</a>
+<BR>
+<B>number-sign-greater</B>   CORE
+<BR>
+<pre>
+	( xd -- c-addr u )
+</pre>
+
+<P>
+
+Drop xd. Make the pictured numeric output string available as a
+character string. c-addr and u specify the resulting character string.
+A program may replace characters within the string.
+
+<P>
+
+<code>
+See:
+<A href=dpans6.htm#6.1.0030>6.1.0030 #</a> ,
+<A href=dpans6.htm#6.1.0050>6.1.0050 #S</a> ,
+<A href=dpans6.htm#6.1.0490>6.1.0490 &lt;#</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0050>
+<code>
+6.1.0050 <B>#S</B>
+</code>
+</a>
+<BR>
+<B>number-sign-s</B> CORE
+<BR>
+<pre>
+	( ud1 -- ud2 )
+</pre>
+
+<P>
+
+Convert one digit of ud1 according to the rule for 
+<a href=dpans6.htm#6.1.0030>#</a>. Continue
+conversion until the quotient is zero. ud2 is zero. An ambiguous
+condition exists if #S executes outside of a 
+<a href=dpans6.htm#6.1.0490>&lt;#</a> 
+<a href=dpans6.htm#6.1.0040>#&gt;</a> 
+delimited number
+conversion.
+
+<P>
+
+
+<hr>
+<A name=6.1.0070>
+<code>
+6.1.0070 <B>'</B>
+</code>
+</a>
+<BR>
+<B>tick</B>  CORE
+<BR>
+<pre>
+	( <B>"&lt;spaces&gt;name"</B> -- xt )
+</pre>
+
+<P>
+
+Skip leading space delimiters. Parse name delimited by a space. Find
+name and return xt, the execution token for name. An ambiguous
+condition exists if name is not found.
+
+<P>
+
+When interpreting, <b><code>' xyz EXECUTE</code></b> is equivalent to xyz.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4>3.4</a> The Forth text interpreter,
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<A href=dpansa6.htm#A.6.1.2033>A.6.1.2033 POSTPONE</a> ,
+<A href=dpans6.htm#6.1.2510>6.1.2510 [']</a> ,
+<a href=dpansa6.htm#A.6.1.0070>A.6.1.0070 '</a> ,
+<A href=dpansd.htm#D.6.7>D.6.7</a> Immediacy.
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0080>
+<code>
+6.1.0080 <B>(</B>
+</code>
+</a>
+<BR>
+<B>paren</B> CORE
+<BR>
+
+<P>
+<pre>
+	Compilation: Perform the execution semantics given below.
+</pre>
+<P>
+<pre>
+	Execution: ( <B>"ccc&lt;paren&gt;"</B> -- )
+</pre>
+<P>
+
+Parse ccc delimited by )
+(right parenthesis). ( is an immediate word.
+
+<P>
+
+The number of characters in ccc may be zero to the number of characters
+in the parse area.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<A href=dpans11.htm#11.6.1.0080>11.6.1.0080 (</a> ,
+<a href=dpansa6.htm#A.6.1.0080>A.6.1.0080 (</a> 
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0090>
+<code>
+6.1.0090 <B>*</B>
+</code>
+</a>
+<BR>
+<B>star</B>  CORE
+<BR>
+<pre>
+	( n1|u1 n2|u2 -- n3|u3 )
+</pre>
+
+<P>
+
+Multiply n1|u1 by n2|u2
+giving the product n3|u3.
+
+<P>
+
+<hr>
+<A name=6.1.0100>
+<code>
+6.1.0100 <B>*/</B>
+</code>
+</a>
+<BR>
+<B>star-slash</B>    CORE
+<BR>
+<pre>
+	( n1 n2 n3 -- n4 )
+</pre>
+
+<P>
+
+Multiply n1 by n2 producing the intermediate double-cell result d.
+Divide d by n3 giving the single-cell quotient n4.  An ambiguous
+condition exists if n3 is zero or if the quotient n4 lies outside the
+range of a signed number.  If d and n3 differ in sign, the
+implementation-defined result returned will be the same as that returned
+by either the phrase 
+<b><code>
+&gt;R M* R&gt; FM/MOD SWAP DROP
+</code></b>
+or the phrase 
+<b><code>
+&gt;R M* R&gt; SM/REM SWAP DROP
+</code></b>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.2.1>3.2.2.1</a> Integer division
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0110>
+<code>
+6.1.0110 <B>*/MOD</B>
+</code>
+</a>
+<BR>
+<B>star-slash-mod</B>        CORE
+<BR>
+<pre>
+	( n1 n2 n3 -- n4 n5 )
+</pre>
+
+<P>
+
+Multiply n1 by n2 producing the intermediate double-cell result d. Divide d
+by n3 producing the single-cell remainder n4 and the single-cell quotient n5.
+An ambiguous condition exists if n3 is zero, or if the quotient n5 lies
+outside the range of a single-cell signed integer. If d and n3 differ in
+sign, the implementation-defined result returned will be the same as that
+returned by either the phrase 
+<b><code>
+&gt;R M* R&gt; FM/MOD
+</code></b> 
+or the phrase 
+<b><code>
+&gt;R M* R&gt; SM/REM
+</code></b>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.2.1>3.2.2.1</a> Integer division
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0120>
+<code>
+6.1.0120 <B>+</B>
+</code>
+</a>
+<BR>
+<B>plus</B>  CORE
+<BR>
+<pre>
+	( n1|u1 n2|u2 -- n3|u3 )
+</pre>
+
+<P>
+
+Add n2|u2
+to n1|u1, giving the sum n3|u3.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0130>
+<code>
+6.1.0130 <B>+!</B>
+</code>
+</a>
+<BR>
+<B>plus-store</B>    CORE
+<BR>
+<pre>
+	( n|u a-addr -- )
+</pre>
+
+<P>
+
+Add n|u
+to the single-cell number at a-addr.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0140>
+<code>
+6.1.0140 <B>+LOOP</B>
+</code>
+</a>
+<BR>
+<B>plus-loop</B>     CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: do-sys -- )
+</pre>
+<P>
+
+Append the run-time semantics given below to the current definition.
+Resolve the destination of all unresolved occurrences of 
+<a href=dpans6.htm#6.1.1760>LEAVE</a> between
+the location given by do-sys and the next location for a transfer of
+control, to execute the words following +LOOP.
+<P>
+<pre>
+	Run-time: ( n -- ) ( R: loop-sys1 -- | loop-sys2 )
+</pre>
+<P>
+
+An ambiguous condition exists if the loop control parameters are
+unavailable. Add n to the loop index. If the loop index did not cross
+the boundary between the loop limit minus one and the loop limit,
+continue execution at the beginning of the loop. Otherwise, discard the
+current loop control parameters and continue execution immediately
+following the loop.
+
+<P>
+
+<code>
+See:    
+<A href=dpans6.htm#6.1.1240>6.1.1240 DO</a> ,
+<A href=dpans6.htm#6.1.1680>6.1.1680 I</a> ,
+<A href=dpans6.htm#6.1.1760>6.1.1760 LEAVE</a> ,
+<a href=dpansa6.htm#A.6.1.0140>A.6.1.0140 +LOOP</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0150>
+<code>
+6.1.0150 <B>,</B>
+</code>
+</a>
+<BR>
+<B>comma</B> CORE
+<BR>
+<pre>
+	( x -- )
+</pre>
+
+<P>
+
+Reserve one cell of data space and store x in the cell. If the data-space
+pointer is aligned when , begins execution, it will remain aligned when ,
+finishes execution. An ambiguous condition exists if the data-space pointer
+is not aligned prior to execution of ,.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3>3.3.3</a> Data space,
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment,
+<a href=dpansa6.htm#A.6.1.0150>A.6.1.0150 ,</a>
+</code>
+
+
+<P>
+
+<hr>
+<A name=6.1.0160>
+<code>
+6.1.0160 <B>-</B>
+</code>
+</a>
+<BR>
+<B>minus</B> CORE
+<BR>
+<pre>
+	( n1|u1 n2|u2 -- n3|u3 )
+</pre>
+
+<P>
+
+Subtract n2|u2
+from n1|u1, giving the difference n3|u3.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment.
+</code>
+
+
+<P>
+
+<hr>
+<A name=6.1.0180>
+<code>
+6.1.0180 <B>.</B>
+</code>
+</a>
+<BR>
+<B>dot</B>   CORE
+<BR>
+<pre>
+	( n -- )
+</pre>
+
+<P>
+
+Display n in
+free field format.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.1.2>3.2.1.2</a> Digit conversion,
+<A href=dpans3.htm#3.2.1.3>3.2.1.3</a> Free-field number display.
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0190>
+<code>
+6.1.0190 <B>."</B>
+</code>
+</a>
+<BR>
+<B>dot-quote</B>     CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( <B>"ccc&lt;quote&gt;"</B> -- )
+</pre>
+<P>
+
+Parse ccc delimited by " (double-quote). Append the run-time semantics
+given below to the current definition.
+
+
+<PRE>
+        Run-time: ( -- )
+</PRE>
+
+<P>
+
+Display
+ccc.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<A href=dpans6.htm#6.2.0200>6.2.0200 .(</a> ,
+<a href=dpansa6.htm#A.6.1.0190>A.6.1.0190 ."</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0230>
+<code>
+6.1.0230 <B>/</B>
+</code>
+</a>
+<BR>
+<B>slash</B> CORE
+<BR>
+<pre>
+	( n1 n2 -- n3 )
+</pre>
+
+<P>
+
+Divide n1 by n2, giving the single-cell quotient n3. An ambiguous
+condition exists if n2 is zero. If n1 and n2 differ in sign, the
+implementation-defined result returned will be the same as that returned
+by either the phrase 
+<b><code>
+&gt;R S&gt;D R&gt; FM/MOD SWAP DROP
+</code></b> 
+or the phrase
+<b><code>
+&gt;R S&gt;D R&gt; SM/REM SWAP DROP
+</code></b>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.2.1>3.2.2.1</a> Integer division
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0240>
+<code>
+6.1.0240 <B>/MOD</B>
+</code>
+</a>
+<BR>
+<B>slash-mod</B>     CORE
+<BR>
+<pre>
+	( n1 n2 -- n3 n4 )
+</pre>
+
+<P>
+
+Divide n1 by n2, giving the single-cell remainder n3 and the single-cell
+quotient n4. An ambiguous condition exists if n2 is zero. If n1 and n2
+differ in sign, the implementation-defined result returned will be the
+same as that returned by either the phrase 
+<b><code>
+&gt;R S&gt;D R&gt; FM/MOD
+</code></b>
+or the phrase 
+<b><code>
+&gt;R S&gt;D R&gt; SM/REM
+</code></b>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.2.1>3.2.2.1</a> Integer division
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0250>
+<code>
+6.1.0250 <B>0&lt;</B>
+</code>
+</a>
+<BR>
+<B>zero-less</B>     CORE
+<BR>
+<pre>
+	( n -- flag )
+</pre>
+
+<P>
+
+flag is true
+if and only if n is less than zero.
+
+<P>
+
+<hr>
+<A name=6.1.0270>
+<code>
+6.1.0270 <B>0=</B>
+</code>
+</a>
+<BR>
+<B>zero-equals</B>   CORE
+<BR>
+<pre>
+	( x -- flag )
+</pre>
+
+<P>
+
+flag is
+true if and only if x is equal to zero.
+
+<P>
+
+<hr>
+<A name=6.1.0290>
+<code>
+6.1.0290 <B>1+</B>
+</code>
+</a>
+<BR>
+<B>one-plus</B>      CORE
+<BR>
+<pre>
+	( n1|u1 -- n2|u2 )
+</pre>
+
+<P>
+
+Add one (1)
+to n1|u1 giving the sum n2|u2.
+
+<P>
+
+<hr>
+<A name=6.1.0300>
+<code>
+6.1.0300 <B>1-</B>
+</code>
+</a>
+<BR>
+<B>one-minus</B>     CORE
+<BR>
+<pre>
+	( n1|u1 -- n2|u2 )
+</pre>
+
+<P>
+
+Subtract one (1)
+from n1|u1 giving the difference n2|u2.
+
+<P>
+
+<hr>
+<A name=6.1.0310>
+<code>
+6.1.0310 <B>2!</B>
+</code>
+</a>
+<BR>
+<B>two-store</B>     CORE
+<BR>
+<pre>
+	( x1 x2 a-addr -- )
+</pre>
+
+<P>
+
+Store the cell pair x1 x2 at a-addr, with x2 at a-addr and x1 at the next
+consecutive cell. It is equivalent to the sequence 
+<b><code>
+SWAP OVER ! CELL+ !
+</code></b>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0320>
+<code>
+6.1.0320 <B>2*</B>
+</code>
+</a>
+<BR>
+<B>two-star</B>      CORE
+<BR>
+<pre>
+	( x1 -- x2 )
+</pre>
+
+<P>
+
+x2 is the result of shifting x1 one bit toward the most-significant bit,
+filling the vacated least-significant bit with zero.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.1.0320>A.6.1.0320 2*</a>
+</code>
+<p>
+
+<hr>
+<A name=6.1.0330>
+<code>
+6.1.0330 <B>2/</B>
+</code>
+</a>
+<BR>
+<B>two-slash</B>     CORE
+<BR>
+<pre>
+	( x1 -- x2 )
+</pre>
+
+<P>
+
+x2 is the result of shifting x1 one bit toward the least-significant
+bit, leaving the most-significant bit unchanged.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.1.0330>A.6.1.0330 2/</a>
+</code>
+<p>
+
+<hr>
+<A name=6.1.0350>
+<code>
+6.1.0350 <B>2@</B>
+</code>
+</a>
+<BR>
+<B>two-fetch</B>     CORE
+<BR>
+<pre>
+	( a-addr -- x1 x2 )
+</pre>
+
+<P>
+
+Fetch the cell pair x1 x2 stored at a-addr. x2 is stored at a-addr and
+x1 at the next consecutive cell. It is equivalent to the sequence 
+<b><code>
+DUP CELL+ @ SWAP @
+</code></b>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment,
+<A href=dpans6.htm#6.1.0310>6.1.0310 2!</a> ,
+<a href=dpansa6.htm#A.6.1.0350>A.6.1.0350 2@</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0370>
+<code>
+6.1.0370 <B>2DROP</B>
+</code>
+</a>
+<BR>
+<B>two-drop</B>      CORE
+<BR>
+<pre>
+	( x1 x2 -- )
+</pre>
+
+<P>
+
+Drop cell
+pair x1 x2 from the stack.
+
+<P>
+
+<hr>
+<A name=6.1.0380>
+<code>
+6.1.0380 <B>2DUP</B>
+</code>
+</a>
+<BR>
+<B>two-dupe</B>      CORE
+<BR>
+<pre>
+	( x1 x2 -- x1 x2 x1 x2 )
+</pre>
+
+<P>
+
+Duplicate cell
+pair x1 x2.
+
+<P>
+
+<hr>
+<A name=6.1.0400>
+<code>
+6.1.0400 <B>2OVER</B>
+</code>
+</a>
+<BR>
+<B>two-over</B>      CORE
+<BR>
+<pre>
+	( x1 x2 x3 x4 -- x1 x2 x3 x4 x1 x2 )
+</pre>
+
+<P>
+
+Copy cell
+pair x1 x2 to the top of the stack.
+
+<P>
+
+<hr>
+<A name=6.1.0430>
+<code>
+6.1.0430 <B>2SWAP</B>
+</code>
+</a>
+<BR>
+<B>two-swap</B>      CORE
+<BR>
+<pre>
+	( x1 x2 x3 x4 -- x3 x4 x1 x2 )
+</pre>
+
+<P>
+
+Exchange the
+top two cell pairs.
+
+<P>
+
+<hr>
+<A name=6.1.0450>
+<code>
+6.1.0450 <B>:</B>
+</code>
+</a>
+<BR>
+<B>colon</B> CORE
+<BR>
+<pre>
+	( C: <B>"&lt;spaces&gt;name"</B> -- colon-sys )
+</pre>
+
+<P>
+
+Skip leading space delimiters. Parse name delimited by a space. Create
+a definition for name, called a <B>colon definition</B>. Enter
+compilation state and start the current definition, producing colon-sys.
+Append the initiation semantics given below to the current definition.
+
+<P>
+
+The execution semantics of name will be determined by the words compiled
+into the body of the definition. The current definition shall not be
+findable in the dictionary until it is ended (or until the execution of
+<a href=dpans6.htm#6.1.1250>DOES&gt;</a> 
+in some systems).
+<P>
+<pre>
+	Initiation: ( i*x -- i*x )  ( R:  -- nest-sys )
+</pre>
+<P>
+
+Save implementation-dependent information nest-sys about the calling
+definition. The stack effects i*x represent arguments to name.
+
+<P>
+<pre>
+	<i>name</i> Execution: ( i*x -- j*x )
+</pre>
+<P>
+
+Execute the definition name. The stack effects i*x and j*x represent
+arguments to and results from name, respectively.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4>3.4</a> The Forth text interpreter,
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<A href=dpans3.htm#3.4.5>3.4.5</a> Compilation,
+<A href=dpans6.htm#6.1.2500>6.1.2500 [</a> ,
+<A href=dpans6.htm#6.1.2540>6.1.2540 ]</a> ,
+<A href=dpans15.htm#15.6.2.0470>15.6.2.0470 ;CODE</a> ,
+<a href=dpansa6.htm#A.6.1.0450>A.6.1.0450 :</a> ,
+<a href=a0005.htm>RFI 0005</a> Initiation semantics.
+</code>
+
+
+<P>
+
+<hr>
+<A name=6.1.0460>
+<code>
+6.1.0460 <B>;</B>
+</code>
+</a>
+<BR>
+<B>semicolon</B>     CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: colon-sys -- )
+</pre>
+<P>
+
+Append the run-time semantics below to the current definition. End the
+current definition, allow it to be found in the dictionary and enter
+interpretation state, consuming colon-sys. If the data-space pointer is
+not aligned, reserve enough data space to align it.
+
+<P>
+<pre>
+	Run-time: ( -- ) ( R: nest-sys -- )
+</pre>
+<P>
+
+Return to
+the calling definition specified by nest-sys.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4>3.4</a> The Forth text interpreter,
+<A href=dpans3.htm#3.4.5>3.4.5</a> Compilation,
+<a href=dpansa6.htm#A.6.1.0460>A.6.1.0460 ;</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0480>
+<code>
+6.1.0480 <B>&lt;</B>
+</code>
+</a>
+<BR>
+<B>less-than</B>     CORE
+<BR>
+<pre>
+	( n1 n2 -- flag )
+</pre>
+
+<P>
+
+flag is
+true if and only if n1 is less than n2.
+
+<P>
+
+<code>
+See:    
+<A href=dpans6.htm#6.1.2340>6.1.2340 U&lt;</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0490>
+<code>
+6.1.0490 <B>&lt;#</B>
+</code>
+</a>
+<BR>
+<B>less-number-sign</B>      CORE
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+Initialize the
+pictured numeric output conversion process.
+
+<P>
+
+<code>
+See:    
+<A href=dpans6.htm#6.1.0030>6.1.0030 #</a> ,
+<A href=dpans6.htm#6.1.0040>6.1.0040 #&gt;</a> ,
+<A href=dpans6.htm#6.1.0050>6.1.0050 #S</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0530>
+<code>
+6.1.0530 <B>=</B>
+</code>
+</a>
+<BR>
+<B>equals</B>        CORE
+<BR>
+<pre>
+	( x1 x2 -- flag )
+</pre>
+
+<P>
+
+flag is true
+if and only if x1 is bit-for-bit the same as x2.
+
+<P>
+
+<hr>
+<A name=6.1.0540>
+<code>
+6.1.0540 <B>&gt;</B>
+</code>
+</a>
+<BR>
+<B>greater-than</B>  CORE
+<BR>
+<pre>
+	( n1 n2 -- flag )
+</pre>
+
+<P>
+
+flag is true
+if and only if n1 is greater than n2.
+
+<P>
+
+<code>
+See:    
+<A href=dpans6.htm#6.2.2350>6.2.2350 U&gt;</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0550>
+<code>
+6.1.0550 <B>&gt;BODY</B>
+</code>
+</a>
+<BR>
+<B>to-body</B>       CORE
+<BR>
+<pre>
+	( xt -- a-addr )
+</pre>
+
+<P>
+
+a-addr is the data-field address corresponding to xt. An ambiguous
+condition exists if xt is not for a word defined via 
+<a href=dpans6.htm#6.1.1000>CREATE</a>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3>3.3.3</a> Data space,
+<a href=dpansa6.htm#A.6.1.0550>A.6.1.0550 &gt;BODY</a>
+</code>
+
+
+<P>
+
+<hr>
+<A name=6.1.0560>
+<code>
+6.1.0560 <B>&gt;IN</B>
+</code>
+</a>
+<BR>
+<B>to-in</B> CORE
+<BR>
+<pre>
+	( -- a-addr )
+</pre>
+
+<P>
+
+a-addr is the address of a cell containing the offset in characters from
+the start of the input buffer to the start of the parse area.
+
+<P>
+
+<hr>
+<A name=6.1.0570>
+<code>
+6.1.0570 <B>&gt;NUMBER</B>
+</code>
+</a>
+<BR>
+<B>to-number</B>      CORE
+<BR>
+<pre>
+	( ud1 c-addr1 u1 -- ud2 c-addr2 u2 )
+</pre>
+
+<P>
+
+ud2 is the unsigned result of converting the characters within the
+string specified by c-addr1 u1 into digits, using the number in 
+<a href=dpans6.htm#6.1.0750>BASE</a>,
+and adding each into ud1 after multiplying ud1 by the number in BASE.
+Conversion continues left-to-right until a character that is not
+convertible, including any <B>+</B> or <B>-</B>, is encountered or the
+string is entirely converted. c-addr2 is the location of the first
+unconverted character or the first character past the end of the string
+if the string was entirely converted. u2 is the number of unconverted
+characters in the string. An ambiguous condition exists if ud2
+overflows during the conversion.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.1.2>3.2.1.2</a> Digit conversion
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0580>
+<code>
+6.1.0580 <B>&gt;R</B>
+</code>
+</a>
+<BR>
+<B>to-r</B>  CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( x -- ) ( R:  -- x )
+</pre>
+<P>
+
+Move x to
+the return stack.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.3.3>3.2.3.3</a> Return stack,
+<A href=dpans6.htm#6.1.2060>6.1.2060 R&gt;</a> ,
+<A href=dpans6.htm#6.1.2070>6.1.2070 R@</a> ,
+<A href=dpans6.htm#6.2.0340>6.2.0340 2&gt;R</a> ,
+<A href=dpans6.htm#6.2.0410>6.2.0410 2R&gt;</a> ,
+<A href=dpans6.htm#6.2.0415>6.2.0415 2R@</a> 
+</code>
+<P>
+
+<hr>
+<A name=6.1.0630>
+<code>
+6.1.0630 <B>?DUP</B>
+</code>
+</a>
+<BR>
+<B>question-dupe</B> CORE
+<BR>
+<pre>
+	( x -- 0 | x x )
+</pre>
+
+<P>
+
+Duplicate x
+if it is non-zero.
+
+<P>
+
+<hr>
+<A name=6.1.0650>
+<code>
+6.1.0650 <B>@</B>
+</code>
+</a>
+<BR>
+<B>fetch</B> CORE
+<BR>
+<pre>
+	( a-addr -- x )
+</pre>
+
+<P>
+
+x is the
+value stored at a-addr.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0670>
+<code>
+6.1.0670 <B>ABORT</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( i*x -- ) ( R: j*x -- )
+</pre>
+
+<P>
+
+Empty the data stack and perform the function of 
+<a href=dpans6.htm#6.1.2050>QUIT</a>, which includes
+emptying the return stack, without displaying a message.
+
+<P>
+
+<code>
+See:    
+<A href=dpans9.htm#9.6.2.0670>9.6.2.0670 ABORT</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0680>
+<code>
+6.1.0680 <B>ABORT"</B>
+</code>
+</a>
+<BR>
+<B>abort-quote</B>   CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( <B>"ccc&lt;quote&gt;"</B> -- )
+</pre>
+<P>
+
+Parse ccc delimited by a " (double-quote). Append the run-time semantics
+given below to the current definition.
+
+<p>
+<pre>
+	Run-time: ( i*x x1 --  | i*x ) ( R: j*x --  | j*x )
+</pre>
+<P>
+
+Remove x1 from the stack. If any bit of x1 is not zero, display ccc and
+perform an implementation-defined abort sequence that includes the
+function of 
+<a href=dpans6.htm#6.1.0670>ABORT</a>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<A href=dpans9.htm#9.6.2.0680>9.6.2.0680 ABORT"</a> ,
+<a href=dpansa6.htm#A.6.1.0680>A.6.1.0680 ABORT"</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0690>
+<code>
+6.1.0690 <B>ABS</B>
+</code>
+</a>
+<BR>
+<B>abs</B>   CORE
+<BR>
+<pre>
+	( n -- u )
+</pre>
+
+<P>
+
+u is the
+absolute value of n.
+
+<P>
+
+<hr>
+<A name=6.1.0695>
+<code>
+6.1.0695 <B>ACCEPT</B>
+</code>
+</a>
+<BR>
+CORE
+<pre>
+	( c-addr +n1 -- +n2 )
+</pre>
+
+<P>
+
+Receive a string of at most +n1 characters. An ambiguous condition
+exists if +n1 is zero or greater than 32,767. Display graphic
+characters as they are received. A program that depends on the presence
+or absence of non-graphic characters in the string has an environmental
+dependency. The editing functions, if any, that the system performs in
+order to construct the string are implementation-defined.
+
+<P>
+
+Input terminates when an implementation-defined line terminator is
+received. When input terminates, nothing is appended to the string, and
+the display is maintained in an implementation-defined way.
+
+<P>
+
++n2 is the
+length of the string stored at c-addr.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.1.0695>A.6.1.0695 ACCEPT</a>
+</code>
+<p>
+
+<hr>
+<A name=6.1.0705>
+<code>
+6.1.0705 <B>ALIGN</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+If the data-space pointer is not aligned, reserve enough space to align
+it.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3>3.3.3</a> Data space,
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment,
+<a href=dpansa6.htm#A.6.1.0705>A.6.1.0705 ALIGN</a>
+</code>
+
+
+<P>
+
+<hr>
+<A name=6.1.0706>
+<code>
+6.1.0706 <B>ALIGNED</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( addr -- a-addr )
+</pre>
+
+<P>
+
+a-addr
+is the first aligned address greater than or equal to addr.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment,
+<a href=dpans6.htm#6.1.0705>6.1.0705 ALIGN</a>
+</code>
+
+
+<P>
+
+<hr>
+<A name=6.1.0710>
+<code>
+6.1.0710 <B>ALLOT</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( n -- )
+</pre>
+
+<P>
+
+If n is greater than zero, reserve n address units of data space. If n
+is less than zero, release |n| address units of data space. If n is
+zero, leave the data-space pointer unchanged.
+
+<P>
+
+If the data-space pointer is aligned and n is a multiple of the size of
+a cell when ALLOT begins execution, it will remain aligned when ALLOT
+finishes execution.
+
+<P>
+
+If the data-space pointer is character aligned and n is a multiple of
+the size of a character when ALLOT begins execution, it will remain
+character aligned when ALLOT finishes execution.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3>3.3.3</a> Data space
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0720>
+<code>
+6.1.0720 <B>AND</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( x1 x2 -- x3 )
+</pre>
+
+<P>
+
+x3 is
+the bit-by-bit logical <B>and</B> of x1 with x2.
+
+<P>
+
+<hr>
+<A name=6.1.0750>
+<code>
+6.1.0750 <B>BASE</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( -- a-addr )
+</pre>
+
+<P>
+
+a-addr is the address of a cell containing the current number-conversion
+radix {{2...36}}.
+
+<P>
+
+<hr>
+<A name=6.1.0760>
+<code>
+6.1.0760 <B>BEGIN</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: -- dest )
+</pre>
+<P>
+
+Put the next location for a transfer of control, dest, onto the control
+flow stack. Append the run-time semantics given below to the current
+definition.
+
+<P>
+<pre>
+	Run-time: ( -- )
+</pre>
+<P>
+
+Continue
+execution.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.3.2>3.2.3.2</a> Control-flow stack,
+<A href=dpans6.htm#6.1.2140>6.1.2140 REPEAT</a> ,
+<A href=dpans6.htm#6.1.2390>6.1.2390 UNTIL</a> ,
+<A href=dpans6.htm#6.1.2430>6.1.2430 WHILE</a> ,
+<a href=dpansa6.htm#A.6.1.0760>A.6.1.0760 BEGIN</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0770>
+<code>
+6.1.0770 <B>BL</B>
+</code>
+</a>
+<BR>
+<B>b-l</B>   CORE
+<BR>
+<pre>
+	( -- char )
+</pre>
+
+<P>
+
+char is
+the character value for a space.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.1.0770>A.6.1.0770 BL</a>
+</code>
+<p>
+
+<hr>
+<A name=6.1.0850>
+<code>
+6.1.0850 <B>C!</B>
+</code>
+</a>
+<BR>
+<B>c-store</B>       CORE
+<BR>
+<pre>
+	( char c-addr -- )
+</pre>
+
+<P>
+
+Store char at c-addr. When character size is smaller than cell size,
+only the number of low-order bits corresponding to character size are
+transferred.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0860>
+<code>
+6.1.0860 <B>C,</B>
+</code>
+</a>
+<BR>
+<B>c-comma</B>       CORE
+<BR>
+<pre>
+	( char -- )
+</pre>
+
+<P>
+
+Reserve space for one character in the data space and store char in the
+space. If the data-space pointer is character aligned when C, begins
+execution, it will remain character aligned when C, finishes execution.
+An ambiguous condition exists if the data-space pointer is not
+character-aligned prior to execution of C,.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3>3.3.3</a> Data space,
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment.
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0870>
+<code>
+6.1.0870 <B>C@</B>
+</code>
+</a>
+<BR>
+<B>c-fetch</B>       CORE
+<BR>
+<pre>
+	( c-addr -- char )
+</pre>
+
+<P>
+
+Fetch the character stored at c-addr. When the cell size is greater
+than character size, the unused high-order bits are all zeroes.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0880>
+<code>
+6.1.0880 <B>CELL+</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( a-addr1 -- a-addr2 )
+</pre>
+
+<P>
+
+Add the
+size in address units of a cell to a-addr1, giving a-addr2.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment,
+<a href=dpansa6.htm#A.6.1.0880>A.6.1.0880 CELL+</a>
+</code>
+
+
+<P>
+
+<hr>
+<A name=6.1.0890>
+<code>
+6.1.0890 <B>CELLS</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( n1 -- n2 )
+</pre>
+
+<P>
+
+n2 is
+the size in address units of n1 cells.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.1.0890>A.6.1.0890 CELLS</a>
+</code>
+<p>
+
+<hr>
+<A name=6.1.0895>
+<code>
+6.1.0895 <B>CHAR</B>
+</code>
+</a>
+<BR>
+<B>char</B>  CORE
+<BR>
+<pre>
+	( <B>"&lt;spaces&gt;name"</B> -- char )
+</pre>
+
+<P>
+
+Skip leading
+space delimiters. Parse name delimited by a space. Put the
+value of its first character onto the stack.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<A href=dpans6.htm#6.1.2520>6.1.2520 [CHAR]</a> ,
+<a href=dpansa6.htm#A.6.1.0895>A.6.1.0895 CHAR</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0897>
+<code>
+6.1.0897 <B>CHAR+</B>
+</code>
+</a>
+<BR>
+<B>char-plus</B>     CORE
+<BR>
+<pre>
+	( c-addr1 -- c-addr2 )
+</pre>
+
+<P>
+
+Add the
+size in address units of a character to c-addr1, giving c-addr2.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.1>3.3.3.1</a> Address alignment
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0898>
+<code>
+6.1.0898 <B>CHARS</B>
+</code>
+</a>
+<BR>
+<B>chars</B> CORE
+<BR>
+<pre>
+	( n1 -- n2 )
+</pre>
+
+<P>
+
+n2 is
+the size in address units of n1 characters.
+
+
+<P>
+
+<hr>
+<A name=6.1.0950>
+<code>
+6.1.0950 <B>CONSTANT</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( x <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+
+<P>
+
+Skip leading
+space delimiters. Parse name delimited by a space. Create a
+definition for name with the execution semantics defined below.
+
+<P>
+
+name is
+referred to as a <B>constant</B>.
+
+<P>
+<pre>
+	<i>name</i> Execution: ( -- x )
+</pre>
+<P>
+
+Place x
+on the stack.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<a href=dpansa6.htm#A.6.1.0950>A.6.1.0950 CONSTANT</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.0980>
+<code>
+6.1.0980 <B>COUNT</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( c-addr1 -- c-addr2 u )
+</pre>
+
+<P>
+
+Return the
+character string specification for the counted string stored at
+c-addr1. c-addr2 is the address of the first character after c-addr1. u is
+the contents of the character at c-addr1, which is the length in characters of
+the string at c-addr2.
+
+<P>
+
+<hr>
+<A name=6.1.0990>
+<code>
+6.1.0990 <B>CR</B>
+</code>
+</a>
+<BR>
+<B>c-r</B>   CORE
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+Cause subsequent
+output to appear at the beginning of the next line.
+
+<P>
+
+<hr>
+<A name=6.1.1000>
+<code>
+6.1.1000 <B>CREATE</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+
+<P>
+
+Skip leading
+space delimiters. Parse name delimited by a space. Create a
+definition for name with the execution semantics defined below. If the
+data-space pointer is not aligned, reserve enough data space to align it. The
+new data-space pointer defines name's data field. CREATE does not allocate
+data space in name's data field.
+
+<P>
+<pre>
+	<i>name</i> Execution: ( -- a-addr )
+</pre>
+<P>
+
+a-addr is the address of name's data field. The execution semantics of name
+may be extended by using 
+<a href=dpans6.htm#6.1.1250>DOES&gt;</a>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3>3.3.3</a> Data space,
+<a href=dpansa6.htm#A.6.1.1000>A.6.1.1000 CREATE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1170>
+<code>
+6.1.1170 <B>DECIMAL</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+Set the
+numeric conversion radix to ten (decimal).
+
+<P>
+
+<hr>
+<A name=6.1.1200>
+<code>
+6.1.1200 <B>DEPTH</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( -- +n )
+</pre>
+
+<P>
+
++n is the number of single-cell values contained in the data stack
+before +n was placed on the stack.
+
+<P>
+
+<hr>
+<A name=6.1.1240>
+<code>
+6.1.1240 <B>DO</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: -- do-sys )
+</pre>
+<P>
+
+Place do-sys onto the control-flow stack. Append the run-time semantics
+given below to the current definition. The semantics are incomplete
+until resolved by a consumer of do-sys such as 
+<a href=dpans6.htm#6.1.1800>LOOP</a>.
+
+<P>
+<pre>
+	Run-time: ( n1|u1 n2|u2 -- ) ( R: -- loop-sys )
+</pre>
+<P>
+
+Set up loop control parameters with index n2|u2 and limit n1|u1. An
+ambiguous condition exists if n1|u1 and n2|u2 are not both the same
+type. Anything already on the return stack becomes unavailable until
+the loop-control parameters are discarded.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.3.2>3.2.3.2</a> Control-flow stack,
+<A href=dpans6.htm#6.1.0140>6.1.0140 +LOOP</a> ,
+<a href=dpansa6.htm#A.6.1.1240>A.6.1.1240 DO</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1250>
+<code>
+6.1.1250 <B>DOES&gt;</B>
+</code>
+</a>
+<BR>
+<B>does</B>  CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: colon-sys1 -- colon-sys2 )
+</pre>
+<P>
+
+Append the run-time semantics below to the current definition. Whether
+or not the current definition is rendered findable in the dictionary by
+the compilation of DOES&gt; is implementation defined. Consume
+colon-sys1 and produce colon-sys2. Append the initiation semantics
+given below to the current definition.
+
+<P>
+<pre>
+	Run-time: ( -- ) ( R: nest-sys1 -- )
+</pre>
+<P>
+
+Replace the execution semantics of the most recent definition, referred
+to as name, with the name execution semantics given below. Return
+control to the calling definition specified by nest-sys1. An ambiguous
+condition exists if name was not defined with 
+<a href=dpans6.htm#6.1.1000>CREATE</a> 
+or a user-defined
+word that calls CREATE.
+
+<P>
+<pre>
+	Initiation: ( i*x -- i*x a-addr ) ( R:  -- nest-sys2 )
+</pre>
+<P>
+
+Save implementation-dependent information nest-sys2 about the calling
+definition. Place name's data field address on the stack. The stack
+effects i*x represent arguments to name.
+
+<P>
+<pre>
+	<i>name</i> Execution: ( i*x -- j*x )
+</pre>
+<P>
+
+Execute the portion of the definition that begins with the initiation
+semantics appended by the DOES&gt; which modified name. The stack
+effects i*x and j*x represent arguments to and results from name,
+respectively.
+
+<P>
+
+<code>
+See:
+<a href=dpansa6.htm#A.6.1.1250>A.6.1.1250 DOES&gt;</a> ,
+<a href=a0003.htm>RFI 0003</a> Defining words etc.,
+<a href=a0005.htm>RFI 0005</a> Initiation semantics.
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1260>
+<code>
+6.1.1260 <B>DROP</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( x -- )
+</pre>
+
+<P>
+
+Remove x
+from the stack.
+
+<P>
+
+<hr>
+<A name=6.1.1290>
+<code>
+6.1.1290 <B>DUP</B>
+</code>
+</a>
+<BR>
+<B>dupe</B>  CORE
+<BR>
+<pre>
+	( x -- x x )
+</pre>
+
+<P>
+
+Duplicate
+x.
+
+<P>
+
+<hr>
+<A name=6.1.1310>
+<code>
+6.1.1310 <B>ELSE</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: orig1 -- orig2 )
+</pre>
+<P>
+
+Put the location of a new unresolved forward reference orig2 onto the
+control flow stack. Append the run-time semantics given below to the
+current definition. The semantics will be incomplete until orig2 is
+resolved (e.g., by 
+<a href=dpans6.htm#6.1.2270>THEN</a>). 
+Resolve the forward reference orig1 using the
+location following the appended run-time semantics.
+
+<P>
+<pre>
+	Run-time: ( -- )
+</pre>
+<P>
+
+Continue execution at the location given by the resolution of orig2.
+
+<P>
+
+<code>
+See:
+<A href=dpans6.htm#6.1.1700>6.1.1700 IF</a> ,
+<a href=dpansa6.htm#A.6.1.1310>A.6.1.1310 ELSE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1320>
+<code>
+6.1.1320 <B>EMIT</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( x -- )
+</pre>
+
+<P>
+
+If x is a graphic character in the implementation-defined character set,
+display x. The effect of EMIT for all other values of x is
+implementation-defined.
+
+<P>
+
+When passed a character whose character-defining bits have a value
+between hex 20 and 7E inclusive, the corresponding standard character,
+specified by 
+<a href=dpans3.htm#3.1.2.1>3.1.2.1</a> 
+Graphic characters, is displayed. Because
+different output devices can respond differently to control characters,
+programs that use control characters to perform specific functions have
+an environmental dependency. Each EMIT deals with only one character.
+
+<P>
+
+<code>
+See:    
+<A href=dpans6.htm#6.1.2310>6.1.2310 TYPE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1345>
+<code>
+6.1.1345 <B>ENVIRONMENT?</B>
+</code>
+</a>
+<BR>
+<B>environment-query</B>     CORE
+<BR>
+<pre>
+	( c-addr u -- false | i*x true )
+</pre>
+
+<P>
+
+c-addr is the address of a character string and u is the string's
+character count. u may have a value in the range from zero to an
+implementation-defined maximum which shall not be less than 31. The
+character string should contain a keyword from 
+<a href=dpans3.htm#3.2.6>3.2.6</a> Environmental
+queries or the optional word sets to be checked for correspondence with
+an attribute of the present environment. If the system treats the
+attribute as unknown, the returned flag is false; otherwise, the flag is
+true and the i*x returned is of the type specified in the table for the
+attribute queried.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.1.1345>A.6.1.1345 ENVIRONMENT?</a>
+</code>
+<p>
+
+<hr>
+<A name=6.1.1360>
+<code>
+6.1.1360 <B>EVALUATE</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( i*x c-addr u -- j*x )
+</pre>
+
+<P>
+
+Save the current input source specification. Store minus-one (-1) in
+<a href=dpans6.htm#6.2.2218>SOURCE-ID</a> 
+if it is present. Make the string described by c-addr and u
+both the input source and input buffer, set 
+<a href=dpans6.htm#6.1.0560>&gt;IN</a> 
+to zero, and
+interpret. When the parse area is empty, restore the prior input source
+specification. Other stack effects are due to the words EVALUATEd.
+
+<P>
+<code>
+See:
+<a href=dpans7.htm#7.6.1.1360>7.6.1.1360 EVALUATE</a> ,
+<a href=dpansa6.htm#A.6.1.1360>A.6.1.1360 EVALUATE</a> ,
+<a href=a0006.htm>RFI 0006</a> Writing to Input Buffers.
+</code>
+<p>
+
+<hr>
+<A name=6.1.1370>
+<code>
+6.1.1370 <B>EXECUTE</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( i*x xt -- j*x )
+</pre>
+
+<P>
+
+Remove xt from the stack and perform the semantics identified by it.
+Other stack effects are due to the word EXECUTEd.
+
+<P>
+
+<code>
+See:
+<A href=dpans6.htm#6.1.0070>6.1.0070 '</a> ,
+<A href=dpans6.htm#6.1.2510>6.1.2510 [']</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1380>
+<code>
+6.1.1380 <B>EXIT</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( -- ) ( R: nest-sys -- )
+</pre>
+<P>
+
+Return control to the calling definition specified by nest-sys. Before
+executing EXIT within a do-loop, a program shall discard the loop-control
+parameters by executing 
+<a href=dpans6.htm#6.1.2380>UNLOOP</a>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.3.3>3.2.3.3</a> Return stack,
+<a href=dpansa6.htm#A.6.1.1380>A.6.1.1380 EXIT</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1540>
+<code>
+6.1.1540 <B>FILL</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( c-addr u char -- )
+</pre>
+
+<P>
+
+If u
+is greater than zero, store char in each of u consecutive characters of
+memory beginning at c-addr.
+
+<P>
+
+<hr>
+<A name=6.1.1550>
+<code>
+6.1.1550 <B>FIND</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( c-addr -- c-addr 0  |  xt 1  |  xt -1 )
+</pre>
+
+<P>
+
+Find the definition named in the counted string at c-addr. If the
+definition is not found, return c-addr and zero. If the definition is
+found, return its execution token xt. If the definition is immediate,
+also return one (1), otherwise also return minus-one (-1). For a given
+string, the values returned by FIND while compiling may differ from
+those returned while not compiling.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.2>3.4.2</a> Finding definition names,
+<A href=dpans6.htm#6.1.0070>6.1.0070 '</a> ,
+<A href=dpans6.htm#6.1.2510>6.1.2510 [']</a> ,
+<a href=dpansa6.htm#A.6.1.1550>A.6.1.1550 FIND</a> ,
+<A href=dpansa6.htm#A.6.1.2033>A.6.1.2033 POSTPONE</a> ,
+<A href=dpansd.htm#D.6.7>D.6.7</a> Immediacy.
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1561>
+<code>
+6.1.1561 <B>FM/MOD</B>
+</code>
+</a>
+<BR>
+<B>f-m-slash-mod</B> CORE
+<BR>
+<pre>
+	( d1 n1 -- n2 n3 )
+</pre>
+
+<P>
+
+Divide d1 by n1, giving the floored quotient n3 and the remainder n2.
+Input and output stack arguments are signed. An ambiguous condition
+exists if n1 is zero or if the quotient lies outside the range of a
+single-cell signed integer.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.2.1>3.2.2.1</a> Integer division,
+<A href=dpans6.htm#6.1.2214>6.1.2214 SM/REM</a> ,
+<A href=dpans6.htm#6.1.2370>6.1.2370 UM/MOD</a> ,
+<a href=dpansa6.htm#A.6.1.1561>A.6.1.1561 FM/MOD</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1650>
+<code>
+6.1.1650 <B>HERE</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( -- addr )
+</pre>
+
+<P>
+
+addr is
+the data-space pointer.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.2>3.3.3.2</a> Contiguous regions
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1670>
+<code>
+6.1.1670 <B>HOLD</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( char -- )
+</pre>
+
+<P>
+
+Add char
+to the beginning of the pictured numeric output string. An ambiguous
+condition exists if HOLD executes outside of a 
+<a href=dpans6.htm#6.1.0490>&lt;#</a> 
+<a href=dpans6.htm#6.1.0040>#&gt;</a> 
+delimited number
+conversion.
+
+<P>
+
+<hr>
+<A name=6.1.1680>
+<code>
+6.1.1680 <B>I</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( -- n|u ) ( R:  loop-sys -- loop-sys )
+</pre>
+<P>
+
+n|u is a copy of the current (innermost) loop index. An ambiguous condition
+exists if the loop control parameters are unavailable.
+
+<P>
+
+<hr>
+<A name=6.1.1700>
+<code>
+6.1.1700 <B>IF</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: -- orig )
+</pre>
+<P>
+
+Put the location of a new unresolved forward reference orig onto the
+control flow stack. Append the run-time semantics given below to the
+current definition. The semantics are incomplete until orig is
+resolved, e.g., by 
+<a href=dpans6.htm#6.1.2270>THEN</a> or 
+<a href=dpans6.htm#6.1.1310>ELSE</a>.
+
+<P>
+<pre>
+	Run-time: ( x -- )
+</pre>
+<P>
+
+If all bits of x are zero, continue execution at the location specified
+by the resolution of orig.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.3.2>3.2.3.2</a> Control flow stack,
+<a href=dpansa6.htm#A.6.1.1700>A.6.1.1700 IF</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1710>
+<code>
+6.1.1710 <B>IMMEDIATE</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+Make the
+most recent definition an immediate word. An ambiguous condition
+exists if the most recent definition does not have a name.
+
+<P>
+
+<code>
+See:
+<a href=dpansa6.htm#A.6.1.1710>A.6.1.1710 IMMEDIATE</a> ,
+<A href=dpansd.htm#D.6.7>D.6.7</a> Immediacy,
+<a href=a0007.htm>RFI 0007</a> Distinction between <em>immediacy</em> and <em>special compilation semantics</em>.
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1720>
+<code>
+6.1.1720 <B>INVERT</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( x1 -- x2 )
+</pre>
+
+<P>
+
+Invert all
+bits of x1, giving its logical inverse x2.
+
+<P>
+
+<code>
+See:
+<A href=dpans6.htm#6.1.1910>6.1.1910 NEGATE</a> ,
+<A href=dpans6.htm#6.1.0270>6.1.0270 0=</a> ,
+<a href=dpansa6.htm#A.6.1.1720>A.6.1.1720 INVERT</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1730>
+<code>
+6.1.1730 <B>J</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( -- n|u ) ( R: loop-sys1 loop-sys2 -- loop-sys1 loop-sys2 )
+</pre>
+<P>
+
+n|u is a copy of the next-outer loop index. An ambiguous condition
+exists if the loop control parameters of the next-outer loop, loop-sys1,
+are unavailable.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.1.1730>A.6.1.1730 J</a>
+</code>
+<p>
+
+<hr>
+<A name=6.1.1750>
+<code>
+6.1.1750 <B>KEY</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( -- char )
+</pre>
+
+<P>
+
+Receive one character char, a member of the implementation-defined
+character set. Keyboard events that do not correspond to such
+characters are discarded until a valid character is received, and those
+events are subsequently unavailable.
+
+<P>
+
+All standard characters can be received. Characters received by KEY are
+not displayed.
+
+<P>
+
+Any standard character returned by KEY has the numeric value specified
+in 
+<a href=dpans3.htm#3.1.2.1>3.1.2.1</a> 
+Graphic characters. Programs that require the ability to
+receive control characters have an environmental dependency.
+
+<P>
+
+<code>
+See:
+<A href=dpans10.htm#10.6.2.1305>10.6.2.1305 EKEY</a> ,
+<A href=dpans10.htm#10.6.1.1755>10.6.1.1755 KEY?</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1760>
+<code>
+6.1.1760 <B>LEAVE</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( -- ) ( R: loop-sys -- )
+</pre>
+<P>
+
+Discard the current loop control parameters. An ambiguous condition
+exists if they are unavailable. Continue execution immediately
+following the innermost syntactically enclosing 
+<a href=dpans6.htm#6.1.1240>DO</a> ... 
+<a href=dpans6.htm#6.1.1800>LOOP</a> 
+or DO ...
+<a href=dpans6.htm#6.1.0140>+LOOP</a>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.3.3>3.2.3.3</a> Return stack,
+<a href=dpansa6.htm#A.6.1.1760>A.6.1.1760 LEAVE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1780>
+<code>
+6.1.1780 <B>LITERAL</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( x -- )
+</pre>
+<P>
+
+Append the run-time semantics
+given below to the current definition.
+
+<P>
+<pre>
+	Run-time: ( -- x )
+</pre>
+<P>
+
+Place x
+on the stack.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.1.1780>A.6.1.1780 LITERAL</a>
+</code>
+<p>
+
+<hr>
+<A name=6.1.1800>
+<code>
+6.1.1800 <B>LOOP</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: do-sys -- )
+</pre>
+<P>
+
+Append the run-time semantics given below to the current definition.
+Resolve the destination of all unresolved occurrences of 
+<a href=dpans6.htm#6.1.1760>LEAVE</a> 
+between
+the location given by do-sys and the next location for a transfer of
+control, to execute the words following the LOOP.
+
+<P>
+<pre>
+	Run-time: ( -- ) ( R:  loop-sys1 --  | loop-sys2 )
+</pre>
+<P>
+
+An ambiguous condition exists if the loop control parameters are
+unavailable. Add one to the loop index. If the loop index is then
+equal to the loop limit, discard the loop parameters and continue
+execution immediately following the loop. Otherwise continue execution
+at the beginning of the loop.
+
+<P>
+
+<code>
+See:
+<A href=dpans6.htm#6.1.1240>6.1.1240 DO</a> ,
+<A href=dpans6.htm#6.1.1680>6.1.1680 I</a> ,
+<a href=dpansa6.htm#A.6.1.1800>A.6.1.1800 LOOP</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1805>
+<code>
+6.1.1805 <B>LSHIFT</B>
+</code>
+</a>
+<BR>
+<B>l-shift</B>       CORE
+<BR>
+<pre>
+	( x1 u -- x2 )
+</pre>
+
+<P>
+
+Perform a
+logical left shift of u bit-places on x1, giving x2. Put zeroes
+into the least significant bits vacated by the shift. An ambiguous condition
+exists if u is greater than or equal to the number of bits in a cell.
+
+<P>
+
+<hr>
+<A name=6.1.1810>
+<code>
+6.1.1810 <B>M*</B>
+</code>
+</a>
+<BR>
+<B>m-star</B>        CORE
+<BR>
+<pre>
+	( n1 n2 -- d )
+</pre>
+
+<P>
+
+d is
+the signed product of n1 times n2.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.1.1810>A.6.1.1810 M*</a>
+</code>
+<p>
+
+<hr>
+<A name=6.1.1870>
+<code>
+6.1.1870 <B>MAX</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( n1 n2 -- n3 )
+</pre>
+
+<P>
+
+n3 is
+the greater of n1 and n2.
+
+<P>
+
+<hr>
+<A name=6.1.1880>
+<code>
+6.1.1880 <B>MIN</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( n1 n2 -- n3 )
+</pre>
+
+<P>
+
+n3 is
+the lesser of n1 and n2.
+
+<P>
+
+<hr>
+<A name=6.1.1890>
+<code>
+6.1.1890 <B>MOD</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( n1 n2 -- n3 )
+</pre>
+
+<P>
+
+Divide n1 by n2, giving the single-cell remainder n3. An ambiguous
+condition exists if n2 is zero. If n1 and n2 differ in sign, the
+implementation-defined result returned will be the same as that returned
+by either the phrase 
+<b><code>&gt;R S&gt;D R&gt; FM/MOD DROP</code></b> 
+or the phrase 
+<b><code>&gt;R S&gt;D R&gt; SM/REM DROP</code></b>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.2.1>3.2.2.1</a> Integer division
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1900>
+<code>
+6.1.1900 <B>MOVE</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( addr1 addr2 u -- )
+</pre>
+
+<P>
+
+If u is greater than zero, copy the contents of u consecutive address
+units at addr1 to the u consecutive address units at addr2. After MOVE
+completes, the u consecutive address units at addr2 contain exactly what
+the u consecutive address units at addr1 contained before the move.
+
+<P>
+
+<code>
+See:
+<A href=dpans17.htm#17.6.1.0910>17.6.1.0910 CMOVE</a> ,
+<A href=dpans17.htm#17.6.1.0920>17.6.1.0920 CMOVE&gt;</a> ,
+<a href=dpansa6.htm#A.6.1.1900>A.6.1.1900 MOVE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1910>
+<code>
+6.1.1910 <B>NEGATE</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( n1 -- n2 )
+</pre>
+
+<P>
+
+Negate n1,
+giving its arithmetic inverse n2.
+
+<P>
+
+<code>
+See:
+<A href=dpans6.htm#6.1.1720>6.1.1720 INVERT</a> ,
+<A href=dpans6.htm#6.1.0270>6.1.0270 0=</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.1980>
+<code>
+6.1.1980 <B>OR</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( x1 x2 -- x3 )
+</pre>
+
+<P>
+
+x3 is
+the bit-by-bit inclusive-or of x1 with x2.
+
+<P>
+
+<hr>
+<A name=6.1.1990>
+<code>
+6.1.1990 <B>OVER</B>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( x1 x2 -- x1 x2 x1 )
+</pre>
+
+<P>
+
+Place a
+copy of x1 on top of the stack.
+
+<hr>
+<A name=6.1.2033>
+<code>
+6.1.2033 <B>POSTPONE</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+<P>
+
+Skip leading space delimiters. Parse name delimited by a space. Find
+name. Append the compilation semantics of name to the current
+definition. An ambiguous condition exists if name is not found.
+
+<P>
+
+<code>
+See:
+<a href=dpansd.htm#D.6.7>D.6.7</a> Immediacy,
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<a href=dpansa6.htm#A.6.1.2033>A.6.1.2033 POSTPONE</a> ,
+<a href=dpans6.htm#6.2.2530>6.2.2530 [COMPILE]</a>
+</code>
+
+<P>
+
+
+<hr>
+<A name=6.1.2050>
+<code>
+6.1.2050 <b>QUIT</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( -- )  ( R:  i*x -- )
+</pre>
+
+<P>
+
+Empty the return stack, store zero in 
+<a href=dpans6.htm#6.2.2218>SOURCE-ID</a> 
+if it is present, make
+the user input device the input source, and enter interpretation state.
+Do not display a message. Repeat the following:
+
+<UL>
+<LI>Accept a line from the input source into the input buffer, set 
+<a href=dpans6.htm#6.1.0560>&gt;IN</a>
+to zero, and interpret.
+<LI>Display the implementation-defined system prompt if in interpretation
+state, all processing has been completed, and no ambiguous condition
+exists.
+</ul>
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4>3.4</a> The Forth text interpreter
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2060>
+<code>
+6.1.2060 <b>R&gt;</b>
+</code>
+</a>
+<BR>
+<B>r-from</B>        CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( -- x ) ( R:  x -- )
+</pre>
+<P>
+
+Move x from
+the return stack to the data stack.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.3.3>3.2.3.3</a> Return stack,
+<A href=dpans6.htm#6.1.0580>6.1.0580 &gt;R</a> ,
+<A href=dpans6.htm#6.1.2070>6.1.2070 R@</a> ,
+<A href=dpans6.htm#6.2.0340>6.2.0340 2&gt;R</a> ,
+<A href=dpans6.htm#6.2.0410>6.2.0410 2R&gt;</a> ,
+<A href=dpans6.htm#6.2.0415>6.2.0415 2R@</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2070>
+<code>
+6.1.2070 <b>R@</b>
+</code>
+</a>
+<BR>
+<B>r-fetch</B>       CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( -- x ) ( R:  x -- x )
+</pre>
+<P>
+
+Copy x from
+the return stack to the data stack.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.3.3>3.2.3.3</a> Return stack,
+<A href=dpans6.htm#6.1.0580>6.1.0580 &gt;R</a> ,
+<A href=dpans6.htm#6.1.2060>6.1.2060 R&gt;</a> ,
+<A href=dpans6.htm#6.2.0340>6.2.0340 2&gt;R</a> ,
+<A href=dpans6.htm#6.2.0410>6.2.0410 2R&gt;</a> ,
+<A href=dpans6.htm#6.2.0415>6.2.0415 2R@</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2120>
+<code>
+6.1.2120 <b>RECURSE</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( -- )
+</pre>
+<P>
+
+Append the execution semantics of the current definition to the current
+definition. An ambiguous condition exists if RECURSE appears in a
+definition after 
+<a href=dpans6.htm#6.1.1250>DOES&gt;</a>.
+
+<P>
+
+<code>
+See:
+<A href=dpans6.htm#6.1.2120>6.1.2120 RECURSE</a> ,
+<a href=dpansa6.htm#A.6.1.2120>A.6.1.2120 RECURSE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2140>
+<code>
+6.1.2140 <b>REPEAT</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: orig dest -- )
+</pre>
+<P>
+
+Append the run-time semantics given below to the current definition,
+resolving the backward reference dest. Resolve the forward reference
+orig using the location following the appended run-time semantics.
+
+<P>
+<pre>
+	Run-time: ( -- )
+</pre>
+<P>
+
+Continue execution
+at the location given by dest.
+
+<P>
+
+<code>
+See:
+<A href=dpans6.htm#6.1.0760>6.1.0760 BEGIN</a> ,
+<A href=dpans6.htm#6.1.2430>6.1.2430 WHILE</a> ,
+<a href=dpansa6.htm#A.6.1.2140>A.6.1.2140 REPEAT</a>
+</code>
+
+
+<P>
+
+<hr>
+<A name=6.1.2160>
+<code>
+6.1.2160 <b>ROT</b>
+</code>
+</a>
+<BR>
+<B>rote</B>  CORE
+<BR>
+<pre>
+	( x1 x2 x3 -- x2 x3 x1 )
+</pre>
+
+<P>
+
+Rotate the
+top three stack entries.
+
+
+<P>
+
+<hr>
+<A name=6.1.2162>
+<code>
+6.1.2162 <b>RSHIFT</b>
+</code>
+</a>
+<BR>
+<B>r-shift</B>       CORE
+<BR>
+<pre>
+	( x1 u -- x2 )
+</pre>
+
+<P>
+
+Perform a logical right shift of u bit-places on x1, giving x2. Put
+zeroes into the most significant bits vacated by the shift. An
+ambiguous condition exists if u is greater than or equal to the number
+of bits in a cell.
+
+<P>
+
+<hr>
+<A name=6.1.2165>
+<code>
+6.1.2165 <b>S"</b>
+</code>
+</a>
+<BR>
+<B>s-quote</B>       CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( <B>"ccc&lt;quote&gt;"</B> -- )
+</pre>
+<P>
+
+Parse ccc delimited by " (double-quote). Append the run-time semantics
+given below to the current definition.
+
+
+<PRE>
+        Run-time: ( -- c-addr u )
+</PRE>
+
+<P>
+
+Return c-addr and u describing a string consisting of the characters
+ccc. A program shall not alter the returned string.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<A href=dpans6.htm#6.2.0855>6.2.0855 C"</a> ,
+<A href=dpans11.htm#11.6.1.2165>11.6.1.2165 S"</a> ,
+<a href=dpansa6.htm#A.6.1.2165>A.6.1.2165 S"</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2170>
+<code>
+6.1.2170 <b>S&gt;D</b>
+</code>
+</a>
+<BR>
+<B>s-to-d</B>        CORE
+<BR>
+<pre>
+	( n -- d )
+</pre>
+
+<P>
+
+Convert the
+number n to the double-cell number d with the same numerical
+value.
+
+<P>
+
+<hr>
+<A name=6.1.2210>
+<code>
+6.1.2210 <b>SIGN</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( n -- )
+</pre>
+
+<P>
+
+If n is negative, add a minus sign to the beginning of the pictured
+numeric output string. An ambiguous condition exists if SIGN executes
+outside of a 
+<a href=dpans6.htm#6.1.0490>&lt;#</a> 
+<a href=dpans6.htm#6.1.0040>#&gt;</a> 
+delimited number conversion.
+
+<P>
+
+<hr>
+<A name=6.1.2214>
+<code>
+6.1.2214 <b>SM/REM</b>
+</code>
+</a>
+<BR>
+<B>s-m-slash-rem</B> CORE
+<BR>
+<pre>
+	( d1 n1 -- n2 n3 )
+</pre>
+
+<P>
+
+Divide d1 by n1, giving the symmetric quotient n3 and the remainder n2.
+Input and output stack arguments are signed. An ambiguous condition
+exists if n1 is zero or if the quotient lies outside the range of a
+single-cell signed integer.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.2.1>3.2.2.1</a> Integer division,
+<A href=dpans6.htm#6.1.1561>6.1.1561 FM/MOD</a> ,
+<A href=dpans6.htm#6.1.2370>6.1.2370 UM/MOD</a> ,
+<a href=dpansa6.htm#A.6.1.2214>A.6.1.2214 SM/REM</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2216>
+<code>
+6.1.2216 <b>SOURCE</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( -- c-addr u )
+</pre>
+
+<P>
+
+c-addr is the address of, and u is the number of characters in, the
+input buffer.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.1.2216>A.6.1.2216 SOURCE</a> ,
+<a href=a0006.htm>RFI 0006</a> Writing to Input Buffers.
+</code>
+<p>
+
+<hr>
+<A name=6.1.2220>
+<code>
+6.1.2220 <b>SPACE</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+Display one
+space.
+
+<P>
+
+<hr>
+<A name=6.1.2230>
+<code>
+6.1.2230 <b>SPACES</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( n -- )
+</pre>
+
+<P>
+
+If n
+is greater than zero, display n spaces.
+
+<P>
+
+<hr>
+<A name=6.1.2250>
+<code>
+6.1.2250 <b>STATE</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( -- a-addr )
+</pre>
+
+<P>
+
+a-addr is the address of a cell containing the compilation-state flag.
+STATE is true when in compilation state, false otherwise. The true
+value in STATE is non-zero, but is otherwise implementation-defined.
+Only the following standard words alter the value in STATE: : 
+(<a href=dpans6.htm#6.1.0450>colon</a>), ;
+(<a href=dpans6.htm#6.1.0460>semicolon</a>), 
+<a href=dpans6.htm#6.1.0670>ABORT</a>, 
+<a href=dpans6.htm#6.1.2050>QUIT</a>, 
+<a href=dpans6.htm#6.2.0455>:NONAME</a>, [ 
+(<a href=dpans6.htm#6.1.2500>left-bracket</a>), and ]
+(<a href=dpans6.htm#6.1.2540>right-bracket</a>).
+<p>
+
+<b>Note:</b>  A program shall not directly alter the contents of
+STATE.
+
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4>3.4</a> The Forth text interpreter,
+<A href=dpans15.htm#15.6.2.2250>15.6.2.2250 STATE</a> ,
+<a href=dpansa6.htm#A.6.1.2250>A.6.1.2250 STATE</a> ,
+<a href=a0007.htm>RFI 0007</a> Distinction between <em>immediacy</em> and <em>special compilation semantics</em>.
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2260>
+<code>
+6.1.2260 <b>SWAP</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( x1 x2 -- x2 x1 )
+</pre>
+
+<P>
+
+Exchange the
+top two stack items.
+
+<P>
+
+<hr>
+<A name=6.1.2270>
+<code>
+6.1.2270 <b>THEN</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: orig -- )
+</pre>
+<P>
+
+Append the run-time semantics given below to the current definition.
+Resolve the forward reference orig using the location of the appended
+run-time semantics.
+
+<P>
+<pre>
+	Run-time: ( -- )
+</pre>
+<P>
+
+Continue
+execution.
+
+<P>
+
+<code>
+See:
+<A href=dpans6.htm#6.1.1310>6.1.1310 ELSE</a> ,
+<A href=dpans6.htm#6.1.1700>6.1.1700 IF</a> ,
+<a href=dpansa6.htm#A.6.1.2270>A.6.1.2270 THEN</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2310>
+<code>
+6.1.2310 <b>TYPE</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( c-addr u -- )
+</pre>
+
+<P>
+
+If u is greater than zero, display the character string specified by
+c-addr and u.
+
+<P>
+
+When passed a character in a character string whose character-defining
+bits have a value between hex 20 and 7E inclusive, the corresponding
+standard character, specified by 
+<a href=dpans3.htm#3.1.2.1>3.1.2.1</a> graphic characters, is
+displayed. Because different output devices can respond differently to
+control characters, programs that use control characters to perform
+specific functions have an environmental dependency.
+
+<P>
+
+<code>
+See:
+<A href=dpans6.htm#6.1.1320>6.1.1320 EMIT</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2320>
+<code>
+6.1.2320 <b>U.</b>
+</code>
+</a>
+<BR>
+<B>u-dot</B> CORE
+<BR>
+<pre>
+	( u -- )
+</pre>
+
+<P>
+
+Display u
+in free field format.
+
+<P>
+
+<hr>
+<A name=6.1.2340>
+<code>
+6.1.2340 <b>U&lt;</b>
+</code>
+</a>
+<BR>
+<B>u-less-than</B>   CORE
+<BR>
+<pre>
+	( u1 u2 -- flag )
+</pre>
+
+<P>
+
+flag is
+true if and only if u1 is less than u2.
+
+<P>
+
+<code>
+See:
+<A href=dpans6.htm#6.1.0480>6.1.0480 &lt;</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2360>
+<code>
+6.1.2360 <b>UM*</b>
+</code>
+</a>
+<BR>
+<B>u-m-star</B>      CORE
+<BR>
+<pre>
+	( u1 u2 -- ud )
+</pre>
+
+<P>
+
+Multiply u1 by u2, giving the unsigned double-cell product ud. All
+values and arithmetic are unsigned.
+
+<P>
+
+<hr>
+<A name=6.1.2370>
+<code>
+6.1.2370 <b>UM/MOD</b>
+</code>
+</a>
+<BR>
+<B>u-m-slash-mod</B> CORE
+<BR>
+<pre>
+	( ud u1 -- u2 u3 )
+</pre>
+
+<P>
+
+Divide ud by u1, giving the quotient u3 and the remainder u2. All
+values and arithmetic are unsigned. An ambiguous condition exists if u1
+is zero or if the quotient lies outside the range of a single-cell
+unsigned integer.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.2.1>3.2.2.1</a> Integer division,
+<A href=dpans6.htm#6.1.1561>6.1.1561 FM/MOD</a> ,
+<A href=dpans6.htm#6.1.2214>6.1.2214 SM/REM</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2380>
+<code>
+6.1.2380 <b>UNLOOP</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( -- ) ( R: loop-sys -- )
+</pre>
+<P>
+
+Discard the loop-control parameters for the current nesting level. An
+UNLOOP is required for each nesting level before the definition may be
+<a href=dpans6.htm#6.1.1380>EXIT</a>ed. 
+An ambiguous condition exists if the loop-control parameters
+are unavailable.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.3.3>3.2.3.3</a> Return stack,
+<a href=dpansa6.htm#A.6.1.2380>A.6.1.2380 UNLOOP</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2390>
+<code>
+6.1.2390 <b>UNTIL</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: dest -- )
+</pre>
+<P>
+
+Append the run-time semantics given below to the current definition,
+resolving the backward reference dest.
+
+<P>
+<pre>
+	Run-time: ( x -- )
+</pre>
+<P>
+
+If all bits of x are zero, continue execution at the location specified
+by dest.
+
+<P>
+
+<code>
+See:
+<A href=dpans6.htm#6.1.0760>6.1.0760 BEGIN</a> ,
+<a href=dpansa6.htm#A.6.1.2390>A.6.1.2390 UNTIL</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2410>
+<code>
+6.1.2410 <b>VARIABLE</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+
+<P>
+
+Skip leading space delimiters. Parse name delimited by a space. Create
+a definition for name with the execution semantics defined below.
+Reserve one cell of data space at an aligned address.
+
+<P>
+
+name is referred
+to as a <B>variable</B>.
+
+<P>
+<pre>
+	<i>name</i> Execution: ( -- a-addr )
+</pre>
+<P>
+
+a-addr is the address of the reserved cell. A program is responsible
+for initializing the contents of the reserved cell.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<a href=dpansa6.htm#A.6.1.2410>A.6.1.2410 VARIABLE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2430>
+<code>
+6.1.2430 <b>WHILE</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: dest -- orig dest )
+</pre>
+<P>
+
+Put the location of a new unresolved forward reference orig onto the
+control flow stack, under the existing dest. Append the run-time
+semantics given below to the current definition. The semantics are
+incomplete until orig and dest are resolved (e.g., by 
+<a href=dpans6.htm#6.1.2140>REPEAT</a>).
+
+<P>
+<pre>
+	Run-time: ( x -- )
+</pre>
+<P>
+
+If all bits of x are zero, continue execution at the location specified
+by the resolution of orig.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.1.2430>A.6.1.2430 WHILE</a>
+</code>
+<p>
+
+<hr>
+<A name=6.1.2450>
+<code>
+6.1.2450 <b>WORD</b>
+</code>
+</a>
+<BR>
+CORE
+<BR>
+<pre>
+	( char <B>"&lt;chars&gt;ccc&lt;char&gt;"</B> -- c-addr )
+</pre>
+
+<P>
+
+Skip leading delimiters. Parse characters ccc delimited by char. An
+ambiguous condition exists if the length of the parsed string is greater
+than the implementation-defined length of a counted string.
+
+<P>
+
+c-addr is the address of a transient region containing the parsed word
+as a counted string. If the parse area was empty or contained no
+characters other than the delimiter, the resulting string has a zero
+length. A space, not included in the length, follows the string. A
+program may replace characters within the string.
+
+<P>
+
+<b>Note:</b>  The requirement to follow the string with a space is
+obsolescent and is included as a concession to existing programs that
+use 
+<a href=dpans6.htm#6.2.0970>CONVERT</a>. 
+A program shall not depend on the existence of the
+space.
+
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other transient regions,
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<a href=dpans6.htm#6.2.2008>6.2.2008 PARSE</a> ,
+<a href=dpansa6.htm#A.6.1.2450>A.6.1.2450 WORD</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2490>
+<code>
+6.1.2490 <b>XOR</b>
+</code>
+</a>
+<BR>
+<B>x-or</B>  CORE
+<BR>
+<pre>
+	( x1 x2 -- x3 )
+</pre>
+
+<P>
+
+x3 is
+the bit-by-bit exclusive-or of x1 with x2.
+
+<P>
+
+<hr>
+<A name=6.1.2500>
+<code>
+6.1.2500 <b>[</b>
+</code>
+</a>
+<BR>
+<B>left-bracket</B> CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: Perform the execution semantics given below.
+</pre>
+<P>
+<pre>
+	Execution: ( -- )
+</pre>
+<P>
+
+Enter interpretation
+state. [ is an immediate word.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4>3.4</a> The Forth text interpreter,
+<A href=dpans3.htm#3.4.5>3.4.5</a> Compilation,
+<A href=dpans6.htm#6.1.2540>6.1.2540 ]</a> ,
+<a href=dpansa6.htm#A.6.1.2500>A.6.1.2500 [</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2510>
+<code>
+6.1.2510 <b>[']</b>
+</code>
+</a>
+<BR>
+<B>bracket-tick</B>  CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+<P>
+
+Skip leading space delimiters. Parse name delimited by a space. Find
+name. Append the run-time semantics given below to the current
+definition.
+
+<P>
+
+An ambiguous condition
+exists if name is not found.
+
+<P>
+<pre>
+	Run-time: ( -- xt )
+</pre>
+<P>
+
+Place name's execution token xt on the stack. The execution token
+returned by the compiled phrase 
+<b><code>['] X</code></b> is the same value returned
+by <b><code>' X</code></b> outside of compilation state.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<A href=dpans6.htm#6.1.0070>6.1.0070 '</a> ,
+<A href=dpansa6.htm#A.6.1.2033>A.6.1.2033 POSTPONE</a> ,
+<a href=dpansa6.htm#A.6.1.2510>A.6.1.2510 [']</a> ,
+<A href=dpansd.htm#D.6.7>D.6.7</a> Immediacy.
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2520>
+<code>
+6.1.2520 <b>[CHAR]</b>
+</code>
+</a>
+<BR>
+<B>bracket-char</B>  CORE
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+<P>
+
+Skip leading space delimiters. Parse name delimited by a space. Append the
+run-time semantics given below to the current definition.
+
+<P>
+<pre>
+	Run-time: ( -- char )
+</pre>
+<P>
+
+Place char, the
+value of the first character of name, on the stack.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<A href=dpans6.htm#6.1.0895>6.1.0895 CHAR</a> ,
+<a href=dpansa6.htm#A.6.1.2520>A.6.1.2520 [CHAR]</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.1.2540>
+<code>
+6.1.2540 <b>]</b>
+</code>
+</a>
+<BR>
+<B>right-bracket</B>  CORE
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+Enter compilation
+state.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4>3.4</a> The Forth text interpreter,
+<A href=dpans3.htm#3.4.5>3.4.5</a> Compilation,
+<A href=dpans6.htm#6.1.2500>6.1.2500 [</a> ,
+<a href=dpansa6.htm#A.6.1.2540>A.6.1.2540 ]</a> ,
+</code>
+
+
+<hr>
+<a name=6.2>
+<H2>6.2 Core extension words</H2>
+</a>
+
+<p>
+<code>
+See:
+<a href=dpansa6.htm#A.6.2>A.6.2</a> Core extension words
+</code>
+<p>
+
+<hr>
+<A name=6.2.0060>
+<code>
+6.2.0060 <b>#TIB</b>
+</code>
+</a>
+<BR>
+<B>number-t-i-b</B>  CORE EXT
+<BR>
+<pre>
+	( -- a-addr )
+</pre>
+
+<P>
+
+a-addr
+is the address of a cell containing the number of characters in the
+terminal input buffer.
+
+<P>
+
+<b>Note:</b>  This word is obsolescent and is included as a concession to
+existing implementations.
+
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.2.0060>A.6.2.0060 #TIB</a>
+</code>
+<p>
+
+<hr>
+<A name=6.2.0200>
+<code>
+6.2.0200 <b>.(</b>
+</code>
+</a>
+<BR>
+<B>dot-paren</B>    CORE EXT
+<BR>
+
+<P>
+<pre>
+	Compilation: Perform the execution semantics given below.
+</pre>
+<P>
+<pre>
+	Execution: ( <B>"ccc&lt;paren&gt;"</B> -- )
+</pre>
+<P>
+
+Parse and display ccc delimited by ) (right parenthesis). .( is an
+immediate word.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<A href=dpans6.htm#6.1.0190>6.1.0190 ."</a> ,
+<a href=dpansa6.htm#A.6.2.0200>A.6.2.0200 .(</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.0210>
+<code>
+6.2.0210 <b>.R</b>
+</code>
+</a>
+<BR>
+<B>dot-r</B> CORE EXT
+<BR>
+<pre>
+	( n1 n2 -- )
+</pre>
+
+<P>
+
+Display n1 right aligned in a field n2 characters wide. If the number
+of characters required to display n1 is greater than n2, all digits are
+displayed with no leading spaces in a field as wide as necessary.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.2.0210>A.6.2.0210 .R</a>
+</code>
+<p>
+
+<hr>
+<A name=6.2.0260>
+<code>
+6.2.0260 <b>0&lt;&gt;</b>
+</code>
+</a>
+<BR>
+<B>zero-not-equals</B>       CORE EXT
+<BR>
+<pre>
+	( x -- flag )
+</pre>
+
+<P>
+
+flag is
+true if and only if x is not equal to zero.
+
+<P>
+
+<hr>
+<A name=6.2.0280>
+<code>
+6.2.0280 <b>0&gt;</b>
+</code>
+</a>
+<BR>
+<B>zero-greater</B>  CORE EXT
+<BR>
+<pre>
+	( n -- flag )
+</pre>
+
+<P>
+
+flag is
+true if and only if n is greater than zero.
+
+<P>
+
+<hr>
+<A name=6.2.0340>
+<code>
+6.2.0340 <b>2&gt;R</b>
+</code>
+</a>
+<BR>
+<B>two-to-r</B>      CORE EXT
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( x1 x2 -- ) ( R:  -- x1 x2 )
+</pre>
+<P>
+
+Transfer cell pair x1 x2 to the return stack. Semantically equivalent
+to 
+<b><code>
+SWAP &gt;R &gt;R
+</code></b>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.3.3>3.2.3.3</a> Return stack,
+<A href=dpans6.htm#6.1.0580>6.1.0580 &gt;R</a> ,
+<A href=dpans6.htm#6.1.2060>6.1.2060 R&gt;</a> ,
+<A href=dpans6.htm#6.1.2070>6.1.2070 R@</a> ,
+<A href=dpans6.htm#6.2.0410>6.2.0410 2R&gt;</a> ,
+<A href=dpans6.htm#6.2.0415>6.2.0415 2R@</a> ,
+<a href=dpansa6.htm#A.6.2.0340>A.6.2.0340 2&gt;R</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.0410>
+<code>
+6.2.0410 <b>2R&gt;</b>
+</code>
+</a>
+<BR>
+<B>two-r-from</B>    CORE EXT
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( -- x1 x2 ) ( R:  x1 x2 -- )
+</pre>
+<P>
+
+Transfer cell pair x1 x2 from the return stack. Semantically equivalent
+to 
+<b><code>
+R&gt; R&gt; SWAP
+</code></b>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.3.3>3.2.3.3</a> Return stack,
+<A href=dpans6.htm#6.1.0580>6.1.0580 &gt;R</a> ,
+<A href=dpans6.htm#6.1.2060>6.1.2060 R&gt;</a> ,
+<A href=dpans6.htm#6.1.2070>6.1.2070 R@</a> ,
+<A href=dpans6.htm#6.2.0340>6.2.0340 2&gt;R</a> ,
+<A href=dpans6.htm#6.2.0415>6.2.0415 2R@</a> ,
+<a href=dpansa6.htm#A.6.2.0410>A.6.2.0410 2R&gt;</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.0415>
+<code>
+6.2.0415 <b>2R@</b>
+</code>
+</a>
+<BR>
+<B>two-r-fetch</B>   CORE EXT
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( -- x1 x2 ) ( R:  x1 x2 -- x1 x2 )
+</pre>
+<P>
+
+Copy cell pair x1 x2 from the return stack. Semantically equivalent to
+<b><code>
+R&gt; R&gt; 2DUP &gt;R &gt;R SWAP
+</code></b>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.3.3>3.2.3.3</a> Return stack,
+<A href=dpans6.htm#6.1.0580>6.1.0580 &gt;R</a> ,
+<A href=dpans6.htm#6.1.2060>6.1.2060 R&gt;</a> ,
+<A href=dpans6.htm#6.1.2070>6.1.2070 R@</a> ,
+<A href=dpans6.htm#6.2.0340>6.2.0340 2&gt;R</a> ,
+<A href=dpans6.htm#6.2.0410>6.2.0410 2R&gt;</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.0455>
+<code>
+6.2.0455 <b>:NONAME</b>
+</code>
+</a>
+<BR>
+<B>colon-no-name</B> CORE EXT
+<BR>
+<pre>
+	( C:  -- colon-sys )  ( S:  -- xt )
+</pre>
+
+<P>
+
+Create an execution token xt, enter compilation state and start the
+current definition, producing colon-sys. Append the initiation
+semantics given below to the current definition.
+
+<P>
+
+The execution semantics of xt will be determined by the words compiled
+into the body of the definition. This definition can be executed later
+by using xt 
+<a href=dpans6.htm#6.1.1370>EXECUTE</a>.
+
+<P>
+
+If the control-flow stack is implemented using the data stack, colon-sys
+shall be the topmost item on the data stack.
+
+<p>
+
+<pre>
+	Initiation: ( i*x -- i*x ) ( R:  -- nest-sys )
+</pre>
+<P>
+
+Save implementation-dependent information nest-sys about the calling
+definition. The stack effects i*x represent arguments to xt.
+
+<P>
+<pre>
+	<i>xt</i> Execution: ( i*x -- j*x )
+</pre>
+<P>
+
+Execute the definition specified by xt. The stack effects i*x and j*x
+represent arguments to and results from xt, respectively.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.2.0455>A.6.2.0455 :NONAME</a> ,
+<A href=dpans3.htm#3.2.3.2>3.2.3.2</a> Control-flow stack.
+</code>
+<p>
+
+<hr>
+<A name=6.2.0500>
+<code>
+6.2.0500 <b>&lt;&gt;</b>
+</code>
+</a>
+<BR>
+<B>not-equals</B>    CORE EXT
+<BR>
+<pre>
+	( x1 x2 -- flag )
+</pre>
+
+<P>
+
+flag is
+true if and only if x1 is not bit-for-bit the same as x2.
+
+<P>
+
+<hr>
+<A name=6.2.0620>
+<code>
+6.2.0620 <b>?DO</b>
+</code>
+</a>
+<BR>
+<B>question-do</B>   CORE EXT
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: -- do-sys )
+</pre>
+<P>
+
+Put do-sys onto the control-flow stack. Append the run-time semantics
+given below to the current definition. The semantics are incomplete
+until resolved by a consumer of do-sys such as 
+<a href=dpans6.htm#6.1.1800>LOOP</a>.
+<P>
+<pre>
+	Run-time: ( n1|u1 n2|u2 -- ) ( R: --  | loop-sys )
+</pre>
+<P>
+
+If n1|u1 is equal to n2|u2, continue execution at the location given by
+the consumer of do-sys. Otherwise set up loop control parameters with
+index n2|u2 and limit n1|u1 and continue executing immediately following
+?DO. Anything already on the return stack becomes unavailable until the
+loop control parameters are discarded. An ambiguous condition exists if
+n1|u1 and n2|u2 are not both of the same type.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.3.2>3.2.3.2</a> Control-flow stack,
+<A href=dpans6.htm#6.1.0140>6.1.0140 +LOOP</a> ,
+<A href=dpans6.htm#6.1.1240>6.1.1240 DO</a> ,
+<A href=dpans6.htm#6.1.1680>6.1.1680 I</a> ,
+<A href=dpans6.htm#6.1.1760>6.1.1760 LEAVE</a> ,
+<A href=dpans6.htm#6.1.2380>6.1.2380 UNLOOP</a> ,
+<a href=dpansa6.htm#A.6.2.0620>A.6.2.0620 ?DO</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.0700>
+<code>
+6.2.0700 <b>AGAIN</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: dest -- )
+</pre>
+<P>
+
+Append the run-time semantics given below to the current definition,
+resolving the backward reference dest.
+
+<P>
+<pre>
+	Run-time: ( -- )
+</pre>
+<P>
+
+Continue execution at the location specified by dest. If no other
+control flow words are used, any program code after AGAIN will not be
+executed.
+
+<p>
+<code>
+See:
+<A href=dpans6.htm#6.1.0760>6.1.0760 BEGIN</a> ,
+<a href=dpansa6.htm#A.6.2.0700>A.6.2.0700 AGAIN</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.0855>
+<code>
+6.2.0855 <b>C"</b>
+</code>
+</a>
+<BR>
+<B>c-quote</B>       CORE EXT
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( <B>"ccc&lt;quote&gt;"</B> -- )
+</pre>
+<P>
+
+Parse ccc delimited by " (double-quote) and append the run-time
+semantics given below to the current definition.
+
+<P>
+<pre>
+	Run-time: ( -- c-addr )
+</pre>
+<P>
+
+Return c-addr, a counted string consisting of the characters ccc. A
+program shall not alter the returned string.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<A href=dpans6.htm#6.1.2165>6.1.2165 S"</a> ,
+<A href=dpans11.htm#11.6.1.2165>11.6.1.2165 S"</a> ,
+<a href=dpansa6.htm#A.6.2.0855>A.6.2.0855 C"</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.0873>
+<code>
+6.2.0873 <b>CASE</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: -- case-sys )
+</pre>
+<P>
+
+Mark the start of the CASE ... 
+<a href=dpans6.htm#6.2.1950>OF</a> ... 
+<a href=dpans6.htm#6.2.1343>ENDOF</a> ... 
+<a href=dpans6.htm#6.2.1342>ENDCASE</a> structure.
+Append the run-time semantics given below to the current definition.
+
+<P>
+<pre>
+	Run-time: ( -- )
+</pre>
+<P>
+
+Continue
+execution.
+
+<P>
+
+<code>
+See:
+<a href=dpansa6.htm#A.6.2.0873>A.6.2.0873 CASE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.0945>
+<code>
+6.2.0945 <b>COMPILE,</b>
+</code>
+</a>
+<BR>
+<B>compile-comma</B> CORE EXT
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( xt -- )
+</pre>
+<P>
+
+Append the execution semantics of the definition represented by xt to
+the execution semantics of the current definition.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.2.0945>A.6.2.0945 COMPILE,</a>
+</code>
+<p>
+
+<hr>
+<A name=6.2.0970>
+<code>
+6.2.0970 <b>CONVERT</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( ud1 c-addr1 -- ud2 c-addr2 )
+</pre>
+
+<P>
+
+ud2 is the result of converting the characters within the text beginning
+at the first character after c-addr1 into digits, using the number in
+<a href=dpans6.htm#6.1.0750>BASE</a>, 
+and adding each digit to ud1 after multiplying ud1 by the number
+in BASE. Conversion continues until a character that is not convertible
+is encountered. c-addr2 is the location of the first unconverted
+character. An ambiguous condition exists if ud2 overflows.
+
+<P>
+
+<b>Note:</b>  This word is obsolescent and is included as a concession to
+existing implementations. Its function is superseded by 
+<a href=dpans6.htm#6.1.0570>6.1.0570</a>
+&gt;NUMBER.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.1.2>3.2.1.2</a> Digit conversion,
+<a href=dpansa6.htm#A.6.2.0970>A.6.2.0970 CONVERT</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.1342>
+<code>
+6.2.1342 <b>ENDCASE</b>
+</code>
+</a>
+<BR>
+<B>end-case</B>      CORE EXT
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: case-sys -- )
+</pre>
+<P>
+
+Mark the end of the 
+<a href=dpans6.htm#6.2.0873>CASE</a> ... 
+<a href=dpans6.htm#6.2.1950>OF</a> ... 
+<a href=dpans6.htm#6.2.1343>ENDOF</a> 
+... ENDCASE structure. Use
+case-sys to resolve the entire structure. Append the run-time semantics
+given below to the current definition.
+
+<P>
+<pre>
+	Run-time: ( x -- )
+</pre>
+<P>
+
+Discard the
+case selector x and continue execution.
+
+<P>
+
+<code>
+See:
+<a href=dpansa6.htm#A.6.2.1342>A.6.2.1342 ENDCASE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.1343>
+<code>
+6.2.1343 <b>ENDOF</b>
+</code>
+</a>
+<BR>
+<B>end-of</B>        CORE EXT
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: case-sys1 of-sys -- case-sys2 )
+</pre>
+<P>
+
+Mark the end of the 
+<a href=dpans6.htm#6.2.1950>OF</a> 
+... ENDOF part of the 
+<a href=dpans6.htm#6.2.0873>CASE</a> 
+structure. The next
+location for a transfer of control resolves the reference given by
+of-sys. Append the run-time semantics given below to the current
+definition. Replace case-sys1 with case-sys2 on the control-flow stack,
+to be resolved by 
+<a href=dpans6.htm#6.2.1342>ENDCASE</a>.
+
+<P>
+<pre>
+	Run-time: ( -- )
+</pre>
+<P>
+
+Continue execution at
+the location specified by the consumer of case-sys2.
+
+<P>
+
+<code>
+See:
+<a href=dpansa6.htm#A.6.2.1343>A.6.2.1343 ENDOF</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.1350>
+<code>
+6.2.1350 <b>ERASE</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( addr u -- )
+</pre>
+
+<P>
+
+If u
+is greater than zero, clear all bits in each of u consecutive address
+units of memory beginning at addr .
+
+<P>
+
+<hr>
+<A name=6.2.1390>
+<code>
+6.2.1390 <b>EXPECT</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( c-addr +n -- )
+</pre>
+
+<P>
+
+Receive a string of at most +n characters. Display graphic characters
+as they are received. A program that depends on the presence or absence
+of non-graphic characters in the string has an environmental dependency.
+The editing functions, if any, that the system performs in order to
+construct the string of characters are implementation-defined.
+
+<P>
+
+Input terminates when an implementation-defined line terminator is
+received or when the string is +n characters long. When input
+terminates, nothing is appended to the string and the display is
+maintained in an implementation-defined way.
+
+<P>
+
+Store the
+string at c-addr and its length in 
+<a href=dpans6.htm#6.2.2240>SPAN</a>.
+
+<P>
+
+<b>Note:</b>  This word is obsolescent and is included as a concession to
+existing implementations. Its function is superseded by 
+<a href=dpans6.htm#6.1.0695>6.1.0695</a>
+ACCEPT.
+
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.2.1390>A.6.2.1390 EXPECT</a>
+</code>
+<p>
+
+<hr>
+<A name=6.2.1485>
+<code>
+6.2.1485 <b>FALSE</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( -- false )
+</pre>
+
+<P>
+
+Return a
+false flag.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.1.3.1>3.1.3.1</a> Flags
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.1660>
+<code>
+6.2.1660 <b>HEX</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+Set contents
+of 
+<a href=dpans6.htm#6.1.0750>BASE</a> 
+to sixteen.
+
+
+<P>
+
+<hr>
+<A name=6.2.1850>
+<code>
+6.2.1850 <b>MARKER</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+
+<P>
+
+Skip leading space delimiters. Parse name delimited by a space. Create
+a definition for name with the execution semantics defined below.
+
+<P>
+<pre>
+	<i>name</i> Execution: ( -- )
+</pre>
+<P>
+
+Restore all dictionary allocation and search order pointers to the state
+they had just prior to the definition of name. Remove the definition of
+name and all subsequent definitions. Restoration of any structures
+still existing that could refer to deleted definitions or deallocated
+data space is not necessarily provided. No other contextual information
+such as numeric base is affected.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<A href=dpans15.htm#15.6.2.1580>15.6.2.1580 FORGET</a> ,
+<a href=dpansa6.htm#A.6.2.1850>A.6.2.1850 MARKER</a>
+</code>
+
+
+<P>
+
+<hr>
+<A name=6.2.1930>
+<code>
+6.2.1930 <b>NIP</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( x1 x2 -- x2 )
+</pre>
+
+<P>
+
+Drop the
+first item below the top of stack.
+
+
+<P>
+
+<hr>
+<A name=6.2.1950>
+<code>
+6.2.1950 <b>OF</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( C: -- of-sys )
+</pre>
+<P>
+
+Put of-sys onto the control flow stack. Append the run-time semantics
+given below to the current definition. The semantics are incomplete
+until resolved by a consumer of of-sys such as 
+<a href=dpans6.htm#6.2.1343>ENDOF</a>.
+
+<P>
+<pre>
+	Run-time: ( x1 x2 --   | x1 )
+</pre>
+<P>
+
+If the two values on the stack are not equal, discard the top value and
+continue execution at the location specified by the consumer of of-sys,
+e.g., following the next ENDOF. Otherwise, discard both values and
+continue execution in line.
+
+<P>
+
+<code>
+See:
+<A href=dpans6.htm#6.2.0873>6.2.0873 CASE</a> ,
+<A href=dpans6.htm#6.2.1342>6.2.1342 ENDCASE</a> ,
+<a href=dpansa6.htm#A.6.2.1950>A.6.2.1950 OF</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.2000>
+<code>
+6.2.2000 <b>PAD</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( -- c-addr )
+</pre>
+
+<P>
+
+c-addr is the address of a transient region that can be used to hold
+data for intermediate processing.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other transient regions,
+<a href=dpansa6.htm#A.6.2.2000>A.6.2.2000 PAD</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.2008>
+<code>
+6.2.2008 <b>PARSE</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( char <B>"ccc&lt;char&gt;"</B> -- c-addr u )
+</pre>
+
+<P>
+
+Parse ccc
+delimited by the delimiter char.
+
+<P>
+
+c-addr is the address (within the input buffer) and u is the length of
+the parsed string. If the parse area was empty, the resulting string
+has a zero length.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<a href=dpansa6.htm#A.6.2.2008>A.6.2.2008 PARSE</a>
+</code>
+
+
+<P>
+
+<hr>
+<A name=6.2.2030>
+<code>
+6.2.2030 <b>PICK</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( xu ... x1 x0 u -- xu ... x1 x0 xu )
+</pre>
+
+<P>
+
+Remove u.
+Copy the xu to the top of the stack. An ambiguous condition exists
+if there are less than u+2 items on the stack before PICK is executed.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.2.2030>A.6.2.2030 PICK</a>
+</code>
+<p>
+
+<hr>
+<A name=6.2.2040>
+<code>
+6.2.2040 <b>QUERY</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( -- )
+</pre>
+
+<P>
+
+Make the user input device the input source. Receive input into the
+terminal input buffer, replacing any previous contents. Make the
+result, whose address is returned by 
+<a href=dpans6.htm#6.2.2290>TIB</a>, 
+the input buffer. Set 
+<a href=dpans6.htm#6.1.0560>&gt;IN</a>
+to zero.
+
+<P>
+
+<b>Note:</b>  This word is obsolescent and is included as a concession to
+existing implementations.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.2.2040>A.6.2.2040 QUERY</a> ,
+<a href=a0006.htm>RFI 0006</a>.
+</code>
+<p>
+
+<hr>
+<A name=6.2.2125>
+<code>
+6.2.2125 <b>REFILL</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( -- flag )
+</pre>
+
+<P>
+
+Attempt to fill the input buffer from the input source, returning a true
+flag if successful.
+
+<P>
+
+When the input source is the user input device, attempt to receive input
+into the terminal input buffer. If successful, make the result the
+input buffer, set 
+<a href=dpans6.htm#6.1.0560>&gt;IN</a> 
+to zero, and return true. Receipt of a line
+containing no characters is considered successful. If there is no input
+available from the current input source, return false.
+
+<P>
+
+When the input source is a string from 
+<a href=dpans6.htm#6.1.1360>EVALUATE</a>, 
+return false and
+perform no other action.
+
+<P>
+
+<code>
+See:
+<A href=dpans7.htm#7.6.2.2125>7.6.2.2125 REFILL</a> ,
+<A href=dpans11.htm#11.6.2.2125>11.6.2.2125 REFILL</a> ,
+<a href=dpansa6.htm#A.6.2.2125>A.6.2.2125 REFILL</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.2148>
+<code>
+6.2.2148 <b>RESTORE-INPUT</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( xn ... x1 n -- flag )
+</pre>
+
+<P>
+
+Attempt to restore the input source specification to the state described
+by x1 through xn. flag is true if the input source specification cannot
+be so restored.
+
+<P>
+
+An ambiguous condition exists if the input source represented by the
+arguments is not the same as the current input source.
+
+<P>
+
+<code>
+See:
+<A href=dpansa6.htm#A.6.2.2182>A.6.2.2182 SAVE-INPUT</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.2150>
+<code>
+6.2.2150 <b>ROLL</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( xu xu-1 ... x0 u -- xu-1 ... x0 xu )
+</pre>
+
+<P>
+
+Remove u. Rotate u+1 items on the top of the stack. An ambiguous
+condition exists if there are less than u+2 items on the stack before
+ROLL is executed.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.2.2150>A.6.2.2150 ROLL</a>
+</code>
+<p>
+
+<hr>
+<A name=6.2.2182>
+<code>
+6.2.2182 <b>SAVE-INPUT</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( -- xn ... x1 n )
+</pre>
+
+<P>
+
+x1 through xn describe the current state of the input source
+specification for later use by 
+<a href=dpans6.htm#6.2.2148>RESTORE-INPUT</a>.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.2.2182>A.6.2.2182 SAVE-INPUT</a>
+</code>
+<p>
+
+<hr>
+<A name=6.2.2218>
+<code>
+6.2.2218 <b>SOURCE-ID</b>
+</code>
+</a>
+<BR>
+<B>source-i-d</B>    CORE EXT
+<BR>
+<pre>
+	( -- 0 | -1 )
+</pre>
+
+<P>
+
+Identifies the
+input source as follows:
+
+<P>
+
+
+<PRE>
+SOURCE-ID       Input source
+-1              String (via <a href=dpans6.htm#6.1.1360>EVALUATE</a>)
+ 0              User input device
+</PRE>
+
+<P>
+
+<code>
+See:
+<A href=dpans11.htm#11.6.1.2218>11.6.1.2218 SOURCE-ID</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.2240>
+<code>
+6.2.2240 <b>SPAN</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( -- a-addr )
+</pre>
+
+<P>
+
+a-addr is the address of a cell containing the count of characters
+stored by the last execution of 
+<a href=dpans6.htm#6.2.1390>EXPECT</a>.
+
+<P>
+
+<b>Note:</b>  This word is obsolescent and is included as a concession to
+existing implementations.
+
+
+<P>
+
+<hr>
+<A name=6.2.2290>
+<code>
+6.2.2290 <b>TIB</b>
+</code>
+</a>
+<BR>
+<B>t-i-b</B> CORE EXT
+<BR>
+<pre>
+	( -- c-addr )
+</pre>
+
+<P>
+
+c-addr
+is the address of the terminal input buffer.
+
+<P>
+
+<b>Note:</b>   This word is obsolescent and is included as a concession to
+existing implementations.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.2.2290>A.6.2.2290 TIB</a> ,
+<a href=a0006.htm>RFI 0006</a>.
+</code>
+<P>
+
+<hr>
+<A name=6.2.2295>
+<code>
+6.2.2295 <b>TO</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+
+<P>
+
+<pre>
+	Interpretation: ( x <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+<P>
+
+Skip leading spaces and parse name delimited by a space. Store x in
+name. An ambiguous condition exists if name was not defined by 
+<a href=dpans6.htm#6.2.2405>VALUE</a>.
+
+<P>
+<pre>
+	Compilation: ( <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+<P>
+
+Skip leading spaces and parse name delimited by a space. Append the
+run-time semantics given below to the current definition. An ambiguous
+condition exists if name was not defined by VALUE.
+
+<P>
+<pre>
+	Run-time: ( x -- )
+</pre>
+<P>
+
+Store x
+in name.
+
+<P>
+
+<b>Note:</b>   An ambiguous condition exists if either 
+<a href=dpans6.htm#6.1.2033>POSTPONE</a> or 
+<a href=dpans6.htm#6.2.2530>[COMPILE]</a>
+is applied to TO.
+
+<P>
+
+<code>
+See:
+<A href=dpans13.htm#13.6.1.2295>13.6.1.2295 TO</a> ,
+<a href=dpansa6.htm#A.6.2.2295>A.6.2.2295 TO</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.2298>
+<code>
+6.2.2298 <b>TRUE</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( -- true )
+</pre>
+
+<P>
+
+Return a
+true flag, a single-cell value with all bits set.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.1.3.1>3.1.3.1</a> Flags,
+<a href=dpansa6.htm#A.6.2.2298>A.6.2.2298 TRUE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.2300>
+<code>
+6.2.2300 <b>TUCK</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( x1 x2 -- x2 x1 x2 )
+</pre>
+
+<P>
+
+Copy the
+first (top) stack item below the second stack item.
+
+<P>
+
+<hr>
+<A name=6.2.2330>
+<code>
+6.2.2330 <b>U.R</b>
+</code>
+</a>
+<BR>
+<B>u-dot-r</B>       CORE EXT
+<BR>
+<pre>
+	( u n -- )
+</pre>
+
+<P>
+
+Display u right aligned in a field n characters wide. If the number of
+characters required to display u is greater than n, all digits are
+displayed with no leading spaces in a field as wide as necessary.
+
+<P>
+
+<hr>
+<A name=6.2.2350>
+<code>
+6.2.2350 <b>U&gt;</b>
+</code>
+</a>
+<BR>
+<B>u-greater-than</B>        CORE EXT
+<BR>
+<pre>
+	( u1 u2 -- flag )
+</pre>
+
+<P>
+
+flag is
+true if and only if u1 is greater than u2.
+
+<P>
+
+<code>
+See:
+<A href=dpans6.htm#6.1.0540>6.1.0540 &gt;</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.2395>
+<code>
+6.2.2395 <b>UNUSED</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( -- u )
+</pre>
+
+<P>
+
+u is
+the amount of space remaining in the region addressed by 
+<a href=dpans6.htm#6.1.1650>HERE</a> , in
+address units.
+
+<P>
+
+<hr>
+<A name=6.2.2405>
+<code>
+6.2.2405 <b>VALUE</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( x <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+
+<P>
+
+Skip leading
+space delimiters. Parse name delimited by a space. Create a
+definition for name with the execution semantics defined below, with an
+initial value equal to x.
+
+<P>
+
+name is
+referred to as a <B>value</B>.
+
+<P>
+<pre>
+	<i>name</i> Execution: ( -- x )
+</pre>
+<P>
+
+Place x on the stack. The value of x is that given when name 
+was created,
+until the phrase <b><code>x TO name</code></b> 
+is executed, causing a new value of x to be
+associated with name.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<a href=dpansa6.htm#A.6.2.2405>A.6.2.2405 VALUE</a> ,
+<a href=dpans6.htm#6.2.2295>6.2.2295 TO</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.2440>
+<code>
+6.2.2440 <b>WITHIN</b>
+</code>
+</a>
+<BR>
+CORE EXT
+<BR>
+<pre>
+	( n1|u1 n2|u2 n3|u3 -- flag )
+</pre>
+
+<P>
+
+Perform a comparison of a test value n1|u1 with a lower limit n2|u2 and
+an upper limit n3|u3, returning true if either (n2|u2 &lt; n3|u3 and
+(n2|u2 &lt;= n1|u1 and n1|u1 &lt; n3|u3)) or (n2|u2 &gt; n3|u3 and
+(n2|u2 &lt;= n1|u1 or n1|u1 &lt; n3|u3)) is true, returning false
+otherwise. An ambiguous condition exists if n1|u1, n2|u2, and n3|u3 are
+not all the same type.
+
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.2.2440>A.6.2.2440 WITHIN</a>
+</code>
+<p>
+
+<hr>
+<A name=6.2.2530>
+<code>
+6.2.2530 <b>[COMPILE]</b>
+</code>
+</a>
+<BR>
+<B>bracket-compile</B>       CORE EXT
+<BR>
+
+<P>
+<pre>
+	Intrepretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Compilation: ( <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+<P>
+
+Skip leading space delimiters. Parse name delimited by a space. Find
+name. If name has other than default compilation semantics, append them
+to the current definition; otherwise append the execution semantics of
+name. An ambiguous condition exists if name is not found.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<a href=dpans6.htm#6.1.2033>6.1.2033 POSTPONE</a> ,
+<a href=dpansa6.htm#A.6.2.2530>A.6.2.2530 [COMPILE]</a>
+</code>
+
+<P>
+
+<hr>
+<A name=6.2.2535>
+<code>
+6.2.2535 <b>\</b>
+</code>
+</a>
+<BR>
+<B>backslash</B>  CORE EXT
+<BR>
+
+<P>
+<pre>
+	Compilation: Perform the execution semantics given below.
+</pre>
+<P>
+<pre>
+	Execution: ( <B>"ccc&lt;eol&gt;"</B>-- )
+</pre>
+<P>
+
+Parse and discard
+the remainder of the parse area. \ is an immediate word.
+
+<P>
+
+<code>
+See:
+<A href=dpans7.htm#7.6.2.2535>7.6.2.2535 \</a> ,
+<a href=dpansa6.htm#A.6.2.2535>A.6.2.2535 \</a>
+</code>
+
+<P>
+
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpans7.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>
+

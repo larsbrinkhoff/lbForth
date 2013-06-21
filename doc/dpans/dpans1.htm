@@ -1,0 +1,700 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans2.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+Table of Contents
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>American National Standard for Information Systems</H1>
+
+<H1>Programming Languages</H1>
+
+<H1>Forth</H1>
+
+
+Secretariat
+
+<BR>
+Computer and Business Equipment Manufacturers Association
+
+<BR>
+Approved:  March 24, 1994
+
+<BR>
+American National Standards Institute, Inc.
+
+<P>
+
+
+Copyright (c) 1994 by Technical Committee X3J14.  
+All rights reserved.
+
+<P>
+
+
+This is a working document of Technical Committee X3J14 which represents
+the last draft of ANS Forth submitted to ANSI for publication. 
+Permission is hereby granted to copy this document provided that it is
+copied in its entirety without alteration or as altered by (1) adding
+text that is clearly marked as an insertion; (2) shading or highlighting
+existing text; and/or (3) deleting examples. 
+
+<P>
+
+
+Specifically, permission is granted to use this working document as the
+foundation for textbooks, system manuals, and online documentation so
+long as the requirements in the preceding paragraph are met and the
+resulting product addresses a technical need that is not practically met
+by the official ANS. 
+
+<P>
+
+
+<b>NOTE:</b> This file is provided as a working document of the TC for public
+review and comment as well as documentation uses described above.  It is
+not intended as a substitute for the official ANS Forth document
+published by ANSI.  In the event of conflict, only the printed document
+X3.215-1994 represents the official ANS Forth. 
+
+<P>
+
+
+To obtain the official standard, please contact the American National
+Standards Institute Sales Department, at (212) 642-4900 or FAX (212)
+302-1286, or Global Engineering Documents, at (800) 854-7179 or FAX
+(303) 843-9880, and request Document X3.215-1994.  Thank you very much
+for your interest. 
+
+
+
+<HR>
+<a name=foreword>
+<H1>Foreword</H1>
+</a>
+
+
+(This foreword is not a part of
+American National Standard X3.215-1994)
+
+<P>
+
+
+Forth is a language for direct communication between human beings and
+machines.  Using natural-language diction and machine-oriented syntax,
+Forth provides an economical, productive environment for interactive
+compilation and execution of programs.  Forth also provides low-level
+access to computer-controlled hardware, and the ability to extend the
+language itself.  This extensibility allows the language to be quickly
+expanded and adapted to special needs and different hardware systems. 
+
+<P>
+
+
+Forth was invented by Mr.  Charles Moore to increase programmer
+productivity without sacrificing machine efficiency.  Forth is a layered
+environment containing the elements of a computer language as well as
+those of an operating system and a machine monitor.  This extensible,
+layered environment provides for highly interactive program development
+and testing. 
+
+<P>
+
+
+In the interests of transportability of application software written in
+Forth, standardization efforts began in the mid-1970s by an
+international group of users and implementors who adopted the name
+<B>Forth Standards Team</B>.  This effort resulted in the Forth-77
+Standard.  As the language continued to evolve, an interim Forth-78
+Standard was published by the Forth Standards Team.  Following Forth
+Standards Team meetings in 1979, the Forth-79 Standard was published in
+1980.  Major changes were made by the Forth Standards Team in the
+Forth-83 Standard, which was published in 1983. 
+
+<P>
+
+
+The first meeting of the Technical Committee on Forth Programming
+Systems was convened by the Organizing Committee of the X3J14 Forth
+Technical Committee on August 3, 1987, and has met subsequently on
+November 11-12, 1987, February 10-12, 1988, May 25-28, 1988, August
+10-13, 1988, October 26-29, 1988, January 25-28, 1989, May 3-6, 1989,
+July 26-29, 1989, October 25-28, 1989, January 24-27, 1990, May 22-26,
+1990, August 21-25, 1990, November 6-10,1990, January 29-February 2,
+1991, May 3-4, 1991, June 16-19, 1991, July 30-August 3, 1991, March
+17-21, 1992, October 13-17, 1992, January 26-30, 1993, June 28-30, 1993,
+and June 21, 1994. 
+
+<P>
+
+Requests for interpretation, suggestions for improvement or addenda, or
+defect reports are welcome.  They should be sent to the X3 Secretariat,
+Computer and Business Equipment Manufacturers Association, 1250 Eye
+Street, NW, Suite 200, Washington, DC 20005. 
+
+
+
+<HR>
+<a name=x3.membership>
+<H1>X3 Membership</H1>
+</a>
+
+This standard was processed and approved for submittal to ANSI by the
+Accredited Standards Committee on Information Processing Systems, X3.
+Committee approval of this standard does not necessarily imply that all
+committee members voted for its approval.  At the time it approved this
+standard, the X3 Committee had the following members:
+
+<P>
+
+
+James D. Converse, Chair
+Donald C. Loughry, Vice-Chair
+Joanne Flanagan, Secretary
+
+<P>
+
+
+
+
+<PRE>
+Producer Group                          Name of Representative
+--------------                          ----------------------
+AMP Incorporated                        Edward Kelly
+                                        Charles Brill (Alt.)
+
+AT&T/NCR Corporation                    Thomas W. Kern
+                                        Thomas F. Frost (Alt.)
+
+Apple Computer, Inc.                    Karen Higginbottom
+
+Compaq Computers                        James Barnes
+
+Digital Equipment Corporation           Delbert Shoemaker
+                                        Kevin Lewis
+
+Hitachi America Ltd.                    John Neumann
+                                        Kei Yamashita (Alt.)
+
+Hewlett Packard                         Donald C. Loughry
+
+Bull HN Information Systems Inc.        William George
+
+IBM Corporation                         Joel Urman
+                                        Mary Anne Lawler (Alt.)
+
+Unisys Corporation                      John Hill
+                                        Stephen P. Oksala (Alt.)
+
+Sony Corporation of America             Michael Deese
+
+Storage Technology Corporation          Joseph S. Zajaczkowski
+                                        Samuel D. Cheatham (Alt.)
+
+Sun Microsystems, Inc.                  Scott Jameson
+                                        Gary S. Robinson (Alt.)
+
+* Xerox Corporation                     Dwight McBain
+                                        Roy Pierce (Alt.)
+
+3M Company                              Edie T. Morioka
+                                        Paul D. Jahnke (Alt.
+
+</PRE>
+<P>
+
+
+Consumers Group
+
+<BR>
+---------------
+
+
+<PRE>
+Boeing Company                          Catherine Howells
+                                        Andrea Vanosdoll (Alt.)
+
+Eastman Kodak Company                   James Converse
+                                        Michael Nier (Alt.)
+
+General Services Administration         Douglas Arai
+                                        Larry L. Jackson (Alt.)
+
+Guide International Inc.                Frank Kirshenbaum
+                                        Harold Kuneke (Alt.)
+
+** Hughes Aircraft Company              Harold Zebrack
+
+National Communications Systems         Dennis Bodson
+
+Northern Telecom Inc.                   Mel Woinsky
+                                        Subhash Patel (Alt.)
+
+** Recognition Tech Users Association   Herbert P. Schantz
+                                        Edwin Hale (Alt.)
+
+Share Inc.                              Gary AinsworthDavid Thewis (Alt.)
+
+U. S. Department of Defense             William Rinehuls
+                                        J. Pasquariello (Alt.)
+
+U. S. Department of Energy              Alton Cox
+                                        Lawrence A. Wasson (Alt.)
+
+Wintergreen Information Services        John Wheeler
+</PRE>
+<P>
+
+
+
+General Interest Group
+
+<BR>
+----------------------
+
+
+<PRE>
+American Nuclear Society                Geraldine C. Main
+                                        Sally Hartzell (Alt.)
+
+Assn. of the Institute for Certification of Computer Professionals
+                                        Kenneth Zemrowski
+
+Nat'l Institute of Standards and Technology     
+                                        Robert E. Rountree
+                                        Micharl Hogan (Alt.)
+
+Neville & Associates                    Carlton Neville
+________________________
+
+* Abstain      ** Non-Response
+</PRE>
+
+<P>
+
+
+
+
+<HR>
+<a name=x3j14.membership>
+<H3>X3J14 Membership</H3>
+</a>
+
+At the time it approved this draft of the proposed American National
+Standard, the Technical Committee X3J14 on the Forth Programming
+Language had the following members:
+
+<P>
+
+
+Elizabeth Rather, Chair
+
+<BR>
+Mitch Bradley, acting Vice-Chair
+
+<BR>
+Don Colburn, Secretary
+
+<BR>
+John Rible, Technical Editor
+
+<BR>
+Len Zettel, Vocabulary Representative
+
+<BR>
+Greg Bailey, Technical Subcommittee Chair
+
+<BR>
+
+<P>
+
+
+
+
+<PRE>
+Organization Represented                Name of Representative
+------------------------                ----------------------
+ATHENA Programming, Inc.                Greg Bailey
+                                        Howe Fong (Alt.)
+
+Bradley Forthware                       Mitch Bradley
+
+Creative Solutions, Inc.                Don Colburn
+
+Ford Motor Company                      Leonard F. Zettel, Jr.
+
+FORTH, Inc.                             Elizabeth Rather
+                                        Dennis Ruffer (Alt.)
+
+Institute for Applied Forth Research    Lawrence Forsley
+                                        Horace Simmons (Alt.)
+
+Johns Hopkins University, Applied Physics Lab.  
+                                        John Hayes
+
+Mephistopheles Systems                  Dave Harralson
+
+NASA/Goddard Space Flight Center        James Rash
+
+Nomadic Software                        John K. Stevenson
+
+Unisyn, Inc.                            Gary Betts
+                                        Stephen Egbert (Alt.)
+
+Up and Running                          Martin Tracy
+
+Vesta Technology                        Jack Woehr
+
+Individual Members                      Loring Craymer
+                                        John Rible
+                                        E. (Jet) Thomas
+
+X3 Liasons                              Clyde R. Camp
+                                        Kathleen McMillan
+</PRE>
+
+<P>
+
+
+The following organizations and individuals have also participated in this
+project as Technical Committee members, alternates, or observers.  The
+Technical Committee recognizes and respects their contributions:
+
+<P>
+
+
+Organizations
+
+<BR>
+-------------
+
+
+<PRE>
+British Columbia Inst. of Tech.  MCI Telecommunications Corp.
+Computer Cowboys                 Micromotion
+Computer Sciences Corp.          MicroProcessor Engineering Ltd.
+Computer Strategies, Inc.        National Institute of Standards & Technology
+Digalog Corp.                    NCR Medical Systems Group
+Embedded Sys. Programming Mag.   Performance Packages, Inc.
+Forth Interest Group (FIG)       Purdue University
+H.B. Pascal & Co., Inc.          Robert Berkey Services
+Harris Semiconductor             Shaw Laboratories
+IBM Corporation                  Social Security Administration
+IEEE                             Software Engineering
+Kelly Enterprises                Texas Instruments
+Laboratory Microsystems, Inc.    The Dickens Company
+Maxtor Corp.
+</PRE>
+
+<P>
+
+
+Individuals
+
+<BR>
+-----------
+
+
+<PRE>
+David J. Angel  Ray Duncan      Charles Moore   Dean Sanderson
+Wil Baden       Douglas Fishman Mike Nemeth     George Shaw
+Robert Berkey   Tom Hand        Harry Pascal    Gerald Shifrin
+Ron Braithwaite Gregory Ilg     Stephen Pelc    Robert Smith
+Jack Brown      Charles Keane   Dean Perrine    Tyler Sperry
+Chris Colburn   Guy M. Kelly    David C. Petty  Tom Zimmer
+Ted Dickens     Andrew Kobziar  Bill Ragsdale   James Ryland
+John Dorband    Martin Lascelles
+
+</PRE>
+<P>
+
+<hr>
+<H1>AMERICAN NATIONAL STANDARD ANSI X3.215-1994 American National
+Standard for Information Systems</A></H1>
+
+
+
+<H3>Programming Language</A></H3>
+
+
+<H3>Forth</A></H3>
+
+
+
+<HR>
+<a name=1.>
+<H1>1. Introduction</H1>
+</a>
+
+
+<hr>
+<a name=1.1>
+<H2>1.1 Purpose</H2>
+</a>
+
+The purpose of this Standard is to promote the portability of Forth programs
+for use on a wide variety of computing systems, to facilitate the
+communication of programs, programming techniques, and ideas among Forth
+programmers, and to serve as a basis for the future evolution of the Forth
+language.
+
+<P>
+
+
+<hr>
+<a name=1.2>
+<H2>1.2 Scope</H2>
+</a>
+
+This Standard specifies an interface between a Forth System and a Forth
+Program by defining the words provided by a Standard System.
+
+<p>
+<code>
+See:
+<a href=dpansa1.htm#A.1.2>A.1.2</a> Scope
+</code>
+<p>
+
+<hr>
+<a name=1.2.1>
+<H3>1.2.1 Inclusions</H3>
+</a>
+
+This Standard specifies:
+<P>
+
+
+<UL>
+<LI>the forms
+that a program written in the Forth language may take;
+<LI>the rules for interpreting the meaning of a program and its data.
+</UL>
+
+<P>
+
+
+<hr>
+<a name=1.2.2>
+<H3>1.2.2 Exclusions</H3>
+</a>
+
+This Standard does not specify:
+<P>
+
+
+<UL>
+<LI>the mechanism
+by which programs are transformed for use on computing
+systems;
+<LI>the operations
+required for setup and control of the use of programs
+on computing systems;
+<LI>the method
+of transcription of programs or their input or output data
+to or from a storage medium;
+<LI>the program
+and Forth system behavior when the rules of this Standard
+fail to establish an interpretation;
+<LI>the size
+or complexity of a program and its data that will exceed the
+capacity of any specific computing system or the capability of a particular
+Forth system;
+<LI>the physical
+properties of input/output records, files, and units;
+<LI>the physical
+properties and implementation of storage.
+</UL>
+
+<P>
+
+
+<hr>
+<a name=1.3>
+<H2>1.3 Document organization</H2>
+</a>
+
+<P>
+
+
+<hr>
+<a name=1.3.1>
+<H3>1.3.1 Word sets</H3>
+</a>
+
+This Standard groups Forth words and capabilities into word sets under a name
+indicating some shared aspect, typically their common functional area. Each
+word set may have an extension, containing words that offer additional
+functionality.  These words are not required in an implementation of the word
+set.
+
+<P>
+
+
+The <B>Core</B> word set, defined in sections 1 through 6, contains the
+required
+words and capabilities of a Standard System.  The other word sets, defined in
+sections 7 through 17, are optional, making it possible to provide Standard
+Systems with tailored levels of functionality.
+
+<p>
+<code>
+See:
+<a href=dpansa1.htm#A.1.3.1>A.1.3.1</a> Word sets
+</code>
+<p>
+
+
+
+<hr>
+<a name=1.3.1.1>
+<H4>1.3.1.1 Text sections</H4>
+</a>
+
+Within each word set, section 1 contains introductory and explanatory material
+and section 2 introduces terms and notation used throughout the Standard.
+There are no requirements in these sections.
+
+<P>
+
+
+Sections 3 and 4 contain the usage and documentation requirements,
+respectively, for Standard Systems and Programs, while section 5 specifies
+their labeling.
+
+<P>
+
+
+<hr>
+<a name=1.3.1.2>
+<H4>1.3.1.2 Glossary sections</H4>
+</a>
+
+Section 6 of each word set specifies the required behavior of the definitions
+in the word set and the extensions word set.
+
+<P>
+
+
+<hr>
+<a name=1.3.2>
+<H3>1.3.2 Annexes</H3>
+</a>
+
+The annexes do not 
+contain any required material.
+<P>
+
+
+<a href=dpansa1.htm>Annex A</a> 
+provides some of the rationale behind the committee's decisions in
+creating this Standard, as well as implementation examples.  It has the same
+section numbering as the body of the Standard to make it easy to relate each
+requirements section to its rationale section.
+
+<P>
+
+
+<a href=dpansb.htm>Annex B</a> 
+is a short bibliography on Forth.
+
+<P>
+
+
+<a href=dpansc.htm>Annex C</a> 
+provides an introduction to Forth.
+
+<P>
+
+
+<a href=dpansd.htm>Annex D</a> 
+discusses the compatibility of ANS Forth with earlier Forths,
+emphasizing the differences from Forth-83.
+
+<P>
+
+
+<a href=dpanse.htm>Annex E</a> 
+presents some techniques for writing portable programs in ANS Forth.
+
+<P>
+
+
+<a href=dpansf.htm>Annex F</a> 
+includes the words from all word sets in a single list, and serves as
+an index of ANS Forth words.
+
+<P>
+
+
+<hr>
+<a name=1.4>
+<H2>1.4 Future directions</H2>
+</a>
+
+
+
+<hr>
+<A name=1.4.1>
+<H3>1.4.1 New technology</H3>
+</a>
+
+This Standard adopts certain words and practices that are increasingly found
+in common practice.  New words have also been adopted to ease creation of
+portable programs.
+
+<P>
+
+<hr>
+<A name=1.4.2>
+<H3>1.4.2 Obsolescent features</H3>
+</a>
+
+This Standard adopts certain words and practices that cause some previously
+used words to become obsolescent.  Although retained here because of their
+widespread use, their use in new implementations or new programs is
+discouraged, because they may be withdrawn from future revisions of the
+Standard.
+
+<P>
+
+This Standard designates the following words as obsolescent:
+<P>
+
+
+
+<PRE>
+<a href=dpans6.htm#6.2.0060>6.2.0060</a>        #TIB
+<a href=dpans15.htm#15.6.2.1580>15.6.2.1580</a>     FORGET
+<a href=dpans6.htm#6.2.2240>6.2.2240</a>        SPAN
+<a href=dpans6.htm#6.2.0970>6.2.0970</a>        CONVERT
+<a href=dpans6.htm#6.2.2040>6.2.2040</a>        QUERY
+<a href=dpans6.htm#6.2.2290>6.2.2290</a>        TIB
+<a href=dpans6.htm#6.2.1390>6.2.1390</a>        EXPECT
+</PRE>
+
+<P>
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpans2.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

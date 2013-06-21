@@ -1,0 +1,1779 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans2.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpans4.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=3.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>3. Usage requirements</H1>
+
+A system shall provide all of the words defined in 
+<a href=dpans6.htm#6.1>6.1</a> Core Words.  It
+may also provide any words defined in the optional word sets and
+extensions word sets.  No standard word provided by a system shall alter
+the system state in a way that changes the effect of execution of any
+other standard word except as provided in this Standard.  A system may
+contain non-standard extensions, provided that they are consistent with
+the requirements of this Standard.
+
+<P>
+
+The implementation of a system may use words and techniques outside the
+scope of this Standard.
+
+<P>
+
+A system need not provide all words in executable form.  The
+implementation may provide definitions, including definitions of words
+in the Core word set, in source form only.  If so, the mechanism for
+adding the definitions to the dictionary is implementation defined.
+
+<P>
+
+A program that requires a system to provide words or techniques not
+defined in this Standard has an environmental dependency.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3>A.3</a> Usage requirements
+</code>
+<p>
+
+<hr>
+<A name=3.1>
+<H2>3.1 Data types</H2>
+</a>
+
+A data type identifies the set of permissible values for a data object.
+It is not a property of a particular storage location or position on a
+stack.  Moving a data object shall not affect its type.
+
+<P>
+
+No data-type checking is required of a system.  An ambiguous condition
+exists if an incorrectly typed data object is encountered.
+
+<P>
+
+<a href=dpans3.htm#table.3.1>Table 3.1</a> summarizes the data types used throughout this Standard.
+Multiple instances of the same type in the description of a definition
+are suffixed with a sequence digit subscript to distinguish them.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.1>A.3.1</a> Date-types
+</code>
+<p>
+
+<hr>
+<A name=3.1.1>
+<H3>3.1.1 Data-type relationships</H3>
+</a>
+
+Some of the data types are subtypes of other data types.  A data type i
+is a subtype of type j if and only if the members of i are a subset of
+the members of j.  The following list represents the subtype
+relationships using the phrase <B>i =&gt; j</B> to denote <B>i is a subtype
+of j</B>.  The subtype relationship is transitive; if i =&gt; j and j =&gt; k
+then i =&gt; k:
+
+<PRE>
+	+n => u => x;
+	+n => n => x;
+	char => +n;
+	a-addr => c-addr => addr => u;
+	flag => x;
+	xt => x;
+	+d => d => xd;
+	+d => ud => xd.
+</PRE>
+<P>
+
+Any Forth definition that accepts an argument of type i shall also accept an
+argument that is a subtype of i.
+
+<P>
+
+<hr>
+<A name=3.1.2>
+<H3>3.1.2 Character types</H3>
+</a>
+
+Characters shall be at least one address unit wide, contain at least eight
+bits, and have a size less than or equal to cell size.
+
+<P>
+
+The characters provided by a system shall include the graphic characters
+{32..126}, which represent graphic forms as shown in 
+<a href=dpans3.htm#table.3.2>table 3.2</a>.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.1.2>A.3.1.2</a> Character types
+</code>
+<p>
+
+<hr>
+<A name=3.1.2.1>
+<H2>3.1.2.1 Graphic characters</H2>
+</a>
+
+A graphic character is one that is normally displayed (e.g., A, #, &, 6).
+These values and graphics, shown in 
+<a href=dpans3.htm#table.3.2>table 3.2</a>, are taken directly from ANS
+X3.4-1974 (ASCII) and ISO 646-1983, International Reference Version (IRV).
+The graphic forms of characters outside the hex range {20..7E} are
+implementation-defined.  Programs that use the graphic hex 24 (the currency
+sign) have an environmental dependency.
+
+<P>
+
+The graphic representation of characters is not restricted to particular type
+fonts or styles.  The graphics here are examples.
+
+<P>
+
+<hr>
+<A name=3.1.2.2>
+<H4>3.1.2.2 Control characters</H4>
+</a>
+
+All non-graphic characters included in the implementation-defined character
+set are defined in this Standard as control characters.  In particular, the
+characters {0..31}, which could be included in the implementation-defined
+character set, are control characters.
+
+<P>
+
+Programs that require the ability to send or receive control characters have
+an environmental dependency.
+
+<P>
+
+<hr>
+<h3><a name=table.3.1>Table 3.1</a> - Data types</h3>
+<P>
+
+
+<PRE>
+Symbol          Data type                         Size on stack
+------          ---------                         -------------
+flag            flag                              1 cell
+true            true flag                         1 cell
+false           false flag                        1 cell
+char            character                         1 cell
+n               signed number                     1 cell
++n              non-negative number               1 cell
+u               unsigned number                   1 cell
+n|u 1           number                            1 cell
+x               unspecified cell                  1 cell
+xt              execution token                   1 cell
+addr            address                           1 cell
+a-addr          aligned address                   1 cell
+c-addr          character-aligned address         1 cell
+d               double-cell signed number         2 cells
++d              double-cell non-negative number   2 cells
+ud              double-cell unsigned number       2 cells
+d|ud 2          double-cell number                2 cells
+xd              unspecified cell pair             2 cells
+colon-sys       definition compilation            implementation dependent
+do-sys          do-loop structures                implementation dependent
+case-sys        CASE structures                   implementation dependent
+of-sys          OF structures                     implementation dependent
+orig            control-flow origins              implementation dependent
+dest            control-flow destinations         implementation dependent
+loop-sys        loop-control parameters           implementation dependent
+nest-sys        definition calls                  implementation dependent
+i*x, j*x, k*x 3 any data type                     0 or more cells
+</PRE>
+
+<P>
+
+<B>1</B> May be either a signed number or an unsigned number depending
+on context.
+
+<P>
+
+<B>2</B> May be either a double-cell signed number or a double-cell
+unsigned number depending on context.
+
+<P>
+
+<B>3</B> May be an undetermined number of stack entries of unspecified
+type.  For examples of use, see 
+<a href=dpans6.htm#6.1.1370>6.1.1370</a> EXECUTE, 
+<a href=dpans6.htm#6.1.2050>6.1.2050</a> QUIT.
+
+<p>
+<code>
+See:
+<a href=dpans11.htm#11.3.1>11.3.1</a> Data types,
+<a href=dpans12.htm#12.3.1>12.3.1</a> Data types,
+<a href=dpans14.htm#14.3.1>14.3.1</a> Data types,
+<a href=dpans16.htm#16.3.1>16.3.1</a> Data types.
+</code>
+<p>
+
+<HR>
+<h3><a name=table.3.2>Table 3.2</a> - Standard graphic characters</h3>
+
+
+<PRE>
+Hex     IRV     ASCII
+---     ---     -----
+20
+21      !       !
+22      "       "
+23      #       #
+24      °       $
+25      %       %
+26      &       &
+27      '       '
+28      (       (
+29      )       )
+2A      *       *
+2B      +       +
+2C      ,       ,
+2D      -       -
+2E      .       .
+2F      /       /
+30      0       0
+31      1       1
+32      2       2
+33      3       3
+34      4       4
+35      5       5
+36      6       6
+37      7       7
+38      8       8
+39      9       9
+3A      :       :
+3B      ;       ;
+3C      <       <
+3D      =       =
+3E      >       >
+3F      ?       ?
+40      @       @
+41      A       A
+42      B       B
+43      C       C
+44      D       D
+45      E       E
+46      F       F
+47      G       G
+48      H       H
+49      I       I
+4A      J       J
+4B      K       K
+4C      L       L
+4D      M       M
+4E      N       N
+4F      O       O
+50      P       P
+51      Q       Q
+52      R       R
+53      S       S
+54      T       T
+55      U       U
+56      V       V
+57      W       W
+58      X       X
+59      Y       Y
+5A      Z       Z
+5B      [       [
+5C      \       \
+5D      ]       ]
+5E      ^       ^
+5F      _       _
+60      `       `
+61      a       a
+62      b       b
+63      c       c
+64      d       d
+65      e       e
+66      f       f
+67      g       g
+68      h       h
+69      i       i
+6A      j       j
+6B      k       k
+6C      l       l
+6D      m       m
+6E      n       n
+6F      o       o
+70      p       p
+71      q       q
+72      r       r
+73      s       s
+74      t       t
+75      u       u
+76      v       v
+77      w       w
+78      x       x
+79      y       y
+7A      z       z
+7B      {       {
+7C      |       |
+7D      }       }
+7E      ~       ~
+</PRE>
+
+<P>
+
+<hr>
+<A name=3.1.3>
+<H3>3.1.3 Single-cell types</H3>
+</a>
+
+The implementation-defined fixed size of a cell is specified in address units
+and the corresponding number of bits.  See 
+<a href=dpanse.htm#E.2>E.2</a> Hardware peculiarities.
+
+<P>
+
+Cells shall be at least one address unit wide and contain at least sixteen
+bits.  The size of a cell shall be an integral multiple of the size of a
+character.  Data-stack elements, return-stack elements, addresses, execution
+tokens, flags, and integers are one cell wide.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.1.3>A.3.1.3</a> Single-cell types
+</code>
+<p>
+
+<hr>
+<A name=3.1.3.1>
+<H4>3.1.3.1 Flags</H4>
+</a>
+
+Flags may have one of two logical states, true or false.  Programs that use
+flags as arithmetic operands have an environmental dependency.
+
+<P>
+
+A true flag returned by a standard word shall be a single-cell value with all
+bits set.  A false flag returned by a standard word shall be a single-cell
+value with all bits clear.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.1.3.1>A.3.1.3.1</a> Flags
+</code>
+<p>
+
+<hr>
+<A name=3.1.3.2>
+<H4>3.1.3.2 Integers</H4>
+</a>
+
+The implementation-defined range of signed integers shall include
+{-32767..+32767}.
+
+<P>
+
+The implementation-defined range of non-negative integers shall include
+{0..32767}.
+
+<P>
+
+The implementation-defined range of unsigned integers shall include
+{0..65535}.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.1.3.2>A.3.1.3.2</a> Integers
+</code>
+<p>
+
+<hr>
+<A name=3.1.3.3>
+<H4>3.1.3.3 Addresses</H4>
+</a>
+
+An address identifies a location in data space with a size of one address
+unit, which a program may fetch from or store into except for the restrictions
+established in this Standard.  The size of an address unit is specified in
+bits.  Each distinct address value identifies exactly one such storage
+element.  See 
+<a href=dpans3.htm#3.3.3>3.3.3</a> Data space.
+
+<P>
+
+The set of character-aligned addresses, addresses at which a character can be
+accessed, is an implementation-defined subset of all addresses.  Adding the
+size of a character to a character-aligned address shall produce another
+character-aligned address.
+
+<P>
+
+The set of aligned addresses is an implementation-defined subset of
+character-aligned addresses.  Adding the size of a cell to an aligned address
+shall produce another aligned address.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.1.3.3>A.3.1.3.3</a> Addresses
+</code>
+<p>
+
+<hr>
+<A name=3.1.3.4>
+<H4>3.1.3.4 Counted strings</H4>
+</a>
+
+A counted string in memory is identified by the address (c-addr) of its length
+character.
+
+<P>
+
+The length character of a counted string shall contain a binary
+representation of the number of data characters, between zero and the
+implementation-defined maximum length for a counted string.  The maximum
+length of a counted string shall be at least 255.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.1.3.4>A.3.1.3.4</a> Counted strings
+</code>
+<p>
+
+<hr>
+<A name=3.1.3.5>
+<H4>3.1.3.5 Execution tokens</H4>
+</a>
+
+Different definitions may have the same execution token if the
+definitions are equivalent.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.1.3.5>A.3.1.3.5</a> Execution tokens
+</code>
+<p>
+
+<hr>
+<A name=3.1.4>
+<H3>3.1.4 Cell-pair types</H3>
+</a>
+
+A cell pair in memory consists of a sequence of two contiguous cells.  The
+cell at the lower address is the first cell, and its address is used to
+identify the cell pair.  Unless otherwise specified, a cell pair on a stack
+consists of the first cell immediately above the second cell.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.1.4>A.3.1.4</a> Cell-pair types
+</code>
+<p>
+
+<hr>
+<A name=3.1.4.1>
+<H4>3.1.4.1 Double-cell integers</H4>
+</a>
+
+On the stack, the cell containing the most significant part of a
+double-cell integer shall be above the cell containing the least
+significant part.
+
+<P>
+
+The implementation-defined range of double-cell signed integers shall
+include {-2147483647..+2147483647}.
+
+<P>
+
+The implementation-defined range of double-cell non-negative integers
+shall include {0..2147483647}.
+
+<P>
+
+The implementation-defined range of double-cell unsigned integers shall
+include {0..4294967295}.  Placing the single-cell integer zero on the
+stack above a single-cell unsigned integer produces a double-cell
+unsigned integer with the same value.  See 
+<a href=dpans3.htm#3.2.1.1>3.2.1.1</a> Internal number
+representation.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.1.4.1>A.3.1.4.1</a> Double-cell integers
+</code>
+<p>
+
+<hr>
+<A name=3.1.4.2>
+<H4>3.1.4.2 Character strings</H4>
+</a>
+
+A string is specified by a cell pair (c-addr u) representing its
+starting address and length in characters.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.1.3.4>A.3.1.3.4</a> Counted strings
+</code>
+<p>
+
+<hr>
+<A name=3.1.5>
+<H3>3.1.5 System types</H3>
+</a>
+
+The system data types specify permitted word combinations during
+compilation and execution.
+
+<P>
+
+<hr>
+<A name=3.1.5.1>
+<H4>3.1.5.1 System-compilation types</H4>
+</a>
+
+These data types denote zero or more items on the control-flow stack
+(see 
+<a href=dpans3.htm#3.2.3.2>3.2.3.2</a>).  
+The possible presence of such items on the data stack
+means that any items already there shall be unavailable to a program
+until the control-flow-stack items are consumed.
+
+<P>
+
+The implementation-dependent data generated upon beginning to compile a
+definition and consumed at its close is represented by the symbol
+colon-sys throughout this Standard.
+
+<P>
+
+The implementation-dependent data generated upon beginning to compile a
+do-loop structure such as 
+<a href=dpans6.htm#6.1.1240>DO</a> ... 
+<a href=dpans6.htm#6.1.1800>LOOP</a> 
+and consumed at its close is
+represented by the symbol do-sys throughout this Standard.
+
+<P>
+
+The implementation-dependent data generated upon beginning to compile a
+<a href=dpans6.htm#6.2.0873>CASE</a> ... 
+<a href=dpans6.htm#6.2.1342>ENDCASE</a> 
+structure and consumed at its close is represented by
+the symbol case-sys throughout this Standard.
+
+<P>
+
+The implementation-dependent data generated upon beginning to compile an
+<a href=dpans6.htm#6.2.1950>OF</a> ... 
+<a href=dpans6.htm#6.2.1343>ENDOF</a> 
+structure and consumed at its close is represented by the
+symbol of-sys throughout this Standard.
+
+<P>
+
+The implementation-dependent data generated and consumed by executing
+the other standard control-flow words is represented by the symbols orig
+and dest throughout this Standard.
+
+<P>
+
+<hr>
+<A name=3.1.5.2>
+<H4>3.1.5.2 System-execution types</H4>
+</a>
+
+These data types denote zero or more items on the return stack.  Their
+possible presence means that any items already on the return stack shall
+be unavailable to a program until the system-execution items are
+consumed.
+
+<P>
+
+The implementation-dependent data generated upon beginning to execute a
+definition and consumed upon exiting it is represented by the symbol
+nest-sys throughout this Standard.
+
+<P>
+
+The implementation-dependent loop-control parameters used to control the
+execution of do-loops are represented by the symbol loop-sys throughout
+this Standard.  Loop-control parameters shall be available inside the
+do-loop for words that use or change these parameters, words such as 
+<a href=dpans6.htm#6.1.1680>I</a>,
+<a href=dpans6.htm#6.1.1730>J</a>, 
+<a href=dpans6.htm#6.1.1760>LEAVE</a> and 
+<a href=dpans6.htm#6.1.2380>UNLOOP</a>.
+
+<P>
+
+<hr>
+<A name=3.2>
+<H2>3.2 The implementation environment</H2>
+</a>
+
+<p>
+
+
+<hr>
+<A name=3.2.1>
+<H3>3.2.1 Numbers</H3>
+</a>
+
+<p>
+<code>
+See:
+<a href=dpansa3.htm#A.3.2.1>A.3.2.1</a> Numbers
+</code>
+<p>
+
+
+<hr>
+<A name=3.2.1.1>
+<H4>3.2.1.1 Internal number representation</H4>
+</a>
+
+This Standard allows one's complement, two's complement, or
+sign-magnitude number representations and arithmetic.  Arithmetic zero
+is represented as the value of a single cell with all bits clear.
+<P>
+
+The representation of a number as a compiled literal or in memory is
+implementation dependent.
+
+<P>
+
+<hr>
+<A name=3.2.1.2>
+<H4>3.2.1.2 Digit conversion</H4>
+</a>
+
+Numbers shall be represented externally by using characters from the
+standard character set.
+
+<P>
+
+Conversion between the internal and external forms of a digit shall
+behave as follows:
+
+<P>
+
+The value in 
+<a href=dpans6.htm#6.1.0750>BASE</a> 
+is the radix for number conversion.  A digit has a
+value ranging from zero to one less than the contents of BASE.  The
+digit with the value zero corresponds to the character <B>0</B>.  This
+representation of digits proceeds through the character set to the
+decimal value nine corresponding to the character <B>9</B>.  For digits
+beginning with the decimal value ten the graphic characters beginning
+with the character <B>A</B> are used.  This correspondence continues up
+to and including the digit with the decimal value thirty-five which is
+represented by the character <B>Z</B>.  The conversion of digits outside
+this range is implementation defined.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.2.1.2>A.3.2.1.2</a> Digit conversion
+</code>
+<p>
+
+<hr>
+<A name=3.2.1.3>
+<H4>3.2.1.3 Free-field number display</H4>
+</a>
+
+Free-field number display uses the characters described in digit
+conversion, without leading zeros, in a field the exact size of the
+converted string plus a trailing space.  If a number is zero, the least
+significant digit is not considered a leading zero.  If the number is
+negative, a leading minus sign is displayed.
+
+<P>
+
+Number display may use the pictured numeric output string buffer to hold
+partially converted strings (see 
+<a href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other transient regions).
+
+<P>
+
+<hr>
+<A name=3.2.2>
+<H3>3.2.2 Arithmetic</H3>
+</a>
+
+<p>
+
+
+<hr>
+<A name=3.2.2.1>
+<H4>3.2.2.1 Integer division</H4>
+</a>
+
+Division produces a quotient q and a remainder r by dividing operand a
+by operand b.  Division operations return q, r, or both.  The identity
+b*q + r = a shall hold for all a and b.
+
+<P>
+
+When unsigned integers are divided and the remainder is not zero, q is
+the largest integer less than the true quotient.
+
+<P>
+
+When signed integers are divided, the remainder is not zero, and a and b
+have the same sign, q is the largest integer less than the true
+quotient.  If only one operand is negative, whether q is rounded toward
+negative infinity (floored division) or rounded towards zero (symmetric
+division) is implementation defined.
+
+<P>
+
+Floored division is integer division in which the remainder carries the
+sign of the divisor or is zero, and the quotient is rounded to its
+arithmetic floor.  Symmetric division is integer division in which the
+remainder carries the sign of the dividend or is zero and the quotient
+is the mathematical quotient <B>rounded towards zero</B> or
+<B>truncated</B>.  Examples of each are shown in tables 
+<a href=dpans3.htm#table.3.3>3.3</a> and 
+<a href=dpans3.htm#table.3.3>3.4</a>.
+
+<P>
+
+In cases where the operands differ in sign and the rounding direction
+matters, a program shall either include code generating the desired form
+of division, not relying on the implementation-defined default result,
+or have an environmental dependency on the desired rounding direction.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.2.2.1>A.3.2.2.1</a> Integer division
+</code>
+<p>
+
+<hr>
+<h3><a name=table.3.3>Table 3.3</a> - Floored Division Example</h3>
+<P>
+
+
+<PRE>
+Dividend        Divisor Remainder       Quotient
+--------        ------- ---------       --------
+10                 7       3                1
+-10                7       4               -2
+10                -7      -4               -2
+-10               -7      -3                1
+</PRE>
+<P>
+
+
+<hr>
+<h3><a name=table.3.4>Table 3.4</a> - Symmetric Division Example</h3>
+
+
+<PRE>
+Dividend        Divisor Remainder       Quotient
+--------        ------- ---------       --------
+10                 7       3                1
+-10                7      -3               -1
+10                -7       3               -1
+-10               -7      -3                1
+
+</PRE>
+<P>
+
+
+<P>
+
+<hr>
+<A name=3.2.2.2>
+<H4>3.2.2.2 Other integer operations</H4>
+</a>
+
+In all integer arithmetic operations, both overflow and underflow shall
+be ignored.  The value returned when either overflow or underflow occurs
+is implementation defined.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.2.2.2>A.3.2.2.2</a> Other integer operations
+</code>
+<p>
+
+<hr>
+<A name=3.2.3>
+<H3>3.2.3 Stacks</H3>
+</a>
+
+<p>
+<code>
+See:
+<a href=dpansa3.htm#A.3.2.3>A.3.2.3</a> Stacks
+</code>
+<p>
+
+<hr>
+<A name=3.2.3.1>
+<H4>3.2.3.1 Data stack</H4>
+</a>
+
+Objects on the data stack
+shall be one cell wide.
+
+<P>
+
+<hr>
+<A name=3.2.3.2>
+<H4>3.2.3.2 Control-flow stack</H4>
+</a>
+
+The control-flow stack is a last-in, first out list whose elements
+define the permissible matchings of control-flow words and the
+restrictions imposed on data-stack usage during the compilation of
+control structures.
+
+<P>
+
+The elements of the control-flow stack are system-compilation data
+types.
+
+<P>
+
+The control-flow stack may, but need not, physically exist in an
+implementation.  If it does exist, it may be, but need not be,
+implemented using the data stack.  The format of the control-flow stack
+is implementation defined.  Since the control-flow stack may be
+implemented using the data stack, items placed on the data stack are
+unavailable to a program after items are placed on the control-flow
+stack and remain unavailable until the control-flow stack items are
+removed.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.2.3.2>A.3.2.3.2</a> Control-flow stack
+</code>
+<p>
+
+<hr>
+<A name=3.2.3.3>
+<H4>3.2.3.3 Return stack</H4>
+</a>
+
+Items on the return stack shall consist of one or more cells.  A system
+may use the return stack in an implementation-dependent manner during
+the compilation of definitions, during the execution of do-loops, and
+for storing run-time nesting information.
+
+<P>
+
+A program may use the return stack for temporary storage during the
+execution of a definition subject to the following restrictions:
+
+<UL>
+<LI>A program shall not access values on the return stack (using 
+<a href=dpans6.htm#6.1.2070>R@</a>,
+<a href=dpans6.htm#6.1.2060>R&gt;</a>, 
+<a href=dpans6.htm#6.2.0415>2R@</a> or 
+<a href=dpans6.htm#6.2.0410>2R&gt;</a>) 
+that it did not place there using 
+<a href=dpans6.htm#6.1.0580>&gt;R</a> or 
+<a href=dpans6.htm#6.2.0340>2&gt;R;</a>
+<LI>A program shall not access from within a do-loop values placed
+on the return stack before the loop was entered;
+<LI>All values placed on the return stack within a do-loop shall be
+removed before 
+<a href=dpans6.htm#6.1.1680>I</a>, 
+<a href=dpans6.htm#6.1.1730>J</a>, 
+<a href=dpans6.htm#6.1.1800>LOOP</a>, 
+<a href=dpans6.htm#6.1.0140>+LOOP</a>, 
+<a href=dpans6.htm#6.1.2380>UNLOOP</a>, or 
+<a href=dpans6.htm#6.1.1760>LEAVE</a> is executed;
+<LI>All values placed on the return stack within a definition shall
+be removed before the definition is terminated or before 
+<a href=dpans6.htm#6.1.1380>EXIT</a> is
+executed.
+</UL>
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.2.3.3>A.3.2.3.3</a> Return stack
+</code>
+<p>
+
+<hr>
+<A name=3.2.4>
+<H3>3.2.4 Operator terminal</H3>
+</a>
+
+<code>
+See:
+<a href=dpans1.htm#1.2.2>1.2.2</a> Exclusions
+</code>
+<P>
+
+<hr>
+<A name=3.2.4.1>
+<H4>3.2.4.1 User input device</H4>
+</a>
+
+The method of selecting the user input
+device is implementation defined.
+
+<P>
+
+The method of indicating the end of an input line of text is
+implementation defined.
+
+<P>
+
+<hr>
+<A name=3.2.4.2>
+<H4>3.2.4.2 User output device</H4>
+</a>
+
+The method of selecting the user output device is implementation
+defined.
+
+<P>
+
+<hr>
+<A name=3.2.5>
+<H3>3.2.5 Mass storage</H3>
+</a>
+
+A system need not provide any standard words for accessing mass storage.
+If a system provides any standard word for accessing mass storage, it
+shall also implement the Block word set.
+
+<P>
+
+<hr>
+<A name=3.2.6>
+<H3>3.2.6 Environmental queries</H3>
+</a>
+
+The name spaces for 
+<a href=dpans6.htm#6.1.1345>ENVIRONMENT?</a> 
+and definitions are disjoint.  Names of
+definitions that are the same as ENVIRONMENT? strings shall not impair
+the operation of ENVIRONMENT?.  
+Table 3.5 contains the valid input
+strings and corresponding returned value for inquiring about the
+programming environment with ENVIRONMENT?.
+
+<P>
+
+<a name=table.3.5>
+Table 3.5 - Environmental Query Strings
+</a>
+<P>
+
+
+
+<PRE>
+String                Value  Constant?       Meaning
+                    data type
+/COUNTED-STRING         n       yes     maximum size of a counted string,
+                                        in characters
+/HOLD                   n       yes     size of the pictured numeric output
+                                        string buffer, in characters
+/PAD                    n       yes     size of the scratch area pointed to
+                                        by PAD, in characters
+ADDRESS-UNIT-BITS       n       yes     size of one address unit, in bits
+CORE                    flag    no      true if complete core word set
+                                        present (i.e., not a subset as
+                                        defined in <a href=dpans5.htm#5.1.1>5.1.1</a>)
+CORE-EXT                flag    no      true if core extensions word
+                                        set present
+FLOORED                 flag    yes     true if floored division is the default
+MAX-CHAR                u       yes     maximum value of any character in the
+                                        implementation-defined character set
+MAX-D                   d       yes     largest usable signed double number
+MAX-N                   n       yes     largest usable signed integer
+MAX-U                   u       yes     largest usable unsigned integer
+MAX-UD                  ud      yes     largest usable unsigned double number
+RETURN-STACK-CELLS      n       yes     maximum size of the return stack,
+                                        in cells
+STACK-CELLS             n       yes     maximum size of the data stack,
+                                        in cells
+</PRE>
+<P>
+
+If an environmental query (using ENVIRONMENT?) returns false (i.e.,
+unknown) in response to a string, subsequent queries using the same
+string may return true.  If a query returns true (i.e., known) in
+response to a string, subsequent queries with the same string shall also
+return true.  If a query designated as constant in the above table
+returns true and a value in response to a string, subsequent queries
+with the same string shall return true and the same value.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.2.6>A.3.2.6</a> Environmental queries,
+<a href=dpans7.htm#7.3.1>7.3.1</a> Environmental queries,
+<a href=dpans8.htm#8.3.1>8.3.1</a> Environmental queries,
+<a href=dpans9.htm#9.3.4>9.3.4</a> Environmental queries,
+<a href=dpans10.htm#10.3.2>10.3.2</a> Environmental queries,
+<a href=dpans11.htm#11.3.3>11.3.3</a> Environmental queries,
+<a href=dpans12.htm#12.3.4>12.3.4</a> Environmental queries,
+<a href=dpans13.htm#13.3.2>13.3.2</a> Environmental queries,
+<a href=dpans14.htm#14.3.2>14.3.2</a> Environmental queries,
+<a href=dpans15.htm#15.3.1>15.3.1</a> Environmental queries,
+<a href=dpans16.htm#16.3.2>16.3.2</a> Environmental queries,
+<a href=dpans17.htm#17.3>17.3</a> Additional usage requirements.
+</code>
+<p>
+
+<hr>
+<A name=3.3>
+<H2>3.3 The Forth dictionary</H2>
+</a>
+
+Forth words are organized into a structure called the dictionary.  While
+the form of this structure is not specified by the Standard, it can be
+described as consisting of three logical parts: a name space, a code
+space, and a data space.  The logical separation of these parts does not
+require their physical separation.
+
+<P>
+
+A program shall not fetch from or store into locations outside data
+space.  An ambiguous condition exists if a program addresses name space
+or code space.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.3>A.3.3</a> The Forth dictionary
+</code>
+<p>
+
+<hr>
+<A name=3.3.1>
+<H3>3.3.1 Name space</H3>
+</a>
+
+The relationship between name space and data space is implementation
+dependent.
+
+<P>
+
+<hr>
+<A name=3.3.1.1>
+<H4>3.3.1.1 Word lists</H4>
+</a>
+
+The structure of a word list is implementation dependent.  When
+duplicate names exist in a word list, the latest-defined duplicate shall
+be the one found during a search for the name.
+
+<P>
+
+<hr>
+<A name=3.3.1.2>
+<H4>3.3.1.2 Definition names</H4>
+</a>
+
+Definition names shall contain {1..31} characters.  A system may allow
+or prohibit the creation of definition names containing non-standard
+characters.
+
+<P>
+
+Programs that use lower case for standard definition names or depend on
+the case-sensitivity properties of a system have an environmental
+dependency.
+
+<P>
+
+A program shall not create definition names containing non-graphic
+characters.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.3.1.2>A.3.3.1.2</a> Definition names
+</code>
+<p>
+
+<hr>
+<A name=3.3.2>
+<H3>3.3.2 Code space</H3>
+</a>
+
+The relationship between code space and data space is implementation
+dependent.
+
+<P>
+
+<hr>
+<A name=3.3.3>
+<H3>3.3.3 Data space</H3>
+</a>
+
+Data space is the only logical area of the dictionary for which standard
+words are provided to allocate and access regions of memory.  These
+regions are: contiguous regions, variables, text-literal regions, input
+buffers, and other transient regions, each of which is described in the
+following sections.  A program may read from or write into these regions
+unless otherwise specified.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.3.3>A.3.3.3</a> Data space
+</code>
+<p>
+
+<hr>
+<A name=3.3.3.1>
+<H4>3.3.3.1 Address alignment</H4>
+</a>
+
+Most addresses used in ANS Forth are aligned addresses (indicated by
+a-addr) or character-aligned (indicated by c-addr).  
+<a href=dpans6.htm#6.1.0706>ALIGNED</a>, 
+<a href=dpans6.htm#6.1.0897>CHAR+</a>, and
+arithmetic operations can alter the alignment state of an address on the
+stack.  CHAR+ applied to an aligned address returns a character-aligned
+address that can only be used to access characters.  Applying CHAR+ to a
+character-aligned address produces the succeeding character-aligned
+address.  Adding or subtracting an arbitrary number to an address can
+produce an unaligned address that shall not be used to fetch or store
+anything.  The only way to find the next aligned address is with
+ALIGNED.  An ambiguous condition exists when 
+<a href=dpans6.htm#6.1.0650>@</a>, 
+<a href=dpans6.htm#6.1.0010>!</a>, , 
+(<a href=dpans6.htm#6.1.0150>comma</a>), 
+<a href=dpans6.htm#6.1.0130>+!</a>, 
+<a href=dpans6.htm#6.1.0350>2@</a>, or
+<a href=dpans6.htm#6.1.0310>2!</a> 
+is used with an address that is not aligned, or when 
+<a href=dpans6.htm#6.1.0870>C@</a>, 
+<a href=dpans6.htm#6.1.0850>C!</a>, or 
+<a href=dpans6.htm#6.1.0860>C,</a> is
+used with an address that is not character-aligned.
+
+<P>
+
+The definitions of 
+<a href=dpans6.htm#6.1.1000>6.1.1000</a> CREATE and 
+<a href=dpans6.htm#6.1.2410>6.1.2410</a> VARIABLE require that
+the definitions created by them return aligned addresses.
+
+<P>
+
+After definitions are compiled or the word 
+<a href=dpans6.htm#6.1.0705>ALIGN</a> 
+is executed the
+data-space pointer is guaranteed to be aligned.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.3.3.1>A.3.3.3.1</a> Address alignment
+</code>
+<p>
+
+<hr>
+<A name=3.3.3.2>
+<H4>3.3.3.2 Contiguous regions</H4>
+</a>
+
+A system guarantees that a region of data space allocated using 
+<a href=dpans6.htm#6.1.0710>ALLOT</a>, ,
+(<a href=dpans6.htm#6.1.0150>comma)</a>, C, 
+(<a href=dpans6.htm#6.1.0860>c-comma</a>), and 
+<a href=dpans6.htm#6.1.0705>ALIGN</a> 
+shall be contiguous with the last
+region allocated with one of the above words, unless the restrictions in
+the following paragraphs apply.  The data-space pointer 
+<a href=dpans6.htm#6.1.1650>HERE</a> 
+always
+identifies the beginning of the next data-space region to be allocated.
+As successive allocations are made, the data-space pointer increases.  A
+program may perform address arithmetic within contiguously allocated
+regions.  The last region of data space allocated using the above
+operators may be released by allocating a corresponding negatively-sized
+region using ALLOT, subject to the restrictions of the following
+paragraphs.
+
+<P>
+
+<a href=dpans6.htm#6.1.1000>CREATE</a> 
+establishes the beginning of a contiguous region of data space,
+whose starting address is returned by the CREATEd definition.  This
+region is terminated by compiling the next definition.
+
+<P>
+
+Since an implementation is free to allocate data space for use by code,
+the above operators need not produce contiguous regions of data space if
+definitions are added to or removed from the dictionary between
+allocations.  An ambiguous condition exists if deallocated memory
+contains definitions.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.3.3.2>A.3.3.3.2</a> Contiguous regions
+</code>
+<p>
+
+<hr>
+<A name=3.3.3.3>
+<H4>3.3.3.3 Variables</H4>
+</a>
+
+The region allocated for a variable may be non-contiguous with regions
+subsequently allocated with , 
+(<a href=dpans6.htm#6.1.0150>comma</a>) or 
+<a href=dpans6.htm#6.1.0710>ALLOT</a>.  
+For example, in:
+
+
+<PRE>
+        VARIABLE X  1 CELLS ALLOT
+</PRE>
+<P>
+
+the region X and the region
+ALLOTted could be non-contiguous.
+
+<P>
+
+Some system-provided variables, such as 
+<a href=dpans6.htm#6.1.2250>STATE</a>, 
+are restricted to read-only
+access.
+
+<P>
+
+<hr>
+<A name=3.3.3.4>
+<H4>3.3.3.4 Text-literal regions</H4>
+</a>
+
+The text-literal regions, specified by strings compiled with 
+<a href=dpans6.htm#6.1.2165>S"</a> and 
+<a href=dpans6.htm#6.2.0855>C"</a>,
+may be read-only.
+
+<P>
+
+A program shall not store into the text-literal regions created by S"
+and C" nor into any read-only system variable or read-only transient
+regions.  An ambiguous condition exists when a program attempts to store
+into read-only regions.
+
+<P>
+
+<hr>
+<A name=3.3.3.5>
+<H4>3.3.3.5 Input buffers</H4>
+</a>
+
+The address, length, and content of the input buffer may be transient.
+A program shall not write into the input buffer.  In the absence of any
+optional word sets providing alternative input sources, the input buffer
+is either the terminal-input buffer, used by 
+<a href=dpans6.htm#6.1.2050>QUIT</a> to hold one line from
+the user input device, or a buffer specified by 
+<a href=dpans6.htm#6.1.1360>EVALUATE</a>.  In all cases,
+<a href=dpans6.htm#6.1.2216>SOURCE</a> returns the beginning 
+address and length in characters of the
+current input buffer.
+
+<P>
+
+The minimum size of the terminal-input
+buffer shall be 80 characters.
+
+<P>
+
+The address and length returned by SOURCE, the string returned by 
+<a href=dpans6.htm#6.2.2008>PARSE</a>,
+and directly computed input-buffer addresses are valid only until the
+text interpreter does I/O to refill the input buffer or the input source
+is changed.
+
+<P>
+
+A program may modify the size of the parse area by changing the contents
+of 
+<a href=dpans6.htm#6.1.0560>&gt;IN</a> 
+within the limits imposed by this Standard.  For example, if the
+contents of &gt;IN are saved before a parsing operation and restored
+afterwards, the text that was parsed will be available again for
+subsequent parsing operations.  The extent of permissible repositioning
+using this method depends on the input 
+source (see <a href=dpans7.htm#7.3.3>7.3.3</a> Block buffer
+regions and <a href=dpans11.htm#11.3.4>11.3.4</a> Input source).
+
+<P>
+
+A program may directly examine the input buffer using its address and
+length as returned by SOURCE; the beginning of the parse area within the
+input buffer is indexed by the number in >IN.  The values are valid for
+a limited time.  An ambiguous condition exists if a program modifies the
+contents of the input buffer.
+
+<p>
+<code>
+See:
+<a href=a0006.htm>RFI 0006</a> Writing to Input Buffers
+</code>
+<p>
+
+<hr>
+<A name=3.3.3.6>
+<H4>3.3.3.6 Other transient regions</H4>
+</a>
+
+The data space regions identified by 
+<a href=dpans6.htm#6.2.2000>PAD</a>, 
+<a href=dpans6.htm#6.1.2450>WORD</a>, and 
+<a href=dpans6.htm#6.1.0040>#&gt;</a> 
+(the pictured
+numeric output string buffer) may be transient.  Their addresses and
+contents may become invalid after:
+
+<UL>
+<LI>a definition is created via a defining word;
+<LI>definitions are compiled with 
+: or 
+:NONAME;
+<LI>data space is allocated using 
+<a href=dpans6.htm#6.1.0710>ALLOT</a>, , 
+(<a href=dpans6.htm#6.1.0150>comma</a>),
+C, 
+(<a href=dpans6.htm#6.1.0860>c-comma</a>), or 
+<a href=dpans6.htm#6.1.0705>ALIGN</a>.
+</UL>
+<P>
+
+The previous contents of the regions identified by WORD and #&gt; may be
+invalid after each use of these words.  Further, the regions returned by
+WORD and #&gt; may overlap in memory.  Consequently, use of one of these
+words can corrupt a region returned earlier by a different word.  The
+other words that construct pictured numeric output strings 
+(<a href=dpans6.htm#6.1.0490>&lt;#</a>, 
+<a href=dpans6.htm#6.1.0030>#</a>, 
+<a href=dpans6.htm#6.1.0050>#S</a>,
+and 
+<a href=dpans6.htm#6.1.1670>HOLD</a>) 
+may also modify the contents of these regions.  Words that
+display numbers may be implemented using pictured numeric output words.
+Consequently, .  
+(<a href=dpans6.htm#6.1.0180>dot</a>), 
+<a href=dpans6.htm#6.2.0210>.R</a>, 
+<a href=dpans15.htm#15.6.1.0220>.S</a>, 
+<a href=dpans15.htm#15.6.1.0600>?</a>, 
+<a href=dpans8.htm#8.6.1.1060>D.</a>, 
+<a href=dpans8.htm#8.6.1.1070>D.R</a>, 
+<a href=dpans6.htm#6.1.2320>U.</a>, and 
+<a href=dpans6.htm#6.2.2330>U.R</a> 
+could also
+corrupt the regions.
+
+<P>
+
+The size of the scratch area whose address is returned by PAD shall be
+at least 84 characters.  The contents of the region addressed by PAD are
+intended to be under the complete control of the user: no words defined
+in this Standard place anything in the region, although changing
+data-space allocations as described in 
+<a href=dpans3.htm#3.3.3.2>3.3.3.2</a> Contiguous regions may
+change the address returned by PAD.  Non-standard words provided by an
+implementation may use PAD, but such use shall be documented.
+
+<P>
+
+The size of the region identified by WORD shall be at least 33
+characters.
+
+<P>
+
+The size of the pictured numeric output string buffer shall be at least
+(2*n) + 2 characters, where n is the number of bits in a cell.  Programs
+that consider it a fixed area with unchanging access parameters have an
+environmental dependency.
+
+<p>
+<code>
+See:
+<a href=dpansa3.htm#A.3.3.3.6>A.3.3.3.6</a> Other transient regions,
+<a href=dpans11.htm#11.3.5>11.3.5</a> Other transient regions.
+</code>
+<p>
+
+<hr>
+<a name=3.4>
+<H2>3.4 The Forth text interpreter</H2>
+</a>
+
+Upon start-up, a system shall be able to interpret, as described by
+<a href=dpans6.htm#6.1.2050>6.1.2050</a> QUIT, Forth source code 
+received interactively from a user
+input device.
+
+<P>
+
+Such interactive systems usually furnish a <B>prompt</B> indicating that
+they have accepted a user request and acted on it.  The
+implementation-defined Forth prompt should contain the word <B>OK</B> in
+some combination of upper or lower case.
+
+<P>
+
+Text interpretation (see 
+<a href=dpans6.htm#6.1.1360>6.1.1360</a> EVALUATE and 
+<a href=dpans6.htm#6.1.2050>6.1.2050</a> QUIT) shall
+repeat the following steps until either the parse area is empty or an
+ambiguous condition exists:
+
+<p>
+a) Skip leading spaces and parse a name (see 
+<a href=dpans3.htm#3.4.1>3.4.1</a>);
+<p>
+b) Search the dictionary name space (see 
+<a href=dpans3.htm#3.4.2>3.4.2</a>). If a definition name
+matching the string is found:
+<OL>
+<LI>if interpreting, perform the interpretation semantics of the
+definition (see 
+<a href=dpans3.htm#3.4.3.2>3.4.3.2</a>), and continue at a);
+<LI>if compiling, perform the compilation semantics of the definition (see
+<a href=dpans3.htm#3.4.3.3>3.4.3.3</a>), and continue at a).
+</ol>
+<p>
+c) If a definition name matching the string is not found, attempt to
+convert the string to a number (see 
+<a href=dpans3.htm#3.4.1.3>3.4.1.3</a>). If successful:
+<ol>
+<LI>if interpreting, place the number on the data stack, and continue at a);
+<LI>if compiling, compile code that when executed will place the number on
+the stack (see 
+<a href=dpans6.htm#6.1.1780>6.1.1780</a> LITERAL), and continue at a);
+</ol>
+<p>
+d) If unsuccessful, an ambiguous condition exists (see 
+<a href=dpans3.htm#3.4.4>3.4.4</a>).
+
+<P>
+
+
+<hr>
+<A name=3.4.1>
+<H3>3.4.1 Parsing</H3>
+</a>
+
+Unless otherwise noted, the number of characters parsed may be from zero
+to the implementation-defined maximum length of a counted string.
+
+<P>
+
+If the parse area is empty, i.e., when the number in 
+<a href=dpans6.htm#6.1.0560>&gt;IN</a> 
+is equal to the
+length of the input buffer, or contains no characters other than
+delimiters, the selected string is empty.  Otherwise, the selected
+string begins with the next character in the parse area, which is the
+character indexed by the contents of &gt;IN.  An ambiguous condition exists
+if the number in &gt;IN is greater than the size of the input buffer.
+
+<P>
+
+If delimiter characters are present in the parse area after the
+beginning of the selected string, the string continues up to and
+including the character just before the first such delimiter, and the
+number in &gt;IN is changed to index immediately past that delimiter, thus
+removing the parsed characters and the delimiter from the parse area.
+Otherwise, the string continues up to and including the last character
+in the parse area, and the number in &gt;IN is changed to the length of the
+input buffer, thus emptying the parse area.
+
+<P>
+
+Parsing may change the contents of &gt;IN, but shall not affect the
+contents of the input buffer.  Specifically, if the value in &gt;IN is
+saved before starting the parse, resetting &gt;IN to that value immediately
+after the parse shall restore the parse area without loss of data.
+
+<P>
+
+<hr>
+<A name=3.4.1.1>
+<H4>3.4.1.1 Delimiters</H4>
+</a>
+
+If the delimiter is the space character, hex 20 
+(<a href=dpans6.htm#6.1.0770>BL</a>), 
+control characters
+may be treated as delimiters.  The set of conditions, if any, under
+which a <B>space</B> delimiter matches control characters is
+implementation defined.
+
+<P>
+
+To skip leading delimiters is to pass by zero or more contiguous
+delimiters in the parse area before parsing.
+
+<P>
+
+<hr>
+<A name=3.4.1.2>
+<H4>3.4.1.2 Syntax</H4>
+</a>
+
+Forth has a simple, operator-ordered syntax.  The phrase A B C returns
+values as if A were executed first, then B and finally C.  Words that
+cause deviations from this linear flow of control are called
+control-flow words.  Combinations of control-flow words whose stack
+effects are compatible form control-flow structures.  Examples of
+typical use are given for each control-flow word in
+<A href=dpansa1.htm>Annex A</A>.
+
+<P>
+
+Forth syntax is extensible; for example, new control-flow words can be
+defined in terms of existing ones.
+
+<P>
+
+This Standard does not require a
+syntax or program-construct checker.
+
+<P>
+
+<hr>
+<A name=3.4.1.3>
+<H4>3.4.1.3 Text interpreter input number conversion</H4>
+</a>
+
+When converting input numbers, the text interpreter shall recognize both
+positive and negative numbers, with a negative number represented by a
+single minus sign, the character <B>-</B>, preceding the digits.  The
+value in 
+<a href=dpans6.htm#6.1.0750>BASE</a> 
+is the radix for number conversion.
+
+<P>
+
+<hr>
+<A name=3.4.2>
+<H3>3.4.2 Finding definition names</H3>
+</a>
+
+A string matches a definition name if each character in the string
+matches the corresponding character in the string used as the definition
+name when the definition was created.  The case sensitivity (whether or
+not the upper-case letters match the lower-case letters) is
+implementation defined.  A system may be either case sensitive, treating
+upper- and lower-case letters as different and not matching, or case
+insensitive, ignoring differences in case while searching.
+
+<P>
+
+The matching of upper- and lower-case letters with alphabetic characters
+in character set extensions such as accented international characters is
+implementation defined.
+
+<P>
+
+A system shall be capable of finding the definition names defined by
+this Standard when they are spelled with upper-case letters.
+
+<P>
+
+<hr>
+<A name=3.4.3>
+<H3>3.4.3 Semantics</H3>
+</a>
+
+The semantics of a Forth definition are implemented by machine code or a
+sequence of execution tokens or other representations.  They are largely
+specified by the stack notation in the glossary entries, which shows
+what values shall be consumed and produced.  The prose in each glossary
+entry further specifies the definition's behavior.
+
+<P>
+
+Each Forth definition may have several behaviors, described in the
+following sections.  The terms <B>initiation semantics</B> and
+<B>run-time semantics</B> refer to definition fragments, and have
+meaning only within the individual glossary entries where they appear.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.4.3>A.3.4.3</a> Semantics,
+<a href=a0005.htm>RFI 0005</a>.
+</code>
+<p>
+
+<hr>
+<A name=3.4.3.1>
+<H4>3.4.3.1 Execution semantics</H4>
+</a>
+
+The execution semantics of each Forth definition are specified in an
+<B>Execution:</B> section of its glossary entry.  When a definition has
+only one specified behavior, the label is omitted.
+
+<P>
+
+Execution may occur implicitly, when the definition into which it has
+been compiled is executed, or explicitly, when its execution token is
+passed to 
+<a href=dpans6.htm#6.1.1370>EXECUTE</a>.  
+The execution semantics of a syntactically correct
+definition under conditions other than those specified in this Standard
+are implementation dependent.
+
+<P>
+
+Glossary entries for defining words include the execution semantics for
+the new definition in a <i>name</i> <b>Execution:</B> section.
+
+<P>
+
+<hr>
+<A name=3.4.3.2>
+<H4>3.4.3.2 Interpretation semantics</H4>
+</a>
+
+Unless otherwise specified in an <B>Interpretation:</B> section of the
+glossary entry, the interpretation semantics of a Forth definition are
+its execution semantics.
+
+<P>
+
+A system shall be capable of executing, in interpretation state, all of
+the definitions from the Core word set and any definitions included from
+the optional word sets or word set extensions whose interpretation
+semantics are defined by this Standard.
+
+<P>
+
+A system shall be capable of executing, in interpretation state, any new
+definitions created in accordance with 
+<a href=dpans3.htm#3.>3.</a>  Usage requirements.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.4.3.2>A.3.4.3.2</a> Interpretation semantics
+</code>
+<p>
+
+<hr>
+<A name=3.4.3.3>
+<H4>3.4.3.3 Compilation semantics</H4>
+</a>
+
+Unless otherwise specified in a <B>Compilation:</B> section of the
+glossary entry, the compilation semantics of a Forth definition shall be
+to append its execution semantics to the execution semantics of the
+current definition.
+
+<P>
+<code>
+See:
+<a href=a0007.htm>RFI 0007</a> Distinction between <em>immediacy</em> and <em>special compilation semantics</em>.
+</code>
+<p>
+
+<hr>
+<A name=3.4.4>
+<H3>3.4.4 Possible actions on an ambiguous condition</H3>
+</a>
+
+When an ambiguous condition exists, a system may take one or more of the
+following actions:
+
+<UL>
+<LI>ignore and continue;
+<LI>display a message;
+<LI>execute a particular word;
+<LI>set interpretation state and begin text interpretation;
+<LI>take other implementation-defined actions;
+<LI>take implementation-dependent actions.
+</UL>
+<P>
+
+The response to a particular ambiguous condition need not be the same
+under all circumstances.
+
+<P>
+
+<hr>
+<A name=3.4.5>
+<H3>3.4.5 Compilation</H3>
+</a>
+
+A program shall not attempt to
+nest compilation of definitions.
+
+<P>
+
+During the compilation of the current definition, a program shall not
+execute any defining word, 
+<a href=dpans6.htm#6.2.0455>:NONAME</a>, 
+or any definition that allocates
+dictionary data space.  The compilation of the current definition may be
+suspended using [ 
+(<a href=dpans6.htm#6.1.2500>left-bracket</a>) 
+and resumed using ] 
+(<a href=dpans6.htm#6.1.2540>right-bracket</a>).
+While the compilation of the current definition is suspended, a program
+shall not execute any defining word, :NONAME, or any definition that
+allocates dictionary data space.
+
+<p>
+<code>
+See:
+<a href=dpansa3.htm#A.3.4.5>A.3.4.5</a> Compilation
+</code>
+<p>
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpans4.htm><IMG   src="right.gif" ></A>  Next Section
+<P>
+</BODY>
+</HTML>

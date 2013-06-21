@@ -1,0 +1,553 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans8.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpans10.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=9.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>9. The optional Exception word set</H1>
+
+
+<p>
+<code>
+See:
+<a href=dpansa9.htm#A.9>A.9</a> The optional Exception word set
+</code>
+<p>
+
+
+<hr>
+<A name=9.1>
+<H2>9.1 Introduction</H2>
+</a>
+
+
+<hr>
+<A name=9.2>
+<H2>9.2 Additional terms and notation</H2>
+</a>
+
+None.
+
+
+<hr>
+<A name=9.3>
+<H2>9.3 Additional usage requirements</H2>
+</a>
+
+<p>
+<code>
+See:
+<a href=dpansa9.htm#A.9.3>A.9.3</a> Additional usage requirements
+</code>
+<p>
+
+<hr>
+<A name=9.3.1>
+<H3>9.3.1 THROW values</H3>
+</a>
+
+The 
+<a href=dpans9.htm#9.6.1.2275>THROW</a> 
+values {-255...-1} shall be used only as assigned by this
+Standard.  The values {-4095...-256} shall be used only as assigned by a
+system.
+<P>
+
+If the 
+<a href=dpans11.htm>File-Access</a> or 
+<a href=dpans14.htm>Memory-Allocation</a> word sets are implemented, it is
+recommended that the non-zero values of ior lie within the range of
+system THROW values, as defined above.  In an operating-system
+environment, this can sometimes be accomplished by <B>biasing</B> the
+range of operating-system exception-codes to fall within the THROW
+range.
+<P>
+
+Programs shall not define values for use with THROW in the range
+{-4095...-1}.
+
+<P>
+
+<hr>
+<A name=9.3.2>
+<H3>9.3.2 Exception frame</H3>
+</a>
+
+An exception frame is the implementation-dependent set of information
+recording the current execution state necessary for the proper
+functioning of 
+<a href=dpans9.htm#9.6.1.0875>CATCH</a> and 
+<a href=dpans9.htm#9.6.1.2275>THROW</a>.  It often includes the depths of the
+data stack and return stack.
+<P>
+
+
+<hr>
+<A name=9.3.3>
+<H3>9.3.3 Exception stack</H3>
+</a>
+
+A stack used for the nesting of exception frames by 
+<a href=dpans9.htm#9.6.1.0875>CATCH</a> and 
+<a href=dpans9.htm#9.6.1.2275>THROW</a>.  It
+may be, but need not be, implemented using the return stack.
+<P>
+
+
+<hr>
+<A name=9.3.4>
+<H3>9.3.4 Environmental queries</H3>
+</a>
+
+Append table 9.1
+to table 3.5.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.6>3.2.6</a> Environmental queries
+</code>
+<P>
+
+Table 9.1 - Environmental query strings
+<P>
+
+
+<PRE>
+String          Value data type  Constant?   Meaning
+------          ---------------  ---------   -------
+EXCEPTION       flag             no          Exception word set present
+EXCEPTION-EXT   flag             no          Exception extensions word set present
+
+</PRE>
+
+<P>
+
+<hr>
+<A name=9.3.5>
+<H3>9.3.5 Possible actions on an ambiguous condition</H3>
+</a>
+
+A system choosing to execute 
+<a href=dpans9.htm#9.6.1.2275>THROW</a> when detecting one of the ambiguous
+conditions listed in table 9.3.6 shall use the throw code listed there.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.4>3.4.4</a> Possible actions on an ambiguous
+condition
+</code>
+
+<P>
+
+Table 9.2 - THROW code assignments
+<P>
+
+
+<PRE>
+       Code     Reserved for
+       ----     ------------
+        -1      <a href=dpans6.htm#6.1.0670>ABORT</a>
+        -2      <a href=dpans6.htm#6.1.0680>ABORT"</a>
+        -3      stack overflow
+        -4      stack underflow
+        -5      return stack overflow
+        -6      return stack underflow
+        -7      do-loops nested too deeply during execution
+        -8      dictionary overflow
+        -9      invalid memory address
+        -10     division by zero
+        -11     result out of range
+        -12     argument type mismatch
+        -13     undefined word
+        -14     interpreting a compile-only word
+        -15     invalid <a href=dpans15.htm#15.6.2.1580>FORGET</a>
+        -16     attempt to use zero-length string as a name
+        -17     pictured numeric output string overflow
+        -18     parsed string overflow
+        -19     definition name too long
+        -20     write to a read-only location
+        -21     unsupported operation (e.g., <a href=dpans10.htm#10.6.1.0742>AT-XY</a> on a
+                too-dumb terminal)
+        -22     control structure mismatch
+        -23     address alignment exception
+        -24     invalid numeric argument
+        -25     return stack imbalance
+        -26     loop parameters unavailable
+        -27     invalid recursion
+        -28     user interrupt
+        -29     compiler nesting
+        -30     obsolescent feature
+        -31     <a href=dpans6.htm#6.1.0550>>BODY</a> used on non-<a href=dpans6.htm#6.1.1000>CREATE</a>d definition
+        -32     invalid name argument (e.g., <a href=dpans6.htm#6.2.2295>TO</a> xxx)
+        -33     block read exception
+        -34     block write exception
+        -35     invalid block number
+        -36     invalid file position
+        -37     file I/O exception
+        -38     non-existent file
+        -39     unexpected end of file
+        -40     invalid <a href=dpans6.htm#6.1.0750>BASE</a> for floating point conversion
+        -41     loss of precision
+        -42     floating-point divide by zero
+        -43     floating-point result out of range
+        -44     floating-point stack overflow
+        -45     floating-point stack underflow
+        -46     floating-point invalid argument
+        -47     compilation word list deleted
+        -48     invalid <a href=dpans6.htm#6.1.2033>POSTPONE</a>
+        -49     search-order overflow
+        -50     search-order underflow
+        -51     compilation word list changed
+        -52     control-flow stack overflow
+        -53     exception stack overflow
+        -54     floating-point underflow
+        -55     floating-point unidentified fault
+        -56     <a href=dpans6.htm#6.1.2050>QUIT</a>
+        -57     exception in sending or receiving a character
+        -58     <a href=dpans15.htm#15.6.2.2532>[IF]</a>, <a href=dpans15.htm#15.6.2.2531>[ELSE]</a>, or <a href=dpans15.htm#15.6.2.2533>[THEN]</a> exception
+</PRE>
+
+<P>
+
+<hr>
+<A name=9.3.6>
+<H3>9.3.6 Exception handling</H3>
+</a>
+
+There are several methods of coupling 
+<a href=dpans9.htm#9.6.1.0875>CATCH</a> and 
+<a href=dpans9.htm#9.6.1.2275>THROW</a> to other
+procedural nestings.  The usual nestings are the execution of
+definitions, use of the return stack, use of loops, instantiation of
+locals and nesting of input sources (i.e., with 
+<a href=dpans7.htm#7.6.1.1790>LOAD</a>, 
+<a href=dpans6.htm#6.1.1360>EVALUATE</a>, or
+<a href=dpans11.htm#11.6.1.1717>INCLUDE-FILE</a>).
+<P>
+
+When a THROW returns control to a CATCH, the system shall un-nest not
+only definitions, but also, if present, locals and input source
+specifications, to return the system to its proper state for continued
+execution past the CATCH.
+<P>
+<code>
+See:
+<a href=dpansa9.htm#A.9.3.6>A.9.3.6</a> Exception handling
+</code>
+<p>
+
+
+<hr>
+<A name=9.4>
+<H2>9.4 Additional documentation requirements</H2>
+</a>
+
+
+
+<hr>
+<A name=9.4.1>
+<H3>9.4.1 System documentation</H3>
+</a>
+
+
+
+<hr>
+<A name=9.4.1.1>
+<H3>9.4.1.1 Implementation-defined options</H3>
+</a>
+
+<UL>
+<LI>Values used in the system by 
+<a href=dpans9.htm#9.6.1.0875>9.6.1.0875</a> CATCH and 
+<a href=dpans9.htm#9.6.1.2275>9.6.1.2275</a> THROW
+(<a href=dpans9.htm#9.3.1>9.3.1</a> THROW values, 
+<a href=dpans9.htm#9.3.5>9.3.5</a> 
+Possible actions on an ambiguous condition).
+</UL>
+<P>
+
+
+<hr>
+<A name=9.4.1.2>
+<H3>9.4.1.2 Ambiguous conditions</H3>
+</a>
+
+<UL>
+<LI>no additional requirements.
+</UL>
+<P>
+
+
+<hr>
+<A name=9.4.1.3>
+<H3>9.4.1.3 Other system documentation</H3>
+</a>
+
+<UL>
+<LI>no additional requirements.
+</UL>
+
+<P>
+
+
+<hr>
+<A name=9.4.2>
+<H3>9.4.2 Program documentation</H3>
+</a>
+
+<UL>
+<LI>no additional requirements.
+</UL>
+
+
+<hr>
+<A name=9.5>
+<H2>9.5 Compliance and labeling</H2>
+</a>
+
+
+
+<hr>
+<A name=9.5.1>
+<H3>9.5.1 ANS Forth systems</H3>
+</a>
+
+The phrase <B>Providing the Exception word set</B> shall be appended to
+the label of any Standard System that provides all of the Exception word
+set.
+<P>
+
+The phrase <B>Providing name(s) from the Exception Extensions word
+set</B> shall be appended to the label of any Standard System that
+provides portions of the Exception Extensions word set.
+<P>
+
+The phrase <B>Providing the Exception Extensions word set</B> shall be
+appended to the label of any Standard System that provides all of the
+Exception and Exception Extensions word sets.
+<P>
+
+
+
+<hr>
+<A name=9.5.2>
+<H3>9.5.2 ANS Forth programs</H3>
+</a>
+
+The phrase <B>Requiring the Exception word set</B> shall be appended to
+the label of Standard Programs that require the system to provide the
+Exception word set.
+<P>
+
+The phrase <B>Requiring name(s) from the Exception Extensions word
+set</B> shall be appended to the label of Standard Programs that require
+the system to provide portions of the Exception Extensions word set.
+<P>
+
+The phrase <B>Requiring the Exception Extensions word set</B> shall be
+appended to the label of Standard Programs that require the system to
+provide all of the Exception and Exception Extensions word sets.
+
+<P>
+
+
+<hr>
+<A name=9.6>
+<H2>9.6 Glossary</H2>
+</a>
+
+
+<hr>
+<A name=9.6.1>
+<H3>9.6.1 Exception words</H3>
+</a>
+
+
+
+<hr>
+<A name=9.6.1.0875>
+<code>
+9.6.1.0875 <b>CATCH</b>
+</code>
+</a>
+<BR>
+EXCEPTION
+<BR>
+<pre>
+	( i*x xt -- j*x 0 | i*x n )
+</pre>
+<P>
+
+Push an exception frame on the exception stack and then execute the
+execution token xt (as with 
+<a href=dpans6.htm#6.1.1370>EXECUTE</a>) 
+in such a way that control can be
+transferred to a point just after CATCH if 
+<a href=dpans9.htm#9.6.1.2275>THROW</a> is executed during the
+execution of xt.
+<P>
+
+If the execution of xt completes normally (i.e., the exception frame
+pushed by this CATCH is not popped by an execution of THROW) pop the
+exception frame and return zero on top of the data stack, above whatever
+stack items would have been returned by xt EXECUTE.  Otherwise, the
+remainder of the execution semantics are given by THROW.
+
+<P>
+
+<hr>
+<A name=9.6.1.2275>
+<code>
+9.6.1.2275 <b>THROW</b>
+</code>
+</a>
+<BR>
+EXCEPTION
+<BR>
+<pre>
+	( k*x n -- k*x | i*x n )
+</pre>
+<P>
+
+If any bits of n are non-zero, pop the topmost exception frame from the
+exception stack, along with everything on the return stack above that
+frame.  Then restore the input source specification in use before the
+corresponding 
+<a href=dpans9.htm#9.6.1.0875>CATCH</a> 
+and adjust the depths of all stacks defined by this
+Standard so that they are the same as the depths saved in the exception
+frame (i is the same number as the i in the input arguments to the
+corresponding CATCH), put n on top of the data stack, and transfer
+control to a point just after the CATCH that pushed that exception
+frame.
+<P>
+
+If the top of the stack is non zero and there is no exception frame on
+the exception stack, the behavior is as follows:
+<P>
+
+If n is minus-one (-1), perform the function of 
+<a href=dpans6.htm#6.1.0670>6.1.0670</a> ABORT (the
+version of ABORT in the Core word set), displaying no message.
+<P>
+
+If n is minus-two, perform the function of 
+<a href=dpans6.htm#6.1.0680>6.1.0680</a> ABORT" (the version
+of ABORT" in the Core word set), displaying the characters ccc
+associated with the ABORT" that generated the THROW.
+<P>
+
+Otherwise, the system may display an implementation-dependent message
+giving information about the condition associated with the THROW code n.
+Subsequently, the system shall perform the function of 
+<a href=dpans6.htm#6.1.0670>6.1.0670</a> ABORT
+(the version of ABORT in the Core word set).
+<P>
+
+<p>
+<code>
+See:
+<a href=dpansa9.htm#A.9.6.1.2275>A.9.6.1.2275 THROW</a>
+</code>
+<p>
+
+<hr>
+<A name=9.6.2>
+<H3>9.6.2 Exception extension words</H3>
+</a>
+
+<hr>
+<A name=9.6.2.0670>
+<code>
+9.6.2.0670 <b>ABORT</b>
+</code>
+</a>
+<br>
+EXCEPTION EXT
+<P>
+
+Extend the semantics of 
+<a href=dpans6.htm#6.1.0670>6.1.0670</a> ABORT to be:
+<P>
+
+<pre>
+	( i*x -- ) ( R: j*x -- )
+</pre>
+<P>
+
+Perform the function of -1 
+<a href=dpans9.htm#9.6.1.2275>THROW</a> .
+<P>
+
+
+<hr>
+<A name=9.6.2.0680>
+<code>
+9.6.2.0680 <b>ABORT"</b>
+</code>
+</a>
+<br>
+<B>abort-quote</B>   EXCEPTION EXT
+<P>
+Extend the semantics of 
+<a href=dpans6.htm#6.1.0680>6.1.0680</a> ABORT" to be:
+<P>
+<pre>
+        Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+        Compilation: ( <B>"ccc&lt;quote&gt;"</B> -- )
+</pre>
+<P>
+
+Parse ccc delimited by a " (double-quote).  Append the run-time semantics
+given below to the current definition.
+<P>
+
+<pre>
+        Run-time:       ( i*x x1 --  | i*x ) ( R: j*x --  | j*x )
+</pre>
+<P>
+
+Remove x1 from the stack.  If any bit of x1 is not zero, perform the function
+of -2 
+<a href=dpans9.htm#9.6.1.2275>THROW</a>, 
+displaying ccc if there is no exception frame on the exception
+stack.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing
+</code>
+<P>
+
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpans10.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

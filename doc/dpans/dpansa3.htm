@@ -1,0 +1,1434 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpansa2.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpansa4.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=A.3>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>A.3 Usage requirements</H1>
+
+Forth systems are unusually simple to develop, in comparison with
+compilers for more conventional languages such as C.  In addition to
+Forth systems supported by vendors, public-domain implementations and
+implementation guides have been widely available for nearly twenty
+years, and a large number of individuals have developed their own Forth
+systems.  As a result, a variety of implementation approaches have
+developed, each optimized for a particular platform or target market.
+
+<P>
+
+The X3J14 Technical Committee has endeavored to accommodate this
+diversity by constraining implementors as little as possible, consistent
+with a goal of defining a standard interface between an underlying Forth
+System and an application program being developed on it.
+
+<P>
+
+Similarly, we will not undertake in this section to tell you how to
+implement a Forth System, but rather will provide some guidance as to
+what the minimum requirements are for systems that can properly claim
+compliance with this Standard.
+
+<P>
+
+<hr>
+<a name=A.3.1>
+<H2>A.3.1 Data-types</H2>
+</a>
+
+Most computers deal with arbitrary bit patterns.  There is no way to
+determine by inspection whether a cell contains an address or an
+unsigned integer.  The only meaning a datum possesses is the meaning
+assigned by an application.
+
+<P>
+
+When data are operated upon, the meaning of the result depends on the
+meaning assigned to the input values.  Some combinations of input values
+produce meaningless results: for instance, what meaning can be assigned
+to the arithmetic sum of the ASCII representation of the character
+<B>A</B> and a 
+<a href=dpans6.htm#6.2.2298>TRUE</a> 
+flag? The answer may be <B>no meaning</B>; or
+alternatively, that operation might be the first step in producing a
+checksum.  Context is the determiner.
+
+<P>
+
+The discipline of circumscribing meaning which a program may assign to
+various combinations of bit patterns is sometimes called data typing.
+Many computer languages impose explicit data typing and have compilers
+that prevent ill-defined operations.
+
+<P>
+
+Forth rarely explicitly imposes data-type restrictions.  Still, data
+types implicitly do exist, and discipline is required, particularly if
+portability of programs is a goal.  In Forth, it is incumbent upon the
+programmer (rather than the compiler) to determine that data are
+accurately typed.
+
+<P>
+
+This section attempts to offer guidance regarding de facto data typing
+in Forth.
+
+<P>
+
+<hr>
+<a name=A.3.1.2>
+<H3>A.3.1.2 Character types</H3>
+</a>
+
+The correct identification and proper manipulation of the character data
+type is beyond the purview of Forth's enforcement of data type by means
+of stack depth.  Characters do not necessarily occupy the entire width
+of their single stack entry with meaningful data.  While the distinction
+between signed and unsigned character is entirely absent from the formal
+specification of Forth, the tendency in practice is to treat characters
+as short positive integers when mathematical operations come into play.
+
+<P>
+
+<dl>
+a) Standard Character Set
+
+<P>
+
+<dl>
+1) The storage unit for the character data type 
+(<a href=dpans6.htm#6.1.0870>C@</a>, 
+<a href=dpans6.htm#6.1.0850>C!</a>, 
+<a href=dpans6.htm#6.1.1540>FILL</a>, etc.) must be
+able to contain unsigned numbers from 0 through 255.
+
+<P>
+
+2) An implementation is not required to restrict character storage to
+that range, but a Standard Program without environmental dependencies
+cannot assume the ability to store numbers outside that range in a
+<B>char</B> location.
+
+<P>
+
+3) The allowed number representations are two's-complement,
+one's-complement, and signed-magnitude.  Note that all of these number
+systems agree on the representation of positive numbers.
+
+<P>
+
+4) Since a <B>char</B> can store small positive numbers and since the
+character data type is a sub-range of the unsigned integer data type, C!
+must store the n least-significant bits of a cell (8 <= n <= bits/cell).
+Given the enumeration of allowed number representations and their known
+encodings, 
+<B><code>TRUE xx C! xx C@</code></B> must leave a stack item with some
+number of bits set, which will thus will be accepted as non-zero by 
+<a href=dpans6.htm#6.1.1700>IF</a>.
+
+<P>
+
+5) For the purposes of input 
+(<a href=dpans6.htm#6.1.1750>KEY</a>, 
+<a href=dpans6.htm#6.1.0695>ACCEPT</a>, 
+etc.) and output 
+(<a href=dpans6.htm#6.1.1320>EMIT</a>, 
+<a href=dpans6.htm#6.1.2310>TYPE</a>,
+etc.), the encoding between numbers and human-readable symbols is
+ISO646/IRV (ASCII) within the range from 32 to 126 (space to ~).  EBCDIC
+is out (most <B>EBCDIC</B> computer systems support ASCII too).  Outside
+that range, it is up to the implementation.  The obvious implementation
+choice is to use ASCII control characters for the range from 0 to 31, at
+least for the <B>displayable</B> characters in that range (TAB, RETURN,
+LINEFEED, FORMFEED).  However, this is not as clear-cut as it may seem,
+because of the variation between operating systems on the treatment of
+those characters.  For example, some systems TAB to 4 character
+boundaries, others to 8 character boundaries, and others to preset tab
+stops.  Some systems perform an automatic linefeed after a carriage
+return, others perform an automatic carriage return after a linefeed,
+and others do neither.
+
+<P>
+
+The codes from 128 to 255 may eventually be standardized, either
+formally or informally, for use as international characters, such as the
+letters with diacritical marks found in many European languages.  One
+such encoding is the 8-bit ISO Latin-1 character set.  The computer
+marketplace at large will eventually decide which encoding set of those
+characters prevails.  For Forth implementations running under an
+operating system (the majority of those running on standard platforms
+these days), most Forth implementors will probably choose to do whatever
+the system does, without performing any remapping within the domain of
+the Forth system itself.
+
+<P>
+
+6) A Standard Program can depend on the ability to receive any character
+in the range 32 ...  126 through KEY, and similarly to display the same
+set of characters with EMIT.  If a program must be able to receive or
+display any particular character outside that range, it can declare an
+environmental dependency on the ability to receive or display that
+character.
+
+<P>
+
+7) A Standard Program cannot use control characters in definition names.
+However, a Standard System is not required to enforce this prohibition.
+Thus, existing systems that currently allow control characters in words
+names from 
+<a href=dpans7.htm#7.6.1.0790>BLOCK</a> 
+source may continue to allow them, and programs running
+on those systems will continue to work.  In text file source, the
+parsing action with space as a delimiter (e.g., 
+<a href=dpans6.htm#6.1.0770>BL</a> 
+<a href=dpans6.htm#6.1.2450>WORD</a>) treats control
+characters the same as spaces.  This effectively implies that you cannot
+use control characters in definition names from text-file source, since
+the text interpreter will treat the control characters as delimiters.
+Note that this <B>control-character folding</B> applies only when space
+is the delimiter, thus the phrase 
+<code><B>CHAR ) WORD</B></code> may collect a
+string containing control characters.
+</dl>
+<P>
+
+b) Storage and retrieval
+<P>
+
+<dl>
+Characters are transferred from the data stack to memory by C! and from
+memory to the data stack by C@.  A number of lower-significance bits
+equivalent to the implementation-dependent width of a character are
+transferred from a popped data stack entry to an address by the action
+of C! without affecting any bits which may comprise the
+higher-significance portion of the cell at the destination address;
+however, the action of C@ clears all higher-significance bits of the
+data stack entry which it pushes that are beyond the
+implementation-dependent width of a character (which may include
+implementation-defined display information in the higher-significance
+bits).  The programmer should keep in mind that operating upon arbitrary
+stack entries with words intended for the character data type may result
+in truncation of such data.
+</dl>
+<P>
+
+c) Manipulation on the stack
+<P>
+
+<dl>
+In addition to C@ and C!, characters are moved to, from and upon the
+data stack by the following words:
+
+<P>
+
+<code>
+<a href=dpans6.htm#6.1.0580>&gt;R</a>  
+<a href=dpans6.htm#6.1.0630>?DUP</a>  
+<a href=dpans6.htm#6.1.1260>DROP</a>  
+<a href=dpans6.htm#6.1.1290>DUP</a>  
+<a href=dpans6.htm#6.1.1990>OVER</a>  
+<a href=dpans6.htm#6.2.2030>PICK</a>  
+<a href=dpans6.htm#6.1.2060>R&gt;</a>  
+<a href=dpans6.htm#6.1.2070>R@</a>  
+<a href=dpans6.htm#6.2.2150>ROLL</a>  
+<a href=dpans6.htm#6.1.2160>ROT</a>  
+<a href=dpans6.htm#6.1.2260>SWAP</a>
+</code>
+</dl>
+<P>
+
+d) Additional operations
+<P>
+
+<dl>
+The following mathematical operators are valid for character data:
+
+<P>
+
+<code>
+<a href=dpans6.htm#6.1.0120>+</a>  
+<a href=dpans6.htm#6.1.0160>-</a>  
+<a href=dpans6.htm#6.1.0090>*</a>  
+<a href=dpans6.htm#6.1.0230>/</a>  
+<a href=dpans6.htm#6.1.0240>/MOD</a>  
+<a href=dpans6.htm#6.1.1890>MOD</a>
+</code>
+<P>
+
+The following comparison and bitwise operators may be valid for
+characters, keeping in mind that display information cached in the most
+significant bits of characters in an implementation-defined fashion may
+have to be masked or otherwise dealt with:
+
+<P>
+
+<code>
+<a href=dpans6.htm#6.1.0720>AND</a>  
+<a href=dpans6.htm#6.1.1980>OR</a>  
+<a href=dpans6.htm#6.1.0540>&gt;</a>  
+<a href=dpans6.htm#6.1.0480>&lt;</a>  
+<a href=dpans6.htm#6.2.2350>U&gt;</a>  
+<a href=dpans6.htm#6.1.2340>U&lt;</a>  
+<a href=dpans6.htm#6.1.0530>=</a>  
+<a href=dpans6.htm#6.2.0500>&lt;&gt;</a>  
+<a href=dpans6.htm#6.1.0270>0=</a>  
+<a href=dpans6.htm#6.2.0260>0&lt;&gt;</a>  
+<a href=dpans6.htm#6.1.1870>MAX</a>  
+<a href=dpans6.htm#6.1.1880>MIN</a> 
+<a href=dpans6.htm#6.1.1805>LSHIFT</a> 
+<a href=dpans6.htm#6.1.2162>RSHIFT</a>
+</code>
+
+</dl>
+</dl>
+<P>
+
+
+<hr>
+<a name=A.3.1.3>
+<h3>A.3.1.3   Single-cell types</h3>
+</a>
+<P>
+
+A single-cell stack entry viewed without regard to typing is the
+fundamental data type of Forth.  All other data types are actually
+represented by one or more single-cell stack entries.
+
+<P>
+
+<dl>
+a) Storage and retrieval
+<P>
+
+
+<dl>
+Single-cell data are transferred from the stack to memory by 
+<a href=dpans6.htm#6.1.0010>!</a>; from
+memory to the stack by 
+<a href=dpans6.htm#6.1.0650>@</a>.  
+All bits are transferred in both directions
+and no type checking of any sort is performed, nor does the Standard
+System check that a memory address used by ! or @ is properly aligned or
+properly sized to hold the datum thus transferred.
+</dl>
+<P>
+
+b) Manipulation on the stack
+<P>
+
+<dl>
+Here is a selection of the most important words which move single-cell
+data to, from and upon the data stack:
+
+<P>
+
+<code>
+!  
+@  
+<a href=dpans6.htm#6.1.0580>&gt;R</a>  
+<a href=dpans6.htm#6.1.0630>?DUP</a>  
+<a href=dpans6.htm#6.1.1260>DROP</a>  
+<a href=dpans6.htm#6.1.1290>DUP</a>  
+<a href=dpans6.htm#6.1.1990>OVER</a>  
+<a href=dpans6.htm#6.2.2030>PICK</a>  
+<a href=dpans6.htm#6.1.2060>R&gt;</a>  
+<a href=dpans6.htm#6.1.2070>R@</a>  
+<a href=dpans6.htm#6.2.2150>ROLL</a>  
+<a href=dpans6.htm#6.1.2160>ROT</a>  
+<a href=dpans6.htm#6.1.2260>SWAP</a>
+</code>
+</dl>
+<P>
+
+c) Comparison operators
+<P>
+
+<dl>
+The following comparison operators are universally valid for one or more
+single cells:
+
+<P>
+
+<code>
+<a href=dpans6.htm#6.1.0530>=</a>  
+<a href=dpans6.htm#6.2.0500>&lt;&gt;</a>  
+<a href=dpans6.htm#6.1.0270>0=</a>  
+<a href=dpans6.htm#6.2.0260>0&lt;&gt;</a>
+</code>
+<P>
+</dl>
+</dl>
+
+<hr>
+<a name=A.3.1.3.1>
+<H4>A.3.1.3.1 Flags</H4>
+</a>
+
+A 
+<a href=dpans6.htm#6.2.1485>FALSE</a> 
+flag is a single-cell datum with all bits unset, and a 
+<a href=dpans6.htm#6.2.2298>TRUE</a> 
+flag
+is a single-cell datum with all bits set.  While Forth words which test
+flags accept any non-null bit pattern as true, there exists the concept
+of the well-formed flag.  If an operation whose result is to be used as
+a flag may produce any bit-mask other than TRUE or FALSE, the
+recommended discipline is to convert the result to a well-formed flag by
+means of the Forth word 
+<a href=dpans6.htm#6.2.0260>0&lt;&gt;</a> 
+so that the result of any subsequent logical
+operations on the flag will be predictable.
+
+<P>
+
+In addition to the words which move, fetch and store single-cell items,
+the following words are valid for operations on one or more flag data
+residing on the data stack:
+
+<P>
+
+<code>
+<a href=dpans6.htm#6.1.0720>AND</a>  
+<a href=dpans6.htm#6.1.1980>OR</a>  
+<a href=dpans6.htm#6.1.2490>XOR</a>  
+<a href=dpans6.htm#6.1.1720>INVERT</a>
+</code>
+<P>
+
+<hr>
+<a name=A.3.1.3.2>
+<h4>A.3.1.3.2 Integers</h4>
+</a>
+<p>
+
+Given the same number of bits, unsigned integers usually represent twice
+the number of absolute values representable by signed integers.
+
+<P>
+
+A single-cell datum may be treated by a Standard Program as an unsigned
+integer.  Moving and storing such data is performed as for any
+single-cell data.  In addition, the following mathematical and
+comparison operators are valid for single-cell unsigned integers:
+
+<P>
+
+<code>
+<a href=dpans6.htm#6.1.2360>UM*</a>  
+<a href=dpans6.htm#6.1.2370>UM/MOD</a>  
+<a href=dpans6.htm#6.1.0120>+</a>  
+<a href=dpans6.htm#6.1.0130>+!</a>  
+<a href=dpans6.htm#6.1.0160>-</a>  
+<a href=dpans6.htm#6.1.0290>1+</a>  
+<a href=dpans6.htm#6.1.0300>1-</a>  
+<a href=dpans6.htm#6.1.0090>*</a>  
+<a href=dpans6.htm#6.1.2340>U&lt;</a>  
+<a href=dpans6.htm#6.2.2350>U&gt;</a>
+</code>
+<P>
+
+
+<hr>
+<a name=A.3.1.3.3>
+<H4>A.3.1.3.3 Addresses</H4>
+</a>
+
+An address is uniquely represented as a single cell unsigned number and can be
+treated as such when being moved to, from, or upon the stack.  Conversely,
+each unsigned number represents a unique address (which is not necessarily an
+address of accessible memory).  This one-to-one relationship between addresses
+and unsigned numbers forces an equivalence between address arithmetic and the
+corresponding operations on unsigned numbers.
+
+<P>
+
+Several operators are provided specifically for address arithmetic:
+<P>
+
+<code>
+<a href=dpans6.htm#6.1.0897>CHAR+</a>  
+<a href=dpans6.htm#6.1.0898>CHARS</a>  
+<a href=dpans6.htm#6.1.0880>CELL+</a>  
+<a href=dpans6.htm#6.1.0890>CELLS</a>
+</code>
+<P>
+
+and, if the floating-point word set is present:
+<P>
+
+<code>
+<a href=dpans12.htm#12.6.1.1555>FLOAT+</a>  
+<a href=dpans12.htm#12.6.1.1556>FLOATS</a>  
+<a href=dpans12.htm#12.6.2.2207>SFLOAT+</a>  
+<a href=dpans12.htm#12.6.2.2208>SFLOATS</a>  
+<a href=dpans12.htm#12.6.2.1208>DFLOAT+</a>  
+<a href=dpans12.htm#12.6.2.1209>DFLOATS</a>
+</code>
+<P>
+
+A Standard Program may never assume a particular correspondence between
+a Forth address and the physical address to which it is mapped.
+
+<P>
+
+
+<hr>
+<a name=A.3.1.3.4>
+<H4>A.3.1.3.4 Counted strings</H4>
+</a>
+
+The trend in ANS Forth is to move toward the consistent use of the
+<B>c-addr u</B> representation of strings on the stack.  The use of the
+alternate <B>address of counted string</B> stack representation is
+discouraged.  The traditional Forth words 
+<a href=dpans6.htm#6.1.2450>WORD</a> and 
+<a href=dpans6.htm#6.1.1550>FIND</a> 
+continue to use
+the <B>address of counted string</B> representation for historical
+reasons.  The new word 
+<a href=dpans6.htm#6.2.0855>C"</a> 
+, added as a porting aid for existing
+programs, also uses the counted string representation.
+
+<P>
+
+Counted strings remain useful as a way to store strings in memory.  This
+use is not discouraged, but when references to such strings appear on
+the stack, it is preferable to use the <B>c-addr u</B> representation.
+
+<P>
+
+
+<hr>
+<a name=A.3.1.3.5>
+<H4>A.3.1.3.5 Execution tokens</H4>
+</a>
+
+The association between an execution token and a definition is static.
+Once made, it does not change with changes in the search order or
+anything else.  However it may not be unique, e.g., the phrases
+
+<PRE>
+	<b>' 1+</b> 
+   and
+
+	<b>' CHAR+</b>
+</PRE>
+might return the same value.
+
+<P>
+
+
+<hr>
+<a name=A.3.1.4>
+<H3>A.3.1.4 Cell-pair types</H3>
+</a>
+
+<dl>
+a) Storage and retrieval
+<P>
+
+<dl>
+Two operators are provided to fetch and store cell pairs:
+
+<P>
+
+<code>
+<a href=dpans6.htm#6.1.0350>2@</a>  
+<a href=dpans6.htm#6.1.0310>2!</a>
+</code>
+</dl>
+<P>
+
+b) Manipulation on the stack
+<P>
+
+<dl>
+Additionally, these operators may be used to move cell pairs from, to
+and upon the stack:
+
+<P>
+
+<code>
+<a href=dpans6.htm#6.2.0340>2&gt;R</a>  
+<a href=dpans6.htm#6.1.0370>2DROP</a>  
+<a href=dpans6.htm#6.1.0380>2DUP</a>  
+<a href=dpans6.htm#6.1.0400>2OVER</a>  
+<a href=dpans6.htm#6.2.0415>2R&gt;</a>  
+<a href=dpans6.htm#6.1.0430>2SWAP</a>  
+<a href=dpans8.htm#8.6.2.0420>2ROT</a>
+</code>
+</dl>
+<P>
+
+c) Comparison
+<P>
+
+<dl>
+The following comparison operations are universally valid for cell
+pairs:
+
+<P>
+
+<code>
+<a href=dpans8.htm#8.6.1.1120>D=</a>  
+<a href=dpans8.htm#8.6.1.1080>D0=</a>
+</code>
+</dl>
+</dl>
+<P>
+
+
+<hr>
+<a name=A.3.1.4.1>
+<H4>A.3.1.4.1 Double-cell integers</H4>
+</a>
+
+If a double-cell integer is to be treated as signed, the following
+comparison and mathematical operations are valid:
+
+<P>
+
+<code>
+<a href=dpans8.htm#8.6.1.1040>D+</a>  
+<a href=dpans8.htm#8.6.1.1050>D-</a>  
+<a href=dpans8.htm#8.6.1.1110>D&lt;</a>  
+<a href=dpans8.htm#8.6.1.1075>D0&lt;</a>  
+<a href=dpans8.htm#8.6.1.1160>DABS</a>  
+<a href=dpans8.htm#8.6.1.1210>DMAX</a>  
+<a href=dpans8.htm#8.6.1.1220>DMIN</a>  
+<a href=dpans8.htm#8.6.1.1230>DNEGATE</a>  
+<a href=dpans8.htm#8.6.1.1820>M*/</a>  
+<a href=dpans8.htm#8.6.1.1830>M+</a>
+</code>
+<P>
+
+If a double-cell integer is to be treated as unsigned, the following
+comparison and mathematical operations are valid:
+
+<P>
+
+<code>
+D+  
+D-  
+<a href=dpans6.htm#6.1.2370>UM/MOD</a>  
+<a href=dpans8.htm#8.6.2.1270>DU&lt;</a>
+</code>
+<P>
+
+
+<hr>
+<a name=A.3.1.4.2>
+<H4>A.3.1.4.2 Character strings</H4>
+</a>
+
+See:
+<a href=dpansa3.htm#A.3.1.3.4>A.3.1.3.4</a> Counted Strings
+<P>
+
+
+<hr>
+<a name=A.3.2>
+<H2>A.3.2 The implementation environment</H2>
+</a>
+
+
+
+<hr>
+<a name=A.3.2.1>
+<H3>A.3.2.1 Numbers</H3>
+</a>
+
+Traditionally, Forth has been implemented on two's-complement machines
+where there is a one-to-one mapping of signed numbers to unsigned
+numbers - any single cell item can be viewed either as a signed or
+unsigned number.  Indeed, the signed representation of any positive
+number is identical to the equivalent unsigned representation.  Further,
+addresses are treated as unsigned numbers: there is no distinct pointer
+type.  Arithmetic ordering on two's complement machines allows + and -
+to work on both signed and unsigned numbers.  This arithmetic behavior
+is deeply embedded in common Forth practice.  As a consequence of these
+behaviors, the likely ranges of signed and unsigned numbers for
+implementations hosted on each of the permissible arithmetic
+architectures is:
+
+<P>
+<pre>
+      ---------------------------------------------------------
+      Arithmetic architecture  signed numbers  unsigned numbers
+      ---------------------------------------------------------
+      Two's complement         -n-1 to n       0 to 2n+1
+      One's complement         -n to n         0 to n
+      Signed magnitude         -n to n         0 to n
+      ---------------------------------------------------------
+</pre>
+<P>
+
+where n is the largest positive signed number.  For all three
+architectures, signed numbers in the 0 to n range are bitwise identical
+to the corresponding unsigned number.  Note that unsigned numbers on a
+signed magnitude machine are equivalent to signed non-negative numbers
+as a consequence of the forced correspondence between addresses and
+unsigned numbers and of the required behavior of + and -.
+
+<P>
+
+For reference, these number representations may be defined by the way
+that 
+<a href=dpans6.htm#6.1.1910>NEGATE</a> is implemented:
+
+<P>
+
+
+<PRE>
+two's complement:       : NEGATE  INVERT 1+ ;
+one's complement:       : NEGATE  INVERT ;
+signed-magnitude:       : NEGATE  HIGH-BIT XOR ;
+</PRE>
+
+<P>
+
+where HIGH-BIT is a bit mask with only the most-significant bit set.
+Note that all of these number systems agree on the representation of
+non-negative numbers.
+
+<P>
+
+Per <A href=dpans3.htm#3.2.1.1>3.2.1.1</A> Internal number 
+representation and 
+<a href=dpans6.htm#6.1.0270>6.1.0270</a> 0=, the
+implementor must ensure that no standard or supported word return
+negative zero for any numeric (non-Boolean or flag) result.  Many
+existing programmer assumptions will be violated otherwise.
+
+<P>
+
+There is no requirement to implement circular unsigned arithmetic, nor
+to set the range of unsigned numbers to the full size of a cell.  There
+is historical precedent for limiting the range of u to that of +n, which
+is permissible when the cell size is greater than 16 bits.
+
+<P>
+
+
+<hr>
+<A name=A.3.2.1.2>
+<H4>A.3.2.1.2 Digit conversion</H4>
+</a>
+
+For example, an implementation might convert the characters <B>a</B>
+through <B>z</B> identically to the characters <B>A</B> through
+<B>Z</B>, or it might treat the characters <B>[</B> through <B>~</B>
+as additional digits with decimal values 36 through 71, respectively.
+
+<P>
+
+
+<hr>
+<a name=A.3.2.2>
+<H3>A.3.2.2 Arithmetic</H3>
+</a>
+
+
+<hr>
+<a name=A.3.2.2.1>
+<H4>A.3.2.2.1 Integer division</H4>
+</a>
+
+The Forth-79 Standard specifies that the signed division operators 
+(<a href=dpans6.htm#6.1.0230>/</a>,
+<a href=dpans6.htm#6.1.0240>/MOD</a>, 
+<a href=dpans6.htm#6.1.1890>MOD</a>, 
+<a href=dpans6.htm#6.1.0110>*/MOD</a>, 
+and 
+<a href=dpans6.htm#6.1.0100>*/</a>) 
+round non-integer quotients towards zero
+(symmetric division).  Forth-83 changed the semantics of these operators
+to round towards negative infinity (floored division).  Some in the
+Forth community have declined to convert systems and applications from
+the Forth-79 to the Forth-83 divide.  To resolve this issue, an ANS
+Forth system is permitted to supply either floored or symmetric
+operators.  In addition, ANS Forth systems must provide a floored
+division primitive 
+(<a href=dpans6.htm#6.1.1561>FM/MOD</a>), 
+a symmetric division primitive 
+(<a href=dpans6.htm#6.1.2214>SM/REM</a>),
+and a mixed precision multiplication operator 
+(<a href=dpans6.htm#6.1.1810>M*</a>).
+
+<P>
+
+This compromise protects the investment made in current Forth
+applications; Forth-79 and Forth-83 programs are automatically compliant
+with ANS Forth with respect to division.  In practice, the rounding
+direction rarely matters to applications.  However, if a program
+requires a specific rounding direction, it can use the floored division
+primitive FM/MOD or the symmetric division primitive SM/REM to construct
+a division operator of the desired flavor.  This simple technique can be
+used to convert Forth-79 and Forth-83 programs to ANS Forth without any
+analysis of the original programs.
+
+<P>
+
+
+<hr>
+<a name=A.3.2.2.2>
+<H4>A.3.2.2.2 Other integer operations</H4>
+</a>
+
+Whether underflow occurs depends on the data-type of the result.  For
+example, the phrase 
+<b><code>1 2 -</code></b> underflows if the result is unsigned and
+produces the valid signed result -1.
+
+<P>
+
+
+<hr>
+<a name=A.3.2.3>
+<H3>A.3.2.3 Stacks</H3>
+</a>
+
+The only data type in Forth which has concrete rather than abstract
+existence is the stack entry.  Even this primitive typing Forth only
+enforces by the hard reality of stack underflow or overflow.  The
+programmer must have a clear idea of the number of stack entries to be
+consumed by the execution of a word and the number of entries that will
+be pushed back to a stack by the execution of a word.  The observation
+of anomalous occurrences on the data stack is the first line of defense
+whereby the programmer may recognize errors in an application program.
+It is also worth remembering that multiple stack errors caused by
+erroneous application code are frequently of equal and opposite
+magnitude, causing complementary (and deceptive) results.
+
+<P>
+
+For these reasons and a host of other reasons, the one unambiguous,
+uncontroversial, and indispensable programming discipline observed since
+the earliest days of Forth is that of providing a stack diagram for all
+additions to the application dictionary with the exception of static
+constructs such as 
+<a href=dpans6.htm#6.1.2410>VARIABLE</a>s and 
+<a href=dpans6.htm#6.1.0950>CONSTANT</a>s.
+
+<P>
+
+
+<hr>
+<a name=A.3.2.3.2>
+<H4>A.3.2.3.2 Control-flow stack</H4>
+</a>
+
+The simplest use of control-flow words is to implement the basic control
+structures shown in figure A.1.
+
+<P>
+
+<a name=figure.A.1>*
+</a>
+<pre>
+    ---------------------------------------------------------------
+         |                 _____ |               _____ |
+        < >-----  IF      |     \|     BEGIN    |     \|     BEGIN
+         |      |         |  +-------+          |  +-------+
+     +-------+  |         |  |       |          |  |       |
+     |       |  |         |  +-------+          |  +-------+
+     +-------+  |         |      |              |      |
+         | _____|          -----< >    UNTIL     ------      AGAIN
+         |/       THEN           |
+         |                       |
+    ---------------------------------------------------------------
+                      Figure A.1 - The basic control-flow patterns.
+</pre>
+<P>
+
+Figure A.1 - The basic control-flow patterns.
+<P>
+
+In control flow every branch, or transfer of control, must terminate at
+some destination.  A natural implementation uses a stack to remember the
+origin of forward branches and the destination of backward branches.  At
+a minimum, only the location of each origin or destination must be
+indicated, although other implementation-dependent information also may
+be maintained.
+
+<P>
+
+An origin is the location of the branch itself.  A destination is where
+control would continue if the branch were taken.  A destination is
+needed to resolve the branch address for each origin, and conversely, if
+every control-flow path is completed no unused destinations can remain.
+
+<P>
+
+With the addition of just three words 
+(<a href=dpans15.htm#15.6.2.0702>AHEAD</a>, 
+<a href=dpans15.htm#15.6.2.1020>CS-ROLL</a> and 
+<a href=dpans15.htm#15.6.2.1015>CS-PICK</a>), the
+basic control-flow words supply the primitives necessary to compile a
+variety of transportable control structures.  The abilities required are
+compilation of forward and backward conditional and unconditional
+branches and compile-time management of branch origins and destinations.
+Table A.1 shows the desired behavior.
+
+<P>
+
+The requirement that control-flow words are properly balanced by other
+control-flow words makes reasonable the description of a compile-time
+implementation-defined control-flow stack.  There is no prescription as
+to how the control-flow stack is implemented, e.g., data stack, linked
+list, special array.  Each element of the control-flow stack mentioned
+above is the same size.
+
+<P>
+<a name=table.a.1>*
+</a>
+<pre>
+                 Table A.1 - Compilation behavior of control-flow words
+   ---------------------------------------------------------------------------
+   at compile time,
+   word:    supplies:  resolves:  is used to:
+   ---------------------------------------------------------------------------
+   IF       orig                  mark origin of forward conditional branch
+   THEN                orig       resolve IF or AHEAD
+   BEGIN    dest                  mark backward destination
+   AGAIN               dest       resolve with backward unconditional branch
+   UNTIL               dest       resolve with backward conditional branch
+   AHEAD    orig                  mark origin of forward unconditional branch
+   CS-PICK                        copy item on control-flow stack
+   CS-ROLL                        reorder items on control-flow stack
+   --------------------------------------------------------------------------
+</pre>
+<P>
+
+With these tools, the remaining basic control-structure elements, shown
+in 
+<a href=dpansa3.htm#figure.a.2>figure A.2</a>, 
+can be defined.  The stack notation used here for
+immediate words is ( compilation / execution ).
+
+<P>
+
+<PRE>
+: WHILE  ( dest -- orig dest / flag -- )
+                            \ conditional exit from loops
+	POSTPONE IF         \ conditional forward branch
+           1 CS-ROLL        \ keep dest on top
+; IMMEDIATE
+
+
+: REPEAT  ( orig dest -- / -- )
+                            \ resolve a single WHILE and return to BEGIN
+           POSTPONE AGAIN   \ uncond. backward branch to dest
+           POSTPONE THEN    \ resolve forward branch from orig
+; IMMEDIATE
+
+: ELSE  ( orig1 -- orig2 / -- )
+                            \ resolve IF supplying alternate execution
+        POSTPONE AHEAD      \ unconditional forward branch orig2
+           1 CS-ROLL        \ put orig1 back on top
+           POSTPONE THEN    \ resolve forward branch from orig1
+; IMMEDIATE
+</PRE>
+
+<P>
+<a name=figure.a.2>*
+</a>
+<pre>
+     -----------------------------------------------
+             |                 _____ |
+            < >-----  IF      |     \|        BEGIN
+             |      |         |  +-------+
+         +-------+  |         |  |       |
+         |       |  |         |  +-------+
+         +-------+  |         |      |
+             | _____|         |     < >-----  WHILE
+       _____/ /       ELSE    |      |      |
+      |      |                |  +-------+  |
+      |  +-------+            |  |       |  |
+      |  |       |            |  +-------+  |
+      |  +-------+            |      |      |
+      |_____ |                |_____/  _____|
+            \|        THEN            /       REPEAT
+             |                       |
+    ----------------------------------------------
+    Figure A.2 - Additional basic control-flow patterns.
+</pre>
+<P>
+
+Forth control flow provides a solution for well-known problems with
+strictly structured programming.
+
+<P>
+
+The basic control structures can be supplemented, as shown in the
+examples in 
+<a href=dpansa3.htm#figure.a.3>figure A.3</a>, 
+with additional WHILEs in BEGIN ...  UNTIL and
+BEGIN ...  WHILE ...  REPEAT structures.  However, for each additional
+WHILE there must be a THEN at the end of the structure.  THEN completes
+the syntax with WHILE and indicates where to continue execution when the
+WHILE transfers control.  The use of more than one additional WHILE is
+possible but not common.  Note that if the user finds this use of THEN
+undesirable, an alias with a more likable name could be defined.
+
+<P>
+
+Additional actions may be performed between the control flow word (the
+REPEAT or UNTIL) and the THEN that matches the additional WHILE.
+Further, if additional actions are desired for normal termination and
+early termination, the alternative actions may be separated by the
+ordinary Forth ELSE.  The termination actions are all specified after
+the body of the loop.
+
+<P>
+<a name=figure.a.3>*
+</a>
+<pre>
+    --------------------------------------------------
+     _____ |                      _____ |
+    |     \|         BEGIN       |     \|        BEGIN
+    |  +-------+                 |  +-------+
+    |  |       |                 |  |       |
+    |  +-------+                 |  +-------+
+    |      |                     |      |
+    |     < >------  WHILE       |     < >-----  WHILE
+    |      |       |             |      |      |
+    |  +-------+   |             |  +-------+  |
+    |  |       |   |             |  |       |  |
+    |  +-------+   |             |  +-------+  |
+    |      |       |             |      |      |
+    |     < >----  | WHILE        -----< >     | UNTIL
+    |      |     | |                    |      |
+    |  +-------+ | |                +-------+  |
+    |  |       | | |                |       |  |
+    |  +-------+ | |                +-------+  |
+    |      | ____| |                    | _____/
+     \____/ /      | REPEAT       _____/ /       ELSE
+           |       |             |      |
+       +-------+   |             |  +-------+
+       |       |   |             |  |       |
+       +-------+   |             |  +-------+
+           | ______/              \____ |
+           |/        THEN              \|        THEN
+           |                            |
+    ---------------------------------------------------
+    Figure A.3 - Extended control-flow pattern examples.
+</pre>
+<P>
+
+Note that REPEAT creates an anomaly when matching the WHILE with ELSE or
+THEN, most notable when compared with the BEGIN...UNTIL case.  That is,
+there will be one less ELSE or THEN than there are WHILEs because REPEAT
+resolves one THEN.  As above, if the user finds this count mismatch
+undesirable, REPEAT could be replaced in-line by its own definition.
+
+<P>
+
+Other loop-exit control-flow words, and even other loops, can be
+defined.  The only requirements are that the control-flow stack is
+properly maintained and manipulated.
+
+<P>
+
+The simple implementation of the ANS Forth CASE structure below is an
+example of control structure extension.  Note the maintenance of the
+data stack to prevent interference with the possible control-flow stack
+usage.
+
+<P>
+
+
+<PRE>
+0 CONSTANT CASE IMMEDIATE  ( init count of OFs )
+
+: OF  ( #of -- orig #of+1 / x -- )
+    1+    ( count OFs )
+    >R    ( move off the stack in case the control-flow )
+          ( stack is the data stack. )
+    POSTPONE OVER  POSTPONE = ( copy and test case value)
+    POSTPONE IF    ( add orig to control flow stack )
+    POSTPONE DROP  ( discards case value if = )
+    R>             ( we can bring count back now )
+; IMMEDIATE
+
+: ENDOF ( orig1 #of -- orig2 #of )
+    >R   ( move off the stack in case the control-flow )
+         ( stack is the data stack. )
+    POSTPONE ELSE
+    R>   ( we can bring count back now )
+; IMMEDIATE
+
+: ENDCASE  ( orig1..orign #of -- )
+    POSTPONE DROP  ( discard case value )
+    0 ?DO
+      POSTPONE THEN
+    LOOP
+; IMMEDIATE
+</PRE>
+
+<P>
+
+<hr>
+<a name=A.3.2.3.3>
+<H4>A.3.2.3.3 Return stack</H4>
+</a>
+
+The restrictions in 
+<a href=dpans3.htm#3.2.3.3>section 3.2.3.3</a> Return stack are necessary if
+implementations are to be allowed to place loop parameters on the return
+stack.
+
+<P>
+
+
+<hr>
+<a name=A.3.2.6>
+<H3>A.3.2.6 Environmental queries</H3>
+</a>
+
+The size in address units of various data types may be determined by
+phrases such as <code><b>1 CHARS</code></b>.  
+Similarly, alignment may be determined by
+phrases such as <code><b>1 ALIGNED</code></b>.
+
+<P>
+
+The environmental queries are divided into two groups: those that always
+produce the same value and those that might not.  The former groups
+include entries such as MAX-N.  This information is fixed by the
+hardware or by the design of the Forth system; a user is guaranteed that
+asking the question once is sufficient.
+
+<P>
+
+The other group of queries are for things that may legitimately change
+over time.  For example an application might test for the presence of
+the Double Number word set using an environment query.  If it is
+missing, the system could invoke a system-dependent process to load the
+word set.  The system is permitted to change 
+<a href=dpans6.htm#6.1.1345>ENVIRONMENT?</a>'s database so
+that subsequent queries about it indicate that it is present.
+
+<P>
+
+Note that a query that returns an <B>unknown</B> response could produce
+a <B>known</B> result on a subsequent query.
+
+<P>
+
+
+<hr>
+<a name=A.3.3>
+<H2>A.3.3 The Forth dictionary</H2>
+</a>
+
+A Standard Program may redefine a standard word with a non-standard
+definition.  The program is still Standard (since it can be built on any
+Standard System), but the effect is to make the combined entity
+(Standard System plus Standard Program) a non-standard system.
+
+<P>
+
+
+<hr>
+<a name=A.3.3.1>
+<H3>A.3.3.1 Name space</H3>
+</a>
+
+
+<hr>
+<a name=A.3.3.1.2>
+<H4>A.3.3.1.2 Definition names</H4>
+</a>
+
+The language in this section is there to ensure the portability of
+Standard Programs.  If a program uses something outside the Standard
+that it does not provide itself, there is no guarantee that another
+implementation will have what the program needs to run.  There is no
+intent whatsoever to imply that all Forth programs will be somehow
+lacking or inferior because they are not standard; some of the finest
+jewels of the programmer's art will be non-standard.  At the same time,
+the committee is trying to ensure that a program labeled <B>Standard</B>
+will meet certain expectations, particularly with regard to portability.
+
+<P>
+
+In many system environments the input source is unable to supply certain
+non-graphic characters due to external factors, such as the use of those
+characters for flow control or editing.  In addition, when interpreting
+from a text file, the parsing function specifically treats non-graphic
+characters like spaces; thus words received by the text interpreter will
+not contain embedded non-graphic characters.  To allow implementations
+in such environments to call themselves Standard, this minor restriction
+on Standard Programs is necessary.
+
+<P>
+
+A Standard System is allowed to permit the creation of definition names
+containing non-graphic characters.  Historically, such names were used
+for keyboard editing functions and <B>invisible</B> words.
+
+<P>
+
+<hr>
+<a name=A.3.3.2>
+<H3>A.3.3.2 Code space</H3>
+</a>
+
+
+<hr>
+<a name=A.3.3.3>
+<H3>A.3.3.3 Data space</H3>
+</a>
+
+The words 
+<a href=dpans6.htm#6.2.0060>#TIB</a>, 
+<a href=dpans6.htm#6.1.0560>&gt;IN</a>, 
+<a href=dpans6.htm#6.1.0750>BASE</a>, 
+<a href=dpans7.htm#7.6.1.0790>BLK</a>, 
+<a href=dpans7.htm#7.6.2.2190>SCR</a>, 
+<a href=dpans6.htm#6.1.2216>SOURCE</a>, 
+<a href=dpans6.htm#6.2.2218>SOURCE-ID</a>, 
+<a href=dpans6.htm#6.1.2250>STATE</a>, and 
+<a href=dpans6.htm#6.2.2290>TIB</a>
+contain information used by the Forth system in its operation and may be
+of use to the application.  Any assumption made by the application about
+data available in the Forth system it did not store other than the data
+just listed is an environmental dependency.
+
+<P>
+
+There is no point in specifying (in the Standard) both what is and what
+is not addressable.
+
+<P>
+
+A Standard Program may NOT address:
+<P>
+
+<UL>
+<LI>Directly into the data or return stacks;
+<LI>Into a definition's data field if not stored by the application.
+</ul>
+<P>
+
+The read-only restrictions arise because some Forth systems run from ROM
+and some share I/O buffers with other users or systems. Portable
+programs cannot know which areas are affected, hence the general restrictions.
+
+
+<P>
+
+<hr>
+<a name=A.3.3.3.1>
+<H4>A.3.3.3.1 Address alignment</H4>
+</a>
+
+Many processors have restrictions on the addresses that can be used by
+memory access instructions.  For example, on a Motorola 68000, 16-bit or
+32-bit data can be accessed only at even addresses.  Other examples
+include RISC architectures where 16-bit data can be loaded or stored
+only at even addresses and 32-bit data only at addresses that are
+multiples of four.
+
+<P>
+
+An implementor of ANS Forth can handle these alignment restrictions in
+one of two ways.  Forth's memory access words 
+(<a href=dpans6.htm#6.1.0650>@</a>, 
+<a href=dpans6.htm#6.1.0010>!</a>, 
+<a href=dpans6.htm#6.1.0130>+!</a>, 
+etc.) could be
+implemented in terms of smaller-width access instructions which have no
+alignment restrictions.  For example, on a 68000 Forth with 16-bit
+cells, @ could be implemented with two 68000 byte-fetch instructions and
+a reassembly of the bytes into a 16-bit cell.  Although this conceals
+hardware restrictions from the programmer, it is inefficient, and may
+have unintended side effects in some hardware environments.  An
+alternate implementation of ANS Forth could define each memory-access
+word using the native instructions that most closely match the word's
+function.  On a 68000 Forth with 16-bit cells, @ would use the 68000's
+16-bit move instruction.  In this case, responsibility for giving @ a
+correctly-aligned address falls on the programmer.  A portable ANS Forth
+program must assume that alignment may be required and follow the
+requirements of this section.
+
+<P>
+
+<hr>
+<a name=A.3.3.3.2>
+<H4>A.3.3.3.2 Contiguous regions</H4>
+</a>
+
+The data space of a Forth system comes in discontinuous regions! The
+location of some regions is provided by the system, some by the program.
+Data space is contiguous within regions, allowing address arithmetic to
+generate valid addresses only within a single region.  A Standard
+Program cannot make any assumptions about the relative placement of
+multiple regions in memory.
+
+<P>
+
+<a href=dpans3.htm#3.3.3.2>Section 3.3.3.2</a>
+does prescribe conditions under which contiguous regions
+of data space may be obtained.  For example:
+
+<PRE>
+	CREATE TABLE   1 C, 2 C, ALIGN 1000 , 2000 ,
+</PRE>
+<P>
+
+makes a table whose address is returned by TABLE.  In accessing this table,
+
+
+<PRE>
+TABLE C@                        will return 1
+TABLE CHAR+ C@                  will return 2
+TABLE 2 CHARS + ALIGNED @       will return 1000
+TABLE 2 CHARS + ALIGNED CELL+ @ will return 2000.
+</PRE>
+
+<P>
+
+Similarly,
+
+<PRE>
+	CREATE DATA   1000 ALLOT
+</PRE>
+<P>
+
+makes an array 1000 address units in size.  A more portable strategy would
+define the array in application units, such as:
+
+<P>
+
+
+<PRE>
+	500 CONSTANT NCELLS
+	CREATE CELL-DATA  NCELLS CELLS ALLOT
+</PRE>
+
+<P>
+
+This array can be indexed like this:
+
+<PRE>
+	: LOOK   NCELLS 0 DO  CELL-DATA I CELLS + ? LOOP ;
+</PRE>
+
+<P>
+
+
+<hr>
+<a name=A.3.3.3.6>
+<H4>A.3.3.3.6 Other transient regions</H4>
+</a>
+
+In many existing Forth systems, these areas are at 
+<a href=dpans6.htm#6.1.1650>HERE</a> 
+or just beyond
+it, hence the many restrictions.
+
+<P>
+
+(2*n)+2 is the size of a character string containing the unpunctuated
+binary representation of the maximum double number with a leading minus
+sign and a trailing space.
+
+<P>
+
+<b>Implementation note:</b> Since the minimum value of n is 16, the absolute
+minimum size of the pictured numeric output string is 34 characters.
+But if your implementation has a larger n, you must also increase the
+size of the pictured numeric output string.
+
+<P>
+
+<hr>
+<a name=A.3.4>
+<H2>A.3.4 The Forth text interpreter</H2>
+</a>
+
+
+<hr>
+<a name=A.3.4.3>
+<H3>A.3.4.3 Semantics</H3>
+</a>
+
+The <B>initiation semantics</B> correspond to the code that is executed
+upon entering a definition, analogous to the code executed by 
+<a href=dpans6.htm#6.1.1380>EXIT</a> upon
+leaving a definition.  The <B>run-time semantics</B> correspond to code
+fragments, such as literals or branches, that are compiled inside colon
+definitions by words with explicit compilation semantics.
+
+<P>
+
+In a Forth cross-compiler, the execution semantics may be specified to
+occur in the host system only, the target system only, or in both
+systems.  For example, it may be appropriate for words such as 
+<a href=dpans6.htm#6.1.0890>CELLS</a> to
+execute on the host system returning a value describing the target, for
+colon definitions to execute only on the target, and for 
+<a href=dpans6.htm#6.1.0950>CONSTANT</a> and
+<a href=dpans6.htm#6.1.2410>VARIABLE</a> 
+to have execution behaviors on both systems.  Details of
+cross-compiler behavior are beyond the scope of this Standard.
+
+<P>
+
+<hr>
+<a name=A.3.4.3.2>
+<H4>A.3.4.3.2 Interpretation semantics</H4>
+</a>
+
+For a variety of reasons, this Standard does not define interpretation
+semantics for every word.  Examples of these words are 
+<a href=dpans6.htm#6.1.0580>&gt;R</a>, 
+<a href=dpans6.htm#6.1.0190>."</a>, 
+<a href=dpans6.htm#6.1.1240>DO</a>, and
+<a href=dpans6.htm#6.1.1700>IF</a>.  
+Nothing in this Standard precludes an implementation from providing
+interpretation semantics for these words, such as interactive
+control-flow words.  However, a Standard Program may not use them in
+interpretation state.
+
+<P>
+
+<hr>
+<a name=A.3.4.5>
+<H3>A.3.4.5 Compilation</H3>
+</a>
+
+Compiler recursion at the definition level consumes excessive resources,
+especially to support locals.  The Technical Committee does not believe
+that the benefits justify the costs.  Nesting definitions is also not
+common practice and won't work on many systems.
+
+<P>
+
+<hr>
+<a href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<a href=dpansa4.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

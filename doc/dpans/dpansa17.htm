@@ -1,0 +1,148 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpansa16.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpansb.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=A.17>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H2>A.17 The optional String word set</H2>
+
+
+
+<hr>
+<A name=A.17.6>
+<H3>A.17.6 Glossary</H3>
+</a>
+
+
+
+<hr>
+<A name=A.17.6.1.0245>A.17.6.1.0245 /STRING</A>
+<P>
+
+/STRING is used to remove or add characters relative to the <B>left</B>
+end of the character string.  Positive values of n will exclude
+characters from the string while negative values of n will include
+characters to the left of the string.  /STRING is a natural factor of
+<a href=dpans6.htm#6.1.2450>WORD</a> 
+and commonly available.
+
+<P>
+
+<hr>
+<A name=A.17.6.1.0910>A.17.6.1.0910 CMOVE</A>
+<P>
+
+If c-addr2 lies within the source region (i.e., when c-addr2 is not less
+than c-addr1 and c-addr2 is less than the quantity c-addr1 u 
+<a href=dpans6.htm#6.1.0898>CHARS</a> +),
+memory propagation occurs.
+
+<P>
+
+Typical
+use:    Assume a character string at address 100: <B>ABCD</B>.  Then after
+
+
+<PRE>
+	100 DUP  CHAR+  3 CMOVE
+</PRE>
+
+<P>
+
+the string at address 100 is <B>AAAA</B>.
+
+<P>
+
+Rationale
+for CMOVE and 
+<a href=dpans17.htm#17.6.1.0920>CMOVE&gt;</a> follows 
+<a href=dpans6.htm#6.1.1900>MOVE</a>.
+
+<P>
+
+<hr>
+<A name=A.17.6.1.0920>A.17.6.1.0920 CMOVE&gt;</A>
+<P>
+
+If c-addr1 lies within the destination region (i.e., when c-addr1 is
+greater than or equal to c-addr2 and c-addr2 is less than the quantity
+c-addr1 u 
+<a href=dpans6.htm#6.1.0898>CHARS</a> +), memory propagation occurs.
+
+<P>
+
+Typical use:    Assume a character string at address 100: <B>ABCD</B>.
+Then after
+
+
+<PRE>
+	100 DUP CHAR+ SWAP 3 CMOVE>
+</PRE>
+
+<P>
+
+the string at address 100 is <B>DDDD</B>.
+
+<P>
+
+<hr>
+<A name=A.17.6.1.0935>A.17.6.1.0935 COMPARE</A>
+<P>
+
+Existing Forth systems perform string comparison operations using words that
+differ in spelling, input and output arguments, and case sensitivity.  One in
+widespread use was chosen.
+
+<P>
+
+<hr>
+<A name=A.17.6.1.2191>A.17.6.1.2191 SEARCH</A>
+<P>
+
+Existing Forth systems perform string searching operations using words that
+differ in spelling, input and output arguments, and case sensitivity.  One in
+widespread use was chosen.
+
+<P>
+
+<hr>
+<A name=A.17.6.1.2212>A.17.6.1.2212 SLITERAL</A>
+<P>
+
+The current functionality of 
+<a href=dpans6.htm#6.1.2165>6.1.2165</a> S" may be provided by the following
+definition:
+
+<PRE>
+: S" ( "ccc&lt;quote&gt;" -- )
+    [CHAR] " PARSE   POSTPONE SLITERAL ; IMMEDIATE
+
+</PRE>
+<P>
+
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpansb.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

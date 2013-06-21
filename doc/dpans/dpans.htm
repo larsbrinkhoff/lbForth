@@ -1,0 +1,574 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<HR>
+<H2>American National Standard
+for Information Systems </H2>
+
+<H1>Programming Languages </H1>
+
+<H1>Forth</H1>
+
+<P>
+
+Secretariat
+<BR>
+<B>Computer and Business Equipment Manufacturers Association</B>
+<BR>
+Approved:  March 24, 1994
+<BR>
+<B>American National Standards Institute, Inc.</B>
+<P>
+
+
+<HR>
+<P>
+
+Copyright (c) 1994 by Technical Committee X3J14. All rights reserved.
+<P>
+
+This is a working document of Technical Committee X3J14 which
+represents the last draft of ANS Forth submitted to ANSI for publication. 
+Permission is hereby granted to copy this document provided that it is
+copied in its entirety without alteration or as altered by (1) adding text
+that is clearly marked as an insertion; (2) shading or highlighting
+existing text; and/or (3) deleting examples. 
+<P>
+
+Specifically, permission is granted to use this working document as the
+foundation for textbooks, system manuals, and online documentation so
+long as the requirements in the preceding paragraph are met and the
+resulting product addresses a technical need that is not practically met by
+the official ANS. 
+<P>
+
+<DL><DT><B>NOTE:</B> 
+<DD>This file is provided as a working document of the TC for
+public review and comment as well as documentation uses described above. 
+<I>It is not intended as a substitute for the official ANS Forth document
+published by ANSI.</I> In the event of conflict, only the printed document
+X3.215-1994 represents the official ANS Forth. </DL>
+
+<P>
+
+To obtain the official standard, please contact the American
+National Standards Institute Sales Department, at (212) 642-4900 or FAX
+(212) 302-1286, or Global Engineering Documents, at (800) 854-7179 or
+FAX (303) 843-9880, and request Document X3.215-1994. Thank you very
+much for your interest. 
+
+<P>
+
+
+<HR>
+
+<h3>HTML version 3.2</h3>
+
+<a href=notes.htm>Editorial Notes</a>
+<br>
+<a href=rfilist.htm>Requests for Interpretations</a>
+<p>
+<hr>
+<a name=toc>
+<H3>Table of Contents</H3>
+</a>
+
+ 
+<P>
+
+
+<hr>
+<A href=dpans1.htm#foreword>Foreword</A>
+<BR>
+<A href=dpans1.htm#x3.membership>X3 Membership</A>
+<BR>
+<A href=dpans1.htm#x3j14.membership>X3J14 Membership</A>
+<BR>
+<P>
+
+
+<hr>
+<A href=dpans1.htm#1.>1.</a> Introduction
+<BR>
+<DL>
+<A href=dpans1.htm#1.1>1.1</a> Purpose
+<BR>
+<A href=dpans1.htm#1.2>1.2</a> Scope
+<BR>
+<A href=dpans1.htm#1.3>1.3</a> Document organization
+<BR>
+<A href=dpans1.htm#1.4>1.4</a> Future directions
+<BR></DL>
+
+<P>
+
+
+<hr>
+<A href=dpans2.htm>2.</a> Terms, notation, and references
+<BR>
+<DL>
+<A href=dpans2.htm#2.1>2.1</a> Definitions of terms
+<BR>
+<A href=dpans2.htm#2.2>2.2</a> Notation
+<BR>
+<dl>
+<A href=dpans2.htm#2.2.1>2.2.1</a> Numeric notation
+<BR>
+<A href=dpans2.htm#2.2.2>2.2.2</a> Stack notation
+<BR>
+<A href=dpans2.htm#2.2.3>2.2.3</a> Parsed-text notation
+<BR>
+<A href=dpans2.htm#2.2.4>2.2.4</a> Glossary notation
+<BR></dl>
+<A href=dpans2.htm#2.3>2.3</a> References
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans3.htm>3.</a> Usage requirements
+<BR>
+<DL>
+<A href=dpans3.htm#3.1>3.1</a> Data types
+<BR>
+<dl>
+<a href=dpans3.htm#3.1.1>3.1.1</a> Data-type relationships
+<BR>
+<a href=dpans3.htm#3.1.2>3.1.2</a> Character types
+<BR>
+<a href=dpans3.htm#3.1.3>3.1.3</a> Single-cell types
+<BR>
+<a href=dpans3.htm#3.1.4>3.1.4</a> Cell-pair types
+<BR>
+<a href=dpans3.htm#3.1.5>3.1.5</a> System types
+<BR></dl>
+<A href=dpans3.htm#3.2>3.2</a> The implementation environment
+<BR>
+<dl>
+<A href=dpans3.htm#3.2.1>3.2.1</a> Numbers
+<BR>
+<A href=dpans3.htm#3.2.2>3.2.2</a> Arithmetic
+<BR>
+<A href=dpans3.htm#3.2.3>3.2.3</a> Stacks
+<BR>
+<A href=dpans3.htm#3.2.4>3.2.4</a> Operator terminal
+<BR>
+<A href=dpans3.htm#3.2.5>3.2.5</a> Mass storage
+<BR>
+<A href=dpans3.htm#3.2.6>3.2.6</a> Environmental queries
+<BR></dl>
+<A href=dpans3.htm#3.3>3.3</a> The Forth dictionary
+<BR>
+<dl>
+<A href=dpans3.htm#3.3.1>3.3.1</a> Name space
+<BR>
+<A href=dpans3.htm#3.3.2>3.3.2</a> Code space
+<BR>
+<A href=dpans3.htm#3.3.3>3.3.3</a> Data space
+<BR></dl>
+<A href=dpans3.htm#3.4>3.4</a> The Forth text interpreter
+<BR>
+<dl>
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing
+<BR>
+<A href=dpans3.htm#3.4.2>3.4.2</a> Finding definition names
+<BR>
+<A href=dpans3.htm#3.4.3>3.4.3</a> Semantics
+<BR>
+<A href=dpans3.htm#3.4.4>3.4.4</a> Possible actions on an ambiguous condition
+<BR>
+<A href=dpans3.htm#3.4.5>3.4.5</a> Compilation
+</dl>
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans4.htm>4.</a> Documentation requirements
+<BR>
+<DL>
+<A href=dpans4.htm#4.1>4.1</a> System documentation
+<BR>
+<A href=dpans4.htm#4.2>4.2</a> Program documentation
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans5.htm>5.</a> Compliance and labeling
+<BR>
+<DL>
+<A href=dpans5.htm#5.1>5.1</a> ANS Forth systems
+<BR>
+<A href=dpans5.htm#5.2>5.2</a> ANS Forth programs
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans6.htm>6.</a> Glossary
+<BR>
+<DL>
+<A href=dpans6.htm#6.1>6.1</a> Core words
+<BR>
+<A href=dpans6.htm#6.2>6.2</a> Core extension words
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans7.htm>7.</a> The optional Block word set
+<BR>
+<DL>
+<A href=dpans7.htm#7.1>7.1</a> Introduction
+<BR>
+<A href=dpans7.htm#7.2>7.2</a> Additional terms
+<BR>
+<A href=dpans7.htm#7.3>7.3</a> Additional usage requirements
+<BR>
+<A href=dpans7.htm#7.4>7.4</a> Additional documentation requirements
+<BR>
+<A href=dpans7.htm#7.5>7.5</a> Compliance and labeling
+<BR>
+<A href=dpans7.htm#7.6.1>7.6.1</a> Block words
+<BR>
+<A href=dpans7.htm#7.6.2>7.6.2</a> Block extension words
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans8.htm>8.</a> The optional Double-Number word set
+<BR>
+<DL>
+<A href=dpans8.htm#8.1>8.1</a> Introduction
+<BR>
+<A href=dpans8.htm#8.2>8.2</a> Additional terms and notation
+<BR>
+<A href=dpans8.htm#8.3>8.3</a> Additional usage requirements
+<BR>
+<A href=dpans8.htm#8.4>8.4</a> Additional documentation requirements
+<BR>
+<A href=dpans8.htm#8.5>8.5</a> Compliance and labeling
+<BR>
+<A href=dpans8.htm#8.6.1>8.6.1</a> Double-Number words
+<BR>
+<A href=dpans8.htm#8.6.2>8.6.2</a> Double-Number extension words
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans9.htm>9.</a> The optional Exception word set
+<BR>
+<DL>
+<A href=dpans9.htm#9.1>9.1</a> Introduction
+<BR>
+<A href=dpans9.htm#9.2>9.2</a> Additional terms and notation
+<BR>
+<A href=dpans9.htm#9.3>9.3</a> Additional usage requirements
+<BR>
+<A href=dpans9.htm#9.4>9.4</a> Additional documentation requirements
+<BR>
+<A href=dpans9.htm#9.5>9.5</a> Compliance and labeling
+<BR>
+<A href=dpans9.htm#9.6.1>9.6.1</a> Exception words
+<BR>
+<A href=dpans9.htm#9.6.2>9.6.2</a> Exception extension words
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans10.htm>10.</a> The optional Facility word set
+<BR>
+<DL>
+<A href=dpans10.htm#10.1>10.1</a> Introduction
+<BR>
+<A href=dpans10.htm#10.2>10.2</a> Additional terms and notation
+<BR>
+<A href=dpans10.htm#10.3>10.3</a> Additional usage requirements
+<BR>
+<A href=dpans10.htm#10.4>10.4</a> Additional documentation requirements
+<BR>
+<A href=dpans10.htm#10.5>10.5</a> Compliance and labeling
+<BR>
+<A href=dpans10.htm#10.6.1>10.6.1</a> Facility words
+<BR>
+<A href=dpans10.htm#10.6.2>10.6.2</a> Facility extension words
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans11.htm>11.</a> The optional File-Access word set
+<BR>
+<DL>
+<A href=dpans11.htm#11.1>11.1</a> Introduction
+<BR>
+<A href=dpans11.htm#11.2>11.2</a> Additional terms
+<BR>
+<A href=dpans11.htm#11.3>11.3</a> Additional usage requirements
+<BR>
+<A href=dpans11.htm#11.4>11.4</a> Additional documentation requirements
+<BR>
+<A href=dpans11.htm#11.5>11.5</a> Compliance and labeling
+<BR>
+<A href=dpans11.htm#11.6.1>11.6.1</a> File-Access words
+<BR>
+<A href=dpans11.htm#11.6.2>11.6.2</a> File-Access extension words
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans12.htm>12.</a> The optional Floating-Point word set
+<BR>
+<DL>
+<A href=dpans12.htm#12.1>12.1</a> Introduction
+<BR>
+<A href=dpans12.htm#12.2>12.2</a> Additional terms and notation
+<BR>
+<A href=dpans12.htm#12.3>12.3</a> Additional usage requirements
+<BR>
+<A href=dpans12.htm#12.4>12.4</a> Additional documentation requirements
+<BR>
+<A href=dpans12.htm#12.5>12.5</a> Compliance and labeling
+<BR>
+<A href=dpans12.htm#12.6.1>12.6.1</a> Floating-Point words
+<BR>
+<A href=dpans12.htm#12.6.2>12.6.2</a> Floating-Point extension words
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans13.htm>13.</a> The optional Locals word set
+<BR>
+<DL>
+<A href=dpans13.htm#13.1>13.1</a> Introduction
+<BR>
+<A href=dpans13.htm#13.2>13.2</a> Additional terms and notation
+<BR>
+<A href=dpans13.htm#13.3>13.3</a> Additional usage requirements
+<BR>
+<A href=dpans13.htm#13.4>13.4</a> Additional documentation requirements
+<BR>
+<A href=dpans13.htm#13.5>13.5</a> Compliance and labeling
+<BR>
+<A href=dpans13.htm#13.6.1>13.6.1</a> Locals words
+<BR>
+<A href=dpans13.htm#13.6.2>13.6.2</a> Locals extension words
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans14.htm>14.</a> The optional Memory-Allocation word set
+<BR>
+<DL>
+<A href=dpans14.htm#14.1>14.1</a> Introduction
+<BR>
+<A href=dpans14.htm#14.2>14.2</a> Additional terms and notation
+<BR>
+<A href=dpans14.htm#14.3>14.3</a> Additional usage requirements
+<BR>
+<A href=dpans14.htm#14.4>14.4</a> Additional documentation requirements
+<BR>
+<A href=dpans14.htm#14.5>14.5</a> Compliance and labeling
+<BR>
+<A href=dpans14.htm#14.6.1>14.6.1</a> Memory-Allocation words
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans15.htm>15.</a> The optional Programming-Tools word set
+<BR>
+<DL>
+<A href=dpans15.htm#15.1>15.1</a> Introduction
+<BR>
+<A href=dpans15.htm#15.2>15.2</a> Additional terms and notation
+<BR>
+<A href=dpans15.htm#15.3>15.3</a> Additional usage requirements
+<BR>
+<A href=dpans15.htm#15.4>15.4</a> Additional documentation requirements
+<BR>
+<A href=dpans15.htm#15.5>15.5</a> Compliance and labeling
+<BR>
+<A href=dpans15.htm#15.6.1>15.6.1</a> Programming-Tools words
+<BR>
+<A href=dpans15.htm#15.6.2>15.6.2</a> Programming-Tools extension words
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans16.htm>16.</a> The optional Search-Order word set
+<BR>
+<DL>
+<A href=dpans16.htm#16.1>16.1</a> Introduction
+<BR>
+<A href=dpans16.htm#16.2>16.2</a> Additional terms and notation
+<BR>
+<A href=dpans16.htm#16.3>16.3</a> Additional usage requirements
+<BR>
+<A href=dpans16.htm#16.4>16.4</a> Additional documentation requirements
+<BR>
+<A href=dpans16.htm#16.5>16.5</a> Compliance and labeling
+<BR>
+<A href=dpans16.htm#16.6.1>16.6.1</a> Search-Order words
+<BR>
+<A href=dpans16.htm#16.6.2>16.6.2</a> Search-Order extension words
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpans17.htm>17.</a> The optional String word set
+<BR>
+<DL>
+<A href=dpans17.htm#17.1>17.1</a> Introduction
+<BR>
+<A href=dpans17.htm#17.2>17.2</a> Additional terms and notation
+<BR>
+<A href=dpans17.htm#17.3>17.3</a> Additional usage requirements
+<BR>
+<A href=dpans17.htm#17.4>17.4</a> Additional documentation requirements
+<BR>
+<A href=dpans17.htm#17.5>17.5</a> Compliance and labeling
+<BR>
+<A href=dpans17.htm#17.6.1>17.6.1</a> String words
+<BR></DL>
+<P>
+
+<hr>
+<A href=dpansa1.htm>A.</a> Rationale (informative annex)
+<BR>
+<DL>
+<A href=dpansa1.htm>A.1</a> Introduction
+<BR>
+<A href=dpansa2.htm>A.2</a> Terms and notation
+<BR>
+<A href=dpansa3.htm>A.3</a> Usage requirements
+<BR>
+<A href=dpansa4.htm>A.4</a> Documentation requirements
+<BR>
+<A href=dpansa5.htm>A.5</a> Compliance and labeling
+<BR>
+<A href=dpansa6.htm>A.6</a> Glossary
+<BR>
+<A href=dpansa7.htm>A.7</a> The optional Block word set
+<BR>
+<A href=dpansa8.htm>A.8</a> The optional Double-Number word set
+<BR>
+<A href=dpansa9.htm>A.9</a> The optional Exception word set
+<BR>
+<A href=dpansa10.htm>A.10</a> The optional Facility word set
+<BR>
+<A href=dpansa11.htm>A.11</a> The optional File-Access word set
+<BR>
+<A href=dpansa12.htm>A.12</a> The optional Floating-Point word set
+<BR>
+<A href=dpansa13.htm>A.13</a> The optional Locals word set
+<BR>
+<A href=dpansa14.htm>A.14</a> The optional Memory-Allocation word set
+<BR>
+<A href=dpansa15.htm>A.15</a> The optional Programming-Tools word set
+<BR>
+<A href=dpansa16.htm>A.16</a> The optional Search-Order word set
+<BR>
+<A href=dpansa17.htm>A.17</a> The optional String word set
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpansb.htm>B.</a> Bibliography (informative annex)
+<BR>
+<DL>
+<A href=dpansb.htm#Industry.standards>Industry standards</A>
+<BR>
+<A href=dpansb.htm#Books>Books</A>
+<BR>
+<A href=dpansb.htm#Journals>Journals, magazines and newsletters</A>
+<BR>
+<A href=dpansb.htm#Selected.articles>Selected articles</A>
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpansc.htm>C.</a> Perspective (informative annex)
+<BR>
+<DL>
+<A href=dpansc.htm#C.1>C.1</a> Features of Forth
+<BR>
+<A href=dpansc.htm#C.2>C.2</a> History of Forth
+<BR>
+<A href=dpansc.htm#C.3>C.3</a> Hardware implementations of Forth
+<BR>
+<A href=dpansc.htm#C.4>C.4</a> Standardization efforts
+<BR>
+<A href=dpansc.htm#C.5>C.5</a> Programming in Forth
+<BR>
+<A href=dpansc.htm#C.6>C.6</a> Multiprogrammed systems
+<BR>
+<A href=dpansc.htm#C.7>C.7</a> Design and management considerations
+<BR>
+<A href=dpansc.htm#C.8>C.8</a> Conclusion
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpansd.htm>D.</a> Compatibility analysis of ANS Forth
+(informative annex)
+<BR>
+<DL>
+<A href=dpansd.htm#D.1>D.1</a> FIG Forth (circa 1978)
+<BR>
+<A href=dpansd.htm#D.2>D.2</a> Forth-79
+<BR>
+<A href=dpansd.htm#D.3>D.3</a> Forth-83
+<BR>
+<A href=dpansd.htm#D.4>D.4</a> Recent developments
+<BR>
+<A href=dpansd.htm#D.5>D.5</a> ANS Forth approach
+<BR>
+<A href=dpansd.htm#D.6>D.6</a> Differences from Forth-83
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpanse.htm>E.</a> ANS Forth portability guide (informative
+annex)
+<BR>
+<DL>
+<A href=dpanse.htm#E.1>E.1</a> Introduction
+<BR>
+<A href=dpanse.htm#E.2>E.2</a> Hardware peculiarities
+<BR>
+<A href=dpanse.htm#E.3>E.3</a> Number representation
+<BR>
+<A href=dpanse.htm#E.4>E.4</a> Forth system implementation
+<BR>
+<A href=dpanse.htm#E.5>E.5</a> ROMed application disciplines and
+conventions
+<BR>
+<A href=dpanse.htm#E.6>E.6</a> Summary
+<BR></DL>
+
+<P>
+
+<hr>
+<A href=dpansf.htm>F.</a> Alphabetic list of words (informative
+annex)
+<BR>
+<hr>
+<P>
+</BODY>
+</HTML>

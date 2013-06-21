@@ -1,0 +1,89 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpansa6.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpansa8.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=A.7>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+
+<H2>A.7 The optional Block word set</H2>
+
+Early Forth systems ran stand-alone, with no host OS.  Blocks of 1024
+bytes were designed as a convenient unit of disk, and most native Forth
+systems still use them.  It is relatively easy to write a native disk
+driver that maps head/track/sector addresses to block numbers.  Such
+disk drivers are extremely fast in comparison with conventional
+file-oriented operating systems, and security is high because there is
+no reliance on a disk map.
+
+<P>
+
+Today many Forth implementations run under host operating systems,
+because the compatibility they offer the user outweighs the performance
+overhead.  Many people who use such systems prefer using host OS files
+only; however, people who use both native and non-native Forths need a
+compatible way of accessing disk.  The Block Word set includes the most
+common words for accessing program source and data on disk.
+
+<P>
+
+In order to guarantee that Standard Programs that need access to mass
+storage have a mechanism appropriate for both native and non-native
+implementations, ANS Forth requires that the Block word set be available
+if any mass storage facilities are provided.  On non-native
+implementations, blocks normally reside in host OS files.
+
+<P>
+
+<hr>
+<a name=A.7.2>
+<H3>A.7.2 Additional terms</H3>
+</a>
+
+<DL><DT><B>block</B>
+<DD>Many Forth systems use blocks to contain program source.  Conventionally
+such blocks are formatted for editing as 16 lines of 64 characters.
+Source blocks are often referred to as <B>screens</B>.</DL>
+
+<P>
+
+<hr>
+<a name=A.7.6>
+<H3>A.7.6 Glossary</H3>
+</a>
+
+
+<hr>
+<a name=A.7.6.2.2190>
+A.7.6.2.2190   SCR
+</a>
+<P>
+
+SCR is short for screen.
+
+<P>
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpansa8.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

@@ -1,0 +1,1343 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans10.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpans12.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=11.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>11. The optional File-Access word set</H1>
+
+<p>
+<code>
+See:
+<a href=dpansa11.htm#A.11>A.11</a> The optional File-Access word set
+</code>
+<p>
+
+<hr>
+<A name=11.1>
+<H2>11.1 Introduction</H2>
+</a>
+
+These words provide access to mass storage in the form of <B>files</B>
+under the following assumptions:
+
+<UL>
+<LI>files are provided by a host operating system;
+<LI>file names are represented as character strings;
+<LI>the format of file names is determined by the host operating system;
+<LI>an open file is identified by a single-cell file identifier (fileid);
+<LI>file-state information (e.g., position, size) is managed by the
+host operating system;
+<LI>file contents are accessed as a sequence of characters;
+<LI>file read operations return an actual transfer count, which can
+differ from the requested transfer count.
+</UL>
+
+<P>
+
+<hr>
+<A name=11.2>
+<H2>11.2 Additional terms</H2>
+</a>
+
+<dl>
+<dt><b>file-access method:</b>
+<dd>A permissible means of accessing a file, such as <B>read/write</B> or <B>read only</B>.
+
+<dt><b>file position:</b>
+<dd>The character offset from the start of the file.
+
+<dt><b>input file:</b>
+<dd>The file, containing a sequence of lines, that is the input source.
+</dl>
+
+
+<hr>
+<A name=11.3>
+<H2>11.3 Additional usage requirements</H2>
+</a>
+
+
+
+<hr>
+<A name=11.3.1>
+<H3>11.3.1 Data types</H3>
+</a>
+
+Append table 11.1 to 
+<a href=dpans3.htm#table.3.1>table 3.1</a>.
+<P>
+
+Table 11.1 - Data types
+<P>
+
+
+
+<PRE>
+Symbol  Data type               Size on stack
+------  ---------               -------------
+ior     I/O results             1 cell
+fam     file access method      1 cell
+fileid  file identifiers        1 cell
+</PRE>
+
+<P>
+
+<hr>
+<A name=11.3.1.1>
+<H4>11.3.1.1 File identifiers</H4>
+</a>
+
+File identifiers are implementation-dependent single-cell values that
+are passed to file operators to designate specific files.  Opening a
+file assigns a file identifier, which remains valid until closed.
+
+
+<P>
+
+<hr>
+<A name=11.3.1.2>
+<H4>11.3.1.2 I/O results</H4>
+</a>
+
+I/O results are single-cell numbers indicating the result of I/O
+operations.  A value of zero indicates that the I/O operation completed
+successfully; other values and their meanings are
+implementation-defined.  Reaching the end of a file shall be reported as
+zero.
+
+<P>
+
+An I/O exception in the execution of a File-Access word that can return
+an I/O result shall not cause a 
+<a href=dpans9.htm#9.6.1.2275>THROW</a>; exception indications are
+returned in the ior.
+
+<P>
+
+<hr>
+<A name=11.3.1.3>
+<H4>11.3.1.3 File access methods</H4>
+</a>
+
+File access methods are implementation-defined single-cell
+values.
+
+<P>
+
+<hr>
+<A name=11.3.1.4>
+<H4>11.3.1.4 File names</H4>
+</a>
+
+A character string containing the name of the file.  The file name may
+include an implementation-dependent path name.  The format of file names
+is implementation defined.
+
+<P>
+
+<hr>
+<A name=11.3.2>
+<H3>11.3.2 Blocks in files</H3>
+</a>
+
+If the File-Access word set is implemented, the 
+<a href=dpans7.htm>Block word set</a> shall be
+implemented.
+
+<P>
+
+Blocks may, but need not, reside in files.  When they do:
+<P>
+
+<UL>
+<LI>Block numbers may be mapped to one or more files by
+implementation-defined means. An ambiguous condition exists if a
+requested block number is not currently mapped;
+<LI>An 
+<a href=dpans7.htm#7.6.1.2400>UPDATE</a>d 
+block that came from a file shall be transferred back
+to the same file.
+</UL>
+
+<p>
+<code>
+See:
+<a href=dpansa11.htm#A.11.3.2>A.11.3.2</a> Blocks in files
+</code>
+<p>
+
+
+<hr>
+<A name=11.3.3>
+<H3>11.3.3 Environmental queries</H3>
+</a>
+
+Append table 11.2 to
+table 3.5.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.6>3.2.6</a> Environmental queries
+</code>
+<P>
+
+Table 11.2 - Environmental query strings
+<P>
+
+
+
+<PRE>
+String         Value data type   Constant?  Meaning
+------         ---------------   ---------  -------
+FILE            flag             no         file word set present
+FILE-EXT        flag             no         file extensions word set present
+</PRE>
+
+<P>
+
+<hr>
+<A name=11.3.4>
+<H3>11.3.4 Input source</H3>
+</a>
+
+The File-Access word set creates another input source for the text
+interpreter.  When the input source is a text file, 
+<a href=dpans7.htm#7.6.1.0790>BLK</a> shall contain
+zero, 
+<a href=dpans6.htm#6.2.2218>SOURCE-ID</a> 
+shall contain the fileid of that text file, and the
+input buffer shall contain one line of the text file.
+
+<P>
+
+Input with 
+<a href=dpans11.htm#11.6.1.1718>INCLUDED</a>, 
+<a href=dpans11.htm#11.6.1.1717>INCLUDE-FILE</a>, 
+<a href=dpans7.htm#7.6.1.1790>LOAD</a> and 
+<a href=dpans6.htm#6.1.1360>EVALUATE</a> shall be nestable
+in any order to at least eight levels.
+
+<P>
+
+A program that uses more than eight levels of input-file nesting has an
+environmental dependency.
+
+<P>
+
+<code>
+See: 
+<A href=dpans3.htm#3.3.3.5>3.3.3.5</a> Input buffers,
+<A href=dpans9.htm#9.>9.</a> Optional Exception word set.
+</code>
+<P>
+
+
+<hr>
+<A name=11.3.5>
+<H3>11.3.5 Other transient regions</H3>
+</a>
+
+The list of words using memory in transient regions is extended to
+include <A href=dpans11.htm#11.6.1.2165>11.6.1.2165</a> S".
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other transient regions
+</code>
+<P>
+
+
+<P>
+
+<hr>
+<A name=11.3.6>
+<H3>11.3.6 Parsing</H3>
+</a>
+
+When parsing from a text file using a space delimiter, control
+characters shall be treated the same as the space character.
+
+<P>
+
+Lines of at least 128 characters shall be supported.  A program that
+requires lines of more than 128 characters has an environmental
+dependency.
+
+<P>
+
+A program may reposition the parse area within the input buffer by
+manipulating the contents of 
+<a href=dpans6.htm#6.1.0560>&gt;IN</a>.  
+More extensive repositioning can be
+accomplished using 
+<a href=dpans6.htm#6.2.2182>SAVE-INPUT</a> and 
+<a href=dpans6.htm#6.2.2148>RESTORE-INPUT</a>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing
+</code>
+<P>
+
+<hr>
+<A name=11.4>
+<H2>11.4 Additional documentation requirements</H2>
+</a>
+
+
+<hr>
+<A name=11.4.1>
+<H3>11.4.1 System documentation</H3>
+</a>
+
+
+<hr>
+<A name=11.4.1.1>
+<H4>11.4.1.1 Implementation-defined options</H4>
+</a>
+
+
+<UL>
+<LI>file access methods used by 
+<a href=dpans11.htm#11.6.1.0765>11.6.1.0765</a> BIN, 
+<a href=dpans11.htm#11.6.1.1010>11.6.1.1010</a> CREATE-FILE, 
+<a href=dpans11.htm#11.6.1.1970>11.6.1.1970</a> OPEN-FILE, 
+<a href=dpans11.htm#11.6.1.2054>11.6.1.2054</a> R/O, 
+<a href=dpans11.htm#11.6.1.2056>11.6.1.2056</a> R/W,
+and 
+<a href=dpans11.htm#11.6.1.2425>11.6.1.2425</a> W/O;
+<LI>file exceptions;
+<LI>file line terminator 
+(<a href=dpans11.htm#11.6.1.2090>11.6.1.2090</a> READ-LINE);
+<LI>file name format 
+(<a href=dpans11.htm#11.3.1.4>11.3.1.4</a> File names);
+<LI>Information returned by 
+<a href=dpans11.htm#11.6.2.1524>11.6.2.1524</a> FILE-STATUS;
+<LI>Input file state after an exception 
+(<a href=dpans11.htm#11.6.1.1717>11.6.1.1717</a> INCLUDE-FILE,
+<a href=dpans11.htm#11.6.1.1718>11.6.1.1718</a> INCLUDED);
+<LI>ior values and meaning 
+(<a href=dpans11.htm#11.3.1.2>11.3.1.2</a> I/O results);
+<LI>maximum depth of file input nesting 
+(<a href=dpans11.htm#11.3.4>11.3.4</a> Input source);
+<LI>maximum size of input line 
+(<a href=dpans11.htm#11.3.6>11.3.6</a> Parsing);
+<LI>methods for mapping block ranges to files 
+(<a href=dpans11.htm#11.3.2>11.3.2</a> Blocks in files);
+<LI>number of string buffers provided 
+(<a href=dpans11.htm#11.6.1.2165>11.6.1.2165</a> S");
+<LI>size of string buffer used by 
+<a href=dpans11.htm#11.6.1.2165>11.6.1.2165</a> S".
+</UL>
+
+
+<hr>
+<A name=11.4.1.2>
+<H4>11.4.1.2 Ambiguous conditions</H4>
+</a>
+
+<UL>
+<LI>attempting to position a file outside its boundaries
+(<a href=dpans11.htm#11.6.1.2142>11.6.1.2142</a> REPOSITION-FILE);
+<LI>attempting to read from file positions not yet written
+(<a href=dpans11.htm#11.6.1.2080>11.6.1.2080</a> READ-FILE, 
+<a href=dpans11.htm#11.6.1.2090>11.6.1.2090</a> READ-LINE);
+<LI>fileid is invalid 
+(<a href=dpans11.htm#11.6.1.1717>11.6.1.1717</a> INCLUDE-FILE);
+<LI>I/O exception reading or closing fileid 
+(<a href=dpans11.htm#11.6.1.1717>11.6.1.1717</a> INCLUDE-FILE, 
+<a href=dpans11.htm#11.6.1.1718>11.6.1.1718</a> INCLUDED);
+<LI>named file cannot be opened 
+(<a href=dpans11.htm#11.6.1.1718>11.6.1.1718</a> INCLUDED);
+<LI>requesting an unmapped block number 
+(<a href=dpans11.htm#11.3.2>11.3.2</a> Blocks in files);
+<LI>using 
+<a href=dpans11.htm#11.6.1.2218>11.6.1.2218</a> SOURCE-ID when 
+<a href=dpans7.htm#7.6.1.0790>7.6.1.0790</a> BLK is not zero.
+</ul>
+
+<hr>
+<A name=11.4.3>
+<h4>11.4.1.3 Other system documentation</h4>
+</a>
+<ul>
+<LI>no additional requirements.
+</UL>
+
+<hr>
+<A name=11.4.2>
+<H3>11.4.2 Program documentation</H3>
+</a>
+
+
+<hr>
+<A name=11.4.2.1>
+<H4>11.4.2.1 Environmental dependencies</H4>
+</a>
+
+<UL>
+<LI>requiring lines longer than 128 characters 
+(<a href=dpans11.htm#11.3.6>11.3.6</a> Parsing);
+<LI>using more than eight levels of input-file nesting 
+(<a href=dpans11.htm#11.3.4>11.3.4</a> Input source).
+</UL>
+
+<P>
+
+<hr>
+<A name=11.4.2.2>
+<H4>11.4.2.2 Other program documentation</H4>
+</a>
+
+<UL>
+<LI>no additional requirements.
+</ul>
+
+
+<hr>
+<A name=11.5>
+<h2>11.5 Compliance and labeling</h2>
+</a>
+
+
+<hr>
+<A name=11.5.1>
+<H3>11.5.1 ANS Forth systems</H3>
+</a>
+
+The phrase <B>Providing the File Access word set</B> shall be appended
+to the label of any Standard System that provides all of the File Access
+word set.
+
+<P>
+
+The phrase <B>Providing name(s) from the File Access Extensions word
+set</B> shall be appended to the label of any Standard System that
+provides portions of the File Access Extensions word set.
+
+<P>
+
+The phrase <B>Providing the File Access Extensions word set</B> shall be
+appended to the label of any Standard System that provides all of the
+File Access and File Access Extensions word sets.
+
+
+<P>
+
+<hr>
+<A name=11.5.2>
+<H3>11.5.2 ANS Forth programs</H3>
+</a>
+
+The phrase <B>Requiring the File Access word set</B> shall be appended
+to the label of Standard Programs that require the system to provide the
+File Access word set.
+
+<P>
+
+The phrase <B>Requiring name(s) from the File Access Extensions word
+set</B> shall be appended to the label of Standard Programs that require
+the system to provide portions of the File Access Extensions word set.
+
+<P>
+
+The phrase <B>Requiring the File Access Extensions word set</B> shall be
+appended to the label of Standard Programs that require the system to
+provide all of the File Access and File Access Extensions word sets.
+
+<P>
+
+<hr>
+<A name=11.6>
+<H2>11.6 Glossary</H2>
+</a>
+
+
+<hr>
+<A name=11.6.1>
+<H3>11.6.1 File Access words</H3>
+</a>
+
+
+<hr>
+<A name=11.6.1.0080>
+<code>
+11.6.1.0080 <b>(</b>
+</code>
+</a>
+<BR>
+<B>paren</B> FILE
+<BR>
+<pre>
+	( <B>"ccc&lt;paren&gt;"</B> -- )
+</pre>
+<P>
+
+Extend the semantics of 
+<A href=dpans6.htm#6.1.0080>6.1.0080</a> ( to include:
+<P>
+
+When parsing from a text file, if the end of the parse area is reached
+before a right parenthesis is found, refill the input buffer from the
+next line of the file, set 
+<A href=dpans6.htm#6.1.0560>&gt;IN</a> 
+to zero, and resume parsing, repeating
+this process until either a right parenthesis is found or the end of the
+file is reached.
+
+<P>
+
+<hr>
+<A name=11.6.1.0765>
+<code>
+11.6.1.0765 <b>BIN</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( fam1 -- fam2 )
+</pre>
+<P>
+
+Modify the implementation-defined file access method fam1 to
+additionally select a <B>binary</B>, i.e., not line oriented, file
+access method, giving access method fam2.
+<p>
+
+<code>
+See:    
+<a href=dpansa11.htm#A.11.6.1.0765>A.11.6.1.0765 BIN</a> ,
+<A href=dpans11.htm#11.6.1.2054>11.6.1.2054 R/O</a> ,
+<A href=dpans11.htm#11.6.1.2056>11.6.1.2056 R/W</a> ,
+<A href=dpans11.htm#11.6.1.2425>11.6.1.2425 W/O</a>
+</code>
+
+<P>
+
+<hr>
+<A name=11.6.1.0900>
+<code>
+11.6.1.0900 <b>CLOSE-FILE</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( fileid -- ior )
+</pre>
+<P>
+
+Close the file identified by fileid.  ior is the implementation-defined
+I/O result code.
+
+<P>
+
+<hr>
+<A name=11.6.1.1010>
+<code>
+11.6.1.1010 <b>CREATE-FILE</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( c-addr u fam -- fileid ior )
+</pre>
+<P>
+
+Create the file named in the character string specified by c-addr and u,
+and open it with file access method fam.  The meaning of values of fam
+is implementation defined.  If a file with the same name already exists,
+recreate it as an empty file.
+
+<P>
+
+If the file was successfully created and opened, ior is zero, fileid is
+its identifier, and the file has been positioned to the start of the
+file.
+
+<P>
+
+Otherwise, ior is the implementation-defined I/O result code and fileid
+is undefined.
+
+<p>
+<code>
+See:
+<a href=dpansa11.htm#A.11.6.1.1010>A.11.6.1.1010 CREATE-FILE</a>
+</code>
+<p>
+
+
+<hr>
+<A name=11.6.1.1190>
+<code>
+11.6.1.1190 <b>DELETE-FILE</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( c-addr u -- ior )
+</pre>
+<P>
+
+Delete the file named in the character string specified by c-addr u.
+ior is the implementation-defined I/O result code.
+
+<P>
+
+<hr>
+<A name=11.6.1.1520>
+<code>
+11.6.1.1520 <b>FILE-POSITION</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( fileid -- ud ior )
+</pre>
+<P>
+
+ud is the current file position for the file identified by fileid.  ior
+is the implementation-defined I/O result code.  ud is undefined if ior
+is non-zero.
+
+<P>
+
+<hr>
+<A name=11.6.1.1522>
+<code>
+11.6.1.1522 <b>FILE-SIZE</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( fileid -- ud ior )
+</pre>
+<P>
+
+ud is the size, in characters, of the file identified by fileid.  ior is
+the implementation-defined I/O result code.  This operation does not
+affect the value returned by 
+<A href=dpans11.htm#11.6.1.1520>FILE-POSITION</a>.  
+ud is undefined if ior is
+non-zero.
+
+<P>
+
+<hr>
+<A name=11.6.1.1717>
+<code>
+11.6.1.1717 <b>INCLUDE-FILE</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( i*x fileid -- j*x )
+</pre>
+<P>
+
+Remove fileid from the stack.  Save the current input source
+specification, including the current value of 
+<A href=dpans6.htm#6.2.2218>SOURCE-ID</a>.  Store fileid
+in SOURCE-ID.  Make the file specified by fileid the input source.
+Store zero in 
+<A href=dpans7.htm#7.6.1.0790>BLK</a>.  
+Other stack effects are due to the words included.
+
+<P>
+
+Repeat until end of file: read a line from the file, fill the input
+buffer from the contents of that line, set 
+<A href=dpans6.htm#6.1.0560>&gt;IN</a> to zero, and interpret.
+
+<P>
+
+Text interpretation begins at the file position where the next file read
+would occur.
+
+<P>
+
+When the end of the file is reached, close the file and restore the
+input source specification to its saved value.
+
+<P>
+
+An ambiguous condition exists if fileid is invalid, if there is an I/O
+exception reading fileid, or if an I/O exception occurs while closing
+fileid.  When an ambiguous condition exists, the status (open or closed)
+of any files that were being interpreted is implementation-defined.
+<P>
+
+<code>
+See:
+<A href=dpans11.htm#11.3.4>11.3.4</a> Input source,
+<a href=dpansa11.htm#A.11.6.1.1717>A.11.6.1.1717 INCLUDE-FILE</a>
+</code>
+<p>
+
+
+<hr>
+<A name=11.6.1.1718>
+<code>
+11.6.1.1718 <b>INCLUDED</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( i*x c-addr u -- j*x )
+</pre>
+<P>
+
+Remove c-addr u from the stack.  Save the current input source
+specification, including the current value of 
+<A href=dpans6.htm#6.2.2218>SOURCE-ID</a>.  Open the file
+specified by c-addr u, store the resulting fileid in SOURCE-ID, and make
+it the input source.  Store zero in 
+<A href=dpans7.htm#7.6.1.0790>BLK</a>.  Other stack effects are due to
+the words included.
+
+<P>
+
+Repeat until end of file: read a line from the file, fill the input
+buffer from the contents of that line, set 
+<A href=dpans6.htm#6.1.0560>&gt;IN</a> to zero, and interpret.
+
+<P>
+
+Text interpretation begins at the file position where the next file read
+would occur.
+
+<P>
+
+When the end of the file is reached, close the file and restore the
+input source specification to its saved value.
+
+<P>
+
+An ambiguous condition exists if the named file can not be opened, if an
+I/O exception occurs reading the file, or if an I/O exception occurs
+while closing the file.  When an ambiguous condition exists, the status
+(open or closed) of any files that were being interpreted is
+implementation-defined.
+
+<P>
+
+<code>
+See:    
+<a href=dpansa11.htm#A.11.6.1.1718>A.11.6.1.1718 INCLUDED</a> ,
+<A href=dpans11.htm#11.6.1.1717>11.6.1.1717 INCLUDE-FILE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=11.6.1.1970>
+<code>
+11.6.1.1970 <b>OPEN-FILE</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( c-addr u fam -- fileid ior )
+</pre>
+<P>
+
+Open the file named in the character string specified by c-addr u, with
+file access method indicated by fam.  The meaning of values of fam is
+implementation defined.
+
+<P>
+
+If the file is successfully opened, ior is zero, fileid is its
+identifier, and the file has been positioned to the start of the file.
+
+<P>
+
+Otherwise, ior is the implementation-defined I/O result code and fileid
+is undefined.
+
+<p>
+<code>
+See:
+<a href=dpansa11.htm#A.11.6.1.1970>A.11.6.1.1970 OPEN-FILE</a>
+</code>
+<p>
+
+
+<hr>
+<A name=11.6.1.2054>
+<code>
+11.6.1.2054 <b>R/O</b>
+</code>
+</a>
+<BR>
+<B>r-o</B>   FILE
+<BR>
+<pre>
+	( -- fam )
+</pre>
+<P>
+
+fam is the implementation-defined value for selecting the <B>read
+only</B> file access method.
+<p>
+
+<code>
+See:    
+<A href=dpans11.htm#11.6.1.1010>11.6.1.1010 CREATE-FILE</a> ,
+<A href=dpans11.htm#11.6.1.1970>11.6.1.1970 OPEN-FILE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=11.6.1.2056>
+<code>
+11.6.1.2056 <b>R/W</b>
+</code>
+</a>
+<BR>
+<B>r-w</B>   FILE
+<BR>
+<pre>
+	( -- fam )
+</pre>
+<P>
+
+fam is the implementation-defined value for selecting the
+<B>read/write</B> file access method.
+<p>
+
+<code>
+See:    
+<A href=dpans11.htm#11.6.1.1010>11.6.1.1010 CREATE-FILE</a> ,
+<A href=dpans11.htm#11.6.1.1970>11.6.1.1970 OPEN-FILE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=11.6.1.2080>
+<code>
+11.6.1.2080 <b>READ-FILE</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( c-addr u1 fileid -- u2 ior )
+</pre>
+<P>
+
+Read u1 consecutive characters to c-addr from the current position of
+the file identified by fileid.
+
+<P>
+
+If u1 characters are read without an exception, ior is zero and u2 is
+equal to u1.
+
+<P>
+
+If the end of the file is reached before u1 characters are read, ior is
+zero and u2 is the number of characters actually read.
+
+<P>
+
+If the operation is initiated when the value returned by 
+<A href=dpans11.htm#11.6.1.1520>FILE-POSITION</a>
+is equal to the value returned by 
+<A href=dpans11.htm#11.6.1.1522>FILE-SIZE</a> for the file identified by
+fileid, ior is zero and u2 is zero.
+
+<P>
+
+If an exception occurs, ior is the implementation-defined I/O result
+code, and u2 is the number of characters transferred to c-addr without
+an exception.
+
+<P>
+
+An ambiguous condition exists if the operation is initiated when the
+value returned by FILE-POSITION is greater than the value returned by
+FILE-SIZE for the file identified by fileid, or if the requested
+operation attempts to read portions of the file not written.
+
+<P>
+
+At the conclusion of the operation, FILE-POSITION returns the next file
+position after the last character read.
+
+<p>
+<code>
+See:
+<a href=dpansa11.htm#A.11.6.1.2080>A.11.6.1.2080 READ-FILE</a>
+</code>
+<p>
+
+
+<hr>
+<A name=11.6.1.2090>
+<code>
+11.6.1.2090 <b>READ-LINE</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( c-addr u1 fileid -- u2 flag ior )
+</pre>
+<P>
+
+Read the next line from the file specified by fileid into memory at the
+address c-addr.  At most u1 characters are read.  Up to two
+implementation-defined line-terminating characters may be read into
+memory at the end of the line, but are not included in the count u2.
+The line buffer provided by c-addr should be at least u1+2 characters
+long.
+
+<P>
+
+If the operation succeeded, flag is true and ior is zero.  If a line
+terminator was received before u1 characters were read, then u2 is the
+number of characters, not including the line terminator, actually read
+(0 &lt;= u2 &lt;= u1).  When u1 = u2, the line terminator has yet to be
+reached.
+
+<P>
+
+If the operation is initiated when the value returned by 
+<A href=dpans11.htm#11.6.1.1520>FILE-POSITION</a>
+is equal to the value returned by 
+<A href=dpans11.htm#11.6.1.1522>FILE-SIZE</a> for the file identified by
+fileid, flag is false, ior is zero, and u2 is zero.  If ior is non-zero,
+an exception occurred during the operation and ior is the
+implementation-defined I/O result code.
+
+<P>
+
+An ambiguous condition exists if the operation is initiated when the
+value returned by FILE-POSITION is greater than the value returned by
+FILE-SIZE for the file identified by fileid, or if the requested
+operation attempts to read portions of the file not written.
+
+<P>
+
+At the conclusion of the operation, FILE-POSITION returns the next file
+position after the last character read.
+
+<p>
+<code>
+See:
+<a href=dpansa11.htm#A.11.6.1.2090>A.11.6.1.2090 READ-LINE</a> ,
+<a href=a0001.htm>RFI 0001</a>.
+</code>
+<p>
+
+
+<hr>
+<A name=11.6.1.2142>
+<code>
+11.6.1.2142 <b>REPOSITION-FILE</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( ud fileid -- ior )
+</pre>
+<P>
+
+Reposition the file identified by fileid to ud.  ior is the
+implementation-defined I/O result code.  An ambiguous condition exists
+if the file is positioned outside the file boundaries.
+
+<P>
+
+At the conclusion of the operation, 
+<A href=dpans11.htm#11.6.1.1520>FILE-POSITION</a> returns the
+value ud.
+
+<P>
+
+<hr>
+<A name=11.6.1.2147>
+<code>
+11.6.1.2147 <b>RESIZE-FILE</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( ud fileid -- ior )
+</pre>
+<P>
+
+Set the size of the file identified by fileid to ud.  ior is the
+implementation-defined I/O result code.
+
+<P>
+
+If the resultant file is larger than the file before the operation, the
+portion of the file added as a result of the operation might not have
+been written.
+
+<P>
+
+At the conclusion of the operation, 
+<A href=dpans11.htm#11.6.1.1522>FILE-SIZE</a> returns the value ud and
+<A href=dpans11.htm#11.6.1.1520>FILE-POSITION</a> 
+returns an unspecified value.
+<p>
+
+<code>
+See:    
+<A href=dpans11.htm#11.6.1.2080>11.6.1.2080 READ-FILE</a> ,
+<A href=dpans11.htm#11.6.1.2090>11.6.1.2090 READ-LINE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=11.6.1.2165>
+<code>
+11.6.1.2165 <b>S"</b>
+</code>
+</a>
+<BR>
+<B>s-quote</B>       FILE
+<BR>
+<P>
+
+Extend the semantics of 
+<A href=dpans6.htm#6.1.2165>6.1.2165</a> S" to be:
+
+<PRE>
+        Interpretation: ( <B>"ccc&lt;quote&gt;"</B> -- c-addr u )
+</PRE>
+<P>
+
+Parse ccc delimited by " (double quote).  Store the resulting string
+c-addr u at a temporary location.  The maximum length of the temporary
+buffer is implementation-dependent but shall be no less than 80
+characters.  Subsequent uses of S" may overwrite the temporary buffer.
+At least one such buffer shall be provided.
+
+
+<PRE>
+        Compilation: ( <B>"ccc&lt;quote&gt;"</B> -- )
+</PRE>
+
+<P>
+
+Parse ccc delimited by " (double quote).  Append the run-time semantics
+given below to the current definition.
+
+<PRE>
+        Run-time: ( -- c-addr u )
+</PRE>
+<P>
+
+Return c-addr and u that describe a string consisting of the characters
+ccc.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<A href=dpans6.htm#6.2.0855>6.2.0855 C"</a> ,
+<a href=dpansa11.htm#A.11.6.1.2165>A.11.6.1.2165 S"</a> ,
+<A href=dpans11.htm#11.3.5>11.3.5</a> Other transient regions.
+</code>
+
+<P>
+
+<hr>
+<A name=11.6.1.2218>
+<code>
+11.6.1.2218 <b>SOURCE-ID</b>
+</code>
+</a>
+<BR>
+<B>source-i-d</B>    FILE
+<BR>
+<pre>
+	( -- 0 | -1 | fileid )
+</pre>
+<P>
+
+Extend 
+<A href=dpans6.htm#6.2.2218>6.2.2218</a> 
+SOURCE-ID to include text-file input as follows:
+
+
+<PRE>
+SOURCE-ID       Input source
+---------       ------------
+fileid          Text file <B>fileid</B>
+-1              String (via <A href=dpans6.htm#6.1.1360>EVALUATE</a>)
+0               User input device
+</PRE>
+<P>
+
+An ambiguous condition exists if SOURCE-ID is used when 
+<A href=dpans7.htm#7.6.1.0790>BLK</a> contains a
+non-zero value.
+
+<P>
+
+<hr>
+<A name=11.6.1.2425>
+<code>
+11.6.1.2425 <b>W/O</b>
+</code>
+</a>
+<BR>
+<B>w-o</B>   FILE
+<BR>
+<pre>
+	( -- fam )
+</pre>
+<P>
+
+fam is the implementation-defined value for selecting the <B>write
+only</B> file access method.
+<p>
+
+<code>
+See:    
+<A href=dpans11.htm#11.6.1.1010>11.6.1.1010 CREATE-FILE</a> ,
+<A href=dpans11.htm#11.6.1.1970>11.6.1.1970 OPEN-FILE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=11.6.1.2480>
+<code>
+11.6.1.2480 <b>WRITE-FILE</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( c-addr u fileid -- ior )
+</pre>
+<P>
+
+Write u characters from c-addr to the file identified by fileid starting
+at its current position.  ior is the implementation-defined I/O result
+code.
+
+<P>
+
+At the conclusion of the operation, 
+<A href=dpans11.htm#11.6.1.1520>FILE-POSITION</a> returns the next file
+position after the last character written to the file, and 
+<A href=dpans11.htm#11.6.1.1522>FILE-SIZE</a>
+returns a value greater than or equal to the value returned by
+FILE-POSITION.
+<p>
+
+<code>
+See:    
+<A href=dpans11.htm#11.6.1.2080>11.6.1.2080 READ-FILE</a> ,
+<A href=dpans11.htm#11.6.1.2090>11.6.1.2090 READ-LINE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=11.6.1.2485>
+<code>
+11.6.1.2485 <b>WRITE-LINE</b>
+</code>
+</a>
+<BR>
+FILE
+<BR>
+<pre>
+	( c-addr u fileid -- ior )
+</pre>
+<P>
+
+Write u characters from c-addr followed by the implementation-dependent
+line terminator to the file identified by fileid starting at its current
+position.  ior is the implementation-defined I/O result code.
+
+<P>
+
+At the conclusion of the operation, 
+<A href=dpans11.htm#11.6.1.1520>FILE-POSITION</a> returns the next file
+position after the last character written to the file, and 
+<A href=dpans11.htm#11.6.1.1522>FILE-SIZE</a>
+returns a value greater than or equal to the value returned by
+FILE-POSITION.
+<p>
+
+<code>
+See:    
+<A href=dpans11.htm#11.6.1.2080>11.6.1.2080 READ-FILE</a> ,
+<A href=dpans11.htm#11.6.1.2090>11.6.1.2090 READ-LINE</a>
+</code>
+
+<P>
+
+<hr>
+<a name=11.6.2>
+<H3>11.6.2 File-Access extension words</H3>
+</a>
+
+
+<hr>
+<A name=11.6.2.1524>
+<code>
+11.6.2.1524 <b>FILE-STATUS</b>
+</code>
+</a>
+<BR>
+FILE EXT
+<BR>
+<pre>
+	( c-addr u -- x ior )
+</pre>
+<P>
+
+Return the status of the file identified by the character string c-addr
+u.  If the file exists, ior is zero; otherwise ior is the
+implementation-defined I/O result code.  x contains
+implementation-defined information about the file.
+
+<P>
+
+<hr>
+<A name=11.6.2.1560>
+<code>
+11.6.2.1560 <b>FLUSH-FILE</b>
+</code>
+</a>
+<BR>
+FILE EXT
+<BR>
+<pre>
+	( fileid -- ior )
+</pre>
+<P>
+
+Attempt to force any buffered information written to the file referred
+to by fileid to be written to mass storage, and the size information for
+the file to be recorded in the storage directory if changed.  If the
+operation is successful, ior is zero.  Otherwise, it is an
+implementation-defined I/O result code.
+
+
+<P>
+
+<hr>
+<A name=11.6.2.2125>
+<code>
+11.6.2.2125 <b>REFILL</b>
+</code>
+</a>
+<BR>
+FILE EXT
+<BR>
+<pre>
+	( -- flag )
+</pre>
+<P>
+
+Extend the execution semantics of 
+<A href=dpans6.htm#6.2.2125>6.2.2125</a> REFILL with the
+following:
+
+<P>
+
+When the input source is a text file, attempt to read the next line from
+the text-input file.  If successful, make the result the current input
+buffer, set 
+<A href=dpans6.htm#6.1.0560>&gt;IN</a> 
+to zero, and return true.  Otherwise return false.
+<P>
+
+<code>
+See:    
+<A href=dpans7.htm#7.6.2.2125>7.6.2.2125 REFILL</a>
+</code>
+<P>
+
+<hr>
+<A name=11.6.2.2130>
+<code>
+11.6.2.2130 <b>RENAME-FILE</b>
+</code>
+</a>
+<BR>
+FILE EXT
+<BR>
+<pre>
+	( c-addr1 u1 c-addr2 u2 -- ior )
+</pre>
+<P>
+
+Rename the file named by the character string c-addr1 u1 to the name in
+the character string c-addr2 u2.  ior is the implementation-defined I/O
+result code.
+
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpans12.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>
+

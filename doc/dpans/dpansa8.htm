@@ -1,0 +1,162 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpansa7.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpansa9.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=A.8>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H2>A.8 The optional Double-Number word set</H2>
+
+Forth systems on 8-bit and 16-bit processors often find it necessary to
+deal with double-length numbers.  But many Forths on small embedded
+systems do not, and many users of Forth on systems with a cell size of
+32-bits or more find that the necessity for double-length numbers is
+much diminished.  Therefore, we have factored the words that manipulate
+double-length entities into this optional word set.
+
+<P>
+
+Please note that the naming convention used in this word set conveys
+some important information:
+
+<P>
+
+1.  Words whose names are of the form 2xxx deal with cell pairs, where
+the relationship between the cells is unspecified.  They may be
+two-vectors, double-length numbers, or any pair of cells that it is
+convenient to manipulate together.
+
+<P>
+
+2.  Words with names of the form Dxxx deal specifically with
+double-length integers.
+
+<P>
+
+3.  Words with names of the form Mxxx deal with some combination of
+single and double integers.  The order in which these appear on the
+stack is determined by long-standing common practice.
+
+<P>
+
+Refer to 
+<a href=dpansa3.htm#A.3.1>A.3.1</a> for a discussion of data types in Forth.
+
+<P>
+
+<hr>
+<a name=A.8.6>
+<H3>A.8.6 Glossary</H3>
+</a>
+
+
+<hr>
+<a name=A.8.6.1.0360>A.8.6.1.0360 2CONSTANT</A>
+<P>
+
+Typical use:    <code>x1 x2 2CONSTANT name</code>
+
+<P>
+
+<hr>
+<a name=A.8.6.1.0390>A.8.6.1.0390 2LITERAL</A>
+<P>
+
+Typical use:    <code>: X ... [ x1 x2 ] 2LITERAL ... ;</code>
+
+<P>
+
+<hr>
+<a name=A.8.6.1.0440>A.8.6.1.0440 2VARIABLE</A>
+<P>
+
+Typical use:    <code>2VARIABLE name</code>
+
+<P>
+
+<hr>
+<a name=A.8.6.1.1070>A.8.6.1.1070 D.R</A>
+<P>
+
+In D.R, the <B>R</B> is short for RIGHT.
+
+<P>
+
+<hr>
+<a name=A.8.6.1.1090>A.8.6.1.1090 D2*</A>
+<P>
+<code>
+See: 
+<a href=dpansa6.htm#A.6.1.0320>A.6.1.0320 2*</a> for applicable
+discussion.
+</code>
+<P>
+
+<hr>
+<a name=A.8.6.1.1100>A.8.6.1.1100 D2/</A>
+<P>
+<code>
+See: 
+<a href=dpansa6.htm#A.6.1.0330>A.6.1.0330 2/</a> for applicable
+discussion.
+</code>
+<P>
+
+<hr>
+<a name=A.8.6.1.1140>A.8.6.1.1140 D&gt;S</A>
+<P>
+
+There exist number representations, e.g., the sign-magnitude
+representation, where reduction from double- to single-precision cannot
+simply be done with 
+<a href=dpans6.htm#6.1.1260>DROP</a>.  
+This word, equivalent to DROP on two's
+complement systems, desensitizes application code to number
+representation and facilitates portability.
+
+<P>
+
+<hr>
+<a name=A.8.6.1.1820>A.8.6.1.1820 M*/</A>
+<P>
+
+M*/ was once described by Chuck Moore as the most useful arithmetic
+operator in Forth.  It is the main workhorse in most computations
+involving double-cell numbers.  Note that some systems allow signed
+divisors.  This can cost a lot in performance on some CPUs.  The
+requirement for a positive divisor has not proven to be a problem.
+
+<P>
+
+<hr>
+<a name=A.8.6.1.1830>A.8.6.1.1830 M+</A>
+<P>
+
+M+ is the classical method for integrating.
+
+<P>
+
+<hr>
+<a href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<a href=dpansa9.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

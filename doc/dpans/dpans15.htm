@@ -1,0 +1,918 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans14.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpans16.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=15.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>15. The optional Programming-Tools word set</H1>
+
+<p>
+<code>
+See:
+<a href=dpansa15.htm>15.</a> The optional Programming-Tools word set
+</code>
+<p>
+
+<hr>
+<A name=15.1>
+<H2>15.1 Introduction</H2>
+</a>
+
+This optional word set contains words most often used during the development
+of applications.
+<P>
+
+<hr>
+<A name=15.2>
+<H2>15.2 Additional terms and notation</H2>
+</a>
+
+None.
+<P>
+
+<hr>
+<A name=15.3>
+<H2>15.3 Additional usage requirements</H2>
+</a>
+
+
+<hr>
+<A name=15.3.1>
+<H3>15.3.1 Environmental queries</H3>
+</a>
+
+Append table 15.1 to table 3.5.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.6>3.2.6</a> Environmental queries
+</code>
+<P>
+
+Table 15.1 - Environmental query strings
+<P>
+
+
+<PRE>
+String      Value data type   Constant?  Meaning
+------      ---------------   ---------  -------
+TOOLS       flag              no         programming-tools word set present
+TOOLS-EXT   flag              no         programming-tools extensions word set present
+</PRE>
+
+
+<P>
+
+<hr>
+<A name=15.3.2>
+<H3>15.3.2 The Forth dictionary</H3>
+</a>
+
+A program using the words 
+<a href=dpans15.htm#15.6.2.0930>CODE</a> or 
+<a href=dpans15.htm#15.6.2.0470>;CODE</a> 
+associated with assembler code has an
+environmental dependency on that particular instruction set and assembler
+notation.
+
+<P>
+
+Programs using the words 
+<a href=dpans15.htm#15.6.2.1300>EDITOR</a> or 
+<a href=dpans15.htm#15.6.2.0740>ASSEMBLER</a> 
+require the 
+<a href=dpans16.htm>Search Order word set</a>
+or an equivalent implementation-defined capability.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3>3.3</a> The Forth dictionary
+</code>
+
+<P>
+
+<hr>
+<A name=15.4>
+<H2>15.4 Additional documentation requirements</H2>
+</a>
+
+<hr>
+<A name=15.4.1>
+<H3>15.4.1 System documentation</H3>
+</a>
+
+<hr>
+<A name=15.4.1.1>
+<H4>15.4.1.1 Implementation-defined options</H4>
+</a>
+
+<UL>
+<LI>ending sequence for input following 
+<a href=dpans15.htm#15.6.2.0470>15.6.2.0470</a> ;CODE and 
+<a href=dpans15.htm#15.6.2.0930>15.6.2.0930</a> CODE;
+<LI>manner of processing input following 
+<a href=dpans15.htm#15.6.2.0470>15.6.2.0470</a> ;CODE and 
+<a href=dpans15.htm#15.6.2.0930>15.6.2.0930</a> CODE;
+<LI>search-order capability for 
+<a href=dpans15.htm#15.6.2.1300>15.6.2.1300</a> EDITOR and 
+<a href=dpans15.htm#15.6.2.0740>15.6.2.0740</a> ASSEMBLER 
+(<a href=dpans15.htm#15.3.2>15.3.2</a> The Forth dictionary);
+<LI>source and format of display by 
+<a href=dpans15.htm#15.6.1.2194>15.6.1.2194</a> SEE.
+</ul>
+
+<hr>
+<a name=15.4.1.2>
+<h4>15.4.1.2 Ambiguous conditions</h4>
+</a>
+
+<ul>
+<LI>deleting the compilation word-list 
+(<a href=dpans15.htm#15.6.2.1580>15.6.2.1580</a> FORGET);
+<LI>fewer than u+1 items on control-flow stack 
+(<a href=dpans15.htm#15.6.2.1015>15.6.2.1015</a> CSPICK,
+<a href=dpans15.htm#15.6.2.1020>15.6.2.1020</a> CSROLL);
+<LI>name can't be found 
+(<a href=dpans15.htm#15.6.2.1580>15.6.2.1580</a> FORGET);
+<LI>name not defined via 
+<a href=dpans6.htm#6.1.1000>6.1.1000</a> CREATE 
+(<a href=dpans15.htm#15.6.2.0470>15.6.2.0470</a> ;CODE);
+<LI>
+<a href=dpans6.htm#6.1.2033>6.1.2033</a> POSTPONE applied to 
+<a href=dpans15.htm#15.6.2.2532>15.6.2.2532</a> [IF];
+<LI>reaching the end of the input source before matching 
+<a href=dpans15.htm#15.6.2.2531>15.6.2.2531</a> [ELSE] or 
+<a href=dpans15.htm#15.6.2.2533>15.6.2.2533</a> [THEN] 
+(<a href=dpans15.htm#15.6.2.2532>15.6.2.2532</a> [IF]);
+<LI>removing a needed definition 
+(<a href=dpans15.htm#15.6.2.1580>15.6.2.1580</a> FORGET).
+</UL>
+<P>
+
+<hr>
+<A name=15.4.1.3>
+<H4>15.4.1.3 Other system documentation</H4>
+</a>
+
+<ul>
+<li>no additional requirements.
+</ul>
+<P>
+
+<hr>
+<A name=15.4.2>
+<H3>15.4.2 Program documentation</H3>
+</a>
+
+<hr>
+<A name=15.4.2.1>
+<H4>15.4.2.1 Environmental dependencies</H4>
+</a>
+
+<UL>
+<LI>using the words 
+<a href=dpans15.htm#15.6.2.0470>15.6.2.0470</a> ;CODE or 
+<a href=dpans15.htm#15.6.2.0930>15.6.2.0930</a> CODE.
+</ul>
+
+<hr>
+<A name=15.4.2.2>
+<h4>15.4.2.2 Other program documentation</h4>
+</a>
+<ul>
+<LI>no additional requirements.
+</UL>
+
+<P>
+
+<hr>
+<A name=15.5>
+<H2>15.5 Compliance and labeling</H2>
+</a>
+
+
+<hr>
+<A name=15.5.1>
+<H3>15.5.1 ANS Forth systems</H3>
+</a>
+
+The phrase <B>Providing the Programming-Tools word set</B> shall be
+appended to the label of any Standard System that provides all of the
+Programming-Tools word set.
+
+<P>
+
+The phrase <B>Providing name(s) from the Programming-Tools Extensions
+word set</B> shall be appended to the label of any Standard System that
+provides portions of the Programming-Tools Extensions word set.
+
+<P>
+
+The phrase <B>Providing the Programming-Tools Extensions word set</B>
+shall be appended to the label of any Standard System that provides all
+of the Programming-Tools and Programming-Tools Extensions word sets.
+
+<P>
+
+<hr>
+<A name=15.5.2>
+<H3>15.5.2 ANS Forth programs</H3>
+</a>
+
+The phrase <B>Requiring the Programming-Tools word set</B> shall be
+appended to the label of Standard Programs that require the system to
+provide the Programming-Tools word set.
+
+<P>
+
+The phrase <B>Requiring name(s) from the Programming-Tools Extensions
+word set</B> shall be appended to the label of Standard Programs that
+require the system to provide portions of the Programming-Tools
+Extensions word set.
+
+<P>
+
+The phrase <B>Requiring the Programming-Tools Extensions word set</B>
+shall be appended to the label of Standard Programs that require the
+system to provide all of the Programming-Tools and Programming-Tools
+Extensions word sets.
+
+<P>
+
+<hr>
+<A name=15.6>
+<H3>15.6 Glossary</H3>
+</a>
+
+
+<hr>
+<A name=15.6.1>
+<H3>15.6.1 Programming-Tools words</H3>
+</a>
+
+
+<hr>
+<A name=15.6.1.0220>
+<code>
+15.6.1.0220 <b>.S</b>
+</code>
+</a>
+<BR>
+<B>dot-s</B> TOOLS
+<BR>
+<pre>
+	( -- )
+</pre>
+<P>
+
+Copy and display the values currently on the data stack.  The format of
+the display is implementation-dependent.
+
+<P>
+
+.S may be implemented using pictured numeric output words.
+Consequently, its use may corrupt the transient region identified by 
+<a href=dpans6.htm#6.1.0040>#&gt;</a>.
+<P>
+
+<code>
+See:
+<a href=dpansa15.htm#A.15.6.1.0220>A.15.6.1.0220 .S</a> ,
+<A href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other transient regions.
+</code>
+
+<P>
+
+<hr>
+<A name=15.6.1.0600>
+<code>
+15.6.1.0600 <b>?</b>
+</code>
+</a>
+<BR>
+<B>question</B>      TOOLS
+<BR>
+<pre>
+	( a-addr -- )
+</pre>
+<P>
+
+Display the value stored at a-addr.
+<P>
+
+? may be implemented using pictured numeric output words.  Consequently,
+its use may corrupt the transient region identified by 
+<a href=dpans6.htm#6.1.0040>#&gt;</a>.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other transient regions
+</code>
+
+<P>
+
+<hr>
+<A name=15.6.1.1280>
+<code>
+15.6.1.1280 <b>DUMP</b>
+</code>
+</a>
+<BR>
+TOOLS
+<BR>
+<pre>
+	( addr u -- )
+</pre>
+<P>
+
+Display the contents of u consecutive addresses starting at addr.  The
+format of the display is implementation dependent.
+
+<P>
+
+DUMP may be implemented using pictured numeric output words.
+Consequently, its use may corrupt the transient region identified by 
+<a href=dpans6.htm#6.1.0040>#&gt;</a>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other transient regions
+</code>
+
+<P>
+
+<hr>
+<A name=15.6.1.2194>
+<code>
+15.6.1.2194 <b>SEE</b>
+</code>
+</a>
+<BR>
+TOOLS
+<BR>
+<pre>
+	( <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+<P>
+
+Display a human-readable representation of the named word's definition.
+The source of the representation (object-code decompilation, source
+block, etc.) and the particular form of the display is implementation
+defined.
+
+<P>
+
+SEE may be implemented using pictured numeric output words.
+Consequently, its use may corrupt the transient region identified by 
+<a href=dpans6.htm#6.1.0040>#&gt;</a>.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other transient regions,
+<a href=dpansa15.htm#A.15.6.1.2194>A.15.6.1.2194 SEE</a>
+</code>
+
+<P>
+
+<hr>
+<A name=15.6.1.2465>
+<code>
+15.6.1.2465 <b>WORDS</b>
+</code>
+</a>
+<BR>
+TOOLS
+<BR>
+<pre>
+	( -- )
+</pre>
+<P>
+
+List the definition names in the first word list of the search order.
+The format of the display is implementation-dependent.
+
+<P>
+
+WORDS may be implemented using pictured numeric output words.
+Consequently, its use may corrupt the transient region identified by 
+<a href=dpans6.htm#6.1.0040>#&gt;</a>.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other transient regions,
+<a href=dpansa15.htm#A.15.6.1.2465>A.15.6.1.2465 WORDS</a>
+</code>
+
+<P>
+
+<hr>
+<A name=15.6.2>
+<H3>15.6.2 Programming-Tools extension words</H3>
+</a>
+
+
+<hr>
+<A name=15.6.2.0470>
+<code>
+15.6.2.0470 <b>;CODE</b>
+</code>
+</a>
+<BR>
+<B>semicolon-code</B>        TOOLS EXT
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<PRE>
+        Compilation: ( C: colon-sys -- )
+</PRE>
+<P>
+
+Append the run-time semantics below to the current definition.  End the
+current definition, allow it to be found in the dictionary, and enter
+interpretation state, consuming colon-sys.
+
+<P>
+
+Subsequent characters in the parse area typically represent source code
+in a programming language, usually some form of assembly language.
+Those characters are processed in an implementation-defined manner,
+generating the corresponding machine code.  The process continues,
+refilling the input buffer as needed, until an implementation-defined
+ending sequence is processed.
+
+
+<PRE>
+        Run-time: ( -- ) ( R: nest-sys -- )
+</PRE>
+
+<P>
+
+Replace the execution semantics of the most recent definition with the
+name execution semantics given below.  Return control to the calling
+definition specified by nest-sys.  An ambiguous condition exists if the
+most recent definition was not defined with 
+<a href=dpans6.htm#6.1.1000>CREATE</a> or a user-defined
+word that calls CREATE.
+
+<PRE>
+        <i>name</i> Execution: ( i*x -- j*x )
+</PRE>
+<P>
+
+Perform the machine code sequence that was generated following ;CODE.
+<P>
+
+<code>
+See:    
+<a href=dpansa15.htm#A.15.6.2.0470>A.15.6.2.0470 ;CODE</a> ,
+<A href=dpans6.htm#6.1.1250>6.1.1250 DOES&gt;</a>
+</code>
+
+<P>
+
+<hr>
+<A name=15.6.2.0702>
+<code>
+15.6.2.0702 <b>AHEAD</b>
+</code>
+</a>
+<BR>
+TOOLS EXT
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+
+<PRE>
+        Compilation: ( C: -- orig )
+</PRE>
+
+Put the location of a new unresolved forward reference orig onto the
+control flow stack.  Append the run-time semantics given below to the
+current definition.  The semantics are incomplete until orig is resolved
+(e.g., by 
+<a href=dpans6.htm#6.1.2270>THEN</a>).
+
+
+<PRE>
+        Run-time: ( -- )
+</PRE>
+<P>
+
+Continue execution at the location specified by the resolution of orig.
+
+<P>
+
+<hr>
+<A name=15.6.2.0740>
+<code>
+15.6.2.0740 <b>ASSEMBLER</b>
+</code>
+</a>
+<BR>
+TOOLS EXT
+<BR>
+<pre>
+	( -- )
+</pre>
+<P>
+
+Replace the first word list in the search order with the ASSEMBLER word
+list.
+<P>
+
+<code>
+See:
+<A href=dpans16.htm#16.>16.</a> The optional Search-Order word set
+</code>
+
+<P>
+
+<hr>
+<A name=15.6.2.0830>
+<code>
+15.6.2.0830 <b>BYE</b>
+</code>
+</a>
+<BR>
+TOOLS EXT
+<BR>
+<pre>
+	( -- )
+</pre>
+<P>
+
+Return control to the host operating system, if any.
+<P>
+
+
+<hr>
+<A name=15.6.2.0930>
+<code>
+15.6.2.0930 <b>CODE</b>
+</code>
+</a>
+<BR>
+TOOLS EXT
+<BR>
+<pre>
+	( <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+<P>
+
+Skip leading space delimiters.  Parse name delimited by a space.  Create
+a definition for name, called a <B>code definition</B>, with the
+execution semantics defined below.
+
+<P>
+
+Subsequent characters in the parse area typically represent source code
+in a programming language, usually some form of assembly language.
+Those characters are processed in an implementation-defined manner,
+generating the corresponding machine code.  The process continues,
+refilling the input buffer as needed, until an implementation-defined
+ending sequence is processed.
+
+
+<PRE>
+        <i>name</i> Execution: ( i*x -- j*x )
+</PRE>
+<P>
+
+Execute the machine code sequence that was generated following CODE.
+<P>
+
+<code>
+See:
+<a href=dpansa15.htm#A.15.6.2.0930>A.15.6.2.0930 CODE</a> ,
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing.
+</code>
+
+<P>
+
+<hr>
+<A name=15.6.2.1015>
+<code>
+15.6.2.1015 <b>CS-PICK</b>
+</code>
+</a>
+<BR>
+<B>c-s-pick</B>      TOOLS EXT
+<BR>
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( C: destu ... orig0|dest0 -- destu ... orig0|dest0 destu )( S: u -- )
+</pre>
+<P>
+
+Remove u.  Copy destu to the top of the control-flow stack.  An
+ambiguous condition exists if there are less than u+1 items, each of
+which shall be an orig or dest, on the control-flow stack before CS-PICK
+is executed.
+
+<P>
+
+If the control-flow stack is implemented using the data stack, u shall
+be the topmost item on the data stack.
+
+<p>
+<code>
+See:
+<a href=dpansa15.htm#A.15.6.2.1015>A.15.6.2.1015 CS-PICK</a>
+</code>
+<p>
+
+
+<hr>
+<A name=15.6.2.1020>
+<code>
+15.6.2.1020 <b>CS-ROLL</b>
+</code>
+</a>
+<BR>
+<B>c-s-roll</B>      TOOLS EXT
+<P>
+<pre>
+	Interpretation: Interpretation semantics for this word are undefined.
+</pre>
+<P>
+<pre>
+	Execution: ( C: origu|destu origu-1|destu-1 ... orig0|dest0 --
+                          origu-1|destu-1 ... orig0|dest0 origu|destu )( S: u -- )
+</pre>
+<P>
+
+Remove u.  Rotate u+1 elements on top of the control-flow stack so that
+origu|destu is on top of the control-flow stack.  An ambiguous condition
+exists if there are less than u+1 items, each of which shall be an orig
+or dest, on the control-flow stack before CS-ROLL is executed.
+
+<P>
+
+If the control-flow stack is implemented using the data stack, u shall
+be the topmost item on the data stack.
+
+<p>
+<code>
+See:
+<a href=dpansa15.htm#A.15.6.2.1020>A.15.6.2.1020 CS-ROLL</a>
+</code>
+<p>
+
+
+<hr>
+<A name=15.6.2.1300>
+<code>
+15.6.2.1300 <b>EDITOR</b>
+</code>
+</a>
+<BR>
+TOOLS EXT
+<BR>
+<pre>
+	( -- )
+</pre>
+<P>
+
+Replace the first word list in the search order with the EDITOR word
+list.
+
+<P>
+
+<code>
+See:
+<A href=dpans16.htm#16.>16.</a> The Optional Search-Order Word Set
+</code>
+
+<P>
+
+<hr>
+<A name=15.6.2.1580>
+<code>
+15.6.2.1580 <b>FORGET</b>
+</code>
+</a>
+<BR>
+TOOLS EXT
+<BR>
+<pre>
+	( <B>"&lt;spaces&gt;name"</B> -- )
+</pre>
+<P>
+
+Skip leading space delimiters.  Parse name delimited by a space.  Find
+name, then delete name from the dictionary along with all words added to
+the dictionary after name.  An ambiguous condition exists if name cannot
+be found.
+
+<P>
+
+If the Search-Order word set is present, FORGET searches the compilation
+word list.  An ambiguous condition exists if the compilation word list
+is deleted.
+
+<P>
+
+An ambiguous condition exists if FORGET removes a word required for
+correct execution.
+
+<P>
+
+<b>Note:</b> This word is obsolescent and is included as a concession to
+existing implementations.
+
+<P>
+
+<code>
+See:
+<a href=dpansa15.htm#A.15.6.2.1580>A.15.6.2.1580 FORGET</a> ,
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<a href=dpans6.htm#6.2.1850>6.2.1850 MARKER</a>
+</code>
+<P>
+
+<hr>
+<A name=15.6.2.2250>
+<code>
+15.6.2.2250 <b>STATE</b>
+</code>
+</a>
+<BR>
+TOOLS EXT
+<BR>
+<pre>
+	( -- a-addr )
+</pre>
+<P>
+
+Extend the semantics of 
+<a href=dpans6.htm#6.1.2250>6.1.2250</a> STATE to allow 
+<a href=dpans15.htm#15.6.2.0470>;CODE</a> to change the
+value in STATE.  A program shall not directly alter the contents of
+STATE.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4>3.4</a> The Forth text interpreter,
+<A href=dpans6.htm#6.1.0450>6.1.0450 :</a> ,
+<A href=dpans6.htm#6.1.0460>6.1.0460 ;</a> ,
+<A href=dpans6.htm#6.1.0670>6.1.0670 ABORT</a> ,
+<A href=dpans6.htm#6.1.2050>6.1.2050 QUIT</a> ,
+<A href=dpans6.htm#6.1.2500>6.1.2500 [</a> ,
+<A href=dpans6.htm#6.1.2540>6.1.2540 ]</a> ,
+<A href=dpans6.htm#6.2.0455>6.2.0455 :NONAME</a>
+</code>
+
+<P>
+
+<hr>
+<A name=15.6.2.2531>
+<code>
+15.6.2.2531 <b>[ELSE]</b>
+</code>
+</a>
+<BR>
+<B>bracket-else</B>  TOOLS EXT
+<BR>
+<P>
+<pre>
+	Compilation: Perform the execution semantics given below.
+</pre>
+<PRE>
+        Execution: ( <B>"&lt;spaces&gt;name"</b> ... -- )
+</PRE>
+<P>
+
+Skipping leading spaces, parse and discard space-delimited words from
+the parse area, including nested occurrences of 
+<a href=dpans15.htm#15.6.2.2532>[IF]</a> ...  
+<a href=dpans15.htm#15.6.2.2533>[THEN]</a> and
+[IF] ...  [ELSE] ...  [THEN], until the word [THEN] has been parsed and
+discarded.  If the parse area becomes exhausted, it is refilled as with
+<a href=dpans6.htm#6.2.2125>REFILL</a>.  
+[ELSE] is an immediate word.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<a href=dpansa15.htm#A.15.6.2.2531>A.15.6.2.2531 [ELSE]</a>
+</code>
+
+<P>
+
+<hr>
+<A name=15.6.2.2532>
+<code>
+15.6.2.2532 <b>[IF]</b>
+</code>
+</a>
+<BR>
+<B>bracket-if</B>    TOOLS EXT
+<BR>
+<P>
+<pre>
+	Compilation: Perform the execution semantics given below.
+</pre>
+<P>
+<pre>
+	Execution: ( flag | flag <B>"&lt;spaces&gt;name"</b> ... -- )
+</pre>
+<P>
+
+If flag is true, do nothing.  Otherwise, skipping leading spaces, parse
+and discard space-delimited words from the parse area, including nested
+occurrences of [IF] ...  
+<a href=dpans15.htm#15.6.2.2533>[THEN]</a> and [IF] ...  
+<a href=dpans15.htm#15.6.2.2531>[ELSE]</a> ...  [THEN], until
+either the word [ELSE] or the word [THEN] has been parsed and discarded.
+If the parse area becomes exhausted, it is refilled as with 
+<a href=dpans6.htm#6.2.2125>REFILL</a>.
+[IF] is an immediate word.
+
+<P>
+
+An ambiguous condition exists if [IF] is 
+<a href=dpans6.htm#6.1.2033>POSTPONE</a>d, or if the end of the
+input buffer is reached and cannot be refilled before the terminating
+[ELSE] or [THEN] is parsed.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.1>3.4.1</a> Parsing,
+<a href=dpansa15.htm#A.15.6.2.2532>A.15.6.2.2532 [IF]</a>
+</code>
+
+<P>
+
+<hr>
+<A name=15.6.2.2533>
+<code>
+15.6.2.2533 <b>[THEN]</b>
+</code>
+</a>
+<BR>
+<B>bracket-then</B>  TOOLS EXT
+<BR>
+<P>
+<pre>
+	Compilation: Perform the execution semantics given below.
+</pre>
+<P>
+<pre>
+	Execution: ( -- )
+</pre>
+<P>
+
+Does nothing.  [THEN] is an immediate word.
+<P>
+<code>
+See:
+<a href=dpansa15.htm#A.15.6.2.2533>A.15.6.2.2533 [THEN]</a>
+</code>
+<p>
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpans16.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

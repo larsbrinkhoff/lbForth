@@ -1,0 +1,2043 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpansa5.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpansa7.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=A.6>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H2>A.6 Glossary</H2>
+
+In this and following sections we present rationales for the handling of
+specific words: why we included them, why we placed them in certain word
+sets, or why we specified their names or meaning as we did.
+
+<P>
+
+Words in this section are organized by word set, retaining their index
+numbers for easy cross-referencing to the glossary.
+
+<P>
+
+Historically, many Forth systems have been written in Forth.  Many of
+the words in Forth originally had as their primary purpose support of
+the Forth system itself.  For example, WORD and FIND are often used as
+the principle instruments of the Forth text interpreter, and CREATE in
+many systems is the primitive for building dictionary entries.  In
+defining words such as these in a standard way, we have endeavored not
+to do so in such a way as to preclude their use by implementors.  One of
+the features of Forth that has endeared it to its users is that the same
+tools that are used to implement the system are available to the
+application programmer - a result of this approach is the compactness
+and efficiency that characterizes most Forth implementations.
+
+<P>
+
+<hr>
+<a name=A.6.1>
+<H3>A.6.1 Core words</H3>
+</a>
+
+
+
+<hr>
+<a name=A.6.1.0070>A.6.1.0070 '</A>
+<P>
+</a>
+
+Typical use:   <code>... ' name .</code>
+<P>
+
+Many Forth systems use a state-smart tick.  Many do not.  ANS Forth follows
+the usage of Forth-83.
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.4.3.2>A.3.4.3.2</a> Interpretation semantics,
+<a href=dpansa6.htm#A.6.1.1550>A.6.1.1550 FIND</a>
+</code>
+<P>
+
+<hr>
+<a name=A.6.1.0080>A.6.1.0080 (</A>
+<P>
+
+Typical use:   <code>...  ( ccc) ...</code>
+<P>
+
+<hr>
+<a name=A.6.1.0140>A.6.1.0140 +LOOP</A>
+<P>
+
+Typical use:  <code>: X ... limit first DO ... step +LOOP ;</code>
+<P>
+
+<hr>
+<a name=A.6.1.0150>A.6.1.0150 ,</A>
+<P>
+
+The use of , (comma) for compiling execution tokens is not portable.
+<P>
+<code>
+See: 
+<a href=dpans6.htm#6.2.0945>6.2.0945 COMPILE,</a>
+</code>
+<P>
+
+<hr>
+<a name=A.6.1.0190>A.6.1.0190 ."</A>
+<P>
+
+Typical use:    <code>: X ... ." ccc"  ... ;</code>
+<P>
+
+An implementation may define interpretation semantics for ." if desired.
+In one plausible implementation, interpreting ." would display the
+delimited message.  In another plausible implementation, interpreting ."
+would compile code to display the message later.  In still another
+plausible implementation, interpreting ." would be treated as an
+exception.  Given this variation a Standard Program may not use ." while
+interpreting.  Similarly, a Standard Program may not compile POSTPONE ."
+inside a new word, and then use that word while interpreting.
+
+<P>
+
+<hr>
+<a name=A.6.1.0320>A.6.1.0320 2*</A>
+<P>
+
+Historically, 2* has been implemented on two's-complement machines as a
+logical left-shift instruction.  Multiplication by two is an efficient
+side-effect on these machines.  However, shifting implies a knowledge of
+the significance and position of bits in a cell.  While the name implies
+multiplication, most implementors have used a hardware left shift to
+implement 2*.
+
+<P>
+
+<hr>
+<a name=A.6.1.0330>A.6.1.0330 2/</A>
+<P>
+
+This word has the same common usage and misnaming implications as 2*.
+It is often implemented on two's-complement machines with a hardware
+right shift that propagates the sign bit.
+
+<P>
+
+<hr>
+<a name=A.6.1.0350>A.6.1.0350 2@</A>
+<P>
+
+With 2@ the storage order is specified by the Standard.
+
+<P>
+
+<hr>
+<a name=A.6.1.0450>A.6.1.0450 :</A>
+<P>
+
+Typical use:    <code>: name ... ;</code>
+
+<P>
+
+In Forth-83, this word was specified to alter the search order.  This
+specification is explicitly removed in this Standard.  We believe that
+in most cases this has no effect; however, systems that allow many
+search orders found the Forth-83 behavior of colon very undesirable.
+
+<P>
+
+Note that colon does not itself invoke the compiler.  Colon sets
+compilation state so that later words in the parse area are compiled.
+
+<P>
+
+<hr>
+<a name=A.6.1.0460>A.6.1.0460 ;</A>
+<P>
+
+
+Typical use:    <code>: name ... ;</code>
+
+<P>
+
+One function performed by both ; and ;CODE is to allow the current
+definition to be found in the dictionary.  If the current definition was
+created by :NONAME the current definition has no definition name and
+thus cannot be found in the dictionary.  If :NONAME is implemented the
+Forth compiler must maintain enough information about the current
+definition to allow ; and ;CODE to determine whether or not any action
+must be taken to allow it to be found.
+
+<P>
+
+<hr>
+<a name=A.6.1.0550>A.6.1.0550 &gt;BODY</A>
+<P>
+
+a-addr is the address that HERE would have returned had it been executed
+immediately after the execution of the CREATE that defined xt.
+
+<P>
+
+<hr>
+<a name=A.6.1.0680>A.6.1.0680 ABORT"</A>
+<P>
+
+Typical use:    <code>: X ... test ABORT" ccc" ... ;</code>
+
+<P>
+
+<hr>
+<a name=A.6.1.0695>A.6.1.0695 ACCEPT</A>
+<P>
+
+Previous standards specified that collection of the input string
+terminates when either a <B>return</B> is received or when +n1
+characters have been received.  Terminating when +n1 characters have
+been received is difficult, expensive, or impossible to implement in
+some system environments.  Consequently, a number of existing
+implementations do not comply with this requirement.  Since line-editing
+and collection functions are often implemented by system components
+beyond the control of the Forth implementation, this Standard imposes no
+such requirement.  A Standard Program may only assume that it can
+receive an input string with ACCEPT or 
+<a href=dpans6.htm#6.2.1390>EXPECT</a>.  
+The detailed sequence of
+user actions necessary to prepare and transmit that line are beyond the
+scope of this Standard.
+
+<P>
+
+Specification of a non-zero, positive integer count (+n1) for ACCEPT
+allows some implementors to continue their practice of using a zero or
+negative value as a flag to trigger special behavior.  Insofar as such
+behavior is outside the Standard, Standard Programs cannot depend upon
+it, but the Technical Committee doesn't wish to preclude it
+unnecessarily.  Since actual values are almost always small integers, no
+functionality is impaired by this restriction.
+
+<P>
+
+ACCEPT and EXPECT perform similar functions.  ACCEPT is recommended for
+new programs, and future use of EXPECT is discouraged.
+
+<P>
+
+It is recommended that all non-graphic characters be reserved for
+editing or control functions and not be stored in the input string.
+
+<P>
+
+Commonly, when the user is preparing an input string to be transmitted
+to a program, the system allows the user to edit that string and correct
+mistakes before transmitting the final version of the string.  The
+editing function is supplied sometimes by the Forth system itself, and
+sometimes by external system software or hardware.  Thus, control
+characters and functions may not be available on all systems.  In the
+usual case, the end of the editing process and final transmission of the
+string is signified by the user pressing a <B>Return</B> or <B>Enter</B>
+key.
+
+<P>
+
+As in previous standards, EXPECT returns the input string immediately
+after the requested number of characters are entered, as well as when a
+line terminator is received.  The <B>automatic termination after
+specified count of characters have been entered</B> behavior is widely
+considered undesirable because the user <B>loses control</B> of the
+input editing process at a potentially unknown time (the user does not
+necessarily know how many characters were requested from EXPECT).  Thus
+EXPECT and SPAN have been made obsolescent and exist in the Standard
+only as a concession to existing implementations.  If EXPECT exists in a
+Standard System it must have the <B>automatic termination</B> behavior.
+
+<P>
+
+ACCEPT does not have the <B>automatic termination</B> behavior of
+EXPECT.  However, because external system hardware and software may
+perform the ACCEPT function, when a line terminator is received the
+action of the cursor, and therefore the display, is
+implementation-defined.  It is recommended that the cursor remain
+immediately following the entered text after a line terminator is
+received.
+
+<P>
+
+<hr>
+<a name=A.6.1.0705>A.6.1.0705 ALIGN</A>
+<P>
+
+In this Standard we have attempted to provide transportability across
+various CPU architectures.  One of the frequent causes of
+transportability problems is the requirement of cell-aligned addresses
+on some CPUs.  On these systems, ALIGN and ALIGNED may be required to
+build and traverse data structures built with C,.  Implementors may
+define these words as no-ops on systems for which they aren't
+functional.
+
+<P>
+
+<hr>
+<a name=A.6.1.0706>A.6.1.0706 ALIGNED</A>
+<P>
+<code>
+See: 
+<a href=dpansa6.htm#A.6.1.0705>A.6.1.0705 ALIGN</a>
+</code>
+<P>
+
+<hr>
+<a name=A.6.1.0760>A.6.1.0760 BEGIN</A>
+<P>
+
+Typical use:	
+<pre>
+        : X ... BEGIN ... test UNTIL ;
+</pre>
+
+or
+<P>
+
+
+<PRE>
+	: X ... BEGIN ... test WHILE ... REPEAT ;
+</PRE>
+<P>
+
+<hr>
+<a name=A.6.1.0770>A.6.1.0770 BL</A>
+<P>
+
+Because space is used throughout Forth as the standard delimiter, this
+word is the only way a program has to find and use the system value of
+<B>space</B>.  The value of a space character can not be obtained with
+CHAR, for instance.
+
+<P>
+
+<hr>
+<a name=A.6.1.0880>A.6.1.0880 CELL+</A>
+<P>
+
+As with ALIGN and ALIGNED, the words CELL and CELL+ were added to aid in
+transportability across systems with different cell sizes.  They are
+intended to be used in manipulating indexes and addresses in integral
+numbers of cell-widths.
+
+<P>
+
+Example:
+
+<PRE>
+2VARIABLE DATA
+
+0 100 DATA 2!
+DATA @ . 100
+
+DATA CELL+ @ .  0
+</PRE>
+
+<P>
+
+<hr>
+<a name=A.6.1.0890>A.6.1.0890 CELLS</A>
+<P>
+<code>
+See:
+<a href=dpansa6.htm#A.6.1.0880>A.6.1.0880 CELL+</a>
+</code>
+<P>
+
+Example:  <code>CREATE NUMBERS  100 CELLS ALLOT</code>
+<P>
+
+(Allots space in the array NUMBERS for 100 cells of data.)
+
+<P>
+
+<hr>
+<a name=A.6.1.0895>A.6.1.0895 CHAR</A>
+<P>
+
+Typical use:    <code>... CHAR A CONSTANT "A" ...</code>
+
+<P>
+
+<hr>
+<a name=A.6.1.0950>A.6.1.0950 CONSTANT</A>
+<P>
+
+Typical use:    <code>... DECIMAL 10 CONSTANT TEN ...</code>
+
+<P>
+
+<hr>
+<a name=A.6.1.1000>A.6.1.1000 CREATE</A>
+<P>
+
+The data-field address of a word defined by CREATE is given by the
+data-space pointer immediately following the execution of CREATE
+
+<P>
+
+Reservation of data field space is typically done with ALLOT.
+
+<P>
+
+Typical use:    <code>... CREATE SOMETHING ...</code>
+
+<P>
+
+<hr>
+<a name=A.6.1.1240>A.6.1.1240 DO</A>
+<P>
+
+Typical use:
+<P>
+
+
+<PRE>
+	: X ... limit first DO ... LOOP ;
+</PRE>
+<P>
+
+or
+<P>
+
+
+<PRE>
+	: X ... limit first DO ... step +LOOP ;
+</PRE>
+<P>
+
+<hr>
+<a name=A.6.1.1250>A.6.1.1250 DOES&gt;</A>
+<P>
+
+Typical use:    <code>: X ... DOES&gt; ... ;</code>
+
+<P>
+
+Following DOES&gt;, a Standard Program may not make any assumptions
+regarding the ability to find either the name of the definition
+containing the DOES&gt; or any previous definition whose name may be
+concealed by it.  DOES&gt; effectively ends one definition and begins
+another as far as local variables and control-flow structures are
+concerned.  The compilation behavior makes it clear that the user is not
+entitled to place DOES&gt; inside any control-flow structures.
+
+<P>
+
+<hr>
+<a name=A.6.1.1310>A.6.1.1310 ELSE</A>
+<P>
+
+Typical use:    <code>: X ... test IF ... ELSE ... THEN ;</code>
+
+<P>
+
+<hr>
+<a name=A.6.1.1345>A.6.1.1345 ENVIRONMENT?</A>
+<P>
+
+In a Standard System that contains only the Core word set, effective use
+of ENVIRONMENT? requires either its use within a definition, or the use
+of user-supplied auxiliary definitions.  The Core word set lacks both a
+direct method for collecting a string in interpretation state
+(
+<a href=dpans11.htm#11.6.1.2165>11.6.1.2165</a> 
+S" is in an optional word set) and also a means to test the
+returned flag in interpretation state (e.g.  the optional
+<a href=dpans15.htm#15.6.2.2532>15.6.2.2532</a> [IF]).
+
+<P>
+
+The combination of 
+<a href=dpans6.htm#6.1.1345>6.1.1345</a> ENVIRONMENT?, 
+<a href=dpans11.htm#11.6.1.2165>11.6.1.2165</a> S", 
+<a href=dpans15.htm#15.6.2.2532>15.6.2.2532</a> [IF], 
+<a href=dpans15.htm#15.6.2.2531>15.6.2.2531</a> [ELSE], and 
+<a href=dpans15.htm#15.6.2.2533>15.6.2.2533</a> [THEN] constitutes an
+effective suite of words for conditional compilation that works in
+interpretation state.
+
+<P>
+
+<hr>
+<a name=A.6.1.1360>A.6.1.1360 EVALUATE</A>
+<P>
+
+The Technical Committee is aware that this function is commonly spelled
+EVAL.  However, there exist implementations that could suffer by
+defining the word as is done here.  We also find EVALUATE to be more
+readable and explicit.  There was some sentiment for calling this
+INTERPRET, but that too would have undesirable effects on existing code.
+The longer spelling was not deemed significant since this is not a word
+that should be used frequently in source code.
+
+<P>
+
+<hr>
+<a name=A.6.1.1380>A.6.1.1380 EXIT</A>
+<P>
+
+Typical use:    <code>: X ... test IF ... EXIT THEN ... ;</code>
+
+<P>
+
+<hr>
+<a name=A.6.1.1550>A.6.1.1550 FIND</A>
+<P>
+
+One of the more difficult issues which the Committee took on was the
+problem of divorcing the specification of implementation mechanisms from
+the specification of the Forth language.  Three basic implementation
+approaches can be quickly enumerated:
+
+<P>
+
+1) Threaded code mechanisms.  These are the traditional approaches to
+implementing Forth, but other techniques may be used.
+
+<P>
+
+2) Subroutine threading with <B>macro-expansion</B> (code copying).
+Short routines, like the code for DUP, are copied into a definition
+rather than compiling a JSR reference.
+
+<P>
+
+3) Native coding with optimization.  This may include stack optimization
+(replacing such phrases as 
+<code>SWAP ROT +</code> with one or two machine
+instructions, for example), parallelization (the trend in the newer RISC
+chips is to have several functional subunits which can execute in
+parallel), and so on.
+
+<P>
+
+The initial requirement (inherited from Forth-83) that compilation
+addresses be compiled into the dictionary disallowed type 2 and type 3
+implementations.
+
+<P>
+
+Type 3 mechanisms and optimizations of type 2 implementations were
+hampered by the explicit specification of immediacy or non-immediacy of
+all standard words.  POSTPONE allowed de-specification of immediacy or
+non-immediacy for all but a few Forth words whose behavior must be
+STATE-independent.
+
+<P>
+
+One type 3 implementation, Charles Moore's cmForth, has both compiling
+and interpreting versions of many Forth words.  At the present, this
+appears to be a common approach for type 3 implementations.  The
+Committee felt that this implementation approach must be allowed.
+Consequently, it is possible that words without interpretation semantics
+can be found only during compilation, and other words may exist in two
+versions: a compiling version and an interpreting version.  Hence the
+values returned by FIND may depend on STATE, and ' and ['] may be unable
+to find words without interpretation semantics.
+
+<P>
+
+<hr>
+<a name=A.6.1.1561>A.6.1.1561 FM/MOD</A>
+<P>
+
+By introducing the requirement for <B>floored</B> division, Forth-83
+produced much controversy and concern on the part of those who preferred
+the more common practice followed in other languages of implementing
+division according to the behavior of the host CPU, which is most often
+symmetric (rounded toward zero).  In attempting to find a compromise
+position, this Standard provides primitives for both common varieties,
+floored and symmetric 
+(<a href=dpans6.htm#6.1.2214>see</a> SM/REM).  FM/MOD is the floored version.
+
+<P>
+
+The Technical Committee considered providing two complete sets of
+explicitly named division operators, and declined to do so on the
+grounds that this would unduly enlarge and complicate the Standard.
+Instead, implementors may define the normal division words in terms of
+either FM/MOD or SM/REM providing they document their choice.  People
+wishing to have explicitly named sets of operators are encouraged to do
+so.  FM/MOD may be used, for example, to define:
+
+<P>
+
+
+<PRE>
+: /_MOD ( n1 n2 -- n3 n4) >R S>D R> FM/MOD ;
+
+: /_  ( n1 n2 -- n3)  /_MOD SWAP DROP ;
+
+: _MOD ( n1 n2 -- n3)   /_MOD DROP ;
+
+: */_MOD ( n1 n2 n3 -- n4 n5)  >R M* R> FM/MOD ;
+
+: */_  ( n1 n2 n3 -- n4 )   */_MOD SWAP DROP ;
+</PRE>
+
+<P>
+
+<hr>
+<a name=A.6.1.1700>A.6.1.1700 IF</A>
+<P>
+
+Typical use:
+<P>
+
+
+<PRE>
+	: X ... test IF ... THEN ... ;
+</PRE>
+<P>
+
+or
+<P>
+
+
+<PRE>
+	: X ... test IF ... ELSE ... THEN ... ;
+</PRE>
+<P>
+
+<hr>
+<a name=A.6.1.1710>A.6.1.1710 IMMEDIATE</A>
+<P>
+
+Typical use:    <code>: X  ...  ;  IMMEDIATE</code>
+
+<P>
+
+<hr>
+<a name=A.6.1.1720>A.6.1.1720 INVERT</A>
+<P>
+
+The word NOT was originally provided in Forth as a flag operator to make
+control structures readable.  Under its intended usage the following two
+definitions would produce identical results:
+
+<P>
+
+
+<PRE>
+: ONE  ( flag -- )
+    IF ." true" ELSE ." false" THEN ;
+
+: TWO ( flag -- )
+    NOT IF ." false" ELSE ." true" THEN ;
+</PRE>
+
+<P>
+
+This was common usage prior to the Forth-83 Standard which redefined NOT
+as a cell-wide one's-complement operation, functionally equivalent to
+the phrase 
+<code>-1 XOR</code>. At the same time, the data type manipulated by this
+word was changed from a flag to a cell-wide collection of bits and the
+standard value for true was changed from <B>1</B> (rightmost bit only
+set) to <B>-1</B> (all bits set).  As these definitions of TRUE and NOT
+were incompatible with their previous definitions, many Forth users
+continue to rely on the old definitions.  Hence both versions are in
+common use.
+
+<P>
+
+Therefore, usage of NOT cannot be standardized at this time.  The two
+traditional meanings of NOT - that of negating the sense of a flag and
+that of doing a one's complement operation - are made available by 0=
+and INVERT, respectively.
+
+<P>
+
+<hr>
+<a name=A.6.1.1730>A.6.1.1730 J</A>
+<P>
+
+J may only be used with a nested DO...LOOP, DO...+LOOP, ?DO...LOOP, or
+?DO...+LOOP, for example, in the form:
+
+
+<PRE>
+	: X ... DO ... DO ... J ... LOOP ... +LOOP ... ;
+</PRE>
+<P>
+
+<hr>
+<a name=A.6.1.1760>A.6.1.1760 LEAVE</A>
+<P>
+
+Note that LEAVE immediately exits the loop.  No words following LEAVE
+within the loop will be executed.  Typical use:
+
+
+<PRE>
+	: X ... DO ... IF ... LEAVE THEN ... LOOP ... ;
+</PRE>
+<P>
+
+<hr>
+<a name=A.6.1.1780>A.6.1.1780 LITERAL</A>
+<P>
+
+Typical use:    <code>: X  ... [ x ] LITERAL ...  ;</code>
+
+<P>
+
+<hr>
+<a name=A.6.1.1800>A.6.1.1800 LOOP</A>
+<P>
+
+Typical use:
+<P>
+
+
+<PRE>
+	: X ... limit first DO ... LOOP ... ;
+</PRE>
+<P>
+
+or
+<P>
+
+
+<PRE>
+	: X ... limit first ?DO ... LOOP ... ;
+</PRE>
+<P>
+
+<hr>
+<a name=A.6.1.1810>A.6.1.1810 M*</A>
+<P>
+
+This word is a useful early step in calculation, going to extra
+precision conveniently.  It has been in use since the Forth systems of
+the early 1970's.
+
+<P>
+
+<hr>
+<a name=A.6.1.1900>A.6.1.1900 MOVE</A>
+<P>
+
+CMOVE and CMOVE&gt; are the primary move operators in Forth-83.  They
+specify a behavior for moving that implies propagation if the move is
+suitably invoked.  In some hardware, this specific behavior cannot be
+achieved using the best move instruction.  Further, CMOVE and CMOVE&gt;
+move characters; ANS Forth needs a move instruction capable of dealing
+with address units.  Thus MOVE has been defined and added to the Core
+word set, and CMOVE and CMOVE&gt; have been moved to the String word set.
+
+<P>
+
+<hr>
+<a name=A.6.1.2033>A.6.1.2033 POSTPONE</A>
+<P>
+
+Typical use:
+
+<P>
+
+
+<PRE>
+: ENDIF  POSTPONE THEN ;  IMMEDIATE
+
+: X  ... IF ... ENDIF ... ;
+</PRE>
+
+<P>
+
+POSTPONE replaces most of the functionality of 
+COMPILE and 
+<a href=dpans6.htm#6.2.2530>[COMPILE]</a>.
+COMPILE and [COMPILE] are used for the same purpose: postpone the
+compilation behavior of the next word in the parse area.  COMPILE was
+designed to be applied to non-immediate words and [COMPILE] to immediate
+words.  This burdens the programmer with needing to know which words in
+a system are immediate.  Consequently, Forth standards have had to
+specify the immediacy or non-immediacy of all words covered by the
+Standard.  This unnecessarily constrains implementors.
+
+<P>
+
+A second problem with COMPILE is that some programmers have come to
+expect and exploit a particular implementation, namely:
+
+
+<PRE>
+	:  COMPILE  R>  DUP  @  ,  CELL+  >R  ;
+</PRE>
+
+<P>
+
+This implementation will not work on native code Forth systems.  In a
+native code Forth using inline code expansion and peephole optimization,
+the size of the object code produced varies; this information is
+difficult to communicate to a <B>dumb</B> COMPILE.  A <B>smart</B>
+(i.e., immediate) COMPILE would not have this problem, but this was
+forbidden in previous standards.
+
+<P>
+
+For these reasons, COMPILE has not been included in the Standard and
+[COMPILE] has been moved in favor of POSTPONE.  Additional discussion
+can be found in Hayes, J.R., <B>Postpone</B>, Proceedings of the 1989
+Rochester Forth Conference.
+
+<P>
+
+<hr>
+<a name=A.6.1.2120>A.6.1.2120 RECURSE</A>
+<P>
+
+Typical use:  <code>: X ... RECURSE ... ;</code>
+
+<P>
+
+This is Forth's recursion operator; in some implementations it is called
+MYSELF.  The usual example is the coding of the factorial function.
+
+<PRE>
+: FACTORIAL ( +n1 -- +n2)
+    DUP 2 &lt; IF  DROP 1 EXIT  THEN
+    DUP 1-  RECURSE *
+;
+</PRE>
+
+<P>
+
+n2 = n1(n1-1)(n1-2)...(2)(1), the product of n1 with all positive
+integers less than itself (as a special case, zero factorial equals
+one).  While beloved of computer scientists, recursion makes unusually
+heavy use of both stacks and should therefore be used with caution.  See
+alternate definition in
+<a href=dpansa6.htm#A.6.1.2140>A.6.1.2140</a> REPEAT.
+
+<P>
+
+<hr>
+<a name=A.6.1.2140>A.6.1.2140 REPEAT</A>
+<P>
+
+Typical use:
+<P>
+
+
+
+<PRE>
+: FACTORIAL ( +n1 -- +n2)
+    DUP 2 < IF  DROP 1 EXIT  THEN
+    DUP
+    BEGIN DUP 2 > WHILE
+        1-  SWAP OVER *  SWAP
+    REPEAT  DROP
+;
+</PRE>
+
+<P>
+
+<hr>
+<a name=A.6.1.2165>A.6.1.2165 S"</A>
+<P>
+
+Typical use:    <code>: X  ... S" ccc" ... ;</code>
+
+<P>
+
+This word is found in many systems under the name " (quote).  However,
+current practice is almost evenly divided on the use of ", with many
+systems using the execution semantics given here, while others return
+the address of a counted string.  We attempt here to satisfy both camps
+by providing two words, S" and the Core Extension word C" so that users
+may have whichever behavior they expect with a simple renaming
+operation.
+
+<P>
+
+<hr>
+<a name=A.6.1.2214>A.6.1.2214 SM/REM</A>
+<P>
+
+See the previous discussion of division under FM/MOD.  SM/REM is the
+symmetric-division primitive, which allows programs to define the
+following symmetric-division operators:
+
+<P>
+
+
+<PRE>
+: /-REM  ( n1 n2 -- n3 n4 )  >R  S>D  R> SM/REM ;
+
+: /-  (  n1 n2 -- n3 )  /-REM SWAP DROP ;
+
+: -REM  ( n1 n2 -- n3 )  /-REM DROP ;
+
+: */-REM  (  n1 n2 n3 -- n4 n5 )  >R  M*  R> SM/REM ;
+
+: */-  ( n1 n2 n3 -- n4 )  */-REM SWAP DROP ;
+</PRE>
+
+<P>
+
+<hr>
+<a name=A.6.1.2216>A.6.1.2216 SOURCE</A>
+<P>
+
+SOURCE simplifies the process of directly accessing the input buffer by
+hiding the differences between its location for different input sources.
+This also gives implementors more flexibility in their implementation of
+buffering mechanisms for different input sources.  The committee moved
+away from an input buffer specification consisting of a collection of
+individual variables, declaring TIB and #TIB obsolescent.
+
+<P>
+
+SOURCE in this form exists in F83, POLYFORTH, LMI's Forths and others.
+In conventional systems it is equivalent to the phrase
+
+
+<PRE>
+	BLK @  IF BLK @ BLOCK 1024  ELSE TIB #TIB @ THEN
+</PRE>
+
+<P>
+
+<hr>
+<a name=A.6.1.2250>A.6.1.2250 STATE</A>
+<P>
+
+Although EVALUATE, LOAD, INCLUDE-FILE, and INCLUDED are not listed as
+words which alter STATE, the text interpreted by any one of these words
+could include one or more words which explicitly alter STATE.  EVALUATE,
+LOAD, INCLUDE-FILE, and INCLUDED do not in themselves alter STATE.
+
+<P>
+
+STATE does not nest with text interpreter nesting.  For example, the
+code sequence:
+
+
+<PRE>
+	: FOO  S" ]" EVALUATE ;       FOO
+</PRE>
+
+<P>
+
+will leave the system in compilation state.  Similarly, after LOADing a
+block containing ], the system will be in compilation state.
+
+<P>
+
+Note that ] does not affect the parse area and that the only effect that
+: has on the parse area is to parse a word.  This entitles a program to
+use these words to set the state with known side-effects on the parse
+area.  For example:
+
+<P>
+
+
+<PRE>
+: NOP  : POSTPONE ; IMMEDIATE ;
+
+NOP ALIGN    NOP ALIGNED
+</PRE>
+
+<P>
+
+Some non-ANS Forth compliant systems have ] invoke a compiler loop in
+addition to setting STATE.  Such a system would inappropriately attempt
+to compile the second use of NOP.
+
+<P>
+
+Also note that nothing in the Standard prevents a program from finding
+the execution tokens of ] or [ and using these to affect STATE.  These
+facts suggest that implementations of ] will do nothing but set STATE
+and a single interpreter/compiler loop will monitor STATE.
+
+
+<P>
+
+<hr>
+<a name=A.6.1.2270>A.6.1.2270 THEN</A>
+<P>
+
+Typical use:
+<P>
+
+
+<PRE>
+	: X ... test IF ... THEN ... ;
+</PRE>
+<P>
+
+or
+<P>
+
+
+<PRE>
+	: X ... test IF ... ELSE ... THEN ... ;
+</PRE>
+<P>
+
+<hr>
+<a name=A.6.1.2380>A.6.1.2380 UNLOOP</A>
+<P>
+
+
+Typical use:
+
+<PRE>
+: X  ...
+
+   limit first DO
+
+       ... test IF ... UNLOOP EXIT THEN ...
+
+   LOOP
+   ...
+;
+</PRE>
+
+<P>
+
+UNLOOP allows the use of EXIT within the context of DO ...  LOOP and
+related do-loop constructs.  UNLOOP as a function has been called UNDO.
+UNLOOP is more indicative of the action: nothing gets undone -- we
+simply stop doing it.
+
+<P>
+
+<hr>
+<a name=A.6.1.2390>A.6.1.2390 UNTIL</A>
+<P>
+
+Typical use:    <code>: X ... BEGIN ... test UNTIL ... ;</code>
+
+<P>
+
+<hr>
+<a name=A.6.1.2410>A.6.1.2410 VARIABLE</A>
+<P>
+
+
+Typical use:    <code>... VARIABLE XYZ ...</code>
+
+<P>
+
+<hr>
+<a name=A.6.1.2430>A.6.1.2430 WHILE</A>
+<P>
+
+
+Typical use:    <code>: X ... BEGIN ... test WHILE ... REPEAT ... ;</code>
+
+<P>
+
+<hr>
+<a name=A.6.1.2450>A.6.1.2450 WORD</A>
+<P>
+
+Typical use:    <code>char WORD ccc&lt;char&gt;</code>
+
+<P>
+
+<hr>
+<a name=A.6.1.2500>A.6.1.2500 [</A>
+<P>
+
+Typical use:    <code>: X ... [ 4321 ] LITERAL ... ;</code>
+
+<P>
+
+<hr>
+<a name=A.6.1.2510>A.6.1.2510 [']</A>
+<P>
+
+Typical use:    <code>: X  ... ['] name ... ;</code>
+
+<P>
+<code>
+See:  
+<a href=dpansa6.htm#A.6.1.1550>A.6.1.1550 FIND</a>
+</code>
+<P>
+
+<hr>
+<a name=A.6.1.2520>A.6.1.2520 [CHAR]</A>
+<P>
+
+Typical use:    <code>: X  ...  [CHAR] ccc  ...  ;</code>
+
+<P>
+
+<hr>
+<a name=A.6.1.2540>A.6.1.2540 ]</A>
+<P>
+
+Typical use:    <code>: X ... [ 1234 ] LITERAL ... ;</code>
+
+<P>
+
+ 
+<hr>
+<a name=A.6.2>
+<H3>A.6.2 Core extension words</H3>
+</a>
+
+The words in this collection fall into several categories:
+<P>
+
+<UL>
+<LI>Words that are in common use but are deemed less essential than Core
+words (e.g., 
+<a href=dpans6.htm#6.2.0260>0&lt;&gt;</a>);
+<LI>Words that are in common use but can be trivially defined from Core
+words (e.g., 
+<a href=dpans6.htm#6.2.1485>FALSE</a>);
+<LI>Words that are primarily useful in narrowly defined types of
+applications or are in less frequent use (e.g., 
+<a href=dpans6.htm#6.2.2008>PARSE</a>);
+<LI>Words that are being deprecated in favor of new words introduced to
+solve specific problems (e.g., 
+<a href=dpans6.htm#6.2.0970>CONVERT</a>).
+</UL>
+<P>
+
+Because of the varied justifications for inclusion of these words, the
+Technical Committee does not encourage implementors to offer the
+complete collection, but to select those words deemed most valuable to
+their clientele.
+
+<P>
+
+<hr>
+<a name=A.6.2.0060>A.6.2.0060 #TIB</A>
+<P>
+
+The function of #TIB has been superseded by 
+<a href=dpans6.htm#6.1.2216>SOURCE</a>.
+
+<P>
+
+<hr>
+<a name=A.6.2.0200>A.6.2.0200 .(</A>
+<P>
+
+Typical use:    <code>.( ccc)</code>
+
+<P>
+
+<hr>
+<a name=A.6.2.0210>A.6.2.0210 .R</A>
+<P>
+
+In .R, <B>R</B> is short for RIGHT.
+
+<P>
+
+<hr>
+<a name=A.6.2.0340>A.6.2.0340 2&gt;R</A>
+<P>
+
+Historically, 2&gt;R has been used to implement 
+<a href=dpans6.htm#6.1.1240>DO</a>.  Hence the order of
+parameters on the return stack.
+
+<P>
+
+The primary advantage of 2&gt;R is that it puts the top stack entry on the
+top of the return stack.  For instance, a double-cell number may be
+transferred to the return stack and still have the most significant cell
+accessible on the top of the return stack.
+
+<P>
+
+<hr>
+<a name=A.6.2.0410>A.6.2.0410 2R&gt;</A>
+<P>
+
+Note that 2R&gt; is not equivalent to 
+<a href=dpans6.htm#6.1.2060>R&gt;</a> R&gt;.  Instead, it mirrors the
+action of 
+<a href=dpans6.htm#6.2.0340>2&gt;R</a> 
+(see <a href=dpansa6.htm#A.6.2.0340>A.6.2.0340</A>).
+
+<P>
+
+<hr>
+<a name=A.6.2.0455>A.6.2.0455 :NONAME</A>
+<P>
+
+:NONAME allows a user to create an execution token with the semantics of
+a colon definition without an associated name.  Previously, only 
+<a href=dpans6.htm#6.1.0450>:</a>
+(colon) could create an execution token with these semantics.  Thus,
+Forth code could only be compiled using the syntax of :, that is:
+
+
+<PRE>
+	: NAME  ...  ;
+</PRE>
+
+<P>
+
+:NONAME removes this constraint and places the Forth compiler in the
+hands of the programmer.
+
+<P>
+
+:NONAME can be used to create application-specific programming
+languages.  One technique is to mix Forth code fragments with
+application-specific constructs.  The application-specific constructs
+use :NONAME to compile the Forth code and store the corresponding
+execution tokens in data structures.
+
+<P>
+
+The functionality of :NONAME can be built on any Forth system.  For
+years, expert Forth programmers have exploited intimate knowledge of
+their systems to generate unnamed code fragments.  Now, this function
+has been named and can be used in a portable program.
+
+<P>
+
+For example, :NONAME can be used to build a table of code fragments
+where indexing into the table allows executing a particular fragment.
+The declaration syntax of the table is:
+
+<P>
+
+
+<PRE>
+:NONAME .. code for command 0 .. ;  0 CMD !
+
+:NONAME .. code for command 1 .. ;  1 CMD !
+   ...
+
+:NONAME .. code for command 99 .. ; 99 CMD !
+
+   ... 5 CMD @ EXECUTE ...
+
+</PRE>
+<P>
+
+The definitions of the table building words are:
+
+<PRE>
+CREATE CMD-TABLE  \ table for command execution tokens
+100 CELLS ALLOT
+
+: CMD ( n -- a-addr ) \ nth element address in table
+    CELLS CMD-TABLE + ;
+</PRE>
+
+<P>
+
+As a further example, a defining word can be created to allow
+performance monitoring.  In the example below, the number of times a
+word is executed is counted.  : must first be renamed to allow the
+definition of the new ;.
+
+<P>
+
+
+<PRE>
+: DOCOLON ( -- )     \ Modify CREATEd word to execute like a colon def
+     DOES> ( i*x a-addr -- j*x )
+     1 OVER +!         \ count executions
+     CELL+ @ EXECUTE   \ execute :NONAME definition
+;
+
+: OLD: : ;           \ just an alias
+
+OLD: : ( "name" -- a-addr xt colon-sys )
+                     \ begins an execution-counting colon definition
+     CREATE  HERE 0 ,  \ storage for execution counter
+     0 ,               \ storage for execution token
+     DOCOLON           \ set run time for CREATEd word
+    :NONAME           \ begin unnamed colon definition
+;
+</PRE>
+<P>
+
+( Note the placement of DOES&gt;: DOES&gt; must modify the CREATEd word and not
+the :NONAME definition, so DOES&gt; must execute before :NONAME.)
+
+<PRE>
+OLD: ; ( a-addr xt colon-sys -- )
+                      \ ends an execution-counting colon definition )
+    POSTPONE ;        \ complete compilation of colon def
+    SWAP CELL+ !      \ save execution token
+;  IMMEDIATE
+</PRE>
+
+<P>
+
+The new : and ; are used just like the standard ones to define words:
+<P>
+
+
+<PRE>
+	... : xxx  ... ;  ...  xxx  ...
+</PRE>
+
+Now however, these words may be <B>ticked</B> to retrieve the count (and
+execution token):
+
+
+<PRE>
+	... ' xxx >BODY ? ...
+</PRE>
+
+<P>
+
+<hr>
+<a name=A.6.2.0620>A.6.2.0620 ?DO</A>
+<P>
+
+Typical use:
+
+<code>: FACTORIAL ( +n1 -- +n2 )  1 SWAP 1+ ?DO  I *  LOOP ;</code>
+
+<P>
+
+This word was added in response to many requests for a resolution of the
+difficulty introduced by Forth-83's DO, which on a 16-bit system will
+loop 65,535 times if given equal arguments.  As this Standard also
+encourages 32-bit systems, this behavior can be intolerable.  The
+Technical Committee considered applying these semantics to 
+<a href=dpans6.htm#6.1.1240>DO</a>, but
+declined on the grounds that it might break existing code.
+
+<P>
+
+<hr>
+<a name=A.6.2.0700>A.6.2.0700 AGAIN</A>
+<P>
+
+Typical use:    <code>: X ... BEGIN ... AGAIN ... ;</code>
+
+<P>
+
+Unless word-sequence has a way to terminate, this is an endless loop.
+
+<P>
+
+<hr>
+<a name=A.6.2.0855>A.6.2.0855 C"</A>
+<P>
+
+Typical use:    <code>: X  ...  C" ccc"  ...  ;</code>
+
+<P>
+
+It is easy to convert counted strings to pointer/length but hard to do
+the opposite.  C" is the only new word that uses the <B>address of
+counted string</B> stack representation.  It is provided as an aid to
+porting existing programs to ANS Forth systems.  It is relatively
+difficult to implement C" in terms of other standard words, considering
+its <B>compile string into the current definition</B> semantics.
+
+<P>
+
+Users of C" are encouraged to migrate their application code toward the
+consistent use of the preferred <B>c-addr u</B> stack representation
+with the alternate word 
+<a href=dpans6.htm#6.1.2165>S"</a>.  This may be accomplished by converting
+application words with counted string input arguments to use the
+preferred <B>c-addr u</B> representation, thus eliminating the need for
+C" .
+
+<P>
+<code>
+See:
+<a href=dpansa3.htm#A.3.1.3.4>A.3.1.3.4</a> Counted strings
+</code>
+<P>
+
+<hr>
+<a name=A.6.2.0873>A.6.2.0873 CASE</A>
+<P>
+
+Typical use:
+
+<PRE>
+   : X ...
+       CASE
+       test1 OF ... ENDOF
+       testn OF ... ENDOF
+       ... ( default )
+       ENDCASE ...
+   ;
+</PRE>
+
+<P>
+
+<hr>
+<a name=A.6.2.0945>A.6.2.0945 COMPILE,</A>
+<P>
+
+COMPILE, is the compilation equivalent of 
+<a href=dpans6.htm#6.1.1370>EXECUTE</a>.  In many cases, it is
+possible to compile a word by using 
+<a href=dpans6.htm#6.1.2033>POSTPONE</a> without resorting to the
+use of COMPILE,.  However, the use of POSTPONE requires that the name of
+the word must be known at compile time, whereas COMPILE, allows the word
+to be located at any time.  It is sometime possible to use 
+<a href=dpans6.htm#6.1.1360>EVALUATE</a> to
+compile a word whose name is not known until run time.  This has two
+possible problems:
+
+<UL>
+<LI>EVALUATE is slower than COMPILE, because a dictionary search is
+required.
+<LI>The current search order affects the outcome of EVALUATE.
+</UL>
+<P>
+
+In traditional threaded-code implementations, compilation is performed
+by 
+<a href=dpans6.htm#6.1.0150>,</a> (comma).  
+This usage is not portable; it doesn't work for
+subroutine-threaded, native code, or relocatable implementations.  Use
+of COMPILE, is portable.
+
+<P>
+
+In most systems it is possible to implement COMPILE, so it will generate
+code that is optimized to the same extent as code that is generated by
+the normal compilation process.  However, in some implementations there
+are two different <B>tokens</B> corresponding to a particular definition
+name: the normal <B>execution token</B> that is used while interpreting
+or with EXECUTE, and another <B>compilation token</B> that is used while
+compiling.  It is not always possible to obtain the compilation token
+from the execution token.  In these implementations, COMPILE, might not
+generate code that is as efficient as normally compiled code.
+
+<P>
+
+<hr>
+<a name=A.6.2.0970>A.6.2.0970 CONVERT</A>
+<P>
+
+CONVERT may be defined as follows:
+
+
+<PRE>
+	: CONVERT   CHAR+ 65535 >NUMBER DROP ;
+</PRE>
+
+<P>
+
+<hr>
+<a name=A.6.2.1342>A.6.2.1342 ENDCASE</A>
+<P>
+
+Typical use:
+
+<PRE>
+   : X ...
+       CASE
+       test1 OF ... ENDOF
+       testn OF ... ENDOF
+       ... ( default )
+       ENDCASE ...
+   ;
+</PRE>
+
+<P>
+
+<hr>
+<a name=A.6.2.1343>A.6.2.1343 ENDOF</A>
+<P>
+
+Typical use:
+
+<PRE>
+: X ...
+   CASE
+   test1 OF ... ENDOF
+   testn OF ... ENDOF
+   ... ( default )
+   ENDCASE ...
+;
+</PRE>
+
+<P>
+
+<hr>
+<a name=A.6.2.1390>A.6.2.1390 EXPECT</A>
+<P>
+
+Specification of positive integer counts (+n) for EXPECT allows some
+implementors to continue their practice of using a zero or negative
+value as a flag to trigger special behavior.  Insofar as such behavior
+is outside the Standard, Standard Programs cannot depend upon it, but
+the Technical Committee doesn't wish to preclude it unnecessarily.
+Since actual values are almost always small integers, no functionality
+is impaired by this restriction.
+
+<P>
+
+<hr>
+<a name=A.6.2.1850>A.6.2.1850 MARKER</A>
+<P>
+
+As dictionary implementations have gotten more elaborate and in some
+cases have used multiple address spaces, 
+<a href=dpans15.htm#15.6.2.1580>FORGET</a> has become prohibitively
+difficult or impossible to implement on many Forth systems.  MARKER
+greatly eases the problem by making it possible for the system to
+remember <B>landmark information</B> in advance that specifically marks
+the spots where the dictionary may at some future time have to be
+rearranged.
+
+<P>
+
+<hr>
+<a name=A.6.2.1950>A.6.2.1950 OF</a>
+<P>
+
+Typical use:
+
+<PRE>
+   : X ...
+       CASE
+       test1 OF ... ENDOF
+       testn OF ... ENDOF
+       ... ( default )
+       ENDCASE ...
+   ;
+</PRE>
+
+<P>
+
+<hr>
+<a name=A.6.2.2000>A.6.2.2000 PAD</A>
+<P>
+
+PAD has been available as scratch storage for strings since the earliest
+Forth implementations.  It was brought to our attention that many
+programmers are reluctant to use PAD, fearing incompatibilities with
+system uses.  PAD is specifically intended as a programmer convenience,
+however, which is why we documented the fact that no standard words use
+it.
+
+<P>
+
+<hr>
+<a name=A.6.2.2008>A.6.2.2008 PARSE</A>
+<P>
+
+Typical use:    <code>char PARSE ccc&lt;char&gt;</code>
+
+<P>
+
+The traditional Forth word for parsing is 
+<a href=dpans6.htm#6.1.2450>WORD</a>.  PARSE solves the
+following problems with WORD:
+
+<P>
+
+a) WORD always skips leading delimiters.  This behavior is appropriate
+for use by the text interpreter, which looks for sequences of non-blank
+characters, but is inappropriate for use by words like ( , .( , and ." .
+Consider the following (flawed) definition of .( :
+
+
+<PRE>
+	: .(   [CHAR] )  WORD COUNT TYPE ;  IMMEDIATE
+</PRE>
+
+<P>
+
+This works fine when used in a line like:
+
+
+<PRE>
+	.( HELLO)   5 .
+</PRE>
+
+<P>
+
+but consider what happens if the user enters an empty string:
+
+
+<PRE>
+	.( )   5 .
+</PRE>
+
+<P>
+
+The definition of .( shown above would treat the ) as a leading
+delimiter, skip it, and continue consuming characters until it located
+another ) that followed a non-) character, or until the parse area was
+empty.  In the example shown, the 5 .  would be treated as part of the
+string to be printed.
+
+<P>
+
+With PARSE, we could write a correct definition of .( :
+
+
+<PRE>
+	: .(   [CHAR] ) PARSE TYPE ; IMMEDIATE
+</PRE>
+
+<P>
+
+This definition avoids the <B>empty string</B> anomaly.
+
+<P>
+
+b)      WORD returns its result as a counted string.  This has four bad
+effects:
+
+<P>
+
+1)      The characters accepted by WORD must be copied from the input buffer
+into a temporary buffer, in order to make room for the count character that
+must be at the beginning of the counted string.  The copy step is inefficient,
+compared to PARSE, which leaves the string in the input buffer and doesn't
+need to copy it anywhere.
+
+<P>
+
+2)      WORD must be careful not to store too many characters into the
+temporary buffer, thus overwriting something beyond the end of the buffer.
+This adds to the overhead of the copy step.  (WORD may have to scan a lot of
+characters before finding the trailing delimiter.)
+
+<P>
+
+3)      The count character limits the length of the string returned by WORD
+to 255 characters (longer strings can easily be stored in blocks!).  This
+limitation does not exist for PARSE.
+
+<P>
+
+4)      The temporary buffer is typically overwritten by the next use of WORD.
+This introduces a temporal dependency; the value returned by WORD is only
+valid for a limited duration.  PARSE has a temporal dependency, too, related
+to the lifetime of the input buffer, but that is less severe in most cases
+than WORD's temporal dependency.
+
+<P>
+
+The behavior of WORD with respect to skipping leading delimiters is
+useful for parsing blank-delimited names.  Many system implementations
+include an additional word for this purpose, similar to PARSE with
+respect to the <B>c-addr u</B> return value, but without an explicit
+delimiter argument (the delimiter set is implicitly <B>white space</B>),
+and which does skip leading delimiters.  A common description for this
+word is:
+
+
+<PRE>
+	PARSE-WORD  ( &lt;spaces&gt;name -- c-addr u )
+</PRE>
+
+<P>
+
+Skip leading spaces and parse name delimited by a space.  c-addr is the
+address within the input buffer and u is the length of the selected string.
+If the parse area is empty, the resulting string has a zero length.
+
+<P>
+
+If both PARSE and PARSE-WORD are present, the need for WORD is largely
+eliminated.
+
+<P>
+
+<hr>
+<a name=A.6.2.2030>A.6.2.2030 PICK</A>
+<P>
+
+0 PICK is equivalent to 
+<a href=dpans6.htm#6.1.1290>DUP</a> and 1 PICK is equivalent to 
+<a href=dpans6.htm#6.1.1990>OVER</a>.
+
+<P>
+
+<hr>
+<a name=A.6.2.2040>A.6.2.2040 QUERY</A>
+<P>
+
+The function of QUERY may be performed with 
+<a href=dpans6.htm#6.1.0695>ACCEPT</a> and 
+<a href=dpans6.htm#6.1.1360>EVALUATE</a>.
+
+<P>
+
+<hr>
+<a name=A.6.2.2125>A.6.2.2125 REFILL</A>
+<P>
+
+This word is a useful generalization of 
+<a href=dpans6.htm#6.2.2040>QUERY</a>.  Re-defining QUERY to
+meet this specification would have broken existing code.  REFILL is
+designed to behave reasonably for all possible input sources.  If the
+input source is coming from the user, as with QUERY, REFILL could still
+return a false value if, for instance, a communication channel closes so
+that the system knows that no more input will be available.
+
+<P>
+
+<hr>
+<a name=A.6.2.2150>A.6.2.2150 ROLL</A>
+<P>
+
+2 ROLL is equivalent to 
+<a href=dpans6.htm#6.1.2160>ROT</a>, 
+1 ROLL is equivalent to 
+<a href=dpans6.htm#6.1.2260>SWAP</a> and 0 ROLL is
+a null operation.
+
+<P>
+
+<hr>
+<a name=A.6.2.2182>A.6.2.2182 SAVE-INPUT</A>
+<P>
+
+SAVE-INPUT and 
+<a href=dpans6.htm#6.2.2148>RESTORE-INPUT</a> 
+allow the same degree of input source
+repositioning within a text file as is available with 
+<a href=dpans7.htm#7.6.1.0800>BLOCK</a> input.
+SAVE-INPUT and RESTORE-INPUT <B>hide the details</B> of the operations
+necessary to accomplish this repositioning, and are used the same way
+with all input sources.  This makes it easier for programs to reposition
+the input source, because they do not have to inspect several variables
+and take different action depending on the values of those variables.
+
+<P>
+
+SAVE-INPUT and RESTORE-INPUT are intended for repositioning within a
+single input source; for example, the following scenario is NOT allowed
+for a Standard Program:
+
+<PRE>
+   : XX
+       SAVE-INPUT  CREATE
+       S" RESTORE-INPUT" EVALUATE
+       ABORT" couldn't restore input"
+   ;
+</PRE>
+
+<P>
+
+This is incorrect because, at the time RESTORE-INPUT is executed, the
+input source is the string via 
+<a href=dpans6.htm#6.1.1360>EVALUATE</a>, which is not the same input
+source that was in effect when SAVE-INPUT was executed.
+
+<P>
+
+The following code is allowed:
+
+
+<PRE>
+: XX
+    SAVE-INPUT  CREATE
+    S" .( Hello)" EVALUATE
+    RESTORE-INPUT ABORT" couldn't restore input"
+;
+</PRE>
+ 
+<P>
+
+After EVALUATE returns, the input source specification is restored to
+its previous state, thus SAVE-INPUT and RESTORE-INPUT are called with
+the same input source in effect.
+
+<P>
+
+In the above examples, the EVALUATE phrase could have been replaced by a
+phrase involving 
+<a href=dpans11.htm#11.6.1.1717>INCLUDE-FILE</a> 
+and the same rules would apply.
+
+<P>
+
+The Standard does not specify what happens if a program violates the
+above rules.  A Standard System might check for the violation and return
+an exception indication from RESTORE-INPUT, or it might fail in an
+unpredictable way.
+
+<P>
+
+The return value from RESTORE-INPUT is primarily intended to report the
+case where the program attempts to restore the position of an input
+source whose position cannot be restored.  The keyboard might be such an
+input source.
+
+<P>
+
+Nesting of SAVE-INPUT and RESTORE-INPUT is allowed.  For example, the
+following situation works as expected:
+
+<PRE>
+: XX
+    SAVE-INPUT
+    S" f1" INCLUDED      \ The file "f1" includes:
+    \   ... SAVE-INPUT ... RESTORE-INPUT ...
+    \ End of file "f1"
+    RESTORE-INPUT  ABORT" couldn't restore input"
+;
+</PRE>
+
+<P>
+
+In principle, RESTORE-INPUT could be implemented to <B>always fail</B>, e.g.:
+
+<PRE>
+: RESTORE-INPUT  ( x1 ... xn n -- flag )
+    0 ?DO DROP LOOP TRUE
+;
+</PRE>
+
+<P>
+
+Such an implementation would not be useful in most cases.  It would be
+preferable for a system to leave SAVE-INPUT and RESTORE-INPUT undefined,
+rather than to create a useless implementation.  In the absence of the
+words, the application programmer could choose whether or not to create
+<B>dummy</B> implementations or to work-around the problem in some other
+way.
+
+<P>
+
+Examples of how an implementation might use the return values from
+SAVE-INPUT to accomplish the save/restore function:
+
+<P>
+
+
+<PRE>
+Input Source    possible stack values
+------------    ---------------------
+block           &gt;IN @  BLK @  2
+EVALUATE        &gt;IN @  1
+keyboard        &gt;IN @  1
+text file       &gt;IN @  lo-pos  hi-pos  3
+</PRE>
+
+<P>
+
+These are examples only; a Standard Program may not assume any particular
+meaning for the individual stack items returned by SAVE-INPUT.
+
+<P>
+
+<hr>
+<a name=A.6.2.2290>A.6.2.2290 TIB</A>
+<P>
+
+The function of TIB has been superseded by 
+<a href=dpans6.htm#6.1.2216>SOURCE</a>.
+
+<P>
+
+<hr>
+<a name=A.6.2.2295>A.6.2.2295 TO</A>
+<P>
+
+Historically, some implementations of TO have not explicitly parsed.
+Instead, they set a mode flag that is tested by the subsequent execution
+of name.  ANS Forth explicitly requires that TO must parse, so that TO's
+effect will be predictable when it is used at the end of the parse area.
+
+<P>
+
+Typical use:    <code>x TO name</code>
+
+<P>
+
+<hr>
+<a name=A.6.2.2298>A.6.2.2298 TRUE</A>
+<P>
+
+TRUE is equivalent to the phrase  <code>0 0=</code>.
+
+<P>
+
+<hr>
+<a name=A.6.2.2405>A.6.2.2405 VALUE</A>
+<P>
+
+Typical use:
+
+<PRE>
+0 VALUE DATA
+
+: EXCHANGE ( n1 -- n2 ) DATA SWAP TO DATA ;
+</PRE>
+
+<P>
+
+EXCHANGE leaves n1 in DATA and returns the prior value n2.
+
+<P>
+
+<hr>
+<a name=A.6.2.2440>A.6.2.2440 WITHIN</A>
+<P>
+
+We describe WITHIN without mentioning circular number spaces (an
+undefined term) or providing the code.  Here is a number line with the
+overflow point (o) at the far right and the underflow point (u) at the
+far left:
+
+<PRE>
+u--------------------------------------------------------------o
+</PRE>
+
+<P>
+
+There are two cases to consider: either the n2|u2..n3|u3 range straddles
+the overflow/underflow points or it does not.  Lets examine the
+non-straddle case first:
+
+<PRE>
+u-------------------[.....................)------------------------o
+</PRE>
+
+<P>
+
+The [ denotes n2|u2, the ) denotes n3|u3, and the dots and [ are numbers
+WITHIN the range.  n3|u3 is greater than n2|u2, so the following tests
+will determine if n1|u1 is WITHIN n2|u2 and n3|u3:
+
+<p>
+<pre>
+           n2|u2 &lt; n1|u1  and  n1|u1 &lt; n3|u3.
+</pre>
+<P>
+
+In the case where the comparison range straddles the overflow/underflow
+points:
+<P>
+
+u...............)-----------------------------[........................o
+
+<p>
+
+n3|u3 is less than n2|u2 and the following tests will determine if n1|u1 is
+WITHIN n2|u2 and n3|u3:
+
+<P>
+<pre>
+           n2|u2 &gt; n1|u1  and  n1|u1 &gt; n3|u3.
+</pre>
+<P>
+
+
+WITHIN must work for both signed and unsigned arguments.  One obvious
+implementation does not work:
+
+<PRE>
+: WITHIN  ( test low high -- flag )
+    &gt;R  OVER &lt; 0= ( test flag1 )
+    SWAP R&gt; &lt;     ( flag1 flag2 )
+    AND
+;
+</PRE>
+
+<P>
+
+Assume two's-complement arithmetic on a 16-bit machine, and consider the
+following test:
+
+
+<PRE>
+	33000  32000 34000  WITHIN
+</PRE>
+
+<P>
+
+The above implementation returns false for that test, even though the
+unsigned number 33000 is clearly within the range {{32000 ..  34000}}.
+
+<P>
+
+The problem is that, in the incorrect implementation, the signed
+comparison 
+&lt; gives the wrong answer when 32000 is compared to 33000,
+because when those numbers are treated as signed numbers, 33000 is
+treated as negative 32536, while 32000 remains positive.
+
+<P>
+
+Replacing &lt; with 
+<a href=dpans6.htm#6.1.2340>U&lt;</a> 
+in the above implementation makes it work with
+unsigned numbers, but causes problems with certain signed number ranges;
+in particular, the test:
+
+
+<PRE>
+	1  -5  5  WITHIN
+</PRE>
+
+<P>
+
+would give an incorrect answer.
+
+<P>
+
+For two's-complement machines that ignore arithmetic overflow (most
+machines), the following implementation works in all cases:
+
+<PRE>
+:  WITHIN  ( test low high -- flag )   OVER - &gt;R - R&gt;  U&lt;  ;
+
+</PRE>
+<P>
+
+<hr>
+<a name=A.6.2.2530>A.6.2.2530 [COMPILE]</A>
+<P>
+
+Typical use:    <code>: name2 ... [COMPILE] name1 ... ;  IMMEDIATE</code>
+
+<P>
+
+<hr>
+<a name=A.6.2.2535>A.6.2.2535 \</A>
+<P>
+
+Typical use:    <code>5 CONSTANT THAT  \  THIS IS A COMMENT ABOUT THAT</code>
+
+<P>
+
+<hr>
+<a href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<a href=dpansa7.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

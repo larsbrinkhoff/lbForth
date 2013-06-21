@@ -1,0 +1,681 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans15.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpans17.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=16.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>16. The optional Search-Order word set</H1>
+
+<p>
+<code>
+See:
+<a href=dpansa16.htm>A.16</a> The optional Search-Order word set
+</code>
+<p>
+
+<hr>
+<A name=16.1>
+<H2>16.1 Introduction</H2>
+</a>
+
+<hr>
+<A name=16.2>
+<H2>16.2 Additional terms and notation</H2>
+</a>
+
+<DL><DT><B>compilation word list:</B>
+<DD>The word list into which new definition names are
+placed.
+
+<DT><B>search order:</B>
+<DD>A list of word lists specifying the order in which the
+dictionary will be searched.</DL>
+
+<p>
+<code>
+See:
+<a href=dpansa16.htm#A.16.2>A.16.2</a> Additional terms
+</code>
+<p>
+
+<hr>
+<A name=16.3>
+<H2>16.3 Additional usage requirements</H2>
+</a>
+
+<hr>
+<A name=16.3.1>
+<H3>16.3.1 Data types</H3>
+</a>
+
+Word list identifiers are implementation-dependent single-cell values
+that identify word lists.
+<P>
+
+Append table 16.1 to 
+<a href=dpans3.htm#table.3.1>table 3.1</a>.
+<P>
+
+Table 16.1 - Data types
+<P>
+
+<PRE>
+Symbol  Data type               Size on stack
+------  ---------               -------------
+wid     word list identifiers   1 cell
+</PRE>
+<P>
+
+<code>
+See:  
+<A href=dpans3.htm#3.1>3.1</a> Data types,
+<A href=dpans3.htm#3.4.2>3.4.2</a> Finding definition names,
+<A href=dpans3.htm#3.4>3.4</a> The Forth text interpreter.
+</code>
+<P>
+
+<hr>
+<A name=16.3.2>
+<H3>16.3.2 Environmental queries</H3>
+</a>
+
+Append table 16.2 to table 3.5.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.2.6>3.2.6</a> Environmental queries
+</code>
+<P>
+
+Table 16.2 - Environmental query strings
+<P>
+
+<PRE>
+String            Value data type  Constant?  Meaning
+------            ---------------  ---------  -------
+SEARCH-ORDER      flag             no         search-order word set present
+SEARCH-ORDER-EXT  flag             no         search-order extensions word set present
+WORDLISTS         n                yes        maximum number of word lists usable
+                                                in the search order
+
+</PRE>
+
+<P>
+
+<hr>
+<A name=16.3.3>
+<H3>16.3.3 Finding definition names</H3>
+</a>
+
+When searching a word list for a definition name, the system shall
+search each word list from its last definition to its first.  The search
+may encompass only a single word list, as with 
+<a href=dpans16.htm#16.6.1.2192>SEARCH-WORDLIST</a>, or all
+the word lists in the search order, as with the text interpreter and
+<a href=dpans6.htm#6.1.1550>FIND</a>.
+
+<P>
+
+Changing the search order shall only affect the subsequent finding of
+definition names in the dictionary.
+
+<P>
+
+A system with the Search-Order word set shall allow at least eight word
+lists in the search order.
+
+<P>
+
+An ambiguous condition exists if a program changes the compilation word
+list during the compilation of a definition or before modification of
+the behavior of the most recently compiled definition with 
+<a href=dpans15.htm#15.6.2.0470>;CODE</a>, 
+<a href=dpans6.htm#6.1.1250>DOES></a>,
+or 
+<a href=dpans6.htm#6.1.1710>IMMEDIATE</a>.
+
+<P>
+
+A program that requires more than eight word lists in the search order
+has an environmental dependency.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.2>3.4.2</a> Finding definition names,
+<a href=dpansa16.htm#A.16.3.3>A.16.3.3</a> Finding definition names.
+</code>
+<P>
+
+<hr>
+<A name=16.3.4>
+<H3>16.3.4 Contiguous regions</H3>
+</a>
+
+The regions of data space produced by the operations described in
+<a href=dpans3.htm#3.3.3.2>3.3.3.2</a> 
+Contiguous regions may be non-contiguous if 
+<a href=dpans16.htm#16.6.1.2460>WORDLIST</a> is executed
+between allocations.
+
+<P>
+
+<hr>
+<A name=16.4>
+<H2>16.4 Additional documentation requirements</H2>
+</a>
+
+<hr>
+<A name=16.4.1>
+<H3>16.4.1 System documentation</H3>
+</a>
+
+<hr>
+<A name=16.4.1.1>
+<H4>16.4.1.1 Implementation-defined options</H4>
+</a>
+
+<UL>
+<LI>maximum number of word lists in the search order 
+(<a href=dpans16.htm#16.3.3>16.3.3</a> Finding definition names, 
+<a href=dpans16.htm#16.6.1.2197>16.6.1.2197</a> SET-ORDER);
+<LI>minimum search order 
+(<a href=dpans16.htm#16.6.1.2197>16.6.1.2197</a> SET-ORDER, 
+<a href=dpans16.htm#16.6.2.1965>16.6.2.1965</a> ONLY).
+</UL>
+<P>
+
+<hr>
+<A name=16.4.1.2>
+<H4>16.4.1.2 Ambiguous conditions</H4>
+</a>
+
+<UL>
+<LI>changing the compilation word list 
+(<a href=dpans16.htm#16.3.3>16.3.3</a> Finding definition names);
+<LI>search order empty 
+(<a href=dpans16.htm#16.6.2.2037>16.6.2.2037</a> PREVIOUS);
+<LI>too many word lists in search order 
+(<a href=dpans16.htm#16.6.2.0715>16.6.2.0715</a> ALSO).
+</ul>
+
+<hr>
+<a name=16.4.1.3>
+<h4>16.4.1.3 Other system documentation</h4>
+</a>
+<ul>
+<li>no additional requirements.
+</ul>
+
+
+<hr>
+<a name=16.4.2>
+<h3>16.4.2 Program documentation</h3>
+</a>
+
+
+<hr>
+<A name=16.4.2.1>
+<H4>16.4.2.1 Environmental dependencies</H4>
+</a>
+
+<UL>
+<LI>requiring more than eight word-lists in the search order 
+(<a href=dpans16.htm#16.3.3>16.3.3</a> Finding definition names).
+</UL>
+
+
+<hr>
+<A name=16.4.2.2>
+<H4>16.4.2.2 Other program documentation</H4>
+</a>
+
+<UL>
+<LI>no additional requirements.
+</UL>
+
+<hr>
+<A name=16.5>
+<H2>16.5 Compliance and labeling</H2>
+</a>
+
+<hr>
+<A name=16.5.1>
+<H3>16.5.1 ANS Forth systems</H3>
+</a>
+
+The phrase <B>Providing the Search-Order word set</B> shall be appended
+to the label of any Standard System that provides all of the
+Search-Order word set.
+
+<P>
+
+The phrase <B>Providing name(s) from the Search-Order Extensions word
+set</B> shall be appended to the label of any Standard System that
+provides portions of the Search-Order Extensions word set.
+
+<P>
+
+The phrase <B>Providing the Search-Order Extensions word set</B> shall
+be appended to the label of any Standard System that provides all of the
+Search-Order and Search-Order Extensions word sets.
+
+<P>
+
+<hr>
+<A name=16.5.2>
+<H3>16.5.2 ANS Forth programs</H3>
+</a>
+
+The phrase <B>Requiring the Search-Order word set</B> shall be appended
+to the label of Standard Programs that require the system to provide the
+Search-Order word set.
+
+<P>
+
+The phrase <B>Requiring name(s) from the Search-Order Extensions word
+set</B> shall be appended to the label of Standard Programs that require
+the system to provide portions of the Search-Order Extensions word set.
+
+<P>
+
+The phrase <B>Requiring the Search-Order Extensions word set</B> shall
+be appended to the label of Standard Programs that require the system to
+provide all of the Search-Order and Search-Order Extensions word sets.
+
+<P>
+
+<hr>
+<A name=16.6>
+<H2>16.6 Glossary</H2>
+</a>
+
+<hr>
+<A name=16.6.1>
+<H3>16.6.1 Search-Order words</H3>
+</a>
+
+<hr>
+<A name=16.6.1.1180>
+<code>
+16.6.1.1180 <b>DEFINITIONS</b>
+</code>
+</a>
+<BR>
+SEARCH
+<BR>
+<pre>
+	( -- )
+</pre>
+<P>
+
+Make the compilation word list the same as the first word list in the
+search order.  Specifies that the names of subsequent definitions will
+be placed in the compilation word list.  Subsequent changes in the
+search order will not affect the compilation word list.
+
+<P>
+
+<code>
+See:
+<A href=dpans16.htm#16.3.3>16.3.3</a> Finding Definition Names
+</code>
+
+<P>
+
+<hr>
+<A name=16.6.1.1550>
+<code>
+16.6.1.1550 <b>FIND</b>
+</code>
+</a>
+<BR>
+SEARCH
+<BR>
+<P>
+
+Extend the semantics of 
+<a href=dpans6.htm#6.1.1550>6.1.1550</a> FIND to be:
+<P>
+
+<pre>
+	( c-addr -- c-addr 0  |  xt 1  |  xt -1 )
+</pre>
+<P>
+
+Find the definition named in the counted string at c-addr.  If the
+definition is not found after searching all the word lists in the search
+order, return c-addr and zero.  If the definition is found, return xt.
+If the definition is immediate, also return one (1); otherwise also
+return minus-one (-1).  For a given string, the values returned by FIND
+while compiling may differ from those returned while not compiling.
+
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.4.2>3.4.2</a> Finding definition names,
+<A href=dpans6.htm#6.1.0070>6.1.0070 '</a> ,
+<A href=dpans6.htm#6.1.2033>6.1.2033 POSTPONE</a> ,
+<A href=dpans6.htm#6.1.2510>6.1.2510 [']</a> ,
+<A href=dpansd.htm#D.6.7>D.6.7</a> Immediacy.
+</code>
+
+<P>
+
+<hr>
+<A name=16.6.1.1595>
+<code>
+16.6.1.1595 <b>FORTH-WORDLIST</b>
+</code>
+</a>
+<BR>
+SEARCH
+<BR>
+<pre>
+	( -- wid )
+</pre>
+<P>
+
+Return wid, the identifier of the word list that includes all standard
+words provided by the implementation.  This word list is initially the
+compilation word list and is part of the initial search order.
+
+<P>
+
+<hr>
+<A name=16.6.1.1643>
+<code>
+16.6.1.1643 <b>GET-CURRENT</b>
+</code>
+</a>
+<BR>
+SEARCH
+<BR>
+<pre>
+	( -- wid )
+</pre>
+<P>
+
+Return wid, the identifier of the compilation word list.
+<P>
+
+<hr>
+<A name=16.6.1.1647>
+<code>
+16.6.1.1647 <b>GET-ORDER</b>
+</code>
+</a>
+<BR>
+SEARCH
+<BR>
+<pre>
+	( -- widn ... wid1 n )
+</pre>
+<P>
+
+Returns the number of word lists n in the search order and the word list
+identifiers widn ...  wid1 identifying these word lists.  wid1
+identifies the word list that is searched first, and widn the word list
+that is searched last.  The search order is unaffected.
+
+<P>
+<code>
+See:
+<a href=a0002.htm>RFI 0002</a>
+</code>
+<p>
+
+<hr>
+<A name=16.6.1.2192>
+<code>
+16.6.1.2192 <b>SEARCH-WORDLIST</b>
+</code>
+</a>
+<BR>
+SEARCH
+<BR>
+<pre>
+	( c-addr u wid -- 0 | xt 1 | xt -1 )
+</pre>
+<P>
+
+Find the definition identified by the string c-addr u in the word list
+identified by wid.  If the definition is not found, return zero.  If the
+definition is found, return its execution token xt and one (1) if the
+definition is immediate, minus-one (-1) otherwise.
+
+<p>
+<code>
+See:
+<a href=dpansa16.htm#A.16.6.1.2192>A.16.6.1.2192 SEARCH-WORDLIST</a>
+</code>
+<p>
+
+<hr>
+<A name=16.6.1.2195>
+<code>
+16.6.1.2195 <b>SET-CURRENT</b>
+</code>
+</a>
+<BR>
+SEARCH
+<BR>
+<pre>
+	( wid -- )
+</pre>
+<P>
+
+Set the compilation word list to the word list identified by wid.
+
+<P>
+
+<hr>
+<A name=16.6.1.2197>
+<code>
+16.6.1.2197 <b>SET-ORDER</b>
+</code>
+</a>
+<BR>
+SEARCH
+<BR>
+<pre>
+	( widn ... wid1 n -- )
+</pre>
+<P>
+
+Set the search order to the word lists identified by widn ...  wid1.
+Subsequently, word list wid1 will be searched first, and word list widn
+searched last.  If n is zero, empty the search order.  If n is minus
+one, set the search order to the implementation-defined minimum search
+order.  The minimum search order shall include the words 
+<a href=dpans16.htm#16.6.1.1595>FORTH-WORDLIST</a>
+and SET-ORDER.  A system shall allow n to be at least eight.
+
+<P>
+<code>
+See:
+<a href=a0002.htm>RFI 0002</a>
+</code>
+<P>
+
+<hr>
+<A name=16.6.1.2460>
+<code>
+16.6.1.2460 <b>WORDLIST</b>
+</code>
+</a>
+<BR>
+SEARCH
+<BR>
+<pre>
+	( -- wid )
+</pre>
+<P>
+
+Create a new empty word list, returning its word list identifier wid.
+The new word list may be returned from a pool of preallocated word lists
+or may be dynamically allocated in data space.  A system shall allow the
+creation of at least 8 new word lists in addition to any provided as
+part of the system.
+
+<P>
+
+<hr>
+<A name=16.6.2>
+<H3>16.6.2 Search-Order extension words</H3>
+</a>
+
+
+<hr>
+<A name=16.6.2.0715>
+<code>
+16.6.2.0715 <b>ALSO</b>
+</code>
+</a>
+<BR>
+SEARCH EXT
+<BR>
+<pre>
+	( -- )
+</pre>
+<P>
+
+Transform the search order consisting of widn, ...  wid2, wid1 (where
+wid1 is searched first) into widn, ...  wid2, wid1, wid1.  An ambiguous
+condition exists if there are too many word lists in the search order.
+
+<p>
+<code>
+See:
+<a href=dpansa16.htm#A.16.6.2.0715>A.16.6.2.0715 ALSO</a> ,
+<a href=a0002.htm>RFI 0002</a>
+</code>
+<p>
+
+
+<hr>
+<A name=16.6.2.1590>
+<code>
+16.6.2.1590 <b>FORTH</b>
+</code>
+</a>
+<BR>
+SEARCH EXT
+<BR>
+<pre>
+	( -- )
+</pre>
+<P>
+
+Transform the search order consisting of widn, ...  wid2, wid1 (where
+wid1 is searched first) into widn, ...  wid2, 
+wid <a href=dpans16.htm#16.6.1.1595>FORTH-WORDLIST</a>.
+
+<P>
+
+<hr>
+<A name=16.6.2.1965>
+<code>
+16.6.2.1965 <b>ONLY</b>
+</code>
+</a>
+<BR>
+SEARCH EXT
+<BR>
+<pre>
+	( -- )
+</pre>
+<P>
+
+Set the search order to the implementation-defined minimum search order.
+The minimum search order shall include the words 
+<a href=dpans16.htm#16.6.1.1595>FORTH-WORDLIST</a> and
+<a href=dpans16.htm#16.6.1.2197>SET-ORDER</a>.
+
+<P>
+<code>
+See:
+<a href=a0002.htm>RFI 0002</a>
+</code>
+<p>
+
+<hr>
+<A name=16.6.2.1985>
+<code>
+16.6.2.1985 <b>ORDER</b>
+</code>
+</a>
+<BR>
+SEARCH EXT
+<BR>
+<pre>
+	( -- )
+</pre>
+<P>
+
+Display the word lists in the search order in their search order
+sequence, from first searched to last searched.  Also display the word
+list into which new definitions will be placed.  The display format is
+implementation dependent.
+
+<P>
+
+ORDER may be implemented using pictured numeric output words.
+Consequently, its use may corrupt the transient region identified by 
+<a href=dpans6.htm#6.1.0040>#&gt;</a>.
+<P>
+
+<code>
+See:
+<A href=dpans3.htm#3.3.3.6>3.3.3.6</a> Other Transient Regions
+</code>
+<P>
+
+<hr>
+<A name=16.6.2.2037>
+<code>
+16.6.2.2037 <b>PREVIOUS</b>
+</code>
+</a>
+<BR>
+SEARCH EXT
+<BR>
+<pre>
+	( -- )
+</pre>
+<P>
+
+Transform the search order consisting of widn, ...  wid2, wid1 (where
+wid1 is searched first) into widn, ...  wid2.  An ambiguous condition
+exists if the search order was empty before PREVIOUS was executed.
+
+<P>
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpans17.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

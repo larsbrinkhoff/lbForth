@@ -1,0 +1,534 @@
+<HTML><HEAD>
+<TITLE>DPANS94</TITLE>
+</HEAD>
+
+<BODY>
+<table width=100%>
+<tr>
+<td align=left>
+<a href=dpans1.htm><img src=left.gif
+ width=26 height=26 align=ALIGN border=0></a>
+<a href=dpans3.htm><img src=right.gif
+ width=26 height=26 align=ALIGN border=0></a>
+</td>
+<td align=right>
+<a href=dpans.htm#toc><img src=up.gif 
+ width=26 height=26 align=ALIGN border=0></a>
+<a name=2.>Table of Contents</a>
+</td>
+</tr>
+</table>
+<p>
+<hr size=4>
+
+<H1>2. Terms, notation, and references</H1>
+
+The phrase <B>See:</B> is used throughout this Standard to direct the reader to
+other sections of the Standard that have a direct bearing on the current
+section.
+
+<P>
+
+In this Standard, <B>shall</B> states a requirement on a system or
+program; conversely, <B>shall not</B> is a prohibition; <B>need not</B>
+means <B>is not required to</B>; <B>should</B> describes a
+recommendation of the Standard; and <B>may</B>, depending on context,
+means <B>is allowed to</B> or <B>might happen</B>.
+
+<P>
+
+Throughout the Standard,
+typefaces are used in the following manner:
+
+<UL>
+<LI>This proportional
+serif typeface is used for text, with italic used
+for symbols and the first appearance of new terms;
+<LI>A bold
+proportional sans-serif typeface is used for headings;
+<LI>A bold
+monospaced serif typeface is used for Forth-language text.
+</UL>
+
+<P>
+
+<hr>
+<A name=2.1>
+<H2>2.1 Definitions of terms</H2>
+</a>
+
+Terms defined in this section are used generally throughout this Standard.
+Additional terms specific to individual word sets are defined in those word
+sets.  Other terms are defined at their first appearance, indicated by italic
+type.  Terms not defined in this Standard are to be construed according to the
+Dictionary for Information Systems, ANSI X3.172-1990.
+
+<P>
+
+<DL><DT><B>address unit:</B>  <DD>Depending on context, either 1) the units
+into which a Forth
+address space is divided for the purposes of locating data objects such as
+characters and variables; 2) the physical memory storage elements
+corresponding to those units; 3) the contents of such a memory storage
+element; or 4) the units in which the length of a region of memory is
+expressed.
+
+<DT><B>aligned address:</B>  <DD>The address of a memory location at which a
+character, cell,
+cell pair, or double-cell integer can be accessed.
+
+<DT><B>ambiguous condition:</B>  <DD>A circumstance for which this Standard
+does not
+prescribe a specific behavior for Forth systems and programs.
+
+<P>
+
+Ambiguous conditions include such things as the absence of a needed delimiter
+while parsing, attempted access to a nonexistent file, or attempted use of a
+nonexistent word.  An ambiguous condition also exists when a Standard word is
+passed values that are improper or out of range.
+
+<DT><B>cell:</B>
+<DD>The primary unit of information in the architecture of a Forth system.
+
+<DT><B>cell pair:</B>
+<DD>Two cells that are treated as a single unit.
+
+<DT><B>character:</B>
+<DD>Depending on context, either 1) a storage unit capable of holding
+a character; or 2) a member of a character set.
+
+<DT><B>character-aligned address:</B>
+<DD>The address of a memory location at which a
+character can be accessed.
+
+<DT><B>character string:</B>
+<DD>Data space that is associated with a sequence of
+consecutive character-aligned addresses.  Character strings usually
+contain text.  Unless otherwise indicated, the term <B>string</B> means
+<B>character string</B>.
+
+<DT><B>code space:</B>
+<DD>The logical area of the dictionary in which word semantics are
+implemented.
+
+<DT><B>compile:</B>
+<DD>To transform
+source code into dictionary definitions.
+
+<DT><B>compilation semantics:</B>
+<DD>The behavior of a Forth definition when its name is
+encountered by the text interpreter in compilation state.
+
+<DT><B>counted string:</B>
+<DD>A data structure consisting of one character containing a
+length followed by zero or more contiguous data characters.  Normally, counted
+strings contain text.
+
+<DT><B>cross compiler:</B>
+<DD>A system that compiles a program for later execution in
+an environment that may be physically and logically different from the
+compiling environment.  In a cross compiler, the term <B>host</B>
+applies to the compiling environment, and the term <B>target</B> applies
+to the run-time environment.
+
+<DT><B>current definition:</B>
+<DD>The definition whose compilation has been started but not
+yet ended.
+
+<DT><B>data field:</B>
+<DD>The data space
+associated with a word defined via 
+<a href=dpans6.htm#6.1.1000>CREATE</a>.
+
+<DT><B>data space:</B>
+<DD>The logical
+area of the dictionary that can be accessed.
+
+<DT><B>data-space pointer:</B>
+<DD>The address of the next available data space location,
+i.e., the value returned by 
+<a href=dpans6.htm#6.1.1650>HERE</a>.
+
+<DT><B>data stack:</B>
+<DD>A stack that may be used for passing parameters between
+definitions.  When there is no possibility of confusion, the data stack is
+referred to as <B>the stack</B>.  Contrast with return stack.
+
+<DT><B>data type:</B>
+<DD>An identifier
+for the set of values that a data object may have.
+
+<DT><B>defining word:</B>
+<DD>A Forth word
+that creates a new definition when executed.
+
+<DT><B>definition:</B>
+<DD>A Forth execution
+procedure compiled into the dictionary.
+
+<DT><B>dictionary:</B>
+<DD>An extensible structure that contains definitions and associated
+data space.
+
+<DT><B>display:</B>
+<DD>To send one or more
+characters to the user output device.
+
+<DT><B>environmental dependencies:</B>
+<DD>A program's implicit assumptions about a Forth
+system's implementation options or underlying hardware.  For example, a
+program that assumes a cell size greater than 16 bits is said to have an
+environmental dependency.
+
+<DT><B>execution semantics:</B>
+<DD>The behavior
+of a Forth definition when it is executed.
+
+<DT><B>execution token:</B>
+<DD>A value that identifies the execution semantics of a
+definition.
+
+<DT><B>find:</B>
+<DD>To search the
+dictionary for a definition name matching a given string.
+
+<DT><B>immediate word:</B>
+<DD>A Forth word whose compilation semantics are to perform its
+execution semantics.
+
+<DT><B>implementation defined:</B>
+<DD>Denotes system behaviors or features that must be
+provided and documented by a system but whose further details are not
+prescribed by this Standard.
+
+<DT><B>implementation dependent:</B>
+<DD>Denotes system behaviors or features that must be
+provided by a system but whose further details are not prescribed by this
+Standard.
+
+<DT><B>input buffer:</B>
+<DD>A region of memory containing the sequence of characters from
+the input source that is currently accessible to a program.
+
+<DT><B>input source:</B>
+<DD>The device, file, block, or other entity that supplies
+characters to refill the input buffer.
+
+<DT><B>input source specification:</B>
+<DD>A set of information describing a particular
+state of the input source, input buffer, and parse area. This information is
+sufficient, when saved and restored properly, to enable the nesting of parsing
+operations on the same or different input sources.
+
+<DT><B>interpretation semantics:</B>
+<DD>The behavior of a Forth definition when its name is
+encountered by the text interpreter in interpretation state.
+
+<dt><b>initiation semantics:</b> 
+<dd>The behavior of a Forth definition, or of the portion of a Forth definition 
+following <a href=dpans6.htm#6.1.1250>DOES></a>, when it begins execution. 
+
+<DT><B>keyboard event:</B>
+<DD>A value received by the system denoting a user action at the
+user input device.  The term <B>keyboard</B> in this document does not exclude
+other types of user input devices.
+
+<DT><B>line:</B>
+<DD>A sequence of characters followed by an actual or implied line
+terminator.
+
+<DT><B>name space:</B>
+<DD>The logical area of the dictionary in which definition names are
+stored.
+
+<DT><B>number:</B>
+<DD>In this Standard, <B>number</B> used without other qualification
+means <B>integer</B>.  Similarly, <B>double number</B> means
+<B>double-cell integer</B>.
+
+<DT><B>parse:</B>
+<DD>To select and exclude a character string from the parse area using a
+specified set of delimiting characters, called delimiters.
+
+<DT><B>parse area:</B>
+<DD>The portion of the input buffer that has not yet been parsed, and
+is thus available to the system for subsequent processing by the text
+interpreter and other parsing operations.
+
+<DT><B>pictured-numeric output:</B>
+<DD>A number display format in which the number is
+converted using Forth words that resemble a symbolic <B>picture</B> of
+the desired output.
+
+<DT><B>program:</B>
+<DD>A complete specification of execution to achieve a specific function
+(application task) expressed in Forth source code form.
+
+<DT><B>receive:</B>
+<DD>To obtain characters
+from the user input device.
+
+<DT><B>return stack:</B>
+<DD>A stack that may be used for program execution nesting, do-loop
+execution, temporary storage, and other purposes.
+
+<DT><B>standard word:</B>
+<DD>A named Forth
+procedure, formally specified in this Standard.
+
+<DT><B>user input device:</B>
+<DD>The input device currently selected as the source of
+received data, typically a keyboard.
+
+<DT><B>user output device:</B>
+<DD>The output device currently selected as the destination
+of display data.
+
+<DT><B>variable:</B>
+<DD>A named region of data space located and accessed by its memory
+address.
+
+<DT><B>word:</B>
+<DD>Depending on context, either 1) the name of a Forth definition; or 2) a
+parsed sequence of non-space characters, which could be the name of a Forth
+definition.
+
+<DT><B>word list:</B>
+<DD>A list of associated Forth definition names that may be examined
+during a dictionary search.
+
+<DT><B>word set:</B>
+<DD>A set of Forth definitions grouped together in this Standard under
+a name indicating some shared aspect, typically their common functional
+area.</DL>
+
+<p>
+<code>
+See:
+<a href=dpansa2.htm#A.2.1>A.2.1</a> Definition of terms,
+<a href=a0005.htm>RFI 0005</a> Initiation semantics,
+<a href=a0007.htm>RFI 0007</a> Distinction between <em>immediacy</em> and <em>special compilation semantics</em>.
+</code>
+<p>
+
+<hr>
+<A name=2.2>
+<H3>2.2 Notation</H3>
+</a>
+
+
+
+<hr>
+<A name=2.2.1>
+<H3>2.2.1 Numeric notation</H3>
+</a>
+
+Unless otherwise stated, all references to numbers apply to signed single-cell
+integers.  The inclusive range of values is shown as {from...to}.  The
+allowable range for the contents of an address is shown in double braces,
+particularly for the contents of variables, e.g., 
+<a href=dpans6.htm#6.1.0750>BASE</a> {{2...36}}.
+
+<P>
+
+<hr>
+<A name=2.2.2>
+<H3>2.2.2 Stack notation</H3>
+</a>
+
+Stack parameters input to and output from a definition are described using the
+notation:
+
+
+<PRE>
+
+( stack-id  before -- after )
+
+</PRE>
+
+<P>
+
+where stack-id specifies which stack is being described, before represents the
+stack-parameter data types before execution of the definition and after
+represents them after execution.  The symbols used in before and after are
+shown in 
+<a href=dpans3.htm#table.3.1>table 3.1</a>.
+
+<P>
+
+The control-flow-stack stack-id is <B>C:</B>, the data-stack stack-id is
+<B>S:</B>, and the return-stack stack-id is <B>R:</B>.  When there is no
+confusion, the data-stack stack-id may be omitted.
+
+<P>
+
+When there are alternate after representations, they are described by
+<B>after1 | after2</B>.  The top of the stack is to the right.  Only
+those stack items required for or provided by execution of the
+definition are shown.
+
+<p>
+<code>
+See:
+<a href=dpansa2.htm#A.2.2.2>A.2.2.2</a> Stack notation
+</code>
+<p>
+
+
+<hr>
+<A name=2.2.3>
+<H3>2.2.3 Parsed-text notation</H3>
+</a>
+
+If, in addition to using stack parameters, a definition parses text,
+that text is specified by an abbreviation from table 2.1, shown
+surrounded by double-quotes and placed between the before parameters and
+the <B>--</B> separator in the first stack described, e.g.,
+
+
+<PRE>
+( S: before <B>"parsed-text-abbreviation"</B> -- after ).
+</PRE>
+
+<P>
+
+<a name=table.2.1>
+Table 2.1 - Parsed text abbreviations
+</a>
+
+<P>
+
+
+<PRE>
+Abbreviation    Description
+------------    -----------
+&lt;char&gt;          the delimiting character marking the end of the
+                string being parsed
+&lt;chars&gt;         zero or more consecutive occurrences of the
+                character char
+&lt;space&gt;         a delimiting space character
+&lt;spaces&gt;        zero or more consecutive occurrences of the
+                character space
+&lt;quote&gt;         a delimiting double quote
+&lt;paren&gt;         a delimiting right parenthesis
+&lt;eol&gt;           an implied delimiter marking the end of a line
+ccc             a parsed sequence of arbitrary characters,
+                excluding the delimiter character
+name            a token delimited by space, equivalent to
+                ccc&lt;space&gt; or ccc&lt;eol&gt;
+</PRE>
+
+<P>
+
+<hr>
+<A name=2.2.4>
+<H3>2.2.4 Glossary notation</H3>
+</a>
+
+The glossary entries for each word set are listed in the standard ASCII
+collating sequence.  Each glossary entry specifies an ANS Forth word and
+consists of two parts: an index line and the semantic description of the
+definition.
+
+<P>
+
+<hr>
+<A name=2.2.4.1>
+<H4>2.2.4.1 Glossary index line</H4>
+</a>
+
+The index line is a single-line entry containing, from left to right:
+<P>
+
+<UL>
+<LI>Section number,
+the last four digits of which assign a unique
+sequential number to all words included in this Standard;
+<LI>DEFINITION-NAME
+in upper-case, mono-spaced, bold-face letters;
+<LI>Natural-language
+pronunciation in quotes if it differs from English;
+<LI>Word-set
+designator from table 2.2. The designation for extensions
+word sets includes <B>EXT</B>.
+</UL>
+
+<P>
+
+<a name=table.2.2>
+Table 2.2 - Word set designators
+</a>
+<P>
+
+
+<PRE>
+Word set                        Designator
+--------                        ----------
+<a href=dpans6.htm>Core word set</a>                   CORE
+<a href=dpans7.htm>Block word set</a>                  BLOCK
+<a href=dpans8.htm>Double-Number word set</a>          DOUBLE
+<a href=dpans9.htm>Exception word set</a>              EXCEPTION
+<a href=dpans10.htm>Facility word set</a>               FACILITY
+<a href=dpans11.htm>File-Access word set</a>            FILE
+<a href=dpans12.htm>Floating-Point word set</a>         FLOATING
+<a href=dpans13.htm>Locals word set</a>                 LOCALS
+<a href=dpans14.htm>Memory-Allocation word set</a>      MEMORY
+<a href=dpans15.htm>Programming-Tools word set</a>      TOOLS
+<a href=dpans16.htm>Search-Order word set</a>           SEARCH
+<a href=dpans17.htm>String-Handling word set</a>        STRING
+</PRE>
+
+<P>
+
+<hr>
+<A name=2.2.4.2>
+<H4>2.2.4.2 Glossary semantic description</H4>
+</a>
+
+The first paragraph of the semantic description contains a stack notation for
+each stack affected by execution of the word.  The remaining paragraphs
+contain a text description of the semantics.  See 
+<a href=dpans3.htm#3.4.3>3.4.3</a> Semantics.
+
+<P>
+
+<hr>
+<A name=2.3>
+<H2>2.3 References</H2>
+</a>
+
+The following national and international standards are referenced in this
+Standard:
+
+<P>
+
+ANSI X3.172-1990, Dictionary for information systems 
+(<a href=dpans2.htm#2.1>2.1</a> Definition of terms);
+
+<P>
+
+ANSI X3.4-1974, American Standard Code for Information Interchange
+(ASCII) 
+(<a href=dpans3.htm#3.1.2.1>3.1.2.1</a> Graphic characters);
+
+<P>
+
+ISO 646-1983, ISO 7-bit coded characterset for information
+interchange, International Reference Version (IRV) 
+(<a href=dpans3.htm#3.1.2.1>3.1.2.1</a> Graphic characters);
+
+<P>
+
+ANSI/IEEE 754-1985, Floating-point standard 
+(<a href=dpans12.htm#12.2.1>12.2.1</a> Definition of terms).
+
+
+<hr>
+<A href=dpans.htm#toc><IMG   src="up.gif" ></A>    Table of Contents 
+<BR>
+<A href=dpans3.htm><IMG   src="right.gif" ></A>
+Next Section
+<P>
+</BODY>
+</HTML>

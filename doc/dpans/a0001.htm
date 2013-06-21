@@ -1,0 +1,264 @@
+<title>ANS Forth RFI 0001: regarding the "flag" returned 
+by <a href=dpans11.htm#11.6.1.2090>READ-LINE</a> at end of file</title>
+
+This document is produced by TC X3J14 as its clarification of questions
+raised about ANSI X3.215-1994, American National Standard for Information
+Systems - Programming Languages - Forth.
+
+<p>The questions covered herein were raised by query
+
+<p>Q0001, regarding the "flag" returned 
+by <a href=dpans11.htm#11.6.1.2090>READ-LINE</a> at end of file boundary
+conditions.
+
+<p>There are four parts in this document:
+
+<ol>
+<li><a href="#query">The original question as received.</a>
+<li><a href="#reply">The TC's reply.</a>
+<li><a href="#ballot">The Letter Ballot issued by TC Chair.</a>
+<li><a href="#results">TC Chair's statement of ballot results.</a>
+</ol>
+
+<h2><a name="query">Q0001 as received</a></h2>
+
+The following query has been assigned number Q0001 and has been
+tentatively assigned to Mitch Bradley for drafting a response.
+- Greg Bailey, by direction, Tue, 21 Mar 95 12:40:30 PST
+<hr>
+
+<pre>
+Subject: Request for clarification--READ-LINE
+To: x3j14@minerva.com, erather@aol.com
+From: lgc@bluemax.jpl.nasa.gov (Loring Craymer)
+Date: Mon, 23 Jan 95 09:14:21 -0800
+Message-Id: <9501231714.AA00637@bluemax>
+Received: from bluemax.jpl.nasa.gov by med3.minerva.com	
+; Mon, 23 Jan 1995 
+11:00 PST
+Content-Type: text
+>From lgc Mon Jan 23 09:14:21 0800 1995 remote from bluemax.jpl.nasa.gov
+Received: from bluemax (bluemax.jpl.nasa.gov [128.149.53.31]) by 
+telerobotics.jpl.nasa.gov (8.6.8/8.6.6) with SMTP id KAA00235; Mon, 23 Jan 
+1995 10:57:40 -0800
+Received: by bluemax (920110.SGI/911001.SGI) for 
+@telerobotics.jpl.nasa.gov:erather@aol.com id AA00637; Mon, 23 Jan 95 09:14:21 
+-0800
+Content-Length: 1072
+</pre>
+
+Dear Elizabeth:
+
+<p>In the course of writing a test suite for the FILE wordset, I've discovered
+that the <a href=dpans11.htm#11.6.1.2090>READ-LINE</a> definition is glaringly 
+incomplete.  For this reason,
+I am submitting this request for clarification (I assume that email is
+sufficient; I don't recall that a more formal process is required).
+
+
+<p>Request for clarification:
+
+<pre>
+<a href=dpans11.htm#11.6.1.2090>11.6.1.2090</a> 
+READ-LINE 
+( c-addr u1 fileid -- u2 flag ior)
+</pre>
+
+What is the meaning of "flag"?  The rationale suggests that it is
+an end-of-file flag (or not-end-of-file from the behavior documented
+in the definition), but this is not clear from the definition.
+
+<p>What happens if the end of the file is encountered while reading a
+line?  The definition states that "If the operation succeeded, flag
+is true and ior is zero", but success is not defined.  I assume that
+success is either that u1 characters were read or that a line terminator
+was encountered.
+
+<p>Suggested resolution:  flag is true unless the end-of-file is encountered,
+in which case it is false.  ior does not reflect whether the
+end-of-file was encountered or not.
+
+<p>
+--Loring
+
+
+<h2><a name="reply">TC Reply to Q0001</a></h2>
+<pre>
+From: Erather@aol.com
+Subject: Official Response to Q0001
+To: X3J14 Technical Committee
+Cc: lbarra@itic.nw.dc.us
+Date: Fri, 31 Mar 95 12:51:59 PST  
+Doc#:  X3J14/Q0001R
+Reference Doc#:  X3.215.1994 ANS Forth
+Date:  March 31, 1995
+Title: Response to Request for Interpretation Q0001, Clarification of
+READ-LINE
+</pre>
+
+Q0001 DRAFT rev 1
+
+<hr>
+Key
+
+<i><blockquote>
+Indicates lines from the original inquiry.  The entirty text of the
+inquiry is cited in this way.
+</blockquote></i>
+
+<b><blockquote>
+Indicates excerpts from the standard
+</blockquote></b>
+
+Unmarked lines comprise the response to the inquiry.
+<hr>
+
+<i><blockquote>
+Request for clarification:
+
+<pre>
+<a href=dpans11.htm#11.6.1.2090>11.6.1.2090</a> 
+READ-LINE 
+( c-addr u1 fileid -- u2 flag ior)
+</pre> 
+
+What is the meaning of "flag"?  The rationale suggests that it is
+an end-of-file flag (or not-end-of-file from the behavior documented
+in the definition), but this is not clear from the definition.
+</blockquote></i>
+
+In the following excerpt from the definition of 
+<a href=dpans11.htm#11.6.1.2090>READ-LINE</a> 
+, the word "if"
+means "If and only if".
+
+<b><blockquote>
+If the operation is initiated when the value returned by 
+<a href=dpans11.htm#11.6.1.1520>FILE-POSITION</a>
+is equal to the value returned by 
+<a href=dpans11.htm#11.6.1.1522>FILE-SIZE</a> for the file identified
+by fileid, flag is false ...
+</blockquote></b>
+
+
+
+<i><blockquote>
+What happens if the end of the file is encountered while reading a
+line?  The definition states that "If the operation succeeded, flag
+is true and ior is zero", but success is not defined.  I assume that
+success is either that u1 characters were read or that a line terminator
+was encountered.
+</blockquote></i>
+
+"success" means that one of the following situations occurred:
+
+<ol>
+<li>Some non-terminator characters were read into the buffer or
+
+<li>A line with a valid terminator sequence, but no characters other
+than the terminator sequence, was read.  In this case, u2=0,
+flag=true, and ior=zero.
+</ol>
+
+Specifically, if the last line in the file is non-empty, but has no
+terminator, an attempt to read that line will "succeed", returning the
+number of characters thus read, and flag will be true.  The next
+read, assuming that no intervening 
+<a href=dpans11.htm#11.6.1.2142>REPOSITION-FILE</a> occurs, will return
+u2=0, flag=false, ior=false.
+
+<p>Here is complete list of return value combinations and their meanings:
+
+<pre>
+u2	flag	ior	Meaning
+--	----	---	-------
+X	X	nonzero	Something bad and unexpected happened
+			(end-of-file is not "unexpected")
+
+0	false	zero	End-of-file; no characters were read
+
+0	true	zero	A blank line was read
+
+0&lt;u2&lt;u1	true	zero	The entire line was read
+
+u1	true	zero	A partial line was read; the rest would
+			not fit in the buffer, and can be acquired
+			by additional calls to <a href=dpans11.htm#11.6.1.2090>READ-LINE</a>.
+</pre>
+
+<i><blockquote>
+Suggested resolution:  flag is true unless the end-of-file is encountered,
+in which case it is false.  ior does not reflect whether the
+end-of-file was encountered or not.
+</blockquote></i>
+
+<h2><a name="ballot">Letter Ballot</a></h2>
+
+<pre>
+From: Erather@aol.com
+Subject: Letter Ballot 012
+To: X3J14 Technical Committee
+Cc: lbarra@itic.nw.dc.us
+Date: Fri, 31 Mar 95 12:54:23 PST  
+X3 Subgroup Letter Ballot
+Authorized by X3 Procedures - Distributed by X3 Subgroup X3J14  Project:
+ X3J14, ANS Forth
+Doc#:  X3J14/LB012
+Reference Doc#s:  X3J14/Q0001R, X3.215.1994 ANS Forth
+Date:  March 31, 1995
+Title: Response to Request for Interpretation Q0001
+Ballot Period:  30 Days
+Ballot Closes NOON DATE:  April 30, 1995
+Respond to:  greg@minerva.com
+        or:  Elizabeth D. Rather, Chair
+             FORTH, Inc.
+             111 N. Sepulveda Blvd.  Suite 300
+             Manhattan Beach, CA  90266
+             (310) 372-8493    FAX (310) 318-7130
+
+Statement:
+    Document X3J14/Q0001R contains a proposed Response to Request for
+    Interpretation Q0001.
+
+Question:
+    Do you agree that this response represents the intended interpretation of
+    X3.215.1994 ANS Forth?
+
+YES____ NO____ ABSTAIN____  [NO or ABSTAIN votes require an explanation]
+
+Signature:  [not required for email ballots]
+Name:
+Organization:
+
+INSTRUCTIONS:
+Please return the entire letter ballot with your response _either_ by email
+to greg@minerva.com _or_ by regular mail or fax to me at the above address,
+before the closing date & time.
+
+All TC members must vote.  Failure to vote in two consecutive ballots may
+cause you to lose your voting rights in X3J14.
+
+Thank you for your participation.
+
+Elizabeth D. Rather, Chair, X3J14
+</pre>
+
+<h2><a name="results">Results of Letter Ballot</a></h2>
+
+<pre>
+From: Erather@aol.com
+Subject: Letter Ballot Results
+To: X3J14 Technical Committee
+Date: Fri, 05 May 95 18:50:18 PDT  
+Letter ballots 12 [and 13] have closed.  Both passed.  Results follow.
+
+Letter ballot 12:  13 yes, 0 no, 0 abstaining.
+
+[irrelevant material deleted]
+
+Thank you all for your participation.  Of the 14 votes received, 9 came by
+email, and the rest by fax (plus mine!).
+
+Regards...
+Elizabeth
+</pre>

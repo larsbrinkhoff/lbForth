@@ -1,0 +1,367 @@
+<title>ANS Forth RFI 0002: search orders in which a given wordlist
+occurs more than once</title>
+
+This document is produced by TC X3J14 as its clarification of questions
+raised about ANSI X3.215-1994, American National Standard for Information
+Systems - Programming Languages - Forth.
+
+<p>The questions covered herein were raised by query
+
+<p>Q0002, regarding the significance of defining search orders in
+which a given wordlist occurs more than once.
+
+<p>There are four parts in this document:
+
+<ol>
+<li><a href="#query">The original question as received.</a>
+<li><a href="#reply">The TC's reply.</a>
+<li><a href="#ballot">The Letter Ballot issued by TC Chair.</a>
+<li><a href="#results">TC Chair's statement of ballot results.</a>
+</ol>
+
+<h2><a name="query">Q0002 as received</a></h2>
+
+The following query has been assigned number Q0002 and has been
+tentatively assigned to Mitch Bradley for drafting a response.
+- Greg Bailey, by direction, Tue, 21 Mar 95 12:44:17 PST
+<hr>
+
+<pre>
+Subject: request for interpretation
+To: x3j14@minerva.com
+Cc: beebeebee@aol.com
+From: John Rible <jrible@cruzio.com>
+Date: Fri, 17 Mar 1995 01:46:52 -0800
+Message-Id: <199503170944.BAA21566@mail3.netcom.com>
+Received: from cruzio.com by med3.minerva.com	; Fri, 17 Mar 1995 01:48 PST
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+>From jrible Fri Mar 17 01:46:52 0800 1995 remote from cruzio.com
+Received: from cruzio.com by mail3.netcom.com (8.6.10/Netcom) id BAA21566; 
+Fri, 17 Mar 1995 01:44:27 -0800
+Received: from cruzio38.cruzio.com by cruzio.cruzio.com id aa29048; 17 Mar 95 
+1:40 PST
+X-Sender: jrible@cruzio.com
+X-Mailer: <PC Eudora Version 1.4>
+Content-Length: 2656
+</pre>
+
+folks-
+
+<p>
+A friend has implemented wordlists using a linked-list to maintain the search 
+order. He put two links in each wordlist structure, one for a static list of 
+wordlists, the other a dynamic link for the search order. This avoided having 
+to allocate an arbitrary amount of space for the search order list/stack.
+
+<p>
+After arguing with him that this is not compliant with the standard, I can't 
+find anything explicit that backs me up. The problem with his method is that 
+each wordlist can only appear ONCE in the search order. Well, that's not a 
+problem in itself, but when a wordlist already in the search order is added 
+to the top its previous location is lost! Again, that's not a real problem if 
+the complete search order is always set explicitly, since the deeper 
+occurrance 
+will never produce a match.
+
+<p>
+But it sure messes up partial search order changes, such as using <a href=dpans16.htm#16.6.2.0715>ALSO</a> or 
+<a href=dpans16.htm#16.6.2.2037>PREVIOUS</a> to temporarily change the order. For example, the following sequence 
+will hang his system:
+
+<pre>
+<a href=dpans16.htm#16.6.2.1965>ONLY</a> <a href=dpans16.htm#16.6.2.1590>FORTH</a>
+VOCABULARY HIDDEN
+...
+<a href=dpans16.htm#16.6.2.0715>ALSO</a> HIDDEN <a href=dpans16.htm#16.6.2.0715>ALSO</a> <a href=dpans16.htm#16.6.2.1590>FORTH</a>  <a href=dpans6.htm#6.2.2535>\</a> so FORTH is searched first
+...
+<a href=dpans16.htm#16.6.2.2037>PREVIOUS</a>                <a href=dpans6.htm#6.2.2535>\</a> FORTH is no longer in the search order!!!
+</pre>
+
+The requirement that I can't find, but believe that we intended, based on 
+extensive common practice, would require the phrase   set-order get-order  to 
+have no effect on the stack (as long as set-order got valid arguments, 
+anyway). 
+The problem sure seemed obvious to me, but he doesn't think it is, and even 
+came 
+up with the following definitions to deal with the issue: 
+
+<pre>
+<a href=dpans6.htm#6.1.0070>'</a> <a href=dpans6.htm#6.2.1930>NIP</a>  <a href=dpans6.htm#6.2.2405>VALUE</a> 'ALSO
+
+<a href=dpans6.htm#6.1.0450>:</a> <a href=dpans16.htm#16.6.2.0715>ALSO</a> <a href=dpans6.htm#6.1.0080>(</a> - ) <a href=dpans6.htm#6.1.2510>[']</a> <a href=dpans6.htm#6.1.0290>1+</a>  <a href=dpans6.htm#6.2.2295>TO</a> 'ALSO <a href=dpans6.htm#6.1.0460>;</a>
+<a href=dpans6.htm#6.1.0450>:</a> <a href=dpans16.htm#16.6.2.1965>ONLY</a> <a href=dpans6.htm#6.1.0080>(</a> - ) -1 <a href=dpans16.htm#16.6.1.2197>SET-ORDER</a>  <a href=dpans6.htm#6.1.2510>[']</a> <a href=dpans6.htm#6.2.1930>NIP</a>  <a href=dpans6.htm#6.2.2295>TO</a> 'ALSO <a href=dpans6.htm#6.1.0460>;</a>
+<a href=dpans6.htm#6.1.0450>:</a> <a href=dpans16.htm#16.6.2.2037>PREVIOUS</a> <a href=dpans6.htm#6.1.0080>(</a> - ) <a href=dpans16.htm#16.6.1.1647>GET-ORDER</a>  <a href=dpans6.htm#6.2.1930>NIP</a> <a href=dpans6.htm#6.1.0300>1-</a>  <a href=dpans16.htm#16.6.1.2197>SET-ORDER</a> <a href=dpans6.htm#6.1.0460>;</a>
+<a href=dpans6.htm#6.1.0450>:</a> <VOCABULARY> <a href=dpans6.htm#6.1.0080>(</a> wid - ) <a href=dpans6.htm#6.2.2535>\</a> wid is the address of the wordlist data structure
+   <a href=dpans6.htm#6.1.0580>>R</a> <a href=dpans16.htm#16.6.1.1647>GET-ORDER</a>  'ALSO <a href=dpans6.htm#6.1.1370>EXECUTE</a>  <a href=dpans6.htm#6.1.2060>R></a> <a href=dpans6.htm#6.1.2260>SWAP</a>  <a href=dpans16.htm#16.6.1.2197>SET-ORDER</a>  <a href=dpans6.htm#6.1.2510>[']</a> <a href=dpans6.htm#6.2.1930>NIP</a>  <a href=dpans6.htm#6.2.2295>TO</a> 'ALSO <a href=dpans6.htm#6.1.0460>;</a>
+
+<a href=dpans6.htm#6.1.0450>:</a> <a href=dpans16.htm#16.6.2.1590>FORTH</a> <a href=dpans6.htm#6.1.0080>(</a> - ) <a href=dpans16.htm#16.6.1.1595>FORTH-WORDLIST</a> <VOCABULARY> <a href=dpans6.htm#6.1.0460>;</a>
+<a href=dpans6.htm#6.1.0450>:</a> VOCABULARY <a href=dpans6.htm#6.1.0080>(</a> 'name' - )  <a href=dpans6.htm#6.1.1000>CREATE</a>  ...  <a href=dpans6.htm#6.1.1250>DOES></a> <VOCABULARY> <a href=dpans6.htm#6.1.0460>;</a>
+</pre>
+
+<p>
+While these deal with some of the situations of adding and removing 
+search-order 
+entries, I've seen a lot of places (in Sun's OpenBoot, for example) where 
+existing code would go up in flames if temporarily adding and removing a 
+vocabulary that happened to already be in the search order took it out 
+completely, as in my example above. Of course, the pathological (but currently 
+working)  <a href=dpans16.htm#16.6.2.1965>ONLY</a> <a href=dpans16.htm#16.6.2.1590>FORTH</a> <a href=dpans16.htm#16.6.2.0715>ALSO</a> <a href=dpans16.htm#16.6.2.2037>PREVIOUS</a>  also leaves his search order empty.
+
+<p>
+Thanks for your responses (even the "you're a *&^#@*$%# idiot for wasting my 
+time" ones add a data point!-)
+
+<pre>
+John Rible  QuickSand  "hardware, software, and so forth"  jrible@cruzio.com
+            317 California Street, Santa Cruz, CA  95060-4215   408-458-0399
+</pre>
+
+<h2><a name="reply">TC Reply to Q0002</a></h2>
+
+<pre>
+From: Erather@aol.com
+Subject: Official Response to Q0002
+To: X3J14 Technical Committee
+Cc: lbarra@itic.nw.dc.us
+Date: Fri, 31 Mar 95 12:52:24 PST  
+Doc#:  X3J14/Q0002R
+Reference Doc#:  X3.215.1994 ANS Forth
+Date:  March 31, 1995
+Title: Response to Request for Interpretation Q0002, Clarification of Search
+Orders
+</pre>
+
+Q0002 DRAFT rev 1
+
+<hr>
+Key
+
+<i><blockquote>
+Indicates lines from the original inquiry.  The entiry text of the
+inquiry is cited in this way.
+</blockquote></i>
+
+<b><blockquote>
+Indicates excerpts from the standard
+</blockquote></b>
+
+Unmarked lines comprise the response to the inquiry.
+<hr>
+
+<i><blockquote>
+A friend has implemented wordlists using a linked-list to maintain
+the search order. He put two links in each wordlist structure, one for
+a static list of wordlists, the other a dynamic link for the search
+order. This avoided having to allocate an arbitrary amount of space
+for the search order list/stack.
+
+<p>
+After arguing with him that this is not compliant with the standard, I
+can't find anything explicit that backs me up. The problem with his
+method is that each wordlist can only appear ONCE in the search
+order. Well, that's not a problem in itself, but when a wordlist
+already in the search order is added to the top its previous location
+is lost! Again, that's not a real problem if the complete search order
+is always set explicitly, since the deeper occurrance will never
+produce a match.
+</blockquote></i>
+
+In the following excerpt from the definition of <a href=dpans16.htm#16.6.1.2197>SET-ORDER</a>, the phrase
+"word lists" means "sequence of word lists".
+
+<b><blockquote>
+      Set the search order to the word lists identified by widn ... wid1.
+      Subsequently, ...
+</blockquote></b>
+
+<a href=dpans16.htm#16.6.1.1647>GET-ORDER</a> must return exactly the same sequence of wids "widn .. wid1" that
+appeared in the arguments to the most recent execution of <a href=dpans16.htm#16.6.1.2197>SET-ORDER</a>, even
+if a particular word list identifier appears more than once in that sequence.
+
+<p>
+A Standard System is permitted to optimize its searching process so that
+the existence of repetetions in the search order need not result in redundant
+searches, but if so (a) the behavior of <a href=dpans16.htm#16.6.1.1647>GET-ORDER</a> and <a href=dpans16.htm#16.6.1.2197>SET-ORDER</a> must be as
+described in the preceding paragraph, and (b) the results of a search must
+be indistinguishable in all cases from the results were there no such
+optimizations.
+
+<i><blockquote>
+But it sure messes up partial search order changes, such as using <a href=dpans16.htm#16.6.2.0715>ALSO</a>
+or <a href=dpans16.htm#16.6.2.2037>PREVIOUS</a> to temporarily change the order. For example, the
+following sequence will hang his system:
+
+<pre>
+<a href=dpans16.htm#16.6.2.1965>ONLY</a> <a href=dpans16.htm#16.6.2.1590>FORTH</a>
+VOCABULARY HIDDEN
+...
+<a href=dpans16.htm#16.6.2.0715>ALSO</a> HIDDEN <a href=dpans16.htm#16.6.2.0715>ALSO</a> <a href=dpans16.htm#16.6.2.1590>FORTH</a>  <a href=dpans6.htm#6.2.2535>\</a> so <a href=dpans16.htm#16.6.2.1590>FORTH</a> is searched first
+...
+<a href=dpans16.htm#16.6.2.2037>PREVIOUS</a>                <a href=dpans6.htm#6.2.2535>\</a> <a href=dpans16.htm#16.6.2.1590>FORTH</a> is no longer in the search order!!!
+</pre>
+</blockquote></i>
+
+Historically, in most implementations of the <a href=dpans16.htm#16.6.2.0715>ALSO</a> .. <a href=dpans16.htm#16.6.2.1965>ONLY</a> search order
+mechanism, the sequence shown would result in the search order containing
+
+<pre>
+ &lt;minimum search order&gt; &lt;FORTH wordlist&gt; &lt;HIDDEN wordlist&gt;
+</pre>
+
+The standard intends to codify that existing practice.
+
+
+<i><blockquote>
+The requirement that I can't find, but believe that we intended, based
+on extensive common practice, would require the phrase "set-order get-order"
+to have no effect on the stack (as long as set-order got valid arguments,
+anyway).  The problem sure seemed obvious to me, but he doesn't think it
+is, and even came up with the following definitions to deal with the issue:
+
+<pre>
+<a href=dpans6.htm#6.1.0070>'</a> <a href=dpans6.htm#6.2.1930>NIP</a>  <a href=dpans6.htm#6.2.2405>VALUE</a> 'ALSO
+
+<a href=dpans6.htm#6.1.0450>:</a> <a href=dpans16.htm#16.6.2.0715>ALSO</a> <a href=dpans6.htm#6.1.0080>(</a> - ) <a href=dpans6.htm#6.1.2510>[']</a> <a href=dpans6.htm#6.1.0290>1+</a>  <a href=dpans6.htm#6.2.2295>TO</a> 'ALSO <a href=dpans6.htm#6.1.0460>;</a>
+<a href=dpans6.htm#6.1.0450>:</a> <a href=dpans16.htm#16.6.2.1965>ONLY</a> <a href=dpans6.htm#6.1.0080>(</a> - ) -1 <a href=dpans16.htm#16.6.1.2197>SET-ORDER</a>  <a href=dpans6.htm#6.1.2510>[']</a> <a href=dpans6.htm#6.2.1930>NIP</a>  <a href=dpans6.htm#6.2.2295>TO</a> 'ALSO <a href=dpans6.htm#6.1.0460>;</a>
+<a href=dpans6.htm#6.1.0450>:</a> <a href=dpans16.htm#16.6.2.2037>PREVIOUS</a> <a href=dpans6.htm#6.1.0080>(</a> - ) <a href=dpans16.htm#16.6.1.1647>GET-ORDER</a>  <a href=dpans6.htm#6.2.1930>NIP</a> <a href=dpans6.htm#6.1.0300>1-</a>  <a href=dpans16.htm#16.6.1.2197>SET-ORDER</a> <a href=dpans6.htm#6.1.0460>;</a>
+<a href=dpans6.htm#6.1.0450>:</a> <VOCABULARY> <a href=dpans6.htm#6.1.0080>(</a> wid - ) <a href=dpans6.htm#6.2.2535>\</a> wid is the address of the wordlist data structure
+   <a href=dpans6.htm#6.1.0580>>R</a> <a href=dpans16.htm#16.6.1.1647>GET-ORDER</a>  'ALSO <a href=dpans6.htm#6.1.1370>EXECUTE</a>  <a href=dpans6.htm#6.1.2060>R></a> <a href=dpans6.htm#6.1.2260>SWAP</a>  <a href=dpans16.htm#16.6.1.2197>SET-ORDER</a>  <a href=dpans6.htm#6.1.2510>[']</a> <a href=dpans6.htm#6.2.1930>NIP</a>  <a href=dpans6.htm#6.2.2295>TO</a> 'ALSO <a href=dpans6.htm#6.1.0460>;</a>
+
+<a href=dpans6.htm#6.1.0450>:</a> <a href=dpans16.htm#16.6.2.1590>FORTH</a> <a href=dpans6.htm#6.1.0080>(</a> - ) <a href=dpans16.htm#16.6.1.1595>FORTH-WORDLIST</a> <VOCABULARY> <a href=dpans6.htm#6.1.0460>;</a>
+<a href=dpans6.htm#6.1.0450>:</a> VOCABULARY <a href=dpans6.htm#6.1.0080>(</a> 'name' - )  <a href=dpans6.htm#6.1.1000>CREATE</a>  ...  <a href=dpans6.htm#6.1.1250>DOES></a> <VOCABULARY> <a href=dpans6.htm#6.1.0460>;</a>
+</pre>
+</blockquote></i>
+
+With these definitions, the sequence "ALSO GET-ORDER" would not yield the
+result specified by the standard.
+
+<i><blockquote>
+While these deal with some of the situations of adding and removing 
+search-order entries, I've seen a lot of places (in Sun's OpenBoot,
+for example) where existing code would go up in flames if temporarily
+adding and removing a vocabulary that happened to already be in the
+search order took it out completely, as in my example above. Of course,
+the pathological (but currently working)  <a href=dpans16.htm#16.6.2.1965>ONLY</a> <a href=dpans16.htm#16.6.2.1590>FORTH</a> <a href=dpans16.htm#16.6.2.0715>ALSO</a> <a href=dpans16.htm#16.6.2.2037>PREVIOUS</a>  also
+leaves his search order empty.
+</blockquote></i>
+
+The ANS Forth search order wordset is intended to provide a predictable
+mechanism for managing search orders in arbitrary ways, albeit subject to
+the system-dependent limitation on the maximum number of word lists.  Some
+applications, for example, choose to use the search order as a "stack",
+adding and removing word lists without regard to whether or not those
+word lists already appear in the search order.
+
+<h2><a name="ballot">Letter Ballot</a></h2>
+
+<pre>
+From: Erather@aol.com
+Subject: Letter Ballot 013
+To: X3J14 Technical Committee
+Cc: lbarra@itic.nw.dc.us
+Date: Fri, 31 Mar 95 12:54:18 PST  
+X3 Subgroup Letter Ballot
+Authorized by X3 Procedures - Distributed by X3 Subgroup X3J14  Project:
+ X3J14, ANS Forth
+Doc#:  X3J14/LB013
+Reference Doc#s:  X3J14/Q0002R, X3.215.1994 ANS Forth
+Date:  March 31, 1995
+Title: Response to Request for Interpretation Q0002
+Ballot Period:  30 Days
+Ballot Closes NOON DATE:  April 30, 1995
+Respond to:  greg@minerva.com
+        or:  Elizabeth D. Rather, Chair
+             FORTH, Inc.
+             111 N. Sepulveda Blvd.  Suite 300
+             Manhattan Beach, CA  90266
+             (310) 372-8493    FAX (310) 318-7130
+
+Statement:
+    Document X3J14/Q0002R contains a proposed Response to Request for
+    Interpretation Q0002.
+
+Question:
+    Do you agree that this response represents the intended interpretation of
+    X3.215.1994 ANS Forth?
+
+YES____ NO____ ABSTAIN____  [NO or ABSTAIN votes require an explanation]
+
+Signature:  [not required for email ballots]
+Name:
+Organization:
+
+INSTRUCTIONS:
+Please return the entire letter ballot with your response _either_ by email
+to greg@minerva.com _or_ by regular mail or fax to me at the above address,
+before the closing date & time.
+
+All TC members must vote.  Failure to vote in two consecutive ballots may
+cause you to lose your voting rights in X3J14.
+
+Thank you for your participation.
+
+Elizabeth D. Rather, Chair, X3J14
+</pre>
+
+<h2><a name="results">Results of Letter Ballot</a></h2>
+
+<pre>
+From: Erather@aol.com
+Subject: Letter Ballot Results
+To: X3J14 Technical Committee
+Date: Fri, 05 May 95 18:50:18 PDT  
+Letter ballots [12 and] 13 have closed.  Both passed.  Results follow.
+
+[...]
+
+Letter ballot 13:  13 yes, 1 no, 0 abstaining.
+
+[...]
+
+Jax [Jack Woehr] voted No on LB13.  His comments follow:
+
+LB13, Woehr: I made a proposal which was drowned out in Mitch's discus-
+sion with himself on the maillist. It was letting Mitch make all the
+decisions in consultation with himself that got us in trouble at the
+spring meeting in Oregon in 1992 and delayed the standard by about a
+year. I expect my proposals to be heard, even if not adopted, in hopes
+we can avoid similar problems in the future.
+
+---------  FOR THE RECORD  -----------------------------------
+[Here is the e-mail message to which Woehr refers.  The active
+part of the discussion occurred over a three day period, involved
+about a dozen e-mail messages, and had seven participants who
+posted.]
+
+>
+> > I think Mitch has gotten the issue here backward.
+
+<...>
+
+>   the arguments that it passes to <a href=dpans16.htm#16.6.1.2197>SET-ORDER</a> be mutually distinct?
+>
+> I believe that the answer is emphatically "no".
+
+
+ I agree with Mitch whole-heartedly. I would move to add that:
+
+"It is the sense of the X3J14 TC that no element of <a href=dpans17.htm#17.6.1.2191>SEARCH</a> <a href=dpans16.htm#16.6.2.1985>ORDER</a> Wordset
+introduces novelty into general Forth praxis, with the exception
+that a <a href=dpans16.htm#16.6.1.2460>WORDLIST</a> now has a tangible representation on the stack, whereas
+FORTH-83 VOCABULARY had no such tangible representation. In all other
+respects the de-facto behavior of Forth search order operations are
+utterly unchanged from Forth-83."
+
+ Do I hear a second?
+
+  =jax=
+
+[...]
+
+Thank you all for your participation.  Of the 14 votes received, 9 came by
+email, and the rest by fax (plus mine!).
+
+Regards...
+Elizabeth
+</pre>

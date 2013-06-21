@@ -1,0 +1,204 @@
+<title>ANS Forth RFI 0005: initiation semantics</title>
+
+This document is produced by TC X3J14 as its clarification of questions
+raised about ANSI X3.215-1994, American National Standard for Information
+Systems - Programming Languages - Forth.
+
+<p>
+The questions covered herein were raised by query
+
+<p>
+Q0005, regarding the definition of "initiation semantics".
+
+<p>There are four parts in this document:
+
+<ol>
+<li><a href="#query">The original question as received.</a>
+<li><a href="#reply">The TC's reply.</a>
+<li><a href="#ballot">The Letter Ballot issued by TC Chair.</a>
+<li><a href="#results">TC Chair's statement of ballot results.</a>
+</ol>
+
+<h2><a name="query">Q0005 as received</a></h2>
+
+<pre>
+Subject: Q0005 Request Recognized
+To: X3J14@minerva.com
+Date: Tue, 12 Sep 95 19:02:13 PDT  
+</pre>
+
+The following query has been assigned number Q0005 and has been
+tentatively assigned to Jim Rash for drafting a response.
+  - Greg Bailey, by direction  950913 0159Z
+<hr>
+
+<i><blockquote>
+I can not find the definition of " Initiation [semantics]" in the
+" <a href=dpans2.htm#2.1>2.1</a> Definitions of terms" but see this term in " <a href=dpans6.htm#6.1.0450>6.1.0450</a> :", p.30.
+
+<p>
+Best regards, Michael
+
+<pre>
+Michael L. Gassanenko
+gml@ag.pu.ru
+</pre>
+</blockquote></i>
+
+<p>
+[Co-author Elizabeth Rather <erather@forth.com> adds:]
+
+<p>
+You will see it in <a href=dpans6.htm#6.1.1250>6.1.1250</a> <a href=dpans6.htm#6.1.1250>DOES></a> as well.  This describes the behavior of
+a word defined by <a href=dpans6.htm#6.1.0450>:</a> or a <a href=dpans6.htm#6.1.1250>DOES></a> word when it begins to execute.  The
+realization that this should be specified separately came rather late in
+the process, and I believe you are correct that we have not defined this
+term adequately.  I am referring your comment to the TC to see whether they
+feel something should be done, such as publishing a clarification.
+
+<p>Thank you for calling it to our attention.
+
+
+<h2><a name="reply">TC Reply to Q0005</a></h2>
+
+<pre>
+From: Elizabeth Rather
+Subject: Q0005R, Initiation Semantics, Official Response
+To: X3J14 Technical Committee
+Cc: lbarra@itic.nw.dc.us
+Date: Mon, 19 Feb 96 14:09
+
+Doc#:  X3J14/Q0005R
+Reference Doc#:  X3.215.1994 ANS Forth
+Date:  February 19, 1996
+Title: Response to Request for Interpretation Q0005, Initiation Semantics
+</pre>
+<hr>
+
+<i><blockquote>
+I can not find the definition of "Initiation [semantics]" in the
+" <a href=dpans2.htm#2.1>2.1</a> Definitions of terms" but see this term in " <a href=dpans6.htm#6.1.0450>6.1.0450</a> :", p.30.
+
+<p>
+Best regards, Michael
+
+<pre>
+Michael L. Gassanenko
+gml@ag.pu.ru
+</pre>
+</blockquote></i>
+
+It is noted that the Technical Committee included, in Section <a href=dpans2.htm#2.1>2.1</a> of the
+standard, definitions of the terms "compilation semantics" and "execution
+semantics".
+
+<p>
+For similar reasons, the TC agrees that the standard should also include a
+definition of the term "initiation semantics" in Section <a href=dpans2.htm#2.1>2.1</a> Definitions
+of Terms:
+
+<dl>
+<dt>   initiation semantics:
+<dd>      The behavior of a Forth definition, or of the portion of a
+      Forth definition following <a href=dpans6.htm#6.1.1250>DOES></a>, when it begins execution.
+</dl>
+
+By way of further clarification, when a definition begins execution, the
+system may perform implementation-dependent actions such as placing items
+on the return stack to allow return to a calling definition.  These actions
+are invisible to a standard program except at certain points during the
+execution of definitions created with <a href=dpans6.htm#6.1.0450>:</a> (colon) or <a href=dpans6.htm#6.2.0455>:NONAME</a> and during the
+execution of the code following <a href=dpans6.htm#6.1.1250>DOES></a>.  At these points, the sole visible
+result is the possible presence of the implementation-dependent _nest-sys_
+on the return stack.
+
+<p>
+Within a given implementation, definitions created with <a href=dpans6.htm#6.1.0450>:</a> (colon) all have
+the same initiation semantics.  Similarly for all definitions created with
+<a href=dpans6.htm#6.2.0455>:NONAME</a> or <a href=dpans6.htm#6.1.1250>DOES></a>.
+
+<h2><a name="ballot">Letter Ballot</a></h2>
+
+<pre>
+X3 Subgroup Letter Ballot
+Authorized by X3 Procedures - Distributed by X3 Subgroup X3J14
+Project: X3J14, ANS Forth
+Doc#:  X3J14/LB016
+Reference Doc#s:  X3J14/Q0005R, X3.215.1994 ANS Forth
+Date:  February 19, 1996
+Title: Response to Request for Interpretation Q0005, Initiation Semantics
+Ballot Period:  30 Days
+Ballot Closes NOON DATE:  March 21, 1996
+Respond to:  greg@minerva.com
+        or:  Elizabeth D. Rather, Chair
+             FORTH, Inc.
+             111 N. Sepulveda Blvd.  Suite 300
+             Manhattan Beach, CA  90266
+             (310) 372-8493    FAX (310) 318-7130
+             erather@forth.com
+
+Statement:
+    Document X3J14/Q0005R contains a proposed Response to Request for
+    Interpretation Q0005.
+
+Question:
+    Do you agree that this response represents the intended interpretation of
+    X3.215.1994 ANS Forth?
+
+
+/------------------------  begin response area----------------------\
+|
+|  YES____ NO____ ABSTAIN____
+|
+|  Signature:  [not required for email ballots]
+|  Name:
+|  Organization:
+|
+|  Explanation (REQUIRED for NO or ABSTAIN votes):
+|    <none>
+\------------------------  end response area  ----------------------/
+
+INSTRUCTIONS:
+Please return the entire letter ballot with your response _either_ by email
+to greg@minerva.com _or_ by regular mail or fax or email to me at the above
+address, before the closing date & time.
+
+   If replying electronically PLEASE edit only within the response area
+   indicated above, inserting any explanatory text in place of <none>.
+   Any changes made outside that area will likely be overlooked.
+
+All TC members must vote.  Failure to vote in two consecutive ballots may
+cause you to lose your voting rights in X3J14.
+
+Thank you for your participation.
+
+Elizabeth D. Rather, Chair, X3J14
+</pre>
+
+<h2><a name="results">Results of Letter Ballot</a></h2>
+
+<pre>
+Letter ballot 16 closed at noon March 21 with the following results:
+
+        Y  N  A NV
+LB16:  10, 1, 1, 2
+
+"No" vote on LB16 from L. Zettel, with the following comment:
+
+   | I agree with the explanation given for the meaning of "initiation
+   | semantics" and with the explanation for the committee's intent in
+   | the language of the standard.
+   |
+   | I do not agree with the declaration of intent to add a formal
+   | definition of "initiation semantics" to the Standard.
+   |
+   |>From: JEThomas@ix.netcom.com (Jonah Thomas)
+   |
+   |>What the original document said, in <a href=dpans3.htm#3.4.3>3.4.3</a> Semantics, was 'The terms
+   |>"initiation semantics" and "run-time semantics" refer to definition
+   |>fragments, and have meaning only within the individual glossary
+   |>entries where they appear.'
+
+
+Abstention from John Hayes.
+<pre>

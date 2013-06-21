@@ -1,0 +1,390 @@
+<title>ANS Forth RFI 0007: distinction between "immediacy" and
+"special compilation semantics"</title>
+
+This document is produced by TC X3J14 as its clarification of questions
+raised about ANSI X3.215-1994, American National Standard for Information
+Systems - Programming Languages - Forth.
+
+<p>
+The questions covered herein were raised by query
+
+<p>
+Q0007, regarding the distinction between "immediacy" and "special
+        compilation semantics".
+
+<p>There are four parts in this document:
+
+<ol>
+<li><a href="#query">The original question as received.</a>
+<li><a href="#reply">The TC's reply.</a>
+<li><a href="#ballot">The Letter Ballot issued by TC Chair.</a>
+<li><a href="#results">TC Chair's statement of ballot results.</a>
+</ol>
+
+<h2><a name="query">Q0007 as received</a></h2>
+
+<pre>
+Subject: Q0007 Request Recognized & Draft 0
+To: X3J14@minerva.com
+Cc: wykoh@pado.krict.re.kr
+Date: Sat, 23 Dec 95 02:11:38 PST  
+</pre>
+
+The following query has been assigned number Q0007.
+   - Greg Bailey, by direction  951223 0700Z
+<hr>
+Wonyong Koh wrote on Fri, 22 Dec 95 16:27:03 PST  <a href=dpans6.htm#6.1.0450>:</a>
+
+<i><blockquote>
+Dear Mr. Bailey,
+
+<p>
+   I would like you to ask to interpret the ANS Forth Stanard.
+You might already know about it. In recent discussion in comp.
+lang.forth I and Mr. Jonah Thamas have different opinion on
+<a href=dpans6.htm#6.1.0950>CONSTANT</a>. I interpret that making <a href=dpans6.htm#6.1.0950>CONSTANT</a> create <a href=dpans6.htm#6.1.1710>IMMEDIATE</a>
+words does not violate ANS Standard while Mr. Thomas thinks
+it does. 
+
+<p>
+   I think that it is a obvious choice to make <a href=dpans6.htm#6.1.0950>CONSTANT</a> words
+STATE-smart in subroutine-threaded Forth (i.e. native Forth
+compiler). <a href=dpans6.htm#6.1.1710>IMMEDIATE</a> <a href=dpans6.htm#6.1.0950>CONSTANT</a> words pushes a number on top of
+the stack in interpretation state while compiles in-line
+machine code in compilation state. I beleive that it is not
+TC's intention to leave significant number of native-code
+Forth compilers out of ANS Standard System. Please clarify this.
+
+<pre>
+Wonyong Koh
+wykoh@pado.krict.re.kr
+</pre>
+</blockquote></i>
+
+<h2><a name="reply">TC Reply to Q0007</a></h2>
+
+<pre>
+From: Elizabeth Rather
+Subject: Q0007R, "immediacy" and "special compilation semantics", Official Response
+To: X3J14 Technical Committee
+Cc: lbarra@itic.nw.dc.us
+Date: Mon, 19 Feb 96 14:10
+
+
+Doc#:  X3J14/Q0007R
+Reference Doc#:  X3.215.1994 ANS Forth
+Date:  February 19, 1996
+Title: Response to Request for Interpretation Q0007, Clarifying the
+distinction between "immediacy" and "special compilation semantics"
+</pre>
+
+<h3>Q0007:  Clarifying the distinction between "immediacy" and
+        "special compilation semantics".</h3>
+
+Wonyong Koh wrote on Fri, 22 Dec 95 16:27:03 PST:
+
+<i><blockquote>
+Dear Mr. Bailey,
+
+<p>
+   I would like you to ask to interpret the ANS Forth Stanard.
+You might already know about it. In recent discussion in comp.
+lang.forth I and Mr. Jonah Thamas have different opinion on
+<a href=dpans6.htm#6.1.0950>CONSTANT</a>. I interpret that making <a href=dpans6.htm#6.1.0950>CONSTANT</a> create <a href=dpans6.htm#6.1.1710>IMMEDIATE</a>
+words does not violate ANS Standard while Mr. Thomas thinks
+it does.
+
+<p>
+   I think that it is a obvious choice to make <a href=dpans6.htm#6.1.0950>CONSTANT</a> words
+STATE-smart in subroutine-threaded Forth (i.e. native Forth
+compiler). <a href=dpans6.htm#6.1.1710>IMMEDIATE</a> <a href=dpans6.htm#6.1.0950>CONSTANT</a> words pushes a number on top of
+the stack in interpretation state while compiles in-line
+machine code in compilation state. I beleive that it is not
+TC's intention to leave significant number of native-code
+Forth compilers out of ANS Standard System. Please clarify this.
+
+<pre>
+Wonyong Koh
+wykoh@pado.krict.re.kr
+</pre>
+</blockquote></i>
+
+Wonyong Koh is literally correct, in the sense that optimizing
+compilers which add special compilation semantics to classes of
+definitions such as  CONSTANTs  are specifically supported by
+ANS Forth.  Applying the concept, in these terms, to ANS Forth
+has very clear meaning and leads to no inconsistencies.
+
+<p> However, using the term "immediate" to speak of such compilation
+semantics is not recommended since this term carries with it all of
+the implications of the implementation model prescribed by earlier
+standards such as FORTH-83.  Attempting to discuss the advanced
+capabilities available to ANS Forth compilers in terms of "immediacy"
+ineviteably leads to confusion, misunderstanding, and the eventual
+"discovery" of apparent inconsistencies that do not, in fact, exist in
+the Standard (although they may indeed exist in a particular
+implementation.)  This in turn can lead to arguments over moot points.
+
+<p>
+In particular, a  <a href=dpans6.htm#6.1.0950>CONSTANT</a>  with special compilation semantics
+is *not* the same thing as is a  <a href=dpans6.htm#6.1.0950>CONSTANT</a>  declared as follows:
+
+<pre>
+     123 <a href=dpans6.htm#6.1.0950>CONSTANT</a> JOE  <a href=dpans6.htm#6.1.1710>IMMEDIATE</a>
+</pre>
+
+... but in ANS Forth terms, this usage is the *only* sense in
+which the word "immediate" or the concept of "immediacy" is
+defined or meaningful.  Always discuss ANS Forth compilation
+semantics as such, not as "immediacy", for clarity and to avoid
+pitfalls, even when discussing an implementation that uses
+classical immediacy as its way for expressing compilation
+semantics.
+
+<h3>Analysis of Specific Case</h3>
+
+However, upon review of the usenet discussion you reference, it would
+appear that you may have added special compilation semantics to
+CONSTANTs without adding all of the communication with the compiler
+that is necessary to deliver the proper semantics in all cases when
+such CONSTANTs are used.  The test case that failed seems likely to
+have encountered one of these probable inconsistencies, as opposed to
+"caring" whether the <a href=dpans6.htm#6.1.0950>CONSTANT</a> definition in question was "immediate"
+in your implementation as such.
+
+<p>
+At the same time, the ability to declare an <a href=dpans6.htm#6.1.1710>IMMEDIATE</a> constant,
+as in   123 <a href=dpans6.htm#6.1.0950>CONSTANT</a> JOE  <a href=dpans6.htm#6.1.1710>IMMEDIATE</a>   had been precluded.
+
+<p>
+Careful review of the semantic requirements for definitions
+when used in compilation, interpretation, and execution, as
+well as the results of obtaining execution tokens and using
+them with  <a href=dpans6.htm#6.1.1370>EXECUTE</a>  or  <a href=dpans6.htm#6.2.0945>COMPILE,</a> , and when referenced
+following  <a href=dpans6.htm#6.2.2530>[COMPILE]</a>  (if  <a href=dpans6.htm#6.2.0945>COMPILE,</a>  or  <a href=dpans6.htm#6.2.2530>[COMPILE]</a> are to
+be supported) should make it clear that significant flow of
+information is required between the compiler and the definition
+when extending normally "default" compilation and/or
+interpretation semantics of compliant definitions.
+
+<p>
+*The standard does not define the way in which this information
+flow takes place.*  While a standard program may extend "macros"
+such as control flow words as illustrated in the examples,
+it is not possible to define words of the sort that normally
+have "default" compilation and interpretation semantics such
+that they have special compilation or interpretation semantics
+without depending on implementation specific knowledge.  If
+this is done without knowing how to communicate with the
+compiler, the resulting definitions may deliver the correct
+semantics in *some*, but cannot in *all*, cases.
+
+<p>
+For example, consider a Standard Program that adds special
+compilation semantics to  <a href=dpans6.htm#6.1.1290>DUP</a>  as in the following example:
+
+<pre>
+    <a href=dpans6.htm#6.1.2410>VARIABLE</a> #DUPS
+    <a href=dpans6.htm#6.1.0450>:</a> <a href=dpans6.htm#6.1.1290>DUP</a>   1 #DUPS <a href=dpans6.htm#6.1.0130>+!</a>  <a href=dpans6.htm#6.1.2033>POSTPONE</a> <a href=dpans6.htm#6.1.1290>DUP</a> <a href=dpans6.htm#6.1.0460>;</a>  <a href=dpans6.htm#6.1.1710>IMMEDIATE</a>
+</pre>
+
+If all this did was to count compilations of <a href=dpans6.htm#6.1.1290>DUP</a>, it would
+be compliant since the additional work done affects nothing
+else and is therefore OK (See section 3.)
+
+<p>
+However, this definition does not comply because it does not
+yield the correct semantics in all cases.
+
+<ul>
+ <li> It compiles correctly
+ <li> It interprets incorrectly
+ <li> (what it compiles) executes correctly
+ <li> Its tick, when EXECUTEd or COMPILE,'d executes incorrectly
+ <li> <a href=dpans6.htm#6.2.2530>[COMPILE]</a> does not work correctly with it.
+</ul>
+
+
+And, coincidentally, execution of its tick is abysmally slow
+(which would take more information flow to resolve, but which
+is not required since it only affects performance as opposed
+to correct execution.)
+
+<p> If the word was made state smart to distinguish between interpret
+and compile states, so that it counted #DUPS and did the <a href=dpans6.htm#6.1.2033>POSTPONE</a> when
+in compilation state and simply executed <a href=dpans6.htm#6.1.1290>DUP</a> when interpreting, then
+the situation changes but is still not correct:
+
+<ul>
+ <li> It compiles correctly
+ <li> It interprets correctly
+ <li> (what it compiles) executes correctly
+ <li> Its tick, when EXECUTEd is correct if in interpret state
+     at the time <a href=dpans6.htm#6.1.1370>EXECUTE</a> is invoked, but is incorrect if in compile
+     state at the time
+ <li> A definition into which its tick is  COMPILE,'d  runs
+     correctly if the definition runs in interpret state but fails
+     if it is run in compile state
+ <li> <a href=dpans6.htm#6.2.2530>[COMPILE]</a> does not work correctly with it.
+</ul>
+
+And execution of the tick, even when correct, is still slow.
+
+<p>
+There is, at minimum, a bidirectional flow of information between
+the compiler / interpreter and the definition of  <a href=dpans6.htm#6.1.1290>DUP</a>  that must
+occur around ticking and <a href=dpans6.htm#6.2.2530>[COMPILE]</a> ; in its absence, the compiler
+does not have any way of asking the definition for an *execution*
+token, and the definition does not have any way to provide one;
+and, in the case of <a href=dpans6.htm#6.2.2530>[COMPILE]</a>, the compiler has no way of knowing
+that this definition is supposed to be treated as though it had
+default compilation semantics.
+
+<p>
+The TC did not attempt specifying this compiler interface because
+it affects only new capabilities which were almost universally
+impossible in earlier standards, and active experimentation is
+still underway with these new capabilities, including as it
+appears your own.  At some time in the future after more has
+been learned it may be appropriate to standardize such a message
+passing mechanism, however at present any *application* which
+adds compilation semantics like this will need to incorporate
+implementation dependent code... or it will yield noncompliant
+definitions, as illustrated above.
+
+<p> In the problem you have been discussing, you are the implementor
+so you certainly have the power to create and then employ the
+necessary interface.  However, it appears that you have overlooked
+this necessity, and that is probably why you have been having
+difficulty.
+
+<h3>Discussion of Immediacy, Transparency, and Compliance</h3>
+
+In FORTH-83 it was necessary to document the "I" (Immediate) attribute
+of every standard word (and for that matter every word in each
+application) because the application needed to be aware of this
+attribute in order to make correct selections between use of COMPILE
+and <a href=dpans6.htm#6.2.2530>[COMPILE]</a> , and in order to predict the consequences of using what
+are now called "execution tokens".  Since knowledge of immediate
+versus nonimmediate attribute for each existing word appeared in
+application programs in both explicit and implicit ways, it was not
+practical to change the "immediacy" of any word in the system, nor
+indeed in most applications.  The attribute of immediacy was the only
+tool for making or discussing the distinc- tion between compilation
+and execution behavior, and the need for program awareness of this
+attribute as well as its inelastic nature led to a number of well
+known inconsistencies.  In addition, it made compliance with FORTH-83
+impractically cumbersome for many advanced compilers, including the
+incremental optimizing sort.
+
+<p>
+ANS Forth addresses these problems by defining all words in terms
+of explicit compilation, interpretation, and execution semantics;
+by defining such words as  <a href=dpans6.htm#6.1.1710>IMMEDIATE</a>  and  <a href=dpans6.htm#6.2.2530>[COMPILE]</a> and the effects
+of <a href=dpans6.htm#6.1.1370>EXECUTE</a> with execution tokens as specific transformations and
+selections on these semantics; by introducing  <a href=dpans6.htm#6.1.2033>POSTPONE</a>  to solve
+a well known dilemma in selection of the appropriate semantics;
+and finally by deleting the "I" designations since it is no longer
+necessary for the application programmer to be aware of them as
+such.  Finally, having done these things, it is possible for a
+compiler to add any desired compilation semantics, including those
+useful for optimization purposes, to definitions without affecting
+the use of those definitions by applications.  <a href=dpans6.htm#6.1.1710>IMMEDIATE</a> remains
+available for application use, but its effects are specified in
+semantic terms that can coexist with arbitrary default compilation
+semantics.
+
+<p>
+In ANS Forth, the existence and nature of compilation semantics
+that are in effect messages to the compiler is concealed well
+from the programmer, and the application code is the same whether
+or not, for example,  <a href=dpans6.htm#6.1.1290>DUP</a>  is "immediate" (in the old terms) or
+"has special compilation semantics" (in ANS Forth terms).  The
+only significant caveat is that when a system supports  <a href=dpans6.htm#6.2.2530>[COMPILE]</a>
+it must be very careful to treat all definitions that the
+Standard says have "default" compilation semantics, but to
+which the system has given "special" compilation semantics
+for its own purposes, as though they had "default" compilation
+semantics when referenced by  <a href=dpans6.htm#6.2.2530>[COMPILE]</a>.
+
+<p>
+An implementation complies with the standard if all Forth words
+and classes of words defined by the Standard behave, in all cases,
+consistently with the semantics prescribed in the Standard.  The
+test for correctness is specifically limited to semantics, as
+opposed to nonsemantic considerations such as, for example,
+the size, speed, or binary representation of compiled programs.
+
+<p>
+Please refer to <a href=dpansd.htm#D.4>D.4</a>, <a href=dpansd.htm#D.5>D.5</a>, <a href=dpansd.htm#D.6.7>D.6.7</a>, and <a href=dpanse.htm#E.4.1>E.4.1</a> for further discussion
+of optimizing compilers and ANS Forth handling of "immediacy".
+
+<h2><a name="ballot">Letter Ballot</a></h2>
+
+<pre>
+X3 Subgroup Letter Ballot
+Authorized by X3 Procedures - Distributed by X3 Subgroup X3J14
+Project: X3J14, ANS Forth
+Doc#:  X3J14/LB018
+Reference Doc#s:  X3J14/Q0007R, X3.215.1994 ANS Forth
+Date:  February 19, 1996
+Title:  Response to Request for Interpretation Q0007, Clarifying the
+distinction between "immediacy" and "special compilation semantics"
+Ballot Period:  30 Days
+Ballot Closes NOON DATE:  March 21, 1996
+Respond to:  greg@minerva.com
+        or:  Elizabeth D. Rather, Chair
+             FORTH, Inc.
+             111 N. Sepulveda Blvd.  Suite 300
+             Manhattan Beach, CA  90266
+             (310) 372-8493    FAX (310) 318-7130
+             erather@forth.com
+
+Statement:
+    Document X3J14/Q0007R contains a proposed Response to Request for
+    Interpretation Q0007.
+
+Question:
+    Do you agree that this response represents the intended interpretation of
+    X3.215.1994 ANS Forth?
+
+
+/------------------------  begin response area----------------------\
+|
+|  YES____ NO____ ABSTAIN____
+|
+|  Signature:  [not required for email ballots]
+|  Name:
+|  Organization:
+|
+|  Explanation (REQUIRED for NO or ABSTAIN votes):
+|    <none>
+\------------------------  end response area  ----------------------/
+
+INSTRUCTIONS:
+Please return the entire letter ballot with your response _either_ by email
+to greg@minerva.com _or_ by regular mail or fax or email to me at the above
+address, before the closing date & time.
+
+   If replying electronically PLEASE edit only within the response area
+   indicated above, inserting any explanatory text in place of <none>.
+   Any changes made outside that area will likely be overlooked.
+
+All TC members must vote.  Failure to vote in two consecutive ballots may
+cause you to lose your voting rights in X3J14.
+
+Thank you for your participation.
+
+Elizabeth D. Rather, Chair, X3J14
+</pre>
+
+<h2><a name="results">Results of Letter Ballot</a></h2>
+
+<pre>
+Letter ballot 18 closed at noon March 21 with the following results:
+
+        Y  N  A NV
+LB18:  12, 0, 1, 1
+
+Abstention from John Hayes.
+</pre>

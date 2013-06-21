@@ -1,0 +1,560 @@
+<title>ANS Forth RFI 0003: What's allowed between <a href=dpans6.htm#6.1.1000>CREATE</a> and DOES></title>
+
+This document is produced by TC X3J14 as its clarification of questions
+raised about ANSI X3.215-1994, American National Standard for Information
+Systems - Programming Languages - Forth.
+
+<p>
+The questions covered herein were raised by query
+
+<p>
+Q0003, regarding usage rules for defining words centering on various
+wordlist actions occurring between <a href=dpans6.htm#6.1.1000>CREATE</a> and <a href=dpans6.htm#6.1.1250>DOES></a>.
+
+<p>There are four parts in this document:
+
+<ol>
+<li><a href="#query">The original question as received.</a>
+<li><a href="#reply">The TC's reply.</a>
+<li><a href="#ballot">The Letter Ballot issued by TC Chair.</a>
+<li><a href="#results">TC Chair's statement of ballot results.</a>
+</ol>
+
+<h2><a name="query">Q0003 as received</a></h2>
+
+The following query has been assigned number Q0003 and has been
+tentatively assigned to Jack Woehr for drafting a response.
+- Greg Bailey, by direction  950509 1900Z
+<hr>
+
+<pre>
+Subject: Defining words, search order and wordlists.
+To: ANSForth@minerva.com
+From: aph@oclc.org (Andrew Houghton)
+Date: Tue, 9 May 95 11:09:48 -0400
+Message-Id: <9505091520.AA26898@fssun09.dev.oclc.org>
+Received: from oclc.org by med3.minerva.com ; Tue,  9 May 1995 08:25 PDT
+Content-Type: text
+>From aph Tue May  9 11:09:48 0400 1995 remote from oclc.org
+Return-Path: <aph@oclc.org>
+Received: from next30-06 (next30-06.dev.oclc.org) by fssun09.dev.oclc.org
+  (4.1/SMI-4.1) id AA26898; Tue, 9 May 95 11:20:56 EDT
+Received: by next30-06 (NX5.67d/NX3.0X) id AA00583; Tue, 9 May 95 11:09:48 -0400
+Received: by NeXT.Mailer (1.100)
+Received: by NeXT Mailer (1.100)
+Content-Length: 7015
+</pre>
+
+I'm not sure whether doing the following is legal ANS FORTH so I was
+looking for someone to provide an interpretation as to whether it is
+legal and if not why not.
+
+<p>
+Here is my problem.  Define the following:
+
+<pre>
+  \ Add selx to search order and make new definitions go into selx.
+: set-current-wordlist  ( selx -- )
+  >r get-order 1+ r> swap set-order definitions ;
+
+  \ Fill wordlist with default definitions.
+: fill-wordlist  ( n n n -- )
+  s" constant a" evaluate
+  s" constant b" evaluate
+  s" constant c" evaluate ;
+
+  \ Create new wordlist with default definitions.
+: create-wordlist  ( -- )
+  create
+    wordlist set-current-wordlist
+    1 2 3 fill-wordlist
+  does>            ( body -- )
+    set-current-wordlist ;
+  
+
+  \ Create new wordlist with default definitions, revised.
+: create-wl  ( -- )
+  wordlist dup set-current-wordlist
+  1 2 3 fill-wordlist
+  previous definitions
+  create
+    dup , set-current-wordlist
+  does>      ( body -- )
+    @ set-current-wordlist ;
+</pre>
+
+I believe that the above words set-current-wordlist and fill-wordlist by
+themselves conform to the standard.  My problem lies with the word
+create-wordlist.  Create-wordlist tries to create a defining word which
+creates a wordlist, adds the newly created wordlist to the search order,
+set the current definitions to go into the newly created wordlist, then
+fills the wordlist with some common definitions.
+
+<p>
+When the word create-wordlist is executed (ie. create-wordlist abc) it
+produces a new (ie. abc) which PFE, an ANS FORTH, is marked in the
+dictionary as a variable -- not a defining word and c in the newly
+created wordlist is marked in its dictionary as a defining word -- not
+a constant!  As far as I can tell from the standard, this could be a
+result of does> (section 6.1.1250) replacing the execution semantics of
+the most recent definition, ie. abc which was defined by create, and the
+fact that fill-wordlist creates new definitions.  It seems that section
+"3.4.5 Compilation" of the standard may apply somehow as well.
+
+<p>
+The standard seems unclear to me when it says that: "does> replaces the
+execution semantics of the most recent definition."  I would have expected
+it to use the term "current definition" from "2.1 Definitions of terms."
+But again whether its "recent definition" or "current definition" it really
+says to me: "replaces the execution semantics of the most recent/current
+definition [in the most recent/current definition's wordlist]".  Note I
+added the bracketed item to show what the standard implies to me.  However
+it is clear that PFE, an ANS FORTH, implies "in the current wordlist where
+definitions are being placed."
+
+<p>
+It's unclear in the standard, to me, which one is correct.  Given the
+ambiguity I rewrote the word create-wordlist and it appears as the word
+create-wl.  The new word create-wl now creates the wordlist fills it with
+the common definitions and restores the previous wordlist.  Then create-wl 
+*creates* the defining word.  This seems to work for PFE but may not work
+for other ANS implementations.  However, this points out another possible
+problem with the definitions of create-wordlist and create-wl.
+
+<p>
+The newly perceived problem is that both words change the search order before
+the does> is done.  It seems to me that sections <a href=dpans16.htm#16.3.3>16.3.3</a> and <a href=dpansa16.htm#A.16.3.3>A.16.3.3</a> say that
+this produces an ambiguous condition.  Is this correct?  Does <a href=dpans16.htm#16.3.3>16.3.3</a> refer
+to when the word create-wordlist is being compiled or the word being defined
+by create-wordlist?
+
+<p>
+My final question is: "Is it possible to portably create a defining word
+which creates a wordlist, fills that wordlist with definitions and then
+switches the search order to that wordlist with the current ANS standard?"
+
+<hr>
+The following sections from the ANS standard, which I thought were
+relevant to the problem, are quoted below for your convience:
+
+<blockquote>
+<a href=dpans2.htm#2.1>2.1</a> Definitions of terms 
+
+<dl>
+
+<dt>
+ambiguous condition: 
+
+<dd>
+  A circumstance for which this Standard does not prescribe a specific
+  behavior for Forth systems and programs. 
+
+<p>
+  Ambiguous conditions include such things as the absence of a needed
+  delimiter while parsing, attempted access to a nonexistent file, or
+  attempted use of a nonexistent word. An ambiguous condition also exists
+  when a Standard word is passed values that are improper or out of range. 
+
+<dt>
+current definition: 
+
+<dd>
+  The definition whose compilation has been started but not yet ended. 
+
+<dt>
+defining word: 
+
+<dd>
+  A Forth word that creates a new definition when executed. 
+
+<dt>
+definition: 
+
+<dd>
+  A Forth execution procedure compiled into the dictionary. 
+
+<dt>
+dictionary: 
+
+<dd>
+  An extensible structure that contains definitions and associated
+  data space. 
+</dl>
+
+
+<a href=dpans3.htm#3.4.5>3.4.5</a> Compilation 
+
+<p>
+A program shall not attempt to nest compilation of definitions. 
+
+<p>
+During the compilation of the current definition, a program shall
+not execute any defining word, <a href=dpans6.htm#6.2.0455>:NONAME</a>, or any definition that
+allocates dictionary data space. The compilation of the current
+definition may be suspended using <a href=dpans6.htm#6.1.2500>[</a> (left-bracket) and resumed
+using <a href=dpans6.htm#6.1.2540>]</a> (right-bracket). While the compilation of the current
+definition is suspended, a program shall not execute any defining
+word, <a href=dpans6.htm#6.2.0455>:NONAME</a>, or any definition that allocates dictionary data space. 
+
+<p>
+<a href=dpans6.htm#6.1.1250>6.1.1250</a>  <a href=dpans6.htm#6.1.1250>DOES></a> does CORE 
+
+<p>
+Interpretation: Interpretation semantics for this word are undefined. 
+
+<p>
+Compilation: ( C: colon-sys1 -- colon-sys2 ) 
+
+<p>
+Append the run-time semantics below to the current definition. Whether
+or not the current definition is rendered findable in the dictionary by
+the compilation of <a href=dpans6.htm#6.1.1250>DOES></a> is implementation defined. Consume colon-sys1
+and produce colon-sys2. Append the initiation semantics given below to
+the current definition. 
+
+<p>
+Run-time: ( -- ) ( R: nest-sys1 -- ) 
+
+<p>
+Replace the execution semantics of the most recent definition, referred
+to as name, with the name execution semantics given below. Return control
+to the calling definition specified by nest-sys1. An ambiguous condition
+exists if name was not defined with <a href=dpans6.htm#6.1.1000>CREATE</a> or a user-defined word that
+calls <a href=dpans6.htm#6.1.1000>CREATE</a>. 
+
+<p>
+Initiation: ( i*x -- i*x a-addr ) ( R: -- nest-sys2 ) 
+
+<p>
+Save implementation-dependent information nest-sys2 about the calling
+definition. Place name's data field address on the stack. The stack
+effects i*x represent arguments to name. 
+
+<p>
+name Execution: ( i*x -- j*x ) 
+
+<p>
+Execute the portion of the definition that begins with the initiation
+semantics appended by the <a href=dpans6.htm#6.1.1250>DOES></a> which modified name. The stack effects
+i*x and j*x represent arguments to and results from name, respectively. 
+
+
+<p>
+<a href=dpans16.htm#16.3.3>16.3.3</a> Finding definition names 
+
+<p>
+An ambiguous condition exists if a program changes the compilation word
+list during the compilation of a definition or before modification of the
+behavior of the most recently compiled definition with <a href=dpans15.htm#15.6.2.0470>;CODE</a>, <a href=dpans6.htm#6.1.1250>DOES></a>, or
+<a href=dpans6.htm#6.1.1710>IMMEDIATE</a>. 
+
+
+<p>
+<a href=dpansa16.htm#A.16.3.3>A.16.3.3</a> Finding definition names 
+
+<p>
+In other words, the following is not guaranteed to work: 
+
+<pre>
+<a href=dpans6.htm#6.1.0450>:</a> FOO  ... <a href=dpans6.htm#6.1.2500>[</a> ... <a href=dpans16.htm#16.6.1.2195>SET-CURRENT</a> <a href=dpans6.htm#6.1.2540>]</a> ... <a href=dpans6.htm#6.1.2120>RECURSE</a> ... <a href=dpans6.htm#6.1.0460>;</a>  <a href=dpans6.htm#6.1.1710>IMMEDIATE</a>
+</pre>
+
+<p>
+<a href=dpans6.htm#6.1.2120>RECURSE</a>, <a href=dpans6.htm#6.1.0460>;</a> (semicolon), and <a href=dpans6.htm#6.1.1710>IMMEDIATE</a> may or may not need information
+stored in the compilation word list. 
+
+</blockquote>
+
+<h2><a name="reply">TC Reply to Q0003</a></h2>
+<pre>
+From: Elizabeth D. Rather
+Subject: Q0003R, Wordlists, Official Response
+To: X3J14 Technical Committee
+Cc: lbarra@itic.nw.dc.us
+Date: Wed, 31 May 95 17:03:44 PDT  
+Doc#:  X3J14/Q0003R
+Reference Doc#:  X3.215.1994 ANS Forth
+Date:  May 16, 1995
+Title: Response to Request for Interpretation Q0003, Clarification of Wordlists
+</pre>
+
+Abstract: No definition can be added to the dictionary between <a href=dpans6.htm#6.1.1000>CREATE</a> and
+<a href=dpans6.htm#6.1.1250>DOES></a>.  Changing compilation wordlist between <a href=dpans6.htm#6.1.1000>CREATE</a> and <a href=dpans6.htm#6.1.1250>DOES></a> is
+ambiguous.
+
+<pre>
+X3.215-1994_KEYWORD_LIST:
+        Core Word Set
+        <a href=dpans6.htm#6.1.1000>CREATE</a> <a href=dpans6.htm#6.1.1000>6.1.1000</a> <a href=dpans6.htm#6.1.1250>DOES></a> <a href=dpans6.htm#6.1.1250>6.1.1250</a>
+        Search Order Word Set
+        <a href=dpans16.htm#16.6.1.1180>DEFINITIONS</a> <a href=dpans16.htm#16.6.1.1180>16.6.1.1180</a> <a href=dpans16.htm#16.6.1.1647>GET-ORDER</a> <a href=dpans16.htm#16.6.1.1647>16.6.1.1647</a> <a href=dpans16.htm#16.6.1.2197>SET-ORDER</a> <a href=dpans16.htm#16.6.1.2197>16.6.1.2197</a>
+        Terms:
+                Ambiguous condition <a href=dpans2.htm#2.1>2.1</a>
+                Compilation word list <a href=dpans16.htm#16.6.1.2195>16.6.1.2195</a>
+X3.215-1994_KEYWORD_LIST;
+Author: Jack Woehr
+</pre>
+
+<i><blockquote>
+Here is my problem.  Define the following:
+
+<pre>
+  \ Add selx to search order and make new definitions go into selx.
+: set-current-wordlist  ( selx -- )
+  >r get-order 1+ r> swap set-order definitions ;
+</pre>
+</blockquote></i>
+
+        set-current-wordlist is standard Forth in the given context,
+i.e. as a definition commenced while the system is interpretive
+mode. Note that it has a dependency on the SEARCH-ORDER Word Set with
+Extensions.
+
+<p>
+        Incidentally, the Technical Committee encourages the use of
+uppercase for Standard words in clarification queries submitted to
+X3J14.
+
+<i><blockquote>
+<pre>
+  \ Fill wordlist with default definitions.
+: fill-wordlist  ( n n n -- )
+  s" constant a" evaluate
+  s" constant b" evaluate
+  s" constant c" evaluate ;
+</pre>
+</blockquote></i>
+
+        fill-wordlist is standard Forth in the given context.
+
+<i><blockquote>
+<pre>
+  \ Create new wordlist with default definitions.
+: create-wordlist  ( -- )
+  create
+    wordlist set-current-wordlist
+    1 2 3 fill-wordlist
+  does>            ( body -- )
+    set-current-wordlist ;
+</pre>
+</blockquote></i>
+
+        This definition of create-wordlist is erroneous as later
+noted by its author: the wordlist-id is not preserved so that
+the body address returned by words can be dereferenced to
+the (should have been) stored wordlist-id for set-current wordlist.
+
+<p>
+        But this flaw conceals the definition's intent, to effect
+<a href=dpans6.htm#6.1.1000>CREATE</a>, change the compilation wordlist, add definitions, then return
+to the original compilation wordlist and effect <a href=dpans6.htm#6.1.1250>DOES></a>. This is not
+Standard Forth.
+
+<p>
+         Words cannot be added to the dictionary between the action of
+<a href=dpans6.htm#6.1.1250>DOES></a> and the most recent action of <a href=dpans6.htm#6.1.1000>CREATE</a>. <a href=dpans6.htm#6.1.1250>DOES></a> modifies a word
+created by <a href=dpans6.htm#6.1.1000>CREATE</a>. <a href=dpans6.htm#6.1.1250>DOES></a> modifies the most recent definition. Thus
+there can have been no new definition added to the dictionary which
+was not created by <a href=dpans6.htm#6.1.1000>CREATE</a> immediately prior to a <a href=dpans6.htm#6.1.1250>DOES></a>. Note that
+<a href=dpans6.htm#6.1.1250>DOES></a> is found in the Core word set and never modified later in the
+Standard when the concept of multiple compilation wordlists is
+introduced.
+
+<p>
+        Although the Standard does not preclude implementations using
+multiple wordlists from having "most recent" definitions in each
+wordset, the definition of <a href=dpans6.htm#6.1.1250>DOES></a> is not extended to provide for
+multiple wordlists, and makes no provision for other than a single
+"most recent" definition.  The clear intent of the Standard is that
+words cannot be added to the dictionary between the action of <a href=dpans6.htm#6.1.1250>DOES></a>
+and the most recent action of <a href=dpans6.htm#6.1.1000>CREATE</a>.
+
+<p>
+        (Also note that the execution of <a href=dpans16.htm#16.6.1.2460>WORDLIST</a> may consume data
+space, altering the address returned by <a href=dpans6.htm#6.1.1650>HERE</a>. The portable program
+must avoid executing <a href=dpans16.htm#16.6.1.2460>WORDLIST</a> between <a href=dpans6.htm#6.1.1000>CREATE</a> and the execution of
+ <a href=dpans6.htm#6.1.0150>,</a> "comma" that saves the wordlist ID in the body of the created
+definition. Otherwise, the CREATE'd, DOES>'d entity at runtime will
+point at space which subsequently might have been used for the
+WORDLIST.)
+
+<p>
+        The following was suggested as an improvement the the original
+definition of create-wordlist.
+
+<i><blockquote>
+<pre>
+  \ Create new wordlist with default definitions, revised.
+: create-wl  ( name< > -- )
+  wordlist dup set-current-wordlist
+  1 2 3 fill-wordlist
+  previous definitions
+  create
+    dup , set-current-wordlist
+  does>      ( body -- )
+    @ set-current-wordlist ;
+</pre>
+</blockquote></i>
+
+<p>
+        This definition create-wl at runtime changes the compilation
+wordlist [16.6.1.2195] between <a href=dpans6.htm#6.1.1000>CREATE</a> [6.1.1000] and <a href=dpans6.htm#6.1.1250>DOES></a> [6.1.1250].
+The Forth Standard, <a href=dpans16.htm#16.3.3>16.3.3</a> para 4:
+
+<p>
+"An ambiguous condition exists if a program changes the compilation
+word list during the compilation of a definition or before modi-
+fication of the behavior of the most recently compiled definition
+with <a href=dpans15.htm#15.6.2.0470>;CODE</a> <a href=dpans6.htm#6.1.1250>DOES></a> or IMMEDIATE."
+
+<p>
+        Therefore, while not "non-Standard", the amended definition
+create-wl exhibits a platform dependency on the particular resolution
+of the ambiguity selected by the hosting Standard System, if create-wl
+is to execute deterministically.
+
+<i><blockquote>
+My final question is: "Is it possible to portably create a defining word
+which creates a wordlist, fills that wordlist with definitions and then
+switches the search order to that wordlist with the current ANS standard?"
+</blockquote></i>
+
+        Yes.
+
+<pre>
+<a href=dpans6.htm#6.1.0450>:</a> SET-CURRENT-WORDLIST <a href=dpans6.htm#6.1.0080>(</a> my_wid --) <a href=dpans6.htm#6.2.2535>\</a> as above
+        <a href=dpans6.htm#6.1.0580>>R</a> <a href=dpans16.htm#16.6.1.1647>GET-ORDER</a> <a href=dpans6.htm#6.1.0290>1+</a> <a href=dpans6.htm#6.1.2060>R></a> <a href=dpans6.htm#6.1.0080>(</a> -- widn wid1 n my_wid)
+        <a href=dpans6.htm#6.1.2260>SWAP</a> <a href=dpans16.htm#16.6.1.2197>SET-ORDER</a> <a href=dpans16.htm#16.6.1.1180>DEFINITIONS</a> <a href=dpans6.htm#6.1.0080>(</a> --)
+<a href=dpans6.htm#6.1.0460>;</a>
+
+<a href=dpans6.htm#6.1.0450>:</a> 78-VOCABULARY <a href=dpans6.htm#6.1.0080>(</a> "name< >" my_wid --)
+        <a href=dpans6.htm#6.1.1000>CREATE</a> <a href=dpans6.htm#6.1.0150>,</a>        <a href=dpans6.htm#6.1.0080>(</a> --)
+        <a href=dpans6.htm#6.1.1250>DOES></a> <a href=dpans6.htm#6.1.0080>(</a> self  --) <a href=dpans6.htm#6.2.2535>\</a> runtime
+                <a href=dpans6.htm#6.1.0650>@</a>       <a href=dpans6.htm#6.1.0080>(</a> -- my_wid)
+                SET-CURRENT-WORDLIST    <a href=dpans6.htm#6.1.0080>(</a> --)
+<a href=dpans6.htm#6.1.0460>;</a>
+
+<a href=dpans6.htm#6.1.0450>:</a> CREATE-WORDLIST <a href=dpans6.htm#6.1.0080>(</a> "name< >" --)
+        <a href=dpans16.htm#16.6.1.2460>WORDLIST</a> <a href=dpans6.htm#6.1.1290>DUP</a> 78-VOCABULARY <a href=dpans6.htm#6.1.0080>(</a> -- wid)
+        SET-CURRENT-WORDLIST <a href=dpans6.htm#6.1.0080>(</a> --)
+        fill-wordlist <a href=dpans6.htm#6.2.2535>\</a> _vide supra_
+        <a href=dpans16.htm#16.6.2.2037>PREVIOUS</a> <a href=dpans16.htm#16.6.1.1180>DEFINITIONS</a>
+<a href=dpans6.htm#6.1.0460>;</a>
+</pre>
+
+<p>
+From the point of view of CREATE-WORDLIST at runtime, 78-VOCABULARY is
+atomic. Its work is done before the change in search order occurs for
+the first time. Good factoring avoids a grey area of the Standard.
+
+<p>
+        Greg Bailey notes that during the mailing list discussion of
+this issue, he erroneously posted using <a href=dpans6.htm#6.1.2410>VARIABLE</a> where <a href=dpans6.htm#6.1.1000>CREATE</a> was
+intended. Greg regrets any confusion thus caused.
+
+<pre>
+Elizabeth D. Rather             "Forth-based products and
+FORTH, Inc.                      Services for real-time
+111 N. Sepulveda Blvd. #300      applications since 1973"
+Manhattan Beach, CA  90266
+(800) 55FORTH or (310) 372-8493
+FAX (310) 318-7130
+</pre>
+
+<h2><a name="ballot">Letter Ballot</a></h2>
+
+<pre>
+From: Elizabeth D. Rather
+Subject: LB014, RE Q0003, Wordlists
+To: X3J14 Technical Committee
+Cc: lbarra@itic.nw.dc.us
+Date: Wed, 31 May 95 17:03:36 PDT  
+X3 Subgroup Letter Ballot
+Authorized by X3 Procedures - Distributed by X3 Subgroup X3J14
+Project: X3J14, ANS Forth
+Doc#:  X3J14/LB014
+Reference Doc#s:  X3J14/Q0003R, X3.215.1994 ANS Forth
+Date:  May 31, 1995
+Title: Response to Request for Interpretation Q0003, Wordlists
+Ballot Period:  30 Days
+Ballot Closes NOON DATE:  June 30, 1995
+Respond to:  greg@minerva.com
+        or:  Elizabeth D. Rather, Chair
+             FORTH, Inc.
+             111 N. Sepulveda Blvd.  Suite 300
+             Manhattan Beach, CA  90266
+             (310) 372-8493    FAX (310) 318-7130
+             erather@forth.com
+
+Statement:
+    Document X3J14/Q0003R contains a proposed Response to Request for
+    Interpretation Q0003.
+
+Question:
+    Do you agree that this response represents the intended interpretation of
+    X3.215.1994 ANS Forth?
+
+
+/------------------------  begin response area----------------------\
+|
+|  YES____ NO____ ABSTAIN____
+|
+|  Signature:  [not required for email ballots]
+|  Name:
+|  Organization:
+|
+|  Explanation (REQUIRED for NO or ABSTAIN votes):
+|    <none>
+\------------------------  end response area  ----------------------/
+
+INSTRUCTIONS:
+Please return the entire letter ballot with your response _either_ by email
+to greg@minerva.com _or_ by regular mail, fax or email to me at the above
+address, before the closing date & time.
+
+   If replying electronically PLEASE edit only within the response area
+   indicated above, inserting any explanatory text in place of <none>.
+   Any changes made outside that area will likely be overlooked.
+
+All TC members must vote.  Failure to vote in two consecutive ballots may
+cause you to lose your voting rights in X3J14.
+
+Thank you for your participation.
+
+Elizabeth D. Rather, Chair, X3J14
+
+Elizabeth D. Rather             "Forth-based products and
+FORTH, Inc.                      Services for real-time
+111 N. Sepulveda Blvd. #300      applications since 1973"
+Manhattan Beach, CA  90266
+(800) 55FORTH or (310) 372-8493
+FAX (310) 318-7130
+</pre>
+
+<h2><a name="results">Results of Letter Ballot</a></h2>
+
+<pre>
+From: Elizabeth D. Rather
+Subject: LBs 14 & 15
+To: X3J14 Technical Committee
+Cc: l.barra@itic.nw.dc.us
+Date: Fri, 07 Jul 95 12:05:04 PDT  
+Letter ballots 14 [and 15] closed at noon July 1 with the following results:
+
+        Y  N  A NV
+LB14:  12, 0, 0, 3
+
+[...]
+
+Thank you for your participation.
+
+Regards,
+Elizabeth D. Rather, Chair X3J14
+
+Elizabeth D. Rather             "Forth-based products and
+FORTH, Inc.                      Services for real-time
+111 N. Sepulveda Blvd. #300      applications since 1973"
+Manhattan Beach, CA  90266
+(800) 55FORTH or (310) 372-8493
+FAX (310) 318-7130
+</pre>
