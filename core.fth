@@ -109,8 +109,6 @@ create squote   128 allot
          2r> 2dup 2* 2>r and if swap over + swap then 2*
       repeat 2r> 3drop ;
 
-\ TODO: */mod
-
 : msb   1 2 begin ?dup while nip dup 2* repeat postpone literal ; immediate
 
 : 0<   msb and if -1 else 0 then ;
@@ -208,12 +206,9 @@ variable #sib
 
 : fill   rot rot ?dup if bounds do dup i c! loop drop else 3drop then ;
 
-\ TODO: fm/mod
-\ TODO: sm/rem
-
 : max   2dup > if drop else nip then ;
 
-\ TODO:   move
+\ TODO: move
 
 variable #tib
 create tib   256 allot
@@ -224,7 +219,7 @@ create tib   256 allot
       i c!  1 #tib +!
    loop ;
 
-: s>d   dup 0< swap ;
+: s>d   dup 0< ;
 
 variable hld
 : <#     pad hld ! ;
@@ -238,7 +233,12 @@ variable hld
 : spaces   0 do space loop ;
 
 : u<   2dup 0< swap 0< over <> if nip nip else drop - 0< then ;
+: u+d ( u1 u2 -- d )   dup rot + dup rot u< negate ;
 
+\ TODO: */
+\ TODO: */mod
+\ TODO: fm/mod
+\ TODO: sm/rem
 \ TODO: um/mod
 
 : [']   ' postpone literal ; immediate

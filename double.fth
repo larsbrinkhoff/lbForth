@@ -1,34 +1,44 @@
 ( Double-Number words. )
 
-: 2constant ( x y "word" -- )
-    create , ,
-  does> ( -- x y )
-    2@ ;
+: 2constant   create , ,  does> 2@ ;
+: 2literal    swap postpone literal postpone literal ; immediate
+: 2variable   create 2 cells allot ;
 
-\ 2literal
-
-: 2variable ( "word" -- )
-    create 2 cells allot ;
-
-\ d+
-\ d-
 \ d.
 \ d.r
-\ d0<
-\ d0=
-\ d2*
-\ d2/
-\ d<
-\ d=
-\ d>s
-\ dabs
-\ dmax
-\ dmin
-\ dnegate
-\ m*/
-\ m+
+
+: d0<   nip 0< ;
+: d2*   swap s>d negate swap 2* rot 2* rot + ;
+: d2/   dup 1 and if msb else 0 then swap 2/ rot 1 rshift rot + swap ;
+
+: d<    rot > if 2drop -1 else u< then ;
+: du<   rot u> if 2drop -1 else u< then ;
+
+: d0=   or 0= ;
+: d=    rot = -rot = and ;
+: d>s   drop ;
+
+: 4dup   2>r 2>r 2r@ 2r> 2r@ 2swap 2r> ;
+: dmax   4dup d< if 2drop else 2nip then ;
+: dmin   4dup d< if 2nip else 2drop then ;
+
+: m+        s>d >r rot u+d rot + r> + ;
+: dnegate   invert swap invert 1 u+d rot + ;
+: dabs      d0< if dnegate then ;
+: d+        >r rot u+d rot + r> + ;
+: d-        dnegate d+ ;
+
+\ m*/ ( d n1 n2 -- d*n1/n2 )
 
 ( Double-Number extension words. )
 
-\ 2rot
-\ du<
+: 2rot   2>r 2swap 2r> 2swap ;
+
+( Forth12 Double-Number extension words. )
+
+: value    create ['] ! , ,  does> cell+ @ ;
+: 2value   create ['] 2! , , ,  does> cell+ 2@ ;
+
+: to   ' >body dup ['] 2value < if ! else dup cell+ swap @ execute then ;
+: to   ' >body dup ['] 2value < if postpone literal postpone !
+   else dup cell+ postpone literal @ compile, then ; immediate compile-only
