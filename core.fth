@@ -221,14 +221,13 @@ create tib   256 allot
 
 variable hld
 : <#     pad hld ! ;
-: hold   hld @ 1- dup hld ! c! ;
-: #      base @ /mod swap digit hold ;
-: #s     begin dup 0 > while # repeat ;
+: hold   -1 hld +!  hld @ c! ;
+: #      swap base @ u/mod swap digit hold swap ;
+: #s     begin # 2dup or 0= until ;
 : sign   0< if [char] - hold then ;
-: holds  bounds swap begin 2dup < while 1- dup c@ hold repeat 2drop ;
 : #>     2drop hld @  pad hld @ - ;
 
-: spaces   0 do space loop ;
+: spaces   dup 0 > if 0 do space loop then ;
 
 : u<   2dup 0< swap 0< over <> if nip nip else drop - 0< then ;
 : u+d ( u1 u2 -- d )   dup rot + dup rot u< negate ;
