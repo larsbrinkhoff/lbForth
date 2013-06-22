@@ -14,7 +14,7 @@
 \ code!      lastxt @ >code >h jsp, h> ;
 
 
-((
+(*
 IN HOST:
    : cell      4 ;
    : header,    align here  name,  link, ( code ) , 0 , ;
@@ -47,4 +47,4 @@ AT TARGET:
    7 "header,"  <link> <jsp enter> ... <exit>
    6 "create"   <link> <jsp enter> ... <exit>
    8 "variable" <link> <jsp enter> <t-create> <(literal)> 1 <allot> <exit>
-))
+*)

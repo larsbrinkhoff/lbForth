@@ -116,7 +116,7 @@ is backtrace
 
 \ ----------------------------------------------------------------------
 
-: ((   begin next-word s" ))" compare 0= until ;
+: (*   begin next-word s" *)" compare 0= until ;
 
 : @+ ( addr -- a' x )   dup cell+ swap @ ;
 : !+ ( x addr -- a' )   tuck ! cell+ ;

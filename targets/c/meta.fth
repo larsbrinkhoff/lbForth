@@ -60,7 +60,7 @@ image-buffer: reloc
 
 : meta-compile   create-image  save-image ;
 
-((
+(*
 create code-line 128 allot
 
 : code ( "name" -- )
@@ -81,4 +81,4 @@ create code-line 128 allot
    bl word
    \ save string, return addres
    t-string, ;
-))
+*)
