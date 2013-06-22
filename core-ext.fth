@@ -50,8 +50,9 @@ variable span
 
 : tuck    swap over ;
 
-\ TODO: .r
-\ TODO: u.r
+: (.r) ( n f u -- )   0 <# #s rot sign #> rot over - spaces type ;
+: u.r   0 rot (.r) ;
+: .r   swap s>d swap abs (.r) ;
 
 : u>   swap u< ;
 
@@ -75,6 +76,6 @@ variable span
 : action-of   ' defer@ ; immediate
 : action-of   postpone ['] postpone defer@ ; immediate compile-only
 
-\ TODO: holds
+: holds   bounds swap begin 2dup < while 1- dup c@ hold repeat 2drop ;
 
 \ TODO: s\"
