@@ -22,11 +22,10 @@
 : dmax   4dup d< if 2drop else 2nip then ;
 : dmin   4dup d< if 2nip else 2drop then ;
 
-: m+        s>d >r rot u+d rot + r> + ;
 : dnegate   invert swap invert 1 u+d rot + ;
 : dabs      d0< if dnegate then ;
-: d+        >r rot u+d rot + r> + ;
 : d-        dnegate d+ ;
+: m+        s>d d+ ;
 
 \ m*/ ( d n1 n2 -- d*n1/n2 )
 

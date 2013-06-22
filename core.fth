@@ -140,9 +140,9 @@ create squote   128 allot
       2>r ?dup 2r> rot 0= until
     nip r> drop r> ;
 
-: /mod   dup 0= abort" Division by zero"
-         dup 0< if negate recurse negate else
-         over 0< if under negate u/mod negate else u/mod then then ;
+: +-   0< if negate then ;
+: abs   dup 0< if negate then ;
+: /mod   2dup xor >r abs swap abs swap u/mod r> +- ;
 
 : space   bl emit ;
 : ?.-     dup 0< if [char] - emit negate then ;
@@ -164,8 +164,6 @@ create squote   128 allot
 : 2!      swap over ! cell+ ! ;
 : 2over   >r >r 2dup r> rot rot r> rot rot ;
 : 2swap   >r rot rot r> rot rot ;
-
-: abs   dup 0< if negate then ;
 
 : chars   ;
 : char+   1 chars + ;
@@ -234,6 +232,10 @@ variable hld
 
 : u<   2dup 0< swap 0< over <> if nip nip else drop - 0< then ;
 : u+d ( u1 u2 -- d )   dup rot + dup rot u< negate ;
+: d+   >r rot u+d rot + r> + ;
+: um*   1 2>r 0 0 rot 0 begin r@ while
+           2r> 2dup 2* 2>r and if 2swap 2over d+ 2swap then 2dup d+
+        repeat 2drop 2r> 2drop ;
 
 \ TODO: */
 \ TODO: */mod
