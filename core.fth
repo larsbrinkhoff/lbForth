@@ -141,7 +141,7 @@ create squote   128 allot
 
 : space   bl emit ;
 : ?.-     dup 0< if [char] - emit negate then ;
-: digit   dup 9 > if [ char a 10 - ] literal else [char] 0 then + ;
+: digit   dup 9 > if [ char A 10 - ] literal else [char] 0 then + ;
 : (.)     base @ u/mod  ?dup if recurse then  digit emit ;
 : u.      (.) space ;
 : .       ?.- u. ;
@@ -197,7 +197,7 @@ variable #sib
     interpret
     nr> restore-input if ." Bad restore-input" cr abort then ;
 
-: fill   rot rot ?dup if bounds do dup i c! loop drop else 3drop then ;
+: fill   rot rot ?dup if bounds do dup i c! loop drop else 2drop then ;
 
 : max   2dup > if drop else nip then ;
 
@@ -217,7 +217,7 @@ create tib   256 allot
 variable hld
 : <#     pad hld ! ;
 : hold   -1 hld +!  hld @ c! ;
-: #      swap base @ u/mod swap digit hold swap ;
+: #      drop base @ u/mod swap digit hold 0 ;
 : #s     begin # 2dup or 0= until ;
 : sign   0< if [char] - hold then ;
 : #>     2drop hld @  pad hld @ - ;
@@ -258,5 +258,6 @@ variable hld
     loop nip ;
 
 : uncount   swap 1 - swap over c! ;
-: word   drop parse-name uncount ; \ TODO: accept any delimiter.
+: skip   begin source? while <source over = while repeat -1 >in +! then drop ;
+: word   dup skip parse uncount ;
 : find   count find-name ?dup 0= if uncount 0 then ;
