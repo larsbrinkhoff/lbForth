@@ -227,9 +227,11 @@ variable hld
 : u<   2dup 0< swap 0< over <> if nip nip else drop - 0< then ;
 : u+d ( u1 u2 -- d )   dup rot + dup rot u< negate ;
 : d+   >r rot u+d rot + r> + ;
+: d+-   0< if invert swap invert 1 u+d rot + then ;
 : um*   1 2>r 0 0 rot 0 begin r@ while
            2r> 2dup 2* 2>r and if 2swap 2over d+ 2swap then 2dup d+
         repeat 2drop 2r> 2drop ;
+: m*   2dup xor >r abs swap abs um* r> d+- ;
 
 \ TODO: */
 \ TODO: */mod
