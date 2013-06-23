@@ -224,7 +224,7 @@ variable hld
 
 : spaces   dup 0 > if 0 do space loop then ;
 
-: u<   2dup 0< swap 0< over <> if nip nip else drop - 0< then ;
+: u<   2dup xor 0< if nip 0< else - 0< then ;
 : u+d ( u1 u2 -- d )   dup rot + dup rot u< negate ;
 : d+   >r rot u+d rot + r> + ;
 : d+-   0< if invert swap invert 1 u+d rot + then ;
