@@ -102,16 +102,11 @@ create squote   128 allot
 ( Core words. )
 
 : and   nand invert ;
-: xor   2dup nand >r r@ nand swap r> nand nand ;
 : 2*    dup + ;
 
 : *   1 2>r 0 swap begin r@ while
          2r> 2dup 2* 2>r and if swap over + swap then 2*
       repeat 2r> 3drop ;
-
-: msb   1 2 begin ?dup while nip dup 2* repeat postpone literal ; immediate
-
-: 0<   msb and if -1 else 0 then ;
 
 : under   postpone >r ' compile, postpone r> ; immediate
 
@@ -158,7 +153,7 @@ create squote   128 allot
 
 : /     /mod nip ;
 : mod   /mod drop ;
-: 2/    dup 0< + 2 / ;  \ Could probably be done faster.
+: 2/    dup [ 0 invert 1 rshift invert ] literal and swap 1 rshift or ;
 
 : 2@      dup cell+ @ swap @ ;
 : 2!      swap over ! cell+ ! ;

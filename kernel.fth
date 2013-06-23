@@ -125,14 +125,14 @@ variable csp
 : ;   reveal postpone exit postpone [ ?csp ; immediate
 
 : =   - if 0 else -1 then ;
-\ TODO: This is wrong if "-" overflows.  If d=x-y and sX is the
-\ sign bit, this computes "less than":  (sy&sx) ^ (sd&sx) ^ (sd&sy)
-: <   - [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
-\ : <   2dup xor 0< if drop 0< else - 0< then ;
-\ create numbers -1 1 rshift invert ,  -1 ,  0 ,  1 ,  -1 1 rshift ,
-\ : n   cells numbers + @ ;
-\ : foo ( n -- )   5 0 do dup i n over . ." < " dup . < ." => " . cr loop drop ;
-\ : bar   5 0 do i n foo loop ;
+\ TODO: This is wrong if "-" overflows.
+\ : <   - [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
+: 0<   [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
+: xor   2dup nand >r r@ nand swap r> nand nand ;
+: <   2dup xor 0< if drop 0< else - 0< then ;
+\ If d=x-y and sX is the  sign bit, this computes "less than":
+\ (sy&sx) ^ (sd&sx) ^ (sd&sy)
+\ : <   2dup and >r  2dup - dup rot and >r  and r> xor r> xor 0< ;
 : >   swap < ;
 
 : >code   TO_CODE + ;

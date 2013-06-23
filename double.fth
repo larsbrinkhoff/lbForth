@@ -9,7 +9,8 @@
 
 : d0<   nip 0< ;
 : d2*   swap s>d negate swap 2* rot 2* rot + ;
-: d2/   dup 1 and if msb else 0 then swap 2/ rot 1 rshift rot + swap ;
+: d2/   dup 1 and if [ 0 invert 1 rshift invert ] literal else 0 then
+   swap 2/ rot 1 rshift rot + swap ;
 
 : d<    rot > if 2drop -1 else u< then ;
 : du<   rot u> if 2drop -1 else u< then ;
