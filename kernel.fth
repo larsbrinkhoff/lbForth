@@ -175,11 +175,11 @@ variable current
 : c<> ( c1 c2 -- flag )   upcase swap upcase <> ;
 
 : name= ( ca1 u1 ca2 u2 -- flag )
-    2>r r@ <> 2r> rot if 3drop 0 exit then
-    bounds do
+   2>r r@ <> 2r> rot if 3drop 0 exit then
+   bounds do
       dup c@ i c@ c<> if drop unloop 0 exit then
       1+
-    loop drop -1 ;
+  loop drop -1 ;
 : nt= ( ca u nt -- flag )   >name name= ;
 
 : immediate?   c@ 127 > if 1 else -1 then ;
@@ -188,23 +188,23 @@ variable current
 \ Forth83: >name >link body> name> link> n>link l>name
 
 : traverse-wordlist ( wid xt -- ) ( xt: nt -- continue? )
-    >r >body @ begin dup while
-       r@ over >r execute r> swap
-       while >nextxt
-    repeat then r> 2drop ;
+   >r >body @ begin dup while
+      r@ over >r execute r> swap
+      while >nextxt
+   repeat then r> 2drop ;
 
-: ?nt>xt ( ca u -1 nt -- xt i? 0 0 | ca u -1 -1 )
-    nip 3dup nt= if nip nip dup immediate? 0 0
-    else drop -1 -1 then ;
+: ?nt>xt ( -1 ca u nt -- 0 xt i? 0 | -1 ca u -1 )
+   3dup nt= if >r 3drop 0 r> dup immediate? 0
+   else drop -1 then ;
 : search-wordlist ( ca u wl -- 0 | xt 1 | xt -1 )
-    -1 swap ['] ?nt>xt traverse-wordlist
-    if 2drop 0 then ;
+   2>r -1 swap 2r> ['] ?nt>xt traverse-wordlist
+   rot if 2drop 0 then ;
 
 : find-name ( a u -- a u 0 | xt ? )
-    #name min context >r begin r> dup cell+ >r @ ?dup while
-       >r 2dup r> search-wordlist ?dup
-       if 2nip r> drop exit then
-    repeat r> drop 0 ;
+   #name min context >r begin r> dup cell+ >r @ ?dup while
+      >r 2dup r> search-wordlist ?dup
+      if 2nip r> drop exit then
+   repeat r> drop 0 ;
 
 : here   dp @ ;
 
