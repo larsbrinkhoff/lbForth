@@ -6,9 +6,9 @@ code cold \ int main (void)
   xt_t *IP = (xt_t *)warm_word.param;
 
   dp_word.param[0] = (cell)dictionary;
-  end_of_dictionary_word.param[0] = (cell)&dictionary[10000];
   SP_word.param[0] = (cell)(&data_stack_word.param[100]);
   RP_word.param[0] = (cell)(&return_stack_word.param[100]);
+  end_of_dictionary_word.param[0] = (cell)dictionary + sizeof dictionary;
 
   siginterrupt (SIGINT, 1);
   signal (SIGINT, signal_handler);
@@ -97,9 +97,9 @@ end-code
 code >number ( d1 addr1 n1 -- d2 addr2 n2 )
     cell n = POP (cell);
     char *addr = POP (char *);
-    udcell d = POP (ucell);
+    udcell d = POP (udcell) << 32;
     int negate = 1;
-    d += POP (udcell) << 32;
+    d += POP (ucell);
     if (n > 0 && *addr == '-')
       {
 	n--;
@@ -118,8 +118,8 @@ code >number ( d1 addr1 n1 -- d2 addr2 n2 )
 	addr++;
 	n--;
       }
-    PUSH (d >> 32);
     PUSH (d & (cell)-1);
+    PUSH (d >> 32);
     PUSH (addr);
     PUSH (n);
 end-code

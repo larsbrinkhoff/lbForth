@@ -57,7 +57,7 @@ variable RP
 	>number ?dup if
 	    ." Undefined: " type cr abort
 	else
-	    drop nip  postpone literal
+	    2drop  postpone literal
 	then
     else
 	3drop
@@ -130,9 +130,9 @@ variable csp
 : 0<   [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
 : xor   2dup nand >r r@ nand swap r> nand nand ;
 : <   2dup xor 0< if drop 0< else - 0< then ;
-\ If d=x-y and sX is the  sign bit, this computes "less than":
-\ (sy&sx) ^ (sd&sx) ^ (sd&sy)
-\ : <   2dup and >r  2dup - dup rot and >r  and r> xor r> xor 0< ;
+\ If d=x-y and sX is the sign bit, this computes "less than":
+\ ((~y)&(x^d)) ^ (d&x);
+\ : <   2dup - >r invert over r@ xor and swap r> and xor 0< ;
 : >   swap < ;
 
 : >code   TO_CODE + ;
