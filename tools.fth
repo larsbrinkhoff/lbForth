@@ -15,9 +15,8 @@
 : ?   @ . ;
 
 : ?dot         dup 32 127 within 0= if drop [char] . then ;
-: dump.        ?dup if swap base @ /mod rot 1- recurse digit else drop then ;
 : dump-chars   dup 16 + swap do i c@ ?dot emit loop ;
-: dump-cells   dup 16 + swap do i @ 10 dump. space cell +loop ;
+: dump-cells   dup 16 + swap do i @ 11 u.r space cell +loop ;
 : dump-line    dup u. space  dup dump-cells  space dump-chars cr ;
 : dump         bounds do i dump-line 16 +loop ;
 
