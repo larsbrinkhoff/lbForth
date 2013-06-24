@@ -1,6 +1,6 @@
 \ -*- forth -*- Copyright 2004, 2013 Lars Brinkhoff
 
-\ This kernel needs, at a minimum, these 18 primitives:
+\ This kernel needs, at a minimum, these 17 primitives:
 \
 \ Definitions:		enter dodoes exit
 \ Control flow:		0branch
@@ -8,13 +8,13 @@
 \ Memory access:	! @ c! c@
 \ Aritmetic/logic:	+ nand
 \ Return stack:		>r r>
-\ Number conversion:	>number
 \ I/O:			emit open-file read-file close-file
 
 : warm
    ." lbForth" cr
    ['] nop dup is backtrace is also
    ['] dummy-catch is catch
+   ['] (number) is number
    ['] lastxt dup lastxt ! forth !
    ['] forth current !
    0 compiler-words !
@@ -52,16 +52,20 @@ variable RP
 
 : ?stack   data_stack 99 cells + sp@ < abort" Stack underflow" ;
 
-: number ( a u -- ... )
-    0 rot rot 0 rot rot ?dup if
-	>number ?dup if
-	    ." Undefined: " type cr abort
-	else
-	    2drop  postpone literal
-	then
-    else
-	3drop
-    then ;
+defer number
+
+\ Sorry about the long definition, but I didn't want to leave many
+\ useless factors lying around.
+: (number) ( a u -- )
+   over c@ [char] - = dup >r if swap 1+ swap 1 - then
+   0 rot rot
+   begin dup while
+      over c@ [char] 0 - dup -1 > while dup 10 < while
+      2>r 1+ swap dup dup + dup + + dup +  r> + swap r> 1 -
+   repeat then drop then
+   ?dup if ." Undefined: " type cr abort then
+   drop r> if negate then
+   postpone literal ;
 
 defer catch
 : dummy-catch   execute 0 ;
