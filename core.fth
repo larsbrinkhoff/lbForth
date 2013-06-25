@@ -97,21 +97,21 @@ create squote   128 allot
 : abort" ( ... x "string<quote>" -- ) ( R: ... -- )
     postpone if  postpone s"  postpone (abort")  postpone then ; immediate
 
-\ ----------------------------------------------------------------------
+: ?:   >in @ >r  parse-name find-name
+   if r> 2drop  begin source 1- + c@ [char] ; = refill abort" ?" until
+   else 2drop r> >in ! : then ;
 
-( Core words. )
+?: and   nand invert ;
+?: 2*    dup + ;
 
-: and   nand invert ;
-: 2*    dup + ;
-
-: *   1 2>r 0 swap begin r@ while
-         2r> 2dup 2* 2>r and if swap over + swap then 2*
-      repeat 2r> 3drop ;
+?: *   1 2>r 0 swap begin r@ while
+          2r> 2dup 2* 2>r and if swap over + swap then 2*
+       repeat 2r> 3drop ;
 
 : under   postpone >r ' compile, postpone r> ; immediate
 
 : bits/cell   0 1 begin ?dup while 2* under 1+ repeat
-              postpone literal ; immediate
+   postpone literal ; immediate
 
 : rshift   >r 0 begin r> dup bits/cell < while 1+ >r
            2* over 0< if 1+ then under 2* repeat drop nip ;
