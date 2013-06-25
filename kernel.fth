@@ -27,7 +27,7 @@
    quit ;
 
 create data_stack     110 cells allot
-create return_stack   100 cells allot
+create return_stack   256 cells allot
 create jmpbuf         jmp_buf allot
 
 variable dp

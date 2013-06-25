@@ -7,7 +7,7 @@ code cold \ int main (void)
 
   dp_word.param[0] = (cell)dictionary;
   SP_word.param[0] = (cell)(&data_stack_word.param[100]);
-  RP_word.param[0] = (cell)(&return_stack_word.param[100]);
+  RP_word.param[0] = (cell)(&return_stack_word.param[256]);
   end_of_dictionary_word.param[0] = (cell)dictionary + sizeof dictionary;
 
   siginterrupt (SIGINT, 1);

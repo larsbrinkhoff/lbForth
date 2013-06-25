@@ -246,7 +246,7 @@ variable hld
 
 : ?prompt   state @ 0= if ."  ok" cr then ;
 
-: (quit)   return_stack 100 cells + rp!  0 csp !  postpone [
+: (quit)   return_stack 256 cells + rp!  0 csp !  postpone [
    terminal-input  ['] ?prompt interpret-loop  bye ;
 
 ' (quit) ' quit >body !
