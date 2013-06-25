@@ -94,36 +94,6 @@ code + ( x y -- x+y )
     PUSH (x + y);
 end-code
 
-code >number ( d1 addr1 n1 -- d2 addr2 n2 )
-    cell n = POP (cell);
-    char *addr = POP (char *);
-    udcell d = POP (udcell) << 32;
-    int negate = 1;
-    d += POP (ucell);
-    if (n > 0 && *addr == '-')
-      {
-	n--;
-	addr++;
-	negate = -1;
-      }
-    while (n > 0)
-      {
-	char c = *addr;
-	int m = (c >= '0' && c <= '9') ? (c - '0') :
-                (c >= 'A' && c <= 'Z') ? (c - 'A' + 10) :
-                (c >= 'a' && c <= 'z') ? (c - 'a' + 10) : 36;
-	if (m < 0 || m >= base_word.param[0])
-	  break;
-	d = base_word.param[0] * d + negate * m;
-	addr++;
-	n--;
-      }
-    PUSH (d & (cell)-1);
-    PUSH (d >> 32);
-    PUSH (addr);
-    PUSH (n);
-end-code
-
 \ This works, but is too slow.
 \ : >r   r@ rp@ -4 + rp! rp@ ! rp@ 4 + ! ;
 

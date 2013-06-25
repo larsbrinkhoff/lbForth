@@ -261,3 +261,31 @@ variable hld
 : skip   begin source? while <source over = while repeat -1 >in +! then drop ;
 : word   dup skip parse uncount ;
 : find   count find-name ?dup 0= if uncount 0 then ;
+
+: base*+ ( d u -- d' )   >r >r base @ um* r> base @ * +  r> 0 d+ ;
+
+: 1/string ( a u -- a' u' )   1- under 1+ ;
+
+: c>number ( c -- u )   [char] 0 -
+   dup 9 > if [ char A char 0 - 10 - ] literal - else exit then
+   dup 10 < if drop 36 exit then
+   dup 35 > if [ char a char A - ] literal - then
+   dup 10 < if drop 36 exit then ;
+
+: u>number ( d a u -- d' a' u' )
+   2>r begin 2r> 2dup 2>r while
+      c@ c>number dup -1 > while  dup base @ < while
+      base*+  2r> 1/string 2>r
+   repeat then then drop 2r> ;
+
+: >number   dup 0= if exit then
+   2dup 2>r
+   over c@ [char] - = dup >r if 1/string then
+   u>number 2swap r@ d+- 2swap
+   dup r> r@ + = if 2drop 2r> else 2r> 2drop then ;
+
+: (number) ( a u -- )   0 rot rot 0 rot rot >number
+   ?dup if cr ." Undefined: " type cr abort then
+   2drop postpone literal ;
+
+' (number) ' number >body !
