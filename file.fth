@@ -1,25 +1,16 @@
 ( File Access words. )
 
-\ ( (extended semantics)
 \ bin
-\ in kernel: close-file
 \ create-file
 \ delete-file
 \ file-position
 \ file-size
-\ in kernel: include-file
-\ in kernel: included
-\ in kernel: open-file
-\ in kernel: r/o
 \ r/w
-\ in kernel: read-file
-\ in kernel: read-line
+\ read-line
 \ reposition-file
 \ resize-file
-\ s" (extended semantics)
-\ source-id (extended semantics)
 \ w/o
-\ in kernel: write-file
+\ write-file
 \ write-line
 
 \ ----------------------------------------------------------------------
@@ -28,5 +19,14 @@
 
 \ file-status
 \ flush-file
-\ refill (extended semantics)
 \ rename-file
+
+( Forth12 )
+
+: i? ( 0 a u nt -- 0 a u 1 | -1 x x 0 )   count 2over compare
+   if 1 else 3drop -1 0 0 0 then ;
+: included? ( a u -- ? )   0 -rot ['] included-files ['] i?
+   traverse-wordlist 2drop ;
+: required   2dup included? if 2drop else included then ;
+: include   parse-name included ;
+: require   parse-name required ;

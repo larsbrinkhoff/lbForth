@@ -18,11 +18,13 @@
    ['] lastxt dup lastxt ! forth !
    ['] forth current !
    0 compiler-words !
+   0 included-files !
    10 base !
    s" core.fth" included
    s" core-ext.fth" included
    s" string.fth" included
    s" tools.fth" included
+   s" file.fth" included
    ." ok" cr
    quit ;
 
@@ -85,11 +87,11 @@ create interpreters   ' compile, ,  ' number ,  ' execute ,
 : string, ( addr n -- )    here over allot align  swap cmove ;
 : #name   NAME_LENGTH 1 - ;
 
-: link, ( nt -- )      lastxt !  current @ >body @ , ;
-: name, ( "name" -- )  parse-name #name min c,  #name string, ;
-: header, ( code -- )  align here  name,  link, ( code ) , 0 , ;
-
-: reveal   lastxt @ current @ >body ! ;
+: chain, ( nt wid -- )  >body dup @ , ! ;
+: link, ( nt -- )       lastxt ! current @ >body @ , ;
+: reveal                lastxt @ current @ >body ! ;
+: name, ( a u -- )      #name min c,  #name string, ;
+: header, ( code -- )   align here  parse-name name,  link, ( code ) , 0 , ;
 
 \ ----------------------------------------------------------------------
 
@@ -168,8 +170,9 @@ cell 8 = [if] : cells   dup + dup + dup + ; [then]
 \ Put xt and 'unex on return stack, then jump to that.
 : execute   ['] unex >r >r rp@ >r ;
 
-create forth            ' lastxt ,
-create compiler-words   0 ,
+variable forth
+variable compiler-words
+variable included-files
 
 create context   ' forth , ' forth , 0 , 0 , 0 ,
 variable current
@@ -311,7 +314,8 @@ defer backtrace
    ['] nop interpret-loop  source-id close-file drop
    nr> restore-input abort" Bad restore-input" ;
 
-: included   r/o open-file abort" Read error." include-file ;
+: included   2dup align here >r  name,  r> ['] included-files chain, 0 , 0 ,
+   r/o open-file abort" Read error." include-file ;
 
 : r/o   s" r" drop ;
 
