@@ -14,7 +14,7 @@
 : forth        forth-wordlist context ! ;
 : set-order    dup 0 = if ( todo ) abort then
                dup -1 = if ( todo ) abort else
-               dup 4 > abort" Max 4 context allowed"
+               dup 8 > abort" Max 8 contexts allowed"
                n>r 0 nr> 1+
                context swap cells bounds
                do i ! cell +loop then ;

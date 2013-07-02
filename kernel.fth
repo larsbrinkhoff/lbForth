@@ -174,7 +174,7 @@ variable forth
 variable compiler-words
 variable included-files
 
-create context   ' forth , ' forth , 0 , 0 , 0 ,
+create context   ' forth , ' forth , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
 variable current
 
 : lowercase? ( c -- flag )   dup [char] a < if drop 0 exit then [char] z 1+ < ;
