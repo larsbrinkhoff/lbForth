@@ -35,7 +35,7 @@ drop
 : does>     [ ' (does>) ] literal compile, does, ; immediate
 : create    [ ' dodoes >code @ ] literal header, reveal (does>) ;
 
-: postpone,   [ ' literal , ' compile, ] literal compile, ;
+: postpone,   [ ' literal compile, ' compile, ] literal compile, ;
 \ Same as:    postpone literal  postpone compile, ;
 
 : finders   create ' , ' , ' ,   does> swap 1+ cells + @ execute ;

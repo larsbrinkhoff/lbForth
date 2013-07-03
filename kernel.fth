@@ -20,6 +20,7 @@
    0 compiler-words !
    0 included-files !
    10 base !
+   postpone [
    s" core.fth" included
    s" core-ext.fth" included
    s" string.fth" included
@@ -72,7 +73,7 @@ defer number
 defer catch
 : dummy-catch   execute 0 ;
 
-create interpreters   ' compile, ,  ' number ,  ' execute ,
+create interpreters  ' execute , ' number , ' execute ,
 
 : interpret-xt   1+ cells  interpreters + @ catch
                  if ." Exception" cr then ;
@@ -250,8 +251,9 @@ create src  2 cells allot
 
 defer also
 
-: [   0 state !  previous ; immediate
-: ]   1 state !  also ['] compiler-words context ! ;
+: [   0 state !  ['] execute interpreters !  previous ; immediate
+: ]   1 state !  ['] compile, interpreters !
+   also ['] compiler-words context ! ;
 
 \ ----------------------------------------------------------------------
 
@@ -262,7 +264,7 @@ defer also
 : 2>r   r> swap rot >r >r >r ;
 : 2r>   r> r> r> rot >r swap ;
 
-: compile,   state @ if , else execute then ;
+: compile,   , ;
 
 defer refill
 
