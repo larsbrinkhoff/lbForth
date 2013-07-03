@@ -40,7 +40,7 @@ variable span
 : pick   ?dup if swap >r 1- recurse r> swap exit then dup ;
 : roll   ?dup if swap >r 1- recurse r> swap then ;
 
-: query   tib ''source !  #tib ''#source !  0 'source-id !  refill drop ;
+: query   terminal-input  refill drop ;
 
 : value   create ,  does> @ ;
 : to      ' >body ! ;

@@ -234,16 +234,15 @@ variable state
 
 : unloop   r> 2r> 2drop >r ;
 
-variable ''source
-variable ''#source
-: source ( -- addr n )   ''source @  ''#source @ @ ;
+create src  2 cells allot
+: source   src dup cell+ @ swap @ ;
 : source? ( -- flag )   >in @ source nip < ;
 : <source ( -- char|-1 )   source >in @ dup rot = if
    2drop -1 else + c@  1 >in +! then ;
 
 : blank?   dup bl =  over 8 = or  over 9 = or  over 10 = or  over 13 = or nip ;
 : skip ( "<blanks>" -- )   begin source? while
-   <source blank? 0= if -1 >in +! exit then repeat ;
+   <source blank? 0= until -1 >in +! then ;
 : parse-name ( "<blanks>name<blank>" -- a u )   skip  source drop >in @ +
    0 begin source? while 1+ <source blank? until 1 - then ;
 
@@ -267,23 +266,19 @@ defer also
 
 defer refill
 
-variable #fib
 create fib   256 allot
 
-: file-refill ( -- flag )   0 >in !  0 #fib !  -1
-   source drop 256 bounds do
+: file-refill ( -- flag )   0 >in !  0 src !  -1
+   fib 256 bounds do
       i 1 source-id read-file abort" Read error."
-      dup 0=  i c@ 10 =  or  if #fib @ or 0= if drop 0 then leave then
-      drop  1 #fib +!
+      dup 0=  i c@ 10 =  or  if src @ or 0= if drop 0 then leave then
+      drop  1 src +!
    loop ;
 
-: restore-input   drop  is refill  'source-id !  ''#source !  ''source !
-   >in !  0 ;
-: save-input   >in @  ''source @  ''#source @  source-id
-   ['] refill >body @  5 ;
-
 variable 'source-id
-: source-id ( -- 0 | -1 | fileid )   'source-id @ ;
+: source-id   'source-id @ ;
+: restore-input   drop  is refill  src !  src cell+ !  'source-id !  >in !  0 ;
+: save-input   >in @  source-id  source  ['] refill >body @  5 ;
 
 : nop ;
 
@@ -307,8 +302,8 @@ defer backtrace
 : interpret-loop   >r begin ['] refill catch if ." Exception" cr -1 then while
    interpret r@ execute repeat r> drop ;
 
-: file-input ( fileid -- )    'source-id !  fib ''source !  #fib ''#source !
-   0 #fib !  ( 0 blk ! )  ['] file-refill is refill ;
+: file-input ( fileid -- )    'source-id !  fib src cell+ !
+   ( 0 blk ! )  ['] file-refill is refill ;
 
 : include-file ( fileid -- )   save-input n>r  file-input
    ['] nop interpret-loop  source-id close-file drop

@@ -181,28 +181,11 @@ variable leaves
 
 : environment?   2drop 0 ;
 
-variable #sib
-
-: evaluate ( ... a u -- ... )
-    save-input n>r -1 'source-id !
-    #sib ! ''source !  #sib ''#source ! 0 >in !
-    interpret
-    nr> restore-input if ." Bad restore-input" cr abort then ;
-
 : fill   rot rot ?dup if bounds do dup i c! loop drop else 2drop then ;
 
 : max   2dup > if drop else nip then ;
 
 \ TODO: move
-
-variable #tib
-create tib   256 allot
-
-: terminal-refill   0 >in !  0 #tib !  -1
-   source drop 256 bounds do
-      key dup 10 = if drop leave then
-      i c!  1 #tib +!
-   loop ;
 
 : s>d   dup 0< ;
 
@@ -235,7 +218,23 @@ variable hld
 
 : [']   ' postpone literal ; immediate
 
-: terminal-input   0 'source-id !  tib ''source !  #tib ''#source !
+: string-refill   0 ;
+
+: string-input ( a u -- )   -1 'source-id !  src ! src cell+ !  0 >in !
+   ['] string-refill ['] refill >body ! ;
+
+: evaluate   save-input n>r  string-input  interpret
+   nr> restore-input abort" Bad restore-input" ;
+
+create tib   256 allot
+
+: terminal-refill   0 >in !  0 src !  -1
+   tib 256 bounds do
+      key dup 10 = if drop leave then
+      i c!  1 src +!
+   loop ;
+
+: terminal-input   0 'source-id !  tib src cell+ !
    ['] terminal-refill ['] refill >body ! ;
 
 : ?prompt   state @ 0= if ."  ok" cr then ;
