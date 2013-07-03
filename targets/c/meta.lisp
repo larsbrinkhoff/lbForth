@@ -9,8 +9,8 @@
 ;;
 ;; ( \ [IF] [ELSE] [THEN] [DEFINED] [UNDEFINED]
 ;; : ; IMMEDIATE DOES> DEFER CODE END-CODE
-;; VARIABLE CREATE ALLOT , ' CELLS >CODE @ INVERT RSHIFT = CHAR -
-;; [CHAR] ['] [ ] LITERAL POSTPONE IS ." S" ABORT"
+;; VARIABLE VALUE CREATE ALLOT , ' CELLS >CODE @ INVERT RSHIFT = CHAR -
+;; [CHAR] ['] [ ] LITERAL POSTPONE TO IS ." S" ABORT"
 ;; IF ELSE THEN DO LEAVE LOOP +LOOP BEGIN AGAIN WHILE REPEAT UNTIL
 ;; CELL JMP_BUF NAME_LENGTH TO_NEXT TO_CODE TO_DOES TO_BODY
 ;; .CS
@@ -200,7 +200,7 @@
 (defun output-header (name code does &optional immediatep codep)
   (declare-word name)
   (let* ((mangled (mangle-word name))
-	 (lastxt (tick name))
+	 (latestxt (tick name))
 	 (name (trunc-word name))
 	 (len (length name)))
     (when immediatep
@@ -209,7 +209,7 @@
       (output-end-of-word))
     (output "struct word ~A_word = { ~D, \"~A\", ~A, ~A, ~A, {"
 	    mangled len (quoted name) *previous-word* code does)
-    (setq *previous-word* lastxt)))
+    (setq *previous-word* latestxt)))
 
 (defun mangle-word (name)
   (cond
@@ -294,6 +294,14 @@
   (output "  (cell)~A" (tick "abort")))
 
 (defimmediate is ()
+  (emit-literal (word-body (read-word)))
+  (emit-word "!"))
+
+(definterpreted value ()
+  (output-header (read-word) "dodoes_code" (word-body "here" 1))
+  (output "  (cell)~A," (pop *control-stack*)))
+
+(defimmediate to ()
   (emit-literal (word-body (read-word)))
   (emit-word "!"))
 
