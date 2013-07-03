@@ -11,7 +11,7 @@
 \ :          header,  ['] enter jsp,  ] !csp ;
 \ create     header,  ['] dovar jsp,  reveal ;
 \ variable   create cell allot ;
-\ code!      lastxt @ >code >h jsp, h> ;
+\ code!      latestxt >code >h jsp, h> ;
 
 
 (*

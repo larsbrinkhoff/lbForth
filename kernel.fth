@@ -15,7 +15,7 @@
    ['] nop dup is backtrace is also
    ['] dummy-catch is catch
    ['] (number) is number
-   ['] lastxt dup lastxt ! forth !
+   ['] latestxt dup to latestxt forth !
    ['] forth current !
    0 compiler-words !
    0 included-files !
@@ -89,8 +89,8 @@ create interpreters  ' execute , ' number , ' execute ,
 : #name   NAME_LENGTH 1 - ;
 
 : chain, ( nt wid -- )  >body dup @ , ! ;
-: link, ( nt -- )       lastxt ! current @ >body @ , ;
-: reveal                lastxt @ current @ >body ! ;
+: link, ( nt -- )       to latestxt  current @ >body @ , ;
+: reveal                latestxt  current @ >body ! ;
 : name, ( a u -- )      #name min c,  #name string, ;
 : header, ( code -- )   align here  parse-name name,  link, ( code ) , 0 , ;
 
@@ -123,7 +123,7 @@ variable  sink
 
 variable csp
 
-: .latest   lastxt @ >name type ;
+: .latest   latestxt >name type ;
 : !csp   csp @ if ." Nested definition: " .latest cr abort then  sp@ csp ! ;
 : ?csp   sp@ csp @ <> if ." Unbalanced definition: " .latest cr abort then
    0 csp ! ;
@@ -319,4 +319,4 @@ defer backtrace
 : (defer)   @ execute ;
 
 \ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
-variable lastxt
+0 value latestxt

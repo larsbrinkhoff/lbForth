@@ -2,7 +2,7 @@ refill   Copyright 2004, 2013 Lars Brinkhoff
 drop
 
 
-: immediate   lastxt @ dup c@ negate swap c! ;
+: immediate   latestxt dup c@ negate swap c! ;
 
 : \   source nip >in ! ; immediate
 
@@ -28,8 +28,8 @@ drop
 : >h      here >r here! ;
 : h>      r> here! ;
 
-: code!     lastxt @ >code ! ;
-: does!     lastxt @ >does ! ;
+: code!     latestxt >code ! ;
+: does!     latestxt >does ! ;
 : does,     ;
 : (does>)   r> does! ;
 : does>     [ ' (does>) ] literal compile, does, ; immediate
@@ -58,7 +58,7 @@ finders postpone-xt   postpone, abort compile,
 : while    postpone if swap ; immediate
 : repeat   postpone again postpone then ; immediate
 
-: recurse   lastxt @ compile, ; immediate
+: recurse   latestxt compile, ; immediate
 
 : 1-   -1 + ;
 
@@ -71,9 +71,9 @@ finders postpone-xt   postpone, abort compile,
       source drop >in @ 1- + c@ [char] ) <> while
       refill while repeat then ; immediate
 
-: hide   lastxt @ >nextxt  current @ >body ! ;
+: hide   latestxt >nextxt  current @ >body ! ;
 
-: link   current @ >body @  lastxt @ >lfa ! ;
+: link   current @ >body @  latestxt >lfa ! ;
 
 : compile-only   hide  current @  [ ' compiler-words ] literal current !
                  link  reveal  current ! ;
@@ -129,7 +129,7 @@ create squote   128 allot
 
 : +-   0< if negate then ;
 : abs   dup 0< if negate then ;
-: /mod   2dup xor >r abs swap abs swap u/mod r> +- ;
+: /mod   2dup xor >r abs under abs u/mod r> +- ;
 
 : space   bl emit ;
 : ?.-     dup 0< if [char] - emit negate then ;
@@ -216,6 +216,12 @@ variable hld
 \ TODO: sm/rem
 \ TODO: um/mod
 
+\ : */mod   under m* sm/rem ;
+\ : */   */mod nip ;
+
+\ : dum* ( ud u -- ud' )   dup >r um* drop swap r> um* rot + ;
+\ : dum/mod ( ud1 u1 -- ud2 u2 )   dup under u/mod swap under um/mod ;
+
 : [']   ' postpone literal ; immediate
 
 : string-refill   0 ;
@@ -250,7 +256,7 @@ create tib   256 allot
        else drop i swap - unloop exit then
     loop nip ;
 
-: uncount   swap 1 - swap over c! ;
+: uncount   under 1- over c! ;
 : skip   begin source? while <source over = while repeat -1 >in +! then drop ;
 : word   dup skip parse uncount ;
 : find   count find-name ?dup 0= if uncount 0 then ;

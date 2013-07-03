@@ -123,8 +123,8 @@ code dodoes
             next,  +1=27	+2=28			<x> push, 10
 end-code						          +3=22
 
-variable lastxt
-: does!   lastxt @ >code >h jsp, h> ;
+0 value latestxt
+: does!   latestxt >code >h jsp, h> ;
 : does,   [ ' dodoes >body ] literal jda, ;
 \ (does>) r> does! ;
 \ does>   postpone (does>) does, ; immediate

@@ -28,7 +28,7 @@ base @  hex
 
 base !  previous definitions  also assembler
 
-: code    create  lastxt @ >body code!  start-code  ;
+: code    create  latestxt >body code!  start-code  ;
 : ;code   postpone (;code) reveal postpone [ ?csp start-code ; immediate
 
 previous

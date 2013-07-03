@@ -8,7 +8,7 @@
 : 2r@   r> 2r> 2dup 2>r rot >r ;
 
 : :noname   align here  0 c, 15 allot  link,
-   [ ' enter >code @ ] literal , 0 , ] lastxt @ !csp ;
+   [ ' enter >code @ ] literal , 0 , ] latestxt !csp ;
 
 : (?do)   r> 2r> 2dup > rot rot 2>r swap >r ;
 : ?do     leaves @  0 leaves !
