@@ -60,18 +60,12 @@ finders postpone-xt   postpone, abort compile,
 
 : recurse   lastxt @ compile, ; immediate
 
-: pad   here 1024 + ;
+: 1-   -1 + ;
 
-: parse \ ( char "string<char>" -- addr n )
-    pad >r  begin
-	source? if <source 2dup <> else 0 0 then
-    while
-	r@ c!  r> 1+ >r
-    repeat  2drop  pad r> over - ;
+: parse   >r  source drop >in @ +
+   0 begin source? while <source r@ <> while 1+ repeat then r> drop ;
 
 : [char]   char postpone literal ; immediate
-
-: 1-   -1 + ;
 
 : (   begin [char] ) parse 2drop
       source drop >in @ 1- + c@ [char] ) <> while
@@ -85,17 +79,15 @@ finders postpone-xt   postpone, abort compile,
                  link  reveal  current ! ;
 
 : (s") ( -- addr n ) ( R: ret1 -- ret2 )
-    r> dup @ swap cell+ 2dup + aligned >r swap ;
+   r> dup @ swap cell+ 2dup + aligned >r swap ;
 
 create squote   128 allot
 
 : s"   [char] " parse  >r squote r@ cmove  squote r> ;
 : s"   postpone (s")  [char] " parse  dup ,  string, ; immediate compile-only
 
-: (abort") ( ... addr n -- ) ( R: ... -- )    cr type cr abort ;
-
-: abort" ( ... x "string<quote>" -- ) ( R: ... -- )
-    postpone if  postpone s"  postpone (abort")  postpone then ; immediate
+: (abort")    cr type cr abort ;
+: abort"   postpone if postpone s" postpone (abort") postpone then ; immediate
 
 : ?:   >in @ >r  parse-name find-name
    if r> 2drop  begin source 1- + c@ [char] ; = refill abort" ?" until
@@ -213,6 +205,8 @@ create tib   256 allot
    loop ;
 
 : s>d   dup 0< ;
+
+: pad   here 1024 + ;
 
 variable hld
 : <#     pad hld ! ;
