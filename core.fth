@@ -248,11 +248,8 @@ create tib   256 allot
 
 ' (quit) ' quit >body !
 
-: accept ( caddr u1 -- u2 )
-    2dup bounds do
-       source? if <source i c!
-       else drop i swap - unloop exit then
-    loop nip ;
+: accept   save-input n>r  terminal-input  refill 0= if 2drop 0 exit then
+   2>r source r> min swap over r> swap cmove  nr> restore-input abort" ?" ;
 
 : uncount   under 1- over c! ;
 : skip   begin source? while <source over = while repeat -1 >in +! then drop ;
