@@ -210,14 +210,12 @@ variable hld
         repeat 2drop 2r> 2drop ;
 : m*   2dup xor >r abs swap abs um* r> d+- ;
 
-\ TODO: */
-\ TODO: */mod
-\ TODO: fm/mod
-\ TODO: sm/rem
-\ TODO: um/mod
-
-\ : */mod   under m* sm/rem ;
-\ : */   */mod nip ;
+\ TODO: implement these stubs
+: um/mod   nip u/mod ;
+: sm/rem   2dup xor >r ( under dabs ) abs um/mod r> +- ;
+: fm/mod   drop ;
+: */mod    under m* sm/rem ;
+: */       */mod nip ;
 
 \ : dum* ( ud u -- ud' )   dup >r um* drop swap r> um* rot + ;
 \ : dum/mod ( ud1 u1 -- ud2 u2 )   dup under u/mod swap under um/mod ;
