@@ -1,7 +1,7 @@
 \ -*- forth -*- Copyright 2013 Lars Brinkhoff
 
 code cold \ int main (void)
-  static cell dictionary[10000];
+  static cell dictionary[15000];
   void signal_handler (int);
   xt_t *IP = (xt_t *)warm_word.param;
 

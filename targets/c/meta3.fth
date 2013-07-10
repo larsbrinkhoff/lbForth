@@ -13,6 +13,8 @@ require search.fth
 only forth definitions  decimal
 
 vocabulary target           \ Holds compiled target words.
+vocabulary host-compiler
+vocabulary host-interpreter
 vocabulary meta-compiler    \ Words executed in interpretation state.
 vocabulary meta-interpreter \ Immediate words used in compilation state.
 
@@ -37,16 +39,53 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 : forward,   forward compile, ;
 finders meta-postpone   postpone, forward, compile,
 
-: iconst   >r : r> postpone literal postpone ; ; immediate
-: immediate:   >in @ >r : r> >in !  ' compile, postpone ; immediate ;
+: iconst   create immediate ,  does> @ postpone literal ;
+: copy   >in @ >r : r> >in !  ' compile, postpone ; ;
+: immediate:   copy immediate ;
 
 : (.def)   cr type space  >in @ parse-name type >in ! ;
 : .def   parse-name postpone sliteral postpone (.def) ; immediate
 
-create code-line 128 allot
+create code-line  128 allot
+create t-dictionary  17000 allot
 
-create t-dictionary   2048 allot
-variable tp   t-dictionary tp !
+
+
+( Host words. )
+
+only also host-interpreter definitions
+
+: :   : interpreter-context also host-compiler ;
+
+copy defer  copy immediate  copy create  copy variable  copy constant
+copy value
+
+cr .( HOST INTERPRETER WORDS: ) cr  words
+
+only also host-compiler definitions
+
+4 iconst cell
+16 iconst name_length
+158 iconst jmp_buf
+16 iconst to_next
+20 iconst to_code
+24 iconst to_does
+28 iconst to_body
+
+: ;   postpone ; interpreter-context also host-interpreter ; immediate
+
+immediate: [defined]  immediate: [undefined]  immediate: [
+immediate: [compile]  immediate: literal      immediate: [']
+immediate: is         immediate: to           immediate: postpone
+immediate: abort"     immediate: [char]
+
+immediate: (       immediate: if       immediate: else   immediate: \
+immediate: [if]    immediate: [else]   immediate: [then]
+immediate: then    immediate: begin    immediate: until  immediate: while
+immediate: repeat  immediate: again    immediate: do     immediate: leave
+immediate: loop    immediate: ."       immediate: s"
+
+cr .( HOST COMPILING WORDS: ) cr  words
 
 
 
@@ -58,28 +97,46 @@ variable tp   t-dictionary tp !
  * CELL JMP_BUF NAME_LENGTH
  *
  * From host:
- * ( \ [IF] [ELSE] [THEN]  INVERT RSHIFT = CHAR - @
+ * ( \ [IF] [ELSE] [THEN]  INVERT RSHIFT CHAR @ = -
  *)
 
-only also meta-interpreter definitions previous
-
-4 constant cell
-16 constant name_length
-256 constant jmp_buf
+interpreter-context definitions also host-interpreter
 
 : [defined]     [T] [defined] ; immediate
 : [undefined]   [T] [undefined] ; immediate
 
-: here       tp @ ;
-: allot      tp +! ;
-: ,          [M] here !   [M] cell [M] allot ;
-: compile,   [M] , ;
+16 iconst name_length
+158 constant jmp_buf
 
-: cells   [M] cell * ;
+variable dp  t-dictionary dp !
+: here       dp @ ;
+: allot      dp +! ;
+: aligned    cell + 1 - cell negate nand invert ;
+: align      dp @ aligned dp ! ;
+: ,          here !   cell allot ;
+: c,         here c!  1 allot ;
+: compile,   , ;
+: string,    here over allot align  swap cmove ;
+: #name      NAME_LENGTH 1 - ;
 
-: create   >in @ cr ." CREATE " parse-name type >in ! ( .def CREATE )  [T] create ;
+variable forth    0 forth !
+variable current  ' forth current !
 
-: code   >in @ cr ." CODE " parse-name type >in ! ( .def CODE )  [T] create
+0 value latestxt
+: link, ( nt -- )       to latestxt  current @ >body @ , ;
+: reveal                latestxt current @ >body ! ;
+: name, ( a u -- )      #name min c,  #name string, ;
+
+: header,    >in @ [T] create >in !
+             align here  parse-name name,  link, 0 , 0 , ;
+             
+: used       here t-dictionary - ;
+
+: cells   cell * ;
+
+: create   .def CREATE  header, reveal ;
+
+: code   .def CODE  header, reveal
    \ ." xt_t * REGPARM "
    \ latestxt >name type
    \ ." _code (xt_t *IP, struct word *word)" cr
@@ -94,15 +151,16 @@ only also meta-interpreter definitions previous
 : end-code   ;
 
 : ]   1 state !  compiler-context ;
-: constant   >in @ cr ." CONSTANT " parse-name type 2dup >in !
-   [definitions] meta-interpreter constant  >in !
-   [T] constant ;
-: variable   >in @ cr ." VARIABLE " parse-name type >in !  [T] variable ;
-: :   >in @ cr ." COLON " parse-name type >in !  [T] create [M] ] ; immediate
+: constant   .def CONSTANT  header, , reveal ;
+: variable   .def VARIABLE  header, 0 , reveal ;
+: :   .def COLON  header, ] ;
 : '   parse-name [T] find-name 0= if forward then ;
-: defer   >in @ cr ." DEFER " parse-name type >in !  [T] defer ;
-: value   >in @ cr ." VALUE " parse-name type >in !  [T] value ;
+: defer   .def DEFER  header, 0 , reveal ;
+: value   .def VALUE  header, , reveal ;
 : immediate   ."  IMMEDIATE " ;
+
+cr .( META-INTERPRETER WORDS: ) cr
+previous words cr
 
 
 
@@ -117,6 +175,9 @@ only also meta-interpreter definitions previous
 
 only also meta-compiler definitions previous
 
+4 iconst cell
+16 iconst name_length
+158 iconst jmp_buf
 16 iconst to_next
 20 iconst to_code
 24 iconst to_does
@@ -125,12 +186,11 @@ only also meta-compiler definitions previous
 : [defined]     [T] [defined] ; immediate
 : [undefined]   [T] [undefined] ; immediate
 : [   0 state !  interpreter-context ; immediate
-: ;   [M] [ ; immediate
+: ;   [M] reveal [M] [ ; immediate
 \ : ;code   postpone [ ... ; immediate
 : [compile]   [T] [compile] ; immediate
 : literal   s" (literal)" find-name drop [M] compile,
    [M] , ; immediate
-: cell   [M] cell [M] literal ;
 : [']   [M] ' [M] literal ; immediate
 : is   [M] ' >body [M] literal postpone ! ; immediate
 : to   [M] ' >body [M] literal postpone ! ; immediate
@@ -146,13 +206,13 @@ immediate: loop    immediate: ."       immediate: s"
 
 immediate: does>
 
-.( METACOMPILER WORDS: )
+cr .( META-COMPILER WORDS: ) cr
 also meta-compiler words cr previous
 
 
 only forth definitions
 
-: ?compile,   state @ if compile, else execute then ;
+: ?compile,   state @ if [M] compile, else execute then ;
 
 : meta-number  2>r 0 0 2r@ >number nip if 2drop 2r> forward ?compile,
    else 2r> 3drop postpone literal then ;
@@ -181,3 +241,5 @@ meta-compile kernel.fth
 
 cr .( TARGET WORDS: ) cr
 also target words only
+
+cr .( TARGET DICTIONARY: ) cr
