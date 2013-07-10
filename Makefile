@@ -17,7 +17,7 @@ kernel.o: kernel.c kernel.h targets/c/forth.h
 	./lisp.sh '(progn (load "$(meta)") (compile-forth "$(nucleus)" "$<"))'
 
 params.lisp: params
-	./$< > $@
+	./$< -lisp > $@
 
 params: targets/c/params.c Makefile
 	$(CC) $(CFLAGS) -I. $< -o $@
