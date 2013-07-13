@@ -13,8 +13,8 @@ require search.fth
 only forth definitions  decimal
 
 vocabulary target           \ Holds compiled target words.
-vocabulary host-compiler    \ Overrides meta definitions.
-vocabulary host-interpreter \ Overrides meta definitions.
+vocabulary host-compiler    \ Overrides metacompiler definitions.
+vocabulary host-interpreter \ Overrides metacompiler definitions.
 vocabulary meta-compiler    \ Words executed in interpretation state.
 vocabulary meta-interpreter \ Immediate words used in compilation state.
 
@@ -39,8 +39,6 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 
 : forward ( a u -- xt )   ."  FORWARD:" 2dup type  input>r string-input
    [T] create latestxt  r>input ;
-: forward,   forward compile, ;
-finders meta-postpone   postpone, forward, compile,
 
 : iconst   create immediate ,  does> @ postpone literal ;
 : copy   >in @ >r : r> >in !  ' compile, postpone ; ;
@@ -55,11 +53,12 @@ create t-dictionary  17000 allot
 
 only also host-interpreter definitions
 
+: ]   ] interpreter-context also host-interpreter ;
 : :   : interpreter-context also host-compiler ;
 
 copy ,       copy '         copy allot     copy defer  copy immediate
 copy create  copy variable  copy constant  copy value  
-\ Maybe also [DEFINED] [UNDEFINED]
+\ [DEFINED] [UNDEFINED]
 
 cr .( HOST INTERPRETER WORDS: ) cr  words
 
@@ -67,11 +66,12 @@ cr .( HOST INTERPRETER WORDS: ) cr  words
 
 only also host-compiler definitions
 
+: [   postpone [ interpreter-context also host-compiler ; immediate
 : ;   postpone ; interpreter-context also host-interpreter ; immediate
 
-immediate: [defined]  immediate: [undefined]  immediate: [
-immediate: [compile]  immediate: literal      immediate: [']
-immediate: is         immediate: to           immediate: postpone
+immediate: [defined]  immediate: [undefined]
+immediate: literal    immediate: [']          immediate: postpone
+immediate: is         immediate: to
 immediate: abort"     immediate: [char]
 
 immediate: (       immediate: if       immediate: else   immediate: \
@@ -102,22 +102,26 @@ interpreter-context definitions also host-interpreter
 
 158 constant jmp_buf
 16 constant name_length
+16 constant to_next
 
 0 value latestxt
+( *** Target compiler included here. *** )
 include c.fth
 variable forth
 0 forth !
 ' forth current !
 t-dictionary dp !
              
-: used       here t-dictionary - ;
-
 : cells   cell * ;
 
 t-dictionary value there
 : (.def)   space here there - .  here to there
    cr type space  >in @ parse-name type >in ! ;
 : .def   parse-name postpone sliteral postpone (.def) ; immediate
+
+\ Possibly, intercept definitions and create a corresponding
+\ definition in the host.
+\ : header,   >in @ [T] create >in !  header, ;
 
 : create   .def CREATE  0 header, reveal ;
 
@@ -135,13 +139,19 @@ t-dictionary value there
 ;
 : end-code   ;
 
+: forward,    forward compile, ;
+: postpone,   postpone literal  postpone compile, ;
+finders meta-postpone   postpone, forward, compile,
+
 : ]   1 state !  compiler-context ;
 : constant   .def CONSTANT  0 header, , reveal ;
 : variable   .def VARIABLE  0 header, 0 , reveal ;
 : :   .def COLON  0 header, ] ;
-: '   parse-name [T] find-name 0= if forward then ;
 : defer   .def DEFER  0 header, 0 , reveal ;
 : value   .def VALUE  0 header, , reveal ;
+
+: find-name   #name min 2dup ['] forth search-wordlist dup if 2nip then ;
+: '   parse-name find-name 0= if forward then ;
 : immediate   ."  IMMEDIATE " ;
 
 cr .( META-INTERPRETER WORDS: ) cr
@@ -172,13 +182,11 @@ only also meta-compiler definitions previous
 : [   0 state !  interpreter-context ; immediate
 : ;   [M] reveal [M] [ ; immediate
 \ : ;code   postpone [ ... ; immediate
-: [compile]   [T] [compile] ; immediate
-: literal   s" (literal)" find-name drop [M] compile,
-   [M] , ; immediate
+: literal   s" (literal)" [M] find-name drop [M] compile, [M] , ; immediate
 : [']   [M] ' [M] literal ; immediate
 : is   [M] ' >body [M] literal postpone ! ; immediate
 : to   [M] ' >body [M] literal postpone ! ; immediate
-: postpone   parse-name [T] find-name meta-postpone ; immediate
+: postpone   parse-name [M] find-name [M] meta-postpone ; immediate
 : abort"   postpone if postpone s" postpone (abort") postpone then ; immediate
 : [char]   char postpone literal ; immediate
 
@@ -205,7 +213,7 @@ finders meta-xt   ?compile, meta-number execute
 
 : ?.name   state @ if space 2dup type then ;
 
-: meta-interpret  begin parse-name  ?.name  dup while
+: meta-interpret   begin parse-name  ?.name  dup while
    find-name meta-xt ?stack repeat 2drop ;
 
 : meta-loop   begin refill while meta-interpret repeat ;
@@ -220,7 +228,11 @@ interpreter-context definitions also host-interpreter
 : include   .def INCLUDE  meta-compile ;
 
 only definitions also meta-interpreter also host-interpreter
-: t-words   latestxt begin ?dup while dup >name type space >nextxt repeat ;
+: t-id.   >name type space ;
+: t-.nt   t-id. 1 ;
+: t-words   ['] forth ['] t-.nt traverse-wordlist ;
+: t-used    here t-dictionary - ;
+: t'        parse-name ['] forth search-wordlist ;
 
 
 
@@ -232,4 +244,5 @@ meta-compile kernel.fth
 
 cr .( TARGET DICTIONARY: ) cr
 only definitions
-t-words
+t-words cr
+." Used: " t-used .
