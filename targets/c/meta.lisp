@@ -7,7 +7,7 @@
 
 ;;; Words (partially) supported by this meta compiler:
 ;;
-;; ( \ [IF] [ELSE] [THEN] [DEFINED] [UNDEFINED]
+;; ( \ [IF] [ELSE] [THEN] [DEFINED] [UNDEFINED] INCLUDE
 ;; : ; IMMEDIATE DOES> DEFER CODE END-CODE
 ;; VARIABLE VALUE CREATE ALLOT , ' CELLS >CODE @ INVERT RSHIFT = CHAR -
 ;; [CHAR] ['] [ ] LITERAL POSTPONE TO IS ." S" ABORT"
@@ -553,6 +553,9 @@
 
 (defimmediate [undefined] ()
   (push (lognot (defined (read-word))) *control-stack*))
+
+(definterpreted include ()
+  (interpret-file (read-word)))
 
 (defun skip-until (&rest words)
   (do ((word (read-word) (read-word)))
