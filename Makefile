@@ -13,7 +13,7 @@ forth: kernel.o
 
 kernel.o: kernel.c kernel.h targets/c/forth.h
 
-%.c %.h: %.fth $(nucleus) $(meta) params.lisp
+%.c %.h: %.fth c.fth $(nucleus) $(meta) params.lisp
 	./lisp.sh '(progn (load "$(meta)") (compile-forth "$(nucleus)" "$<"))'
 
 params.lisp: params

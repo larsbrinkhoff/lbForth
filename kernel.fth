@@ -33,7 +33,6 @@ create data_stack     110 cells allot
 create return_stack   256 cells allot
 create jmpbuf         jmp_buf allot
 
-variable dp
 variable end_of_dictionary
 
 variable SP
@@ -84,22 +83,11 @@ create interpreters  ' execute , ' number , ' execute ,
 : bounds    over + swap ;
 : count     dup 1+ swap c@ ;
 
-: c,   here c!  1 allot ;
-: string, ( addr n -- )    here over allot align  swap cmove ;
-: #name   NAME_LENGTH 1 - ;
-
-: chain, ( nt wid -- )  >body dup @ , ! ;
-: link, ( nt -- )       to latestxt  current @ >body @ , ;
-: reveal                latestxt  current @ >body ! ;
-: name, ( a u -- )      #name min c,  #name string, ;
-: header, ( code -- )   align here  parse-name name,  link, ( code ) , 0 , ;
-
 \ ----------------------------------------------------------------------
 
 ( Core words. )
 
 : +!   swap over @ + swap ! ;
-: ,    here !  cell allot ;
 : -    negate + ;
 : 0=   if 0 else -1 then ;
 : 1+   1 + ;
@@ -120,6 +108,8 @@ variable  sink
 
 : nip    swap drop ;
 : 2nip   2>r 2drop 2r> ;
+
+include c.fth
 
 variable csp
 
@@ -153,10 +143,6 @@ variable >in
 
 : abort   data_stack 100 cells + sp!  quit ;
 
-: align     dp @ aligned dp ! ;
-: aligned   cell + 1 - cell negate nand invert ;
-: allot     dp +! ;
-
 variable base
 
 : bl   32 ;
@@ -176,7 +162,6 @@ variable compiler-words
 variable included-files
 
 create context   ' forth , ' forth , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
-variable current
 
 : lowercase? ( c -- flag )   dup [char] a < if drop 0 exit then [char] z 1+ < ;
 : upcase ( c1 -- c2 )   dup lowercase? if [ char A char a - ] literal + then ;
@@ -213,8 +198,6 @@ variable current
       >r 2dup r> search-wordlist ?dup
       if 2nip r> drop exit then
    repeat r> drop 0 ;
-
-: here   dp @ ;
 
 : invert   -1 nand ;
 : negate   invert 1+ ;
@@ -263,8 +246,6 @@ defer also
 
 : 2>r   r> swap rot >r >r >r ;
 : 2r>   r> r> r> rot >r swap ;
-
-: compile,   , ;
 
 defer refill
 

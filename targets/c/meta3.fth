@@ -1,7 +1,7 @@
 ( Metacompiler for C target. )
 
 (* Need to support these words:
- * ( \ [IF] [ELSE] [THEN] [DEFINED] [UNDEFINED]
+ * ( \ [IF] [ELSE] [THEN] [DEFINED] [UNDEFINED] INCLUDE
  * : ; IMMEDIATE DOES> DEFER CODE END-CODE
  * VARIABLE VALUE CREATE ALLOT , ' CELLS >CODE @ INVERT RSHIFT = CHAR -
  * [CHAR] ['] [ ] LITERAL POSTPONE IS TO  ." S"
@@ -13,8 +13,8 @@ require search.fth
 only forth definitions  decimal
 
 vocabulary target           \ Holds compiled target words.
-vocabulary host-compiler
-vocabulary host-interpreter
+vocabulary host-compiler    \ Overrides meta definitions.
+vocabulary host-interpreter \ Overrides meta definitions.
 vocabulary meta-compiler    \ Words executed in interpretation state.
 vocabulary meta-interpreter \ Immediate words used in compilation state.
 
@@ -34,8 +34,11 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 : t]   r> r> set-current nr> set-order >r ;
 : [T]   postpone [t ' compile, postpone t] ; immediate
 
-: forward ( a u -- xt )   ."  FORWARD:" 2dup type  save-input n>r string-input
-   [T] create latestxt  nr> restore-input abort" Restore input?" ;
+: input>r   r> save-input n>r >r ;
+: r>input   r> nr> restore-input abort" Restore-input?" >r ;
+
+: forward ( a u -- xt )   ."  FORWARD:" 2dup type  input>r string-input
+   [T] create latestxt  r>input ;
 : forward,   forward compile, ;
 finders meta-postpone   postpone, forward, compile,
 
@@ -43,34 +46,26 @@ finders meta-postpone   postpone, forward, compile,
 : copy   >in @ >r : r> >in !  ' compile, postpone ; ;
 : immediate:   copy immediate ;
 
-: (.def)   cr type space  >in @ parse-name type >in ! ;
-: .def   parse-name postpone sliteral postpone (.def) ; immediate
-
 create code-line  128 allot
 create t-dictionary  17000 allot
 
 
 
-( Host words. )
+( Host words to override defining words in metacompiler. )
 
 only also host-interpreter definitions
 
 : :   : interpreter-context also host-compiler ;
 
-copy defer  copy immediate  copy create  copy variable  copy constant
-copy value
+copy ,       copy '         copy allot     copy defer  copy immediate
+copy create  copy variable  copy constant  copy value  
+\ Maybe also [DEFINED] [UNDEFINED]
 
 cr .( HOST INTERPRETER WORDS: ) cr  words
 
-only also host-compiler definitions
+( Host words to override compiling words in metacompiler. )
 
-4 iconst cell
-16 iconst name_length
-158 iconst jmp_buf
-16 iconst to_next
-20 iconst to_code
-24 iconst to_does
-28 iconst to_body
+only also host-compiler definitions
 
 : ;   postpone ; interpreter-context also host-interpreter ; immediate
 
@@ -89,9 +84,9 @@ cr .( HOST COMPILING WORDS: ) cr  words
 
 
 
-( Metacompiler interpreter words. )
+( Metacompiler interpreter words. Primarily defining words. )
 
-(* [DEFINED] [UNDEFINED]
+(* [DEFINED] [UNDEFINED] INCLUDE
  * : IMMEDIATE DOES> DEFER CODE END-CODE
  * VARIABLE VALUE CREATE ALLOT , ' CELLS >CODE
  * CELL JMP_BUF NAME_LENGTH
@@ -105,38 +100,28 @@ interpreter-context definitions also host-interpreter
 : [defined]     [T] [defined] ; immediate
 : [undefined]   [T] [undefined] ; immediate
 
-16 iconst name_length
 158 constant jmp_buf
-
-variable dp  t-dictionary dp !
-: here       dp @ ;
-: allot      dp +! ;
-: aligned    cell + 1 - cell negate nand invert ;
-: align      dp @ aligned dp ! ;
-: ,          here !   cell allot ;
-: c,         here c!  1 allot ;
-: compile,   , ;
-: string,    here over allot align  swap cmove ;
-: #name      NAME_LENGTH 1 - ;
-
-variable forth    0 forth !
-variable current  ' forth current !
+16 constant name_length
 
 0 value latestxt
-: link, ( nt -- )       to latestxt  current @ >body @ , ;
-: reveal                latestxt current @ >body ! ;
-: name, ( a u -- )      #name min c,  #name string, ;
-
-: header,    >in @ [T] create >in !
-             align here  parse-name name,  link, 0 , 0 , ;
+include c.fth
+variable forth
+0 forth !
+' forth current !
+t-dictionary dp !
              
 : used       here t-dictionary - ;
 
 : cells   cell * ;
 
-: create   .def CREATE  header, reveal ;
+t-dictionary value there
+: (.def)   space here there - .  here to there
+   cr type space  >in @ parse-name type >in ! ;
+: .def   parse-name postpone sliteral postpone (.def) ; immediate
 
-: code   .def CODE  header, reveal
+: create   .def CREATE  0 header, reveal ;
+
+: code   .def CODE  0 header, reveal
    \ ." xt_t * REGPARM "
    \ latestxt >name type
    \ ." _code (xt_t *IP, struct word *word)" cr
@@ -151,12 +136,12 @@ variable current  ' forth current !
 : end-code   ;
 
 : ]   1 state !  compiler-context ;
-: constant   .def CONSTANT  header, , reveal ;
-: variable   .def VARIABLE  header, 0 , reveal ;
-: :   .def COLON  header, ] ;
+: constant   .def CONSTANT  0 header, , reveal ;
+: variable   .def VARIABLE  0 header, 0 , reveal ;
+: :   .def COLON  0 header, ] ;
 : '   parse-name [T] find-name 0= if forward then ;
-: defer   .def DEFER  header, 0 , reveal ;
-: value   .def VALUE  header, , reveal ;
+: defer   .def DEFER  0 header, 0 , reveal ;
+: value   .def VALUE  0 header, , reveal ;
 : immediate   ."  IMMEDIATE " ;
 
 cr .( META-INTERPRETER WORDS: ) cr
@@ -177,7 +162,6 @@ only also meta-compiler definitions previous
 
 4 iconst cell
 16 iconst name_length
-158 iconst jmp_buf
 16 iconst to_next
 20 iconst to_code
 24 iconst to_does
@@ -219,17 +203,24 @@ only forth definitions
 
 finders meta-xt   ?compile, meta-number execute
 
-: meta-interpret  begin parse-name ( space 2dup type ) dup while
+: ?.name   state @ if space 2dup type then ;
+
+: meta-interpret  begin parse-name  ?.name  dup while
    find-name meta-xt ?stack repeat 2drop ;
 
 : meta-loop   begin refill while meta-interpret repeat ;
 
-: meta-compile   parse-name r/o open-file abort" Open?"  save-input n>r
+: meta-compile   parse-name r/o open-file abort" Open?"  input>r
    file-input interpreter-context meta-loop
-   source-id close-file abort" Close?"  postpone [
-   nr> restore-input abort" Restore-input?"  only forth definitions ;
+   source-id close-file abort" Close?"  r>input ;
 
 : t-see   only previous target see only ;
+
+interpreter-context definitions also host-interpreter
+: include   .def INCLUDE  meta-compile ;
+
+only definitions also meta-interpreter also host-interpreter
+: t-words   latestxt begin ?dup while dup >name type space >nextxt repeat ;
 
 
 
@@ -239,7 +230,6 @@ interpreter-context
 meta-compile targets/c/nucleus.fth
 meta-compile kernel.fth
 
-cr .( TARGET WORDS: ) cr
-also target words only
-
 cr .( TARGET DICTIONARY: ) cr
+only definitions
+t-words
