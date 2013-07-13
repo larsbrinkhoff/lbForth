@@ -10,25 +10,6 @@
 \ Return stack:		>r r>
 \ I/O:			emit open-file read-file close-file
 
-: warm
-   ." lbForth" cr
-   ['] nop dup is backtrace is also
-   ['] dummy-catch is catch
-   ['] (number) is number
-   ['] latestxt dup to latestxt forth !
-   ['] forth current !
-   0 compiler-words !
-   0 included-files !
-   10 base !
-   postpone [
-   s" core.fth" included
-   s" core-ext.fth" included
-   s" string.fth" included
-   s" tools.fth" included
-   s" file.fth" included
-   ." ok" cr
-   quit ;
-
 create data_stack     110 cells allot
 create return_stack   256 cells allot
 create jmpbuf         jmp_buf allot
@@ -38,21 +19,55 @@ variable end_of_dictionary
 variable SP
 variable RP
 
+: cell    cell ; \ Metacompiler knows what to do.
+: cell+   cell + ;
+
 : sp@   SP @ cell + ;
 : sp!   SP ! ;
 : rp@   RP @ cell + ;
 : rp!   postpone (literal) RP , postpone ! ; immediate
 
+variable  temp
+: drop    temp ! ;
+: 2drop   drop drop ;
+: 3drop   2drop drop ;
+
+: r@   rp@ cell+ @ ;
+: i    r> r@ swap >r ;
+
+: swap   >r temp ! r> temp @ ;
+: over   >r >r r@ r> temp ! r> temp @ ;
+: rot    >r swap r> swap ;
+
+: 2>r   r> swap rot >r >r >r ;
+: 2r>   r> r> r> rot >r swap ;
+
+: dup    sp@ @ ;
+: 2dup   over over ;
+: 3dup   >r >r r@ over 2r> over >r rot swap r> ;
+: ?dup   dup if dup then ;
+
+cell 4 = [if] : cells   dup + dup + ; [then]
+cell 8 = [if] : cells   dup + dup + dup + ; [then]
+
+: -    negate + ;
 : cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
 
 : >name    count cabs ;
 : >lfa     TO_NEXT + ;
 : >nextxt   >lfa @ ;
 
+: invert   -1 nand ;
+: negate   invert 1 + ;
+: 1+       1 + ;
+
 : branch    r> @ >r ;
 : (+loop)   r> swap r> + r@ over >r < invert swap >r ;
 
 : ?stack   data_stack 99 cells + sp@ < abort" Stack underflow" ;
+
+: bl   32 ;
+: cr   10 emit ;
 
 defer number
 
@@ -88,23 +103,7 @@ create interpreters  ' execute , ' number , ' execute ,
 ( Core words. )
 
 : +!   swap over @ + swap ! ;
-: -    negate + ;
 : 0=   if 0 else -1 then ;
-: 1+   1 + ;
-
-variable  sink
-: drop    sink ! ;
-: 2drop   drop drop ;
-: 3drop   2drop drop ;
-
-: swap   >r >r rp@ cell+ @ r> r> drop ;
-: over   >r >r r@ 2r> ;
-: rot    >r swap r> swap ;
-
-: dup    sp@ @ ;
-: 2dup   over over ;
-: 3dup   >r >r r@ over 2r> over >r rot swap r> ;
-: ?dup   dup if dup then ;
 
 : nip    swap drop ;
 : 2nip   2>r 2drop 2r> ;
@@ -138,20 +137,9 @@ variable csp
 
 variable >in
 
-: r@   rp@ cell+ @ ;
-: i    r> r@ swap >r ;
-
 : abort   data_stack 100 cells + sp!  quit ;
 
 variable base
-
-: bl   32 ;
-: cr   10 emit ;
-
-: cell    cell ; \ Metacompiler knows what to do.
-: cell+   cell + ;
-cell 4 = [if] : cells   dup + dup + ; [then]
-cell 8 = [if] : cells   dup + dup + dup + ; [then]
 
 : unex   2r> r> 3drop ;
 \ Put xt and 'unex on return stack, then jump to that.
@@ -199,9 +187,6 @@ create context   ' forth , ' forth , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
       if 2nip r> drop exit then
    repeat r> drop 0 ;
 
-: invert   -1 nand ;
-: negate   invert 1+ ;
-
 : key   here dup 1 0 read-file 0 = 1 = nand 0= abort" Read error"  c@ ;
 
 : literal   state @ if postpone (literal) , then ; immediate
@@ -243,9 +228,6 @@ defer also
 ( Core extension words. )
 
 : <>   = 0= ;
-
-: 2>r   r> swap rot >r >r >r ;
-: 2r>   r> r> r> rot >r swap ;
 
 defer refill
 
@@ -298,6 +280,25 @@ defer backtrace
 : r/o   s" r" drop ;
 
 : (defer)   @ execute ;
+
+: warm
+   ." lbForth" cr
+   ['] nop dup is backtrace is also
+   ['] dummy-catch is catch
+   ['] (number) is number
+   ['] latestxt dup to latestxt forth !
+   ['] forth current !
+   0 compiler-words !
+   0 included-files !
+   10 base !
+   postpone [
+   s" core.fth" included
+   s" core-ext.fth" included
+   s" string.fth" included
+   s" tools.fth" included
+   s" file.fth" included
+   ." ok" cr
+   quit ;
 
 \ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
 0 value latestxt
