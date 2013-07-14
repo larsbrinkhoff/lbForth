@@ -23,7 +23,7 @@
 : c?      c@ . ;
 : cdump   bounds do i c? loop cr ;
 
-: id. ( xt -- )   >name ?dup if type else ." :noname@" 1- (.) then ;
+: id. ( xt -- )   >name ?dup if type else ." :noname@" 1- (.) then space ;
 
 : -rot   swap under swap ;
 
@@ -36,11 +36,11 @@
 : ?nt>end   2dup < if rot drop swap -1 else drop 0 then ;
 : >end   here swap context @ ['] ?nt>end traverse-wordlist drop ;
 
-: .nt     id. space -1 ;
+: .nt     id. -1 ;
 : words   context @ ['] .nt traverse-wordlist ;
 
 : body?      dup >body swap >end within ;
-: .offset    2dup id. swap >body - ."  +" . ;
+: .offset    2dup id. swap >body - ." +" . ;
 : ?.offset   2dup body? if .offset 0 else drop -1 then ;
 :noname      return_stack 256 cells + rp@ do ."  > " i ?
              i @ context @ ['] ?.offset traverse-wordlist cr drop
@@ -128,7 +128,7 @@ finders redefine-xt   redefine redefine (redefi)
 : re:        : latestxt dup count find-name redefine-xt ;
 
 : xt-bounds ( xt -- end start)   dup >end swap >body ;
-: .nt ( nt -- nt )   dup id. space ;
+: .nt ( nt -- nt )   dup id. ;
 : xref-foo ( xt nt -- xt flag )
    dup xt-bounds do over i @ = if .nt leave then cell +loop drop 1 ;
 : xref ( "name" -- )   ' context @ ['] xref-foo traverse-wordlist drop ;

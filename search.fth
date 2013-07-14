@@ -21,11 +21,8 @@
 : only         forth-wordlist forth-wordlist 2 set-order ;
 :noname        get-order 1+ over swap set-order ; is also
 re: previous   get-order 1- nip set-order ;
-: order        ." Order:"
-               context begin dup @ ?dup while
-                  space id. cell+
-               repeat drop cr
-               ." Current: " current @ id. cr ;
+: order        ." Order: " context begin dup @ ?dup while id. cell+ repeat
+   drop cr ." Current: " current @ id. cr ;
 
 ( Traditional vocabulary words. )
 
