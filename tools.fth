@@ -110,7 +110,7 @@ is backtrace
 
 \ TODO: synonym
 
-: [undefined]   parse-name find-name if nip 0 else nip nip -1 then ;
+: [undefined]   parse-name find-name if drop 0 else 2drop -1 then ; immediate
 : [defined]     postpone [undefined] 0= ; immediate
 
 \ ----------------------------------------------------------------------
