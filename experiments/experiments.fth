@@ -63,3 +63,19 @@ previous definitions
 
 : ?? ( x "word" -- )    postpone if  ' compile,  postpone then ; immediate
 : 0?? ( x "word" -- )   postpone 0=  postpone ?? ; immediate
+
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ 
+
+: name-processor:   create ' , ' , ' ,
+   does> >r find-name r> swap 1+ cells + @ execute ;
+
+name-processor: skip-name        end? 2drop end?
+name-processor: interpret-name   execute number execute
+name-processor: compile-name     compile, number execute
+name-processor: postpone-name    postpone, abort compile,
+name-processor: macro-name       postpone, postpone-number, compile,
+
+\ E.g.
+\ : end? ( u1 xt -- u2 )   dup ['] (* = if drop 1
+\    else ['] *) = if 1- then then ;
+\ : (*   1 begin ?dup while next-name skip-name repeat ; immediate
