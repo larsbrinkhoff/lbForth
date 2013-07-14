@@ -23,10 +23,6 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 : target-context   only previous target ;
 : meta-context   only previous meta-compiler also meta-interpreter ;
 
-: (>defs)   get-current r> 2>r set-current ;
-: (defs>)   r> r> set-current >r ;
-: [definitions]   ' postpone literal  postpone (>defs)  ' compile,
-   postpone (defs>) ; immediate
 : [m   r> get-order n>r  meta-context >r ;
 : m]   r> nr> set-order >r ;
 : [M]   [m ' m] compile, ; immediate
@@ -97,9 +93,6 @@ cr .( HOST COMPILING WORDS: ) cr  words
 
 interpreter-context definitions also host-interpreter
 
-: [defined]     [T] [defined] ; immediate
-: [undefined]   [T] [undefined] ; immediate
-
 158 constant jmp_buf
 16 constant name_length
 16 constant to_next
@@ -154,6 +147,13 @@ finders meta-postpone   postpone, forward, compile,
 : '   parse-name find-name 0= if forward then ;
 : immediate   ."  IMMEDIATE " ;
 
+: [undefined]   parse-name find-name if drop 0 else 2drop -1 then ; immediate
+: [defined]     postpone [undefined] 0= ; immediate
+
+: ?end ( xt nt -- nt 0 | xt 1 )   2dup >nextxt = if nip 0 else drop 1 then ;
+: >end ( xt -- a )   ['] forth ['] ?end traverse-wordlist ;
+
+
 cr .( META-INTERPRETER WORDS: ) cr
 previous words cr
 
@@ -168,7 +168,7 @@ previous words cr
  * CELL
  *)
 
-only also meta-compiler definitions previous
+only also meta-interpreter also meta-compiler definitions also host-interpreter
 
 4 iconst cell
 16 iconst name_length
@@ -177,12 +177,30 @@ only also meta-compiler definitions previous
 24 iconst to_does
 28 iconst to_body
 
-: [defined]     [T] [defined] ; immediate
-: [undefined]   [T] [undefined] ; immediate
+: [undefined]   parse-name find-name if drop 0 else 2drop -1 then ; immediate
+: [defined]     postpone [undefined] 0= ; immediate
+
+only forth definitions also meta-interpreter also host-interpreter
+(*
+: forward,    forward compile, ;
+: postpone,   postpone literal  postpone compile, ;
+finders meta-postpone   postpone, forward, compile,
+finders t-pp     postpone, forward, compile, ;
+: (t-postpone)   find-name t-pp ;
+: t-postpone     parse-name postpone sliteral postpone (t-postpone) ; immediate
+*)
+: t-postpone   postpone postpone ; immediate
+only also meta-interpreter also meta-compiler definitions also host-interpreter
+
 : [   0 state !  interpreter-context ; immediate
-: ;   [M] reveal [M] [ ; immediate
+: ;   reveal t-postpone exit postpone [ ; immediate
 \ : ;code   postpone [ ... ; immediate
-: literal   s" (literal)" [M] find-name drop [M] compile, [M] , ; immediate
+: literal   t-postpone (literal) , ; immediate
+\ : [']   ' postpone literal ; immediate
+
+only also meta-compiler definitions previous
+
+\ : literal   s" (literal)" [M] find-name drop [M] compile, [M] , ; immediate
 : [']   [M] ' [M] literal ; immediate
 : is   [M] ' >body [M] literal postpone ! ; immediate
 : to   [M] ' >body [M] literal postpone ! ; immediate
@@ -222,17 +240,24 @@ finders meta-xt   ?compile, meta-number execute
    file-input interpreter-context meta-loop
    source-id close-file abort" Close?"  r>input ;
 
-: t-see   only previous target see only ;
-
 interpreter-context definitions also host-interpreter
 : include   .def INCLUDE  meta-compile ;
 
 only definitions also meta-interpreter also host-interpreter
-: t-id.   >name type space ;
-: t-.nt   t-id. 1 ;
+: t-id.     >name type space ;
+: t-.nt     t-id. 1 ;
 : t-words   ['] forth ['] t-.nt traverse-wordlist ;
 : t-used    here t-dictionary - ;
-: t'        parse-name ['] forth search-wordlist ;
+: t'        parse-name ['] forth search-wordlist 0= abort" Unknown?" ;
+: t-xt??    nip over <> dup ;
+: t-xt?     1 ['] forth ['] xt?? traverse-wordlist nip 0= ;
+\ : t-xt?     c@ 1 15 within ;
+
+: t-disassemble   dup . dup t-xt? if t-id. else drop then ;
+: t-see-line   cr dup .addr  @ t-disassemble ;
+: body-bounds   dup >end swap >body ;
+: t-see-xt   ." : " dup t-id.  body-bounds do i t-see-line cell +loop ;
+: t-see   t' t-see-xt ." ;" cr ;
 
 
 
