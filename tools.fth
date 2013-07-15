@@ -47,8 +47,9 @@
              cell +loop ;
 is backtrace
 
-: xt??   nip over <> dup ;
-: xt?    1 ['] xt?? traverse-order nip 0= ;
+: xt?? ( xt x nt -- xt f f )   nip over <> dup ;
+: xt? ( xt -- f )              1 ['] xt?? traverse-order nip 0= ;
+: wid-xt? ( xt wid -- f )      1 swap ['] xt?? traverse-wordlist nip 0= ;
 
 : disassemble ( x -- )
     dup xt? if
