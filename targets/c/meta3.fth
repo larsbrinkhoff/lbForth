@@ -39,7 +39,6 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 : forward ( a u -- xt )   ."  FORWARD:" 2dup type  input>r string-input
    [T] create latestxt  r>input ;
 
-: iconst   create immediate ,  does> @ postpone literal ;
 : copy   >in @ >r : r> >in !  ' compile, postpone ; ;
 : immediate:   copy immediate ;
 
@@ -96,9 +95,13 @@ cr .( HOST COMPILING WORDS: ) cr  words
 
 interpreter-context definitions also host-interpreter
 
+4 constant cell
 158 constant jmp_buf
 16 constant name_length
 16 constant to_next
+20 constant to_code
+24 constant to_does
+28 constant to_body
 
 0 value latestxt
 ( *** Target compiler included here. *** )
@@ -189,13 +192,6 @@ previous words cr
 
 only also meta-interpreter also meta-compiler definitions also host-interpreter
 
-4 iconst cell
-16 iconst name_length
-16 iconst to_next
-20 iconst to_code
-24 iconst to_does
-28 iconst to_body
-
 : [undefined]   parse-name find-name if drop 0 else 2drop -1 then ; immediate
 : [defined]     postpone [undefined] 0= ; immediate
 
@@ -204,6 +200,11 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 \ : ;code   postpone [ ... ; immediate
 : literal   t-postpone (literal) , ; immediate
 : cell   cell t-postpone literal ; immediate
+: name_length   name_length t-postpone literal ; immediate
+: to_next   to_next t-postpone literal ; immediate
+: to_code   to_code t-postpone literal ; immediate
+: to_does   to_does t-postpone literal ; immediate
+: to_body   to_body t-postpone literal ; immediate
 : [']   [M] ' t-postpone literal ; immediate
 : is   [M] ' >body t-postpone literal t-postpone ! ; immediate
 : to   [M] ' >body t-postpone literal t-postpone ! ; immediate
@@ -236,8 +237,10 @@ only forth definitions
 
 : ?compile,   state @ if [M] compile, else execute then ;
 
+: ?literal,   state @ if [M] literal then ;
+
 : meta-number  2>r 0 0 2r@ >number nip if 2drop 2r> forward ?compile,
-   else 2r> 3drop postpone literal then ;
+   else 2r> 3drop ?literal, then ;
 
 finders meta-xt   ?compile, meta-number execute
 
@@ -258,15 +261,13 @@ finders meta-xt   ?compile, meta-number execute
 interpreter-context definitions also host-interpreter
 : include   .def INCLUDE  meta-compile ;
 
-only definitions also meta-interpreter also host-interpreter
+only forth definitions also meta-interpreter also host-interpreter
 : t-id.     >name type space ;
 : t-.nt     t-id. 1 ;
 : t-words   ['] forth ['] t-.nt traverse-wordlist ;
 : t-used    here t-dictionary - ;
 : t'        parse-name ['] forth search-wordlist 0= abort" Unknown?" ;
-: t-xt??    nip over <> dup ;
 : t-xt?     1 ['] forth ['] xt?? traverse-wordlist nip 0= ;
-\ : t-xt?     c@ 1 15 within ;
 
 : t-disassemble   dup . dup t-xt? if t-id. else drop then ;
 : t-see-line   cr dup .addr  @ t-disassemble ;
