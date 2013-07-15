@@ -36,9 +36,6 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 : input>r   r> save-input n>r >r ;
 : r>input   r> nr> restore-input abort" Restore-input?" >r ;
 
-: forward ( a u -- xt )   ."  FORWARD:" 2dup type  input>r string-input
-   [T] create latestxt  r>input ;
-
 : copy   >in @ >r : r> >in !  ' compile, postpone ; ;
 : immediate:   copy immediate ;
 
@@ -143,7 +140,15 @@ t-dictionary value there
 
 : find-name   #name min 2dup ['] forth search-wordlist dup if 2nip then ;
 
+only forth definitions
+: forward ( a u -- xt )   ."  FORWARD:" 2dup type  input>r string-input
+   [T] create latestxt  r>input ;
+
+interpreter-context definitions also host-interpreter
+
 : forward,    forward compile, ;
+finders target-xt   compile, forward, abort
+: target, ( a u -- )   find-name target-xt ;
 
 only forth definitions also meta-interpreter also host-interpreter
 finders tpp   compile, forward, abort
@@ -239,7 +244,7 @@ only forth definitions
 
 : ?literal,   state @ if [M] literal then ;
 
-: meta-number  2>r 0 0 2r@ >number nip if 2drop 2r> forward ?compile,
+: meta-number  2>r 0 0 2r@ >number nip if 2drop 2r> [M] target, \ forward ?compile,
    else 2r> 3drop ?literal, then ;
 
 finders meta-xt   ?compile, meta-number execute
