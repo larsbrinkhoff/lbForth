@@ -1,6 +1,5 @@
 *.o
 forth
 kernel.[ch]
-params
-params.lisp
+params*
 *~

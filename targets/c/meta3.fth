@@ -92,13 +92,14 @@ cr .( HOST COMPILING WORDS: ) cr  words
 
 interpreter-context definitions also host-interpreter
 
-4 constant cell
-158 constant jmp_buf
-16 constant name_length
-16 constant to_next
-20 constant to_code
-24 constant to_does
-28 constant to_body
+include params.fth
+cell-size constant cell
+jmp_buf-size constant jmp_buf
+name-size constant name_length
+next-offset constant to_next
+code-offset constant to_code
+does-offset constant to_does
+body-offset constant to_body
 
 0 value latestxt
 ( *** Target compiler included here. *** )
@@ -244,7 +245,7 @@ only forth definitions
 
 : ?literal,   state @ if [M] literal then ;
 
-: meta-number  2>r 0 0 2r@ >number nip if 2drop 2r> [M] target, \ forward ?compile,
+: meta-number  2>r 0 0 2r@ >number nip if 2drop 2r> [M] target,
    else 2r> 3drop ?literal, then ;
 
 finders meta-xt   ?compile, meta-number execute
