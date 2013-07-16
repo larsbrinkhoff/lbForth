@@ -178,7 +178,8 @@ finders meta-postpone   postpone, forward, compile,
 : defer   .def DEFER  0 header, 0 , reveal ;
 : value   .def VALUE  0 header, , reveal ;
 
-: '   parse-name find-name 0= if forward then ;
+: '   parse-name find-name 0=
+   if cr ." Undefined, and cannot tick: " type cr abort then ;
 : immediate   ."  IMMEDIATE " ;
 
 : [undefined]   parse-name find-name if drop 0 else 2drop -1 then ; immediate
@@ -217,9 +218,11 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 : to_code   to_code t-postpone literal ; immediate
 : to_does   to_does t-postpone literal ; immediate
 : to_body   to_body t-postpone literal ; immediate
-: [']   [M] ' t-postpone literal ; immediate
-: is   [M] ' >body t-postpone literal t-postpone ! ; immediate
-: to   [M] ' >body t-postpone literal t-postpone ! ; immediate
+: [']   t-postpone (literal) parse-name target, ; immediate
+: is   t-postpone (literal) parse-name target, t-postpone >body
+   t-postpone ! ; immediate
+: to   t-postpone (literal) parse-name target, t-postpone >body
+   t-postpone ! ; immediate
 
 : if   t-postpone 0branch >mark ; immediate
 : then   >resolve ; immediate
@@ -227,6 +230,9 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 : else   t-postpone ahead swap t-postpone then ; immediate
 
 : postpone   ." POSTPONE " parse-name find-name meta-postpone ; immediate
+
+: s"   t-postpone (s")  [char] " parse  dup ,  string, ; immediate
+: ."   [M] s"  t-postpone type ; immediate
 
 only also meta-compiler definitions previous
 
@@ -237,7 +243,7 @@ immediate: (       immediate: \
 immediate: [if]    immediate: [else]   immediate: [then]
 immediate: begin    immediate: until  immediate: while
 immediate: repeat  immediate: again    immediate: do     immediate: leave
-immediate: loop    immediate: ."       immediate: s"
+immediate: loop
 
 immediate: does>
 
