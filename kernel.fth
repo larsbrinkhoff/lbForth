@@ -80,6 +80,11 @@ defer number
    drop r> if negate then
    postpone literal ;
 
+: unex   2r> r> 3drop ;
+\ Put xt and 'unex on return stack, then jump to that.
+: execute   ['] unex >r >r rp@ >r ;
+: perform   @ execute ;
+
 defer catch
 : dummy-catch   execute 0 ;
 
@@ -137,10 +142,6 @@ variable >in
 : abort   data_stack 100 cells + sp!  quit ;
 
 variable base
-
-: unex   2r> r> 3drop ;
-\ Put xt and 'unex on return stack, then jump to that.
-: execute   ['] unex >r >r rp@ >r ;
 
 variable forth
 variable compiler-words
@@ -245,8 +246,6 @@ defer backtrace
    r/o open-file abort" Read error." include-file ;
 
 : r/o   s" r" drop ;
-
-: (defer)   @ execute ;
 
 : warm
    ." lbForth" cr

@@ -290,7 +290,7 @@
   (setq *state* 'interpret-word))
 
 (definterpreted defer ()
-  (output-header (read-word) "dodoes_code" (word-body "(defer)"))
+  (output-header (read-word) "dodoes_code" (word-body "perform"))
   (output "  (cell)~A" (tick "abort")))
 
 (defimmediate is ()
