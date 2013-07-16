@@ -111,6 +111,9 @@ create interpreters  ' execute , ' number , ' execute ,
 
 include c.fth
 
+: (s") ( -- addr n ) ( R: ret1 -- ret2 )
+   r> dup @ swap cell+ 2dup + aligned >r swap ;
+
 variable csp
 
 : .latest   latestxt >name type ;

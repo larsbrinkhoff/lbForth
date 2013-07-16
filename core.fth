@@ -78,9 +78,6 @@ finders postpone-xt   postpone, abort compile,
 : compile-only   hide  current @  [ ' compiler-words ] literal current !
                  link  reveal  current ! ;
 
-: (s") ( -- addr n ) ( R: ret1 -- ret2 )
-   r> dup @ swap cell+ 2dup + aligned >r swap ;
-
 create squote   128 allot
 
 : s"   [char] " parse  >r squote r@ cmove  squote r> ;
