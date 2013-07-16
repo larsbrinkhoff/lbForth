@@ -42,6 +42,10 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 create code-line  128 allot
 create t-dictionary  17000 allot
 
+: ?resolve ( a u )   [T] find-name if ." RESOLVE-FORWARD:" dup id.
+      0 over c!  drop \ TODO: resolve previous references.
+   else 2drop then ;
+
 
 
 ( Host words to override defining words in metacompiler. )
@@ -109,8 +113,8 @@ variable forth
 ' forth current !
 t-dictionary dp !
              
-: >mark   ." >MARK " here .s 0 , ;
-: >resolve   ." >RESOLVE " here .s swap ! ;
+: >mark   here 0 , ;
+: >resolve   here swap ! ;
 
 : cells   cell * ;
 
@@ -122,6 +126,8 @@ t-dictionary value there
 \ Possibly, intercept definitions and create a corresponding
 \ definition in the host.
 \ : header,   >in @ [T] create >in !  header, ;
+
+: header,   >in @ parse-name ?resolve >in !  header, ;
 
 : create   .def CREATE  0 header, reveal ;
 
