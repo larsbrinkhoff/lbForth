@@ -236,19 +236,16 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 
 : s"   t-postpone (s")  [char] " parse  dup ,  string, ; immediate
 : ."   [M] s"  t-postpone type ; immediate
+: [char]   char t-postpone literal ; immediate
+: abort"   t-postpone if [M] s" t-postpone (abort") t-postpone then ; immediate
 
 only also meta-compiler definitions previous
 
-: abort"   postpone if postpone s" postpone (abort") postpone then ; immediate
-: [char]   char postpone literal ; immediate
-
 immediate: (       immediate: \
 immediate: [if]    immediate: [else]   immediate: [then]
-immediate: begin    immediate: until  immediate: while
+immediate: begin   immediate: until    immediate: while
 immediate: repeat  immediate: again    immediate: do     immediate: leave
-immediate: loop
-
-immediate: does>
+immediate: loop    immediate: does>
 
 cr .( META-COMPILER WORDS: ) cr
 also meta-compiler words cr previous
