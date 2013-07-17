@@ -42,7 +42,7 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 create code-line  128 allot
 create t-dictionary  17000 allot
 
-: ?resolve ( a u )   [T] find-name if ." RESOLVE-FORWARD:" dup id.
+: ?resolve ( a u )   [T] find-name if ." FRES:" dup id.
       0 over c!  drop \ TODO: resolve previous references.
    else 2drop then ;
 
@@ -148,18 +148,21 @@ t-dictionary value there
 : find-name   #name min 2dup ['] forth search-wordlist dup if 2nip then ;
 
 only forth definitions
-: forward ( a u -- xt )   ."  FORWARD:" 2dup type  input>r string-input
-   [T] create latestxt  r>input ;
+: forward-reference   [T] create immediate [M] here ,  0 [M] ,
+   does> ." FREF:" dup 0 >body - id. [M] here over @ [M] ,  swap ! ;
+: forward ( a u -- )   ." FNEW:" 2dup type  input>r string-input
+   forward-reference  r>input ;
 
 interpreter-context definitions also host-interpreter
 
-: forward,    forward compile, ;
-finders target-xt   compile, forward, abort
+finders target-xt   compile, forward abort
 : target, ( a u -- )   find-name target-xt ;
 
 only forth definitions also meta-interpreter also host-interpreter
-finders tpp   compile, forward, abort
-: (t-postpone)   find-name tpp ;
+finders tpp   compile, forward abort
+: hppt   find-name tpp ;
+finders hpp   abort hppt execute
+: (t-postpone)   target-context [H] find-name compiler-context hpp ;
 : ppt   drop postpone sliteral postpone (t-postpone) ;
 : ppn   drop ppt ;
 : pph   [H] compile, 2drop ;
@@ -169,7 +172,7 @@ finders pp   ppt ppn pph
 interpreter-context definitions also host-interpreter
 
 : postpone,   t-postpone (literal) , t-postpone compile, ;
-finders meta-postpone   postpone, forward, compile,
+finders meta-postpone   postpone, forward compile,
 
 : ]   1 state !  compiler-context ;
 : constant   .def CONSTANT  0 header, , reveal ;
@@ -229,7 +232,7 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 : ahead   t-postpone branch >mark ; immediate
 : else   t-postpone ahead swap t-postpone then ; immediate
 
-: postpone   ." POSTPONE " parse-name find-name meta-postpone ; immediate
+: postpone   parse-name find-name meta-postpone ; immediate
 
 : s"   t-postpone (s")  [char] " parse  dup ,  string, ; immediate
 : ."   [M] s"  t-postpone type ; immediate
@@ -302,6 +305,6 @@ meta-compile targets/c/nucleus.fth
 meta-compile kernel.fth
 
 cr .( TARGET DICTIONARY: ) cr
-only definitions
+only forth definitions
 t-words cr
 ." Used: " t-used .
