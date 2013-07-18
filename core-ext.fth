@@ -20,10 +20,10 @@
 
 : convert   char+ 65535 >number drop ;
 
-: case      0 ;
-: of        postpone over  postpone =  postpone if  postpone drop ;
-: endof     postpone else  swap 1+ ;
-: endcase   0 do  postpone then  loop postpone drop ;
+: case      0 ; immediate
+: of        postpone over  postpone =  postpone if  postpone drop ; immediate
+: endof     postpone else  swap 1+ ; immediate
+: endcase   postpone drop  0 ?do postpone then loop ; immediate
 
 : erase   0 fill ;
 
