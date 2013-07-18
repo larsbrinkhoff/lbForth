@@ -18,10 +18,9 @@ vocabulary host-interpreter \ Overrides metacompiler definitions.
 vocabulary meta-compiler    \ Words executed in interpretation state.
 vocabulary meta-interpreter \ Immediate words used in compilation state.
 
-: interpreter-context   only also meta-interpreter ;
-: compiler-context   only previous target also meta-compiler ;
-: target-context   only previous target ;
-: meta-context   only previous meta-compiler also meta-interpreter ;
+: interpreter-context   only forth also meta-interpreter ;
+: compiler-context   only previous meta-compiler ;
+: meta-context   compiler-context also meta-interpreter ;
 
 : [h   r> get-order n>r  only forth >r ;
 : h]   r> nr> set-order >r ;
@@ -29,7 +28,7 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 : [m   r> get-order n>r  meta-context >r ;
 : m]   r> nr> set-order >r ;
 : [M]  [m ' m] compile, ; immediate
-: [t   r> get-order n>r get-current >r  target-context definitions >r ;
+: [t   r> get-order n>r get-current >r only previous target definitions >r ;
 : t]   r> r> set-current nr> set-order >r ;
 : [T]  postpone [t ' compile, postpone t] ; immediate
 
@@ -41,10 +40,6 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 
 create code-line  128 allot
 create t-dictionary  17000 allot
-
-: ?resolve ( a u )   [T] find-name if ." FRES:" dup id.
-      0 over c!  drop \ TODO: resolve previous references.
-   else 2drop then ;
 
 
 
@@ -115,6 +110,8 @@ t-dictionary dp !
              
 : >mark   here 0 , ;
 : >resolve   here swap ! ;
+: <mark      here ;
+: <resolve   , ;
 
 : cells   cell * ;
 
@@ -122,12 +119,6 @@ t-dictionary value there
 : (.def)   space here there - .  here to there
    cr type space  >in @ parse-name type >in ! ;
 : .def   parse-name postpone sliteral postpone (.def) ; immediate
-
-\ Possibly, intercept definitions and create a corresponding
-\ definition in the host.
-\ : header,   >in @ [T] create >in !  header, ;
-
-: header,   >in @ parse-name ?resolve >in !  header, ;
 
 : create   .def CREATE  0 header, reveal ;
 
@@ -152,20 +143,15 @@ only forth definitions
    does> ." FREF:" dup 0 >body - id. [M] here over @ [M] ,  swap ! ;
 : forward ( a u -- )   ." FNEW:" 2dup type  input>r string-input
    forward-reference  r>input ;
-
-interpreter-context definitions also host-interpreter
-
-finders target-xt   compile, forward abort
-: target, ( a u -- )   find-name target-xt ;
+: ?forward   2dup ['] target search-wordlist if nip nip execute
+   else forward then ;
+: pph   compile, 2drop ;
 
 only forth definitions also meta-interpreter also host-interpreter
-finders tpp   compile, forward abort
-: hppt   find-name tpp ;
-finders hpp   abort hppt execute
-: (t-postpone)   target-context [H] find-name compiler-context hpp ;
-: ppt   drop postpone sliteral postpone (t-postpone) ;
+finders tpp   compile, ?forward abort
+: target,   find-name tpp ;
+: ppt   drop postpone sliteral postpone target, ;
 : ppn   drop ppt ;
-: pph   [H] compile, 2drop ;
 finders pp   ppt ppn pph
 : t-postpone   parse-name 2dup meta-context [H] find-name
    interpreter-context also host-compiler pp ; immediate
@@ -231,6 +217,10 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 : then   >resolve ; immediate
 : ahead   t-postpone branch >mark ; immediate
 : else   t-postpone ahead swap t-postpone then ; immediate
+\ unresolved   postpone postpone  postpone >mark ; immediate
+\ ahead        unresolved branch ; immediate
+\ if           unresolved 0branch ; immediate
+\ then         >resolve ; immediate
 
 : postpone   parse-name find-name meta-postpone ; immediate
 
@@ -239,7 +229,14 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 : [char]   char t-postpone literal ; immediate
 : abort"   t-postpone if [M] s" t-postpone (abort") t-postpone then ; immediate
 
-only also meta-compiler definitions previous
+: resolving   postpone t-postpone  postpone <resolve ; immediate
+: begin       <mark ; immediate
+: again       resolving branch ; immediate
+: until       resolving 0branch ; immediate
+
+\ : while    postpone if swap ; immediate
+: while    t-postpone 0branch >mark swap ; immediate
+: repeat   t-postpone again t-postpone then ; immediate
 
 immediate: (       immediate: \
 immediate: [if]    immediate: [else]   immediate: [then]
@@ -253,11 +250,11 @@ also meta-compiler words cr previous
 
 only forth definitions
 
-: ?compile,   state @ if [M] compile, else execute then ;
+: ?compile,   state @ abort" Metacompile to host definition?!?" execute ;
 
 : ?literal,   state @ if [M] literal then ;
 
-: meta-number  2>r 0 0 2r@ >number nip if 2drop 2r> [M] target,
+: meta-number  2>r 0 0 2r@ >number nip if 2drop 2r> target,
    else 2r> 3drop ?literal, then ;
 
 finders meta-xt   ?compile, meta-number execute
