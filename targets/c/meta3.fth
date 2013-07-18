@@ -297,6 +297,37 @@ only forth definitions also meta-interpreter also host-interpreter
 : t-see-xt   ." : " dup t-id.  body-bounds do i t-see-line cell +loop ;
 : t-see   t' t-see-xt ." ;" cr ;
 
+: ?first   over c@ 1 swap case
+   [char] 0 of ." zero" endof  [char] 1 of ." one" endof
+   [char] 2 of ." two" endof   [char] 3 of ." three" endof
+   [char] 4 of ." four" endof  [char] 5 of ." five" endof
+   [char] 6 of ." six" endof   [char] 7 of ." seven" endof
+   [char] 8 of ." eight" endof [char] 9 of ." nine" endof
+   nip 0 swap endcase /string ;
+: ?emit   2>r dup 2r> 1+ within if emit 0 then ;
+: .m    [char] 0 [char] 9 ?emit  [char] A [char] Z ?emit
+   [char] a [char] z ?emit  case  [char] ? of ." question" endof
+   [char] > of ." to" endof  [char] < of ." from" endof
+   [char] ' of ." tick" endof  [char] = of ." equal" endof
+   [char] . of ." dot" endof  [char] " of ." quote" endof
+   [char] [ of ." lbracket" endof  [char] ] of ." rbracket" endof
+   [char] + of ." plus" endof  [char] - of ." minus" endof
+   [char] * of ." star" endof  [char] # of ." number" endof
+   [char] / of ." slash" endof  [char] \ of ." backslash" endof
+   [char] @ of ." fetch" endof  [char] ! of ." store" endof
+   0 of endof  ." _" endcase ;
+: .mangled   ?first bounds ?do i c@ .m loop ;
+: .,   ." , " ;
+: .{  ." struct word " >name .mangled ." _word = { " ;
+: .name   dup c@ (.) .,  [char] " emit >name type [char] " emit ., ;
+: .link   >nextxt ?dup if >name ." &" .mangled ." _word, " else ." 0, " then ;
+: .code   >code @ drop ." enter_code, " ;
+: .does   >does @ drop ." 0, {" cr ;
+: .body   body-bounds ?do i @ ."   (cell)" (.) ., cr cell +loop ;
+: .}   ." } }" cr ;
+: dis   dup .{  dup .name  dup .link  dup .code  dup .does  .body  .}  1 ;
+: disassemble-target-dictionary   ['] forth ['] dis traverse-wordlist ;
+
 
 
 ( Start metacompilation. )
@@ -305,6 +336,7 @@ interpreter-context
 meta-compile targets/c/nucleus.fth
 meta-compile kernel.fth
 resolve-forward-references
+disassemble-target-dictionary
 
 cr .( TARGET DICTIONARY: ) cr
 only forth definitions
