@@ -122,18 +122,17 @@ t-dictionary value there
 
 : create   .def CREATE  0 header, reveal ;
 
+: .code1   ." xt_t * REGPARM " latestxt >name type
+   ." _code (xt_t *IP, struct word *word)" cr ;
+
+\ TODO: remember the C function name for later output.
+: .code2   source >in @ /string type cr ;
+
 : code   .def CODE  0 header, reveal
-   \ ." xt_t * REGPARM "
-   \ latestxt >name type
-   \ ." _code (xt_t *IP, struct word *word)" cr
-   \ ." {" cr
-   begin
-      refill 0= abort" Refill?" source s" end-code" compare
-   while
-   \   source type cr
-   repeat
-   \ ." }" cr ;
-;
+   parse-name s" \" compare if .code1 else .code2 then ." {" cr
+   begin refill 0= abort" Refill?" source s" end-code" compare
+   while source type cr repeat ." }" cr ;
+
 : end-code   ;
 
 : find-name   #name min 2dup ['] forth search-wordlist dup if 2nip then ;
@@ -176,7 +175,6 @@ finders meta-postpone   postpone, forward compile,
 
 : ?end ( xt nt -- nt 0 | xt 1 )   2dup >nextxt = if nip 0 else drop 1 then ;
 : >end ( xt -- a )   ['] forth ['] ?end traverse-wordlist ;
-
 
 cr .( META-INTERPRETER WORDS: ) cr
 previous words cr
@@ -227,7 +225,9 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 : s"   t-postpone (s")  [char] " parse  dup ,  string, ; immediate
 : ."   [M] s"  t-postpone type ; immediate
 : [char]   char t-postpone literal ; immediate
-: abort"   t-postpone if [M] s" t-postpone (abort") t-postpone then ; immediate
+: abort"   t-postpone if [M] s" t-postpone cr t-postpone type t-postpone cr
+   t-postpone abort t-postpone then ; immediate
+\ : abort"   t-postpone if [M] s" t-postpone (abort") t-postpone then ; immediate
 
 : resolving   postpone t-postpone  postpone <resolve ; immediate
 : begin       <mark ; immediate
@@ -248,7 +248,14 @@ cr .( META-COMPILER WORDS: ) cr
 also meta-compiler words cr previous
 
 
+
 only forth definitions
+
+: ?found   0= if cr ." Unresolved forward reference: " type cr abort then ;
+: resolve   ." FRES:" dup id. dup >name [M] find-name ?found  swap >body @
+   \ TODO: merge with LEAVE resolution.
+   begin dup while 2dup @ >r swap ! r> repeat 2drop 1 ;
+: resolve-forward-references   ['] target ['] resolve traverse-wordlist ;
 
 : ?compile,   state @ abort" Metacompile to host definition?!?" execute ;
 
@@ -297,6 +304,7 @@ only forth definitions also meta-interpreter also host-interpreter
 interpreter-context
 meta-compile targets/c/nucleus.fth
 meta-compile kernel.fth
+resolve-forward-references
 
 cr .( TARGET DICTIONARY: ) cr
 only forth definitions
