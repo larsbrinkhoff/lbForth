@@ -41,6 +41,27 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 create code-line  128 allot
 create t-dictionary  17000 allot
 
+: ?first   over c@ 1 swap case
+   [char] 0 of ." zero" endof  [char] 1 of ." one" endof
+   [char] 2 of ." two" endof   [char] 3 of ." three" endof
+   [char] 4 of ." four" endof  [char] 5 of ." five" endof
+   [char] 6 of ." six" endof   [char] 7 of ." seven" endof
+   [char] 8 of ." eight" endof [char] 9 of ." nine" endof
+   nip 0 swap endcase /string ;
+: ?emit   2>r dup 2r> 1+ within if emit 0 then ;
+: .m    [char] 0 [char] 9 ?emit  [char] A [char] Z ?emit
+   [char] a [char] z ?emit  case  [char] ? of ." question" endof
+   [char] > of ." to" endof  [char] < of ." from" endof
+   [char] ' of ." tick" endof  [char] = of ." equal" endof
+   [char] . of ." dot" endof  [char] " of ." quote" endof
+   [char] [ of ." lbracket" endof  [char] ] of ." rbracket" endof
+   [char] + of ." plus" endof  [char] - of ." minus" endof
+   [char] * of ." star" endof  [char] # of ." number" endof
+   [char] / of ." slash" endof  [char] \ of ." backslash" endof
+   [char] @ of ." fetch" endof  [char] ! of ." store" endof
+   0 of endof  ." _" endcase ;
+: .mangled   ?first bounds ?do i c@ .m loop ;
+
 
 
 ( Host words to override defining words in metacompiler. )
@@ -122,7 +143,7 @@ t-dictionary value there
 
 : create   .def CREATE  0 header, reveal ;
 
-: .code1   ." xt_t * REGPARM " latestxt >name type
+: .code1   ." xt_t * REGPARM " latestxt >name .mangled
    ." _code (xt_t *IP, struct word *word)" cr ;
 
 \ TODO: remember the C function name for later output.
@@ -168,7 +189,7 @@ finders meta-postpone   postpone, forward compile,
 
 : '   parse-name find-name 0=
    if cr ." Undefined, and cannot tick: " type cr abort then ;
-: immediate   ."  IMMEDIATE " ;
+: immediate   latestxt dup c@ negate swap c! ;
 
 : [undefined]   parse-name find-name if drop 0 else 2drop -1 then ; immediate
 : [defined]     postpone [undefined] 0= ; immediate
@@ -192,12 +213,11 @@ previous words cr
 
 only also meta-interpreter also meta-compiler definitions also host-interpreter
 
-: [undefined]   parse-name find-name if drop 0 else 2drop -1 then ; immediate
-: [defined]     postpone [undefined] 0= ; immediate
+: [defined]   parse-name find-name if drop -1 else 2drop 0 then ; immediate
+: [undefined]   postpone [defined] 0= ; immediate
 
 : [   0 state !  interpreter-context ; immediate
 : ;   reveal t-postpone exit t-postpone [ ; immediate
-\ : ;code   postpone [ ... ; immediate
 : literal   t-postpone (literal) , ; immediate
 : cell   cell t-postpone literal ; immediate
 : name_length   name_length t-postpone literal ; immediate
@@ -211,14 +231,12 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 : to   t-postpone (literal) parse-name target, t-postpone >body
    t-postpone ! ; immediate
 
-: if   t-postpone 0branch >mark ; immediate
-: then   >resolve ; immediate
-: ahead   t-postpone branch >mark ; immediate
-: else   t-postpone ahead swap t-postpone then ; immediate
-\ unresolved   postpone postpone  postpone >mark ; immediate
-\ ahead        unresolved branch ; immediate
-\ if           unresolved 0branch ; immediate
-\ then         >resolve ; immediate
+interpreter-context definitions also host-interpreter
+: unresolved   postpone t-postpone  postpone >mark ; immediate
+only also meta-interpreter also meta-compiler definitions also host-interpreter
+: ahead        unresolved branch ; immediate
+: if           unresolved 0branch ; immediate
+: then         >resolve ; immediate
 
 : postpone   parse-name find-name meta-postpone ; immediate
 
@@ -229,20 +247,21 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
    t-postpone abort t-postpone then ; immediate
 \ : abort"   t-postpone if [M] s" t-postpone (abort") t-postpone then ; immediate
 
+interpreter-context definitions also host-interpreter
 : resolving   postpone t-postpone  postpone <resolve ; immediate
+only also meta-interpreter also meta-compiler definitions also host-interpreter
 : begin       <mark ; immediate
 : again       resolving branch ; immediate
 : until       resolving 0branch ; immediate
 
-\ : while    postpone if swap ; immediate
-: while    t-postpone 0branch >mark swap ; immediate
+: while    t-postpone if swap ; immediate
 : repeat   t-postpone again t-postpone then ; immediate
+: else     t-postpone ahead swap t-postpone then ; immediate
 
 immediate: (       immediate: \
 immediate: [if]    immediate: [else]   immediate: [then]
-immediate: begin   immediate: until    immediate: while
-immediate: repeat  immediate: again    immediate: do     immediate: leave
-immediate: loop    immediate: does>
+immediate: do      immediate: leave    immediate: loop
+immediate: does>
 
 cr .( META-COMPILER WORDS: ) cr
 also meta-compiler words cr previous
@@ -297,26 +316,6 @@ only forth definitions also meta-interpreter also host-interpreter
 : t-see-xt   ." : " dup t-id.  body-bounds do i t-see-line cell +loop ;
 : t-see   t' t-see-xt ." ;" cr ;
 
-: ?first   over c@ 1 swap case
-   [char] 0 of ." zero" endof  [char] 1 of ." one" endof
-   [char] 2 of ." two" endof   [char] 3 of ." three" endof
-   [char] 4 of ." four" endof  [char] 5 of ." five" endof
-   [char] 6 of ." six" endof   [char] 7 of ." seven" endof
-   [char] 8 of ." eight" endof [char] 9 of ." nine" endof
-   nip 0 swap endcase /string ;
-: ?emit   2>r dup 2r> 1+ within if emit 0 then ;
-: .m    [char] 0 [char] 9 ?emit  [char] A [char] Z ?emit
-   [char] a [char] z ?emit  case  [char] ? of ." question" endof
-   [char] > of ." to" endof  [char] < of ." from" endof
-   [char] ' of ." tick" endof  [char] = of ." equal" endof
-   [char] . of ." dot" endof  [char] " of ." quote" endof
-   [char] [ of ." lbracket" endof  [char] ] of ." rbracket" endof
-   [char] + of ." plus" endof  [char] - of ." minus" endof
-   [char] * of ." star" endof  [char] # of ." number" endof
-   [char] / of ." slash" endof  [char] \ of ." backslash" endof
-   [char] @ of ." fetch" endof  [char] ! of ." store" endof
-   0 of endof  ." _" endcase ;
-: .mangled   ?first bounds ?do i c@ .m loop ;
 : .,   ." , " ;
 : .{  ." struct word " >name .mangled ." _word = { " ;
 : .name   dup c@ (.) .,  [char] " emit >name type [char] " emit ., ;
