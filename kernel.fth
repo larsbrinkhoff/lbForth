@@ -47,27 +47,45 @@ variable  temp
 : 3dup   >r >r r@ over 2r> over >r rot swap r> ;
 : ?dup   dup if dup then ;
 
+: nip    swap drop ;
+: 2nip   2>r 2drop 2r> ;
+
 cell 4 = [if] : cells   dup + dup + ; [then]
 cell 8 = [if] : cells   dup + dup + dup + ; [then]
 
-: -    negate + ;
-: cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
-
 : invert   -1 nand ;
 : negate   invert 1 + ;
-: 1+       1 + ;
+: -        negate + ;
+: cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
 
 : branch    r> @ >r ;
 : (+loop)   r> swap r> + r@ over >r < invert swap >r ;
+: unloop    r> 2r> 2drop >r ;
+
+: 1+   1 + ;
+: +!   swap over @ + swap ! ;
+: 0=   if 0 else -1 then ;
+: =    - 0= ;
+: <>   = 0= ;
+
+: min   2dup < if drop else nip then ;
+
+: bounds   over + swap ;
+: count    dup 1+ swap c@ ;
 
 : bl   32 ;
 : cr   10 emit ;
+: type   ?dup if bounds do i c@ emit loop else drop then ;
 
 defer quit
 
 : abort   data_stack 100 cells + sp!  quit ;
 
 : ?stack   data_stack 99 cells + sp@ < abort" Stack underflow" ;
+
+variable state
+
+: literal   state @ if postpone (literal) , then ; immediate
 
 defer number
 
@@ -92,44 +110,13 @@ defer number
 defer catch
 : dummy-catch   execute 0 ;
 
-create interpreters  ' execute , ' number , ' execute ,
-
-: interpret-xt   1+ cells  interpreters + @ catch
-                 if ." Exception" cr then ;
-
-: interpret  begin parse-name dup while
-   find-name interpret-xt ?stack repeat 2drop ;
-
-: bounds    over + swap ;
-: count     dup 1+ swap c@ ;
-
-\ ----------------------------------------------------------------------
-
-( Core words. )
-
-: +!   swap over @ + swap ! ;
-: 0=   if 0 else -1 then ;
-
-: nip    swap drop ;
-: 2nip   2>r 2drop 2r> ;
+: cmove ( addr1 addr2 n -- )   bounds do  dup c@  i c!  1+  loop drop ;
 
 include c.fth
 
 : (s") ( -- addr n ) ( R: ret1 -- ret2 )
    r> dup @ swap cell+ 2dup + aligned >r swap ;
 
-variable csp
-
-: .latest   latestxt >name type ;
-: ?bad   rot if type ." definition: " latestxt >name type cr abort
-   else 2drop then ;
-: !csp   csp @ s" Nested" ?bad  sp@ csp ! ;
-: ?csp   sp@ csp @ <> s" Unbalanced" ?bad  0 csp ! ;
-
-: :   [ ' enter >code @ ] literal header, ] !csp ;
-: ;   reveal postpone exit postpone [ ?csp ; immediate
-
-: =   - if 0 else -1 then ;
 \ TODO: This is wrong if "-" overflows.
 \ : <   - [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
 : 0<   [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
@@ -162,17 +149,7 @@ create context   ' forth , ' forth , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
 
 : key   here dup 1 0 read-file 0 = 1 = nand 0= abort" Read error"  c@ ;
 
-: literal   state @ if postpone (literal) , then ; immediate
-
-: min   2dup < if drop else nip then ;
-
 : or   invert swap invert nand ;
-
-variable state
-
-: type   ?dup if bounds do i c@ emit loop else drop then ;
-
-: unloop   r> 2r> 2drop >r ;
 
 create src  2 cells allot
 : source   src dup cell+ @ swap @ ;
@@ -190,15 +167,29 @@ create src  2 cells allot
 
 defer also
 
+create interpreters  ' execute , ' number , ' execute ,
+
+: interpret-xt   1+ cells  interpreters + @ catch
+                 if ." Exception" cr then ;
+
 : [   0 state !  ['] execute interpreters !  previous ; immediate
 : ]   1 state !  ['] compile, interpreters !
    also ['] compiler-words context ! ;
 
+variable csp
+
+: .latest   latestxt >name type ;
+: ?bad   rot if type ." definition: " latestxt >name type cr abort
+   else 2drop then ;
+: !csp   csp @ s" Nested" ?bad  sp@ csp ! ;
+: ?csp   sp@ csp @ <> s" Unbalanced" ?bad  0 csp ! ;
+
+: :   [ ' enter >code @ ] literal header, ] !csp ;
+: ;   reveal postpone exit postpone [ ?csp ; immediate
+
 \ ----------------------------------------------------------------------
 
 ( Core extension words. )
-
-: <>   = 0= ;
 
 defer refill
 
@@ -224,16 +215,13 @@ defer backtrace
 
 \ ----------------------------------------------------------------------
 
-( String words. )
-
-: cmove ( addr1 addr2 n -- )   bounds do  dup c@  i c!  1+  loop drop ;
-
-\ ----------------------------------------------------------------------
-
 ( File Access words. )
 
 : n>r   r> over >r swap begin ?dup while rot r> 2>r 1 - repeat >r ;
 : nr>   r> r@ begin ?dup while 2r> >r rot rot 1 - repeat r> swap >r ;
+
+: interpret  begin parse-name dup while
+   find-name interpret-xt ?stack repeat 2drop ;
 
 : interpret-loop   >r begin ['] refill catch if ." Exception" cr -1 then while
    interpret r@ execute repeat r> drop ;
