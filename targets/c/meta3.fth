@@ -276,7 +276,7 @@ also meta-compiler words cr previous
 only forth definitions
 
 : ?found   0= if cr ." Unresolved forward reference: " type cr abort then ;
-: resolve   ." FRES:" dup id. dup >name [M] find-name ?found  swap >body @
+: resolve   dup id. dup >name [M] find-name ?found  swap >body @
    \ TODO: merge with LEAVE resolution.
    begin dup while 2dup @ >r swap ! r> repeat 2drop 1 ;
 : resolve-forward-references   ['] target ['] resolve traverse-wordlist ;
@@ -327,7 +327,10 @@ only forth definitions also meta-interpreter also host-interpreter
 : .link   >nextxt ?dup if >name ." &" .mangled ." _word, " else ." 0, " then ;
 : .code   >code @ drop ." enter_code, " ;
 : .does   >does @ drop ." 0, {" cr ;
-: .body   body-bounds ?do i @ ."   (cell)" (.) ., cr cell +loop ;
+: .xt   ." &" >name .mangled ." _word" cell ;
+: .number   (.) ." U" cell ;
+: .cell   ."   (cell)" dup t-xt? if .xt else .number then ., cr ;
+: .body   body-bounds ?do i @ .cell +loop ;
 : .}   ." } }" cr ;
 : dis   dup .{  dup .name  dup .link  dup .code  dup .does  .body  .}  1 ;
 : disassemble-target-dictionary   ['] forth ['] dis traverse-wordlist ;
@@ -341,8 +344,4 @@ meta-compile targets/c/nucleus.fth
 meta-compile kernel.fth
 resolve-forward-references
 disassemble-target-dictionary
-
-cr .( TARGET DICTIONARY: ) cr
-only forth definitions
-t-words cr
-." Used: " t-used .
+cr .( Used: ) t-used .
