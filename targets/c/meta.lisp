@@ -9,7 +9,7 @@
 ;;
 ;; ( \ [IF] [ELSE] [THEN] [DEFINED] [UNDEFINED] INCLUDE
 ;; : ; IMMEDIATE DOES> DEFER CODE END-CODE
-;; VARIABLE VALUE CREATE ALLOT , ' CELLS >CODE @ INVERT RSHIFT = CHAR -
+;; VARIABLE VALUE CREATE ALLOT , ' CELLS >CODE @ INVERT RSHIFT CHAR > = -
 ;; [CHAR] ['] [ ] LITERAL POSTPONE TO IS ." S" ABORT"
 ;; IF ELSE THEN DO LEAVE LOOP +LOOP BEGIN AGAIN WHILE REPEAT UNTIL
 ;; CELL JMP_BUF NAME_LENGTH TO_NEXT TO_CODE TO_DOES TO_BODY
@@ -544,6 +544,11 @@
   (let ((x (pop-integer))
 	(y (pop-integer)))
     (push (if (= x y) -1 0) *control-stack*)))
+
+(definterpreted > ()
+  (let ((x (pop-integer))
+	(y (pop-integer)))
+    (push (if (> y x) -1 0) *control-stack*)))
 
 (defun defined (word)
   (if (member word *vocabulary* :test #'string=) -1 0))

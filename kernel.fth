@@ -50,13 +50,14 @@ variable  temp
 : nip    swap drop ;
 : 2nip   2>r 2drop 2r> ;
 
-cell 4 = [if] : cells   dup + dup + ; [then]
-cell 8 = [if] : cells   dup + dup + dup + ; [then]
+: cells   [ cell 1 > ] [if] dup + [then]
+   [ cell 2 > ] [if] dup + [then]
+   [ cell 4 > ] [if] dup + [then] ;
 
 : invert   -1 nand ;
 : negate   invert 1 + ;
 : -        negate + ;
-: cabs ( char -- |char| )   dup 127 > if 256 swap - then ;
+: cabs     dup 127 > if 256 swap - then ;
 
 : branch    r> @ >r ;
 : (+loop)   r> swap r> + r@ over >r < invert swap >r ;
