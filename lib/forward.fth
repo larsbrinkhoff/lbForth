@@ -1,11 +1,8 @@
 create forward-references 0 ,
 
-\ TODO: merge with similar word in c.fth.
-: chain, ( a1 a2 -- )   swap dup @ , ! ;
-
 : forward: ( "name" -- )   create immediate 0 ,
-   forward-references latestxt chain,
-   does> here chain, ;
+   latestxt forward-references chain,
+   does> here swap chain, ;
 
 : ?found   0= if cr ." Unresolved forward reference: " type cr abort then ;
 

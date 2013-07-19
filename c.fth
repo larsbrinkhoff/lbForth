@@ -11,7 +11,6 @@ variable dp
 
 variable current
 
-: chain, ( nt wid -- )  >body dup @ , ! ;
 : link, ( nt -- )       to latestxt  current @ >body @ , ;
 : reveal                latestxt  current @ >body ! ;
 : #name                 NAME_LENGTH 1 - ;

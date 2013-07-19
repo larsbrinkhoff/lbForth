@@ -162,13 +162,13 @@ create squote   128 allot
 
 variable leaves
 
-: >mark!      here swap dup @ , ! ;
+\ TODO: merge with metacompiler forward reference resolution.
 : >resolve@   @ begin ?dup while dup @ here rot ! repeat ;
 
 : r+   r> r> rot + >r >r ;
 
 : do      leaves @  0 leaves !  postpone 2>r  postpone begin  0 ; immediate
-: leave   postpone branch  leaves >mark! ; immediate
+: leave   postpone branch  here leaves chain, ; immediate
 : +loop   ?dup if swap postpone r+ postpone again postpone then
           else postpone (+loop) postpone until then
           leaves >resolve@  leaves !  postpone unloop ; immediate

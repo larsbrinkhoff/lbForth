@@ -60,10 +60,14 @@ cell 8 = [if] : cells   dup + dup + dup + ; [then]
 : branch    r> @ >r ;
 : (+loop)   r> swap r> + r@ over >r < invert swap >r ;
 
-: ?stack   data_stack 99 cells + sp@ < abort" Stack underflow" ;
-
 : bl   32 ;
 : cr   10 emit ;
+
+defer quit
+
+: abort   data_stack 100 cells + sp!  quit ;
+
+: ?stack   data_stack 99 cells + sp@ < abort" Stack underflow" ;
 
 defer number
 
@@ -142,8 +146,6 @@ variable csp
 
 variable >in
 
-: abort   data_stack 100 cells + sp!  quit ;
-
 variable base
 
 variable forth
@@ -165,8 +167,6 @@ create context   ' forth , ' forth , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
 : min   2dup < if drop else nip then ;
 
 : or   invert swap invert nand ;
-
-defer quit
 
 variable state
 
@@ -245,10 +245,13 @@ defer backtrace
    ['] nop interpret-loop  source-id close-file drop
    nr> restore-input abort" Bad restore-input" ;
 
-: included   2dup align here >r  name,  r> ['] included-files chain, 0 , 0 ,
-   r/o open-file abort" Read error." include-file ;
+\ Compile contents of a, then store x at a.
+: chain, ( x a -- )   dup @ , ! ; 
 
 : r/o   s" r" drop ;
+
+: included   2dup align here >r  name,  r> included-files chain, 0 , 0 ,
+   r/o open-file abort" Read error." include-file ;
 
 : warm
    ." lbForth" cr
