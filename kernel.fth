@@ -234,9 +234,6 @@ defer backtrace
    ['] nop interpret-loop  source-id close-file drop
    nr> restore-input abort" Bad restore-input" ;
 
-\ Compile contents of a, then store x at a.
-: chain, ( x a -- )   dup @ , ! ; 
-
 : r/o   s" r" drop ;
 
 : included   2dup align here >r  name,  r> included-files chain, 0 , 0 ,

@@ -258,10 +258,15 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 : repeat   t-postpone again t-postpone then ; immediate
 : else     t-postpone ahead swap t-postpone then ; immediate
 
-immediate: (       immediate: \
+: do      leaves @  0 leaves !  t-postpone 2>r  t-postpone begin  0 ; immediate
+: leave   t-postpone branch  here leaves chain, ; immediate
+: +loop   ?dup if swap t-postpone r+ t-postpone again t-postpone then
+          else t-postpone (+loop) t-postpone until then
+          leaves >resolve@  leaves !  t-postpone unloop ; immediate
+: loop    1 t-postpone literal t-postpone +loop ; immediate
+
 immediate: [if]    immediate: [else]   immediate: [then]
-immediate: do      immediate: leave    immediate: loop
-immediate: does>
+immediate: does>   immediate: (        immediate: \
 
 cr .( META-COMPILER WORDS: ) cr
 also meta-compiler words cr previous

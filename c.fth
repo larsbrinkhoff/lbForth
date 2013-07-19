@@ -11,6 +11,9 @@ variable dp
 
 variable current
 
+\ Compile the contents of a, then store x in a.
+: chain, ( x a -- )   dup @ , ! ; 
+
 : link, ( nt -- )       to latestxt  current @ >body @ , ;
 : reveal                latestxt  current @ >body ! ;
 : #name                 NAME_LENGTH 1 - ;
