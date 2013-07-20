@@ -49,18 +49,24 @@ create t-dictionary  17000 allot
    [char] 8 of ." eight" endof [char] 9 of ." nine" endof
    nip 0 swap endcase /string ;
 : ?emit   2>r dup 2r> 1+ within if emit 0 then ;
-: .m    [char] 0 [char] 9 ?emit  [char] A [char] Z ?emit
+: .mc    [char] 0 [char] 9 ?emit  [char] A [char] Z ?emit
    [char] a [char] z ?emit  case  [char] ? of ." question" endof
    [char] > of ." to" endof  [char] < of ." from" endof
    [char] ' of ." tick" endof  [char] = of ." equal" endof
-   [char] . of ." dot" endof  [char] " of ." quote" endof
+   [char] . of ." dot" endof  [char] , of ." comma" endof
    [char] [ of ." lbracket" endof  [char] ] of ." rbracket" endof
-   [char] + of ." plus" endof  \ [char] - of ." minus" endof
+   [char] + of ." plus" endof  [char] " of ." quote" endof
    [char] * of ." star" endof  [char] # of ." number" endof
    [char] / of ." slash" endof  [char] \ of ." backslash" endof
    [char] @ of ." fetch" endof  [char] ! of ." store" endof
+   [char] : of ." colon" endof  [char] ; of ." semicolon" endof
    0 of endof  ." _" endcase ;
-: .mangled   ?first bounds ?do i c@ .m loop ;
+: .mangled   ?first bounds ?do i c@ .mc loop ;
+
+: .qc ( c -- )   case  [char] \ of ." \\" endof
+   [char] " of ." \" [char] " emit endof
+   dup emit endcase ;
+: .quoted   [char] " emit  bounds ?do i c@ .qc loop  [char] " emit ;
 
 
 
@@ -74,8 +80,9 @@ only also host-interpreter definitions
 copy ,       copy '         copy allot     copy defer  copy immediate
 copy create  copy variable  copy constant  copy value  
 \ here align [defined] [undefined]
+: forward:   parse-name 2drop ;
 
-cr .( HOST INTERPRETER WORDS: ) cr  words
+\ cr .( HOST INTERPRETER WORDS: ) cr  words
 
 ( Host words to override compiling words in metacompiler. )
 
@@ -95,7 +102,7 @@ immediate: then    immediate: begin    immediate: until  immediate: while
 immediate: repeat  immediate: again    immediate: do     immediate: leave
 immediate: loop    immediate: ."       immediate: s"
 
-cr .( HOST COMPILING WORDS: ) cr  words
+\ cr .( HOST COMPILING WORDS: ) cr  words
 
 
 
@@ -121,8 +128,6 @@ code-offset constant to_code
 does-offset constant to_does
 body-offset constant to_body
 
-: forward:   parse-name 2drop ;
-
 0 value latestxt
 ( *** Target compiler included here. *** )
 include c.fth
@@ -138,10 +143,8 @@ t-dictionary dp !
 
 : cells   cell * ;
 
-t-dictionary value there
-: (.def)   space here there - .  here to there
-   cr type space  >in @ parse-name type >in ! ;
-: .def   parse-name postpone sliteral postpone (.def) ; immediate
+: (.def)   cr type space  >in @ parse-name type >in ! ;
+: .def   parse-name 2drop ; immediate \ postpone sliteral postpone (.def) ; immediate
 
 : create   .def CREATE  0 header, reveal ;
 
@@ -162,8 +165,8 @@ t-dictionary value there
 
 only forth definitions
 : forward-reference   [T] create immediate [M] here ,  0 [M] ,
-   does> ." FREF:" dup 0 >body - id. [M] here over @ [M] ,  swap ! ;
-: forward ( a u -- )   ." FNEW:" 2dup type  input>r string-input
+   does> ( ." FREF:" dup 0 >body - id. ) [M] here over @ [M] ,  swap ! ;
+: forward ( a u -- )   ( ." FNEW:" 2dup type )  input>r string-input
    forward-reference  r>input ;
 : ?forward   2dup ['] target search-wordlist if nip nip execute
    else forward then ;
@@ -199,8 +202,9 @@ finders meta-postpone   postpone, forward compile,
 : ?end ( xt nt -- nt 0 | xt 1 )   2dup < if rot drop swap -1 else drop 0 then ;
 : >end ( xt -- a )   here swap ['] forth ['] ?end traverse-wordlist drop ;
 
-cr .( META-INTERPRETER WORDS: ) cr
-previous words cr
+: forward:   ." struct word " parse-name .mangled ." _word;" cr ;
+
+\ cr .( META-INTERPRETER WORDS: ) cr  previous words cr
 
 
 
@@ -270,15 +274,14 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 immediate: [if]    immediate: [else]   immediate: [then]
 immediate: does>   immediate: (        immediate: \
 
-cr .( META-COMPILER WORDS: ) cr
-also meta-compiler words cr previous
+\ cr .( META-COMPILER WORDS: ) cr  also meta-compiler words cr previous
 
 
 
 only forth definitions
 
 : ?found   0= if cr ." Unresolved forward reference: " type cr abort then ;
-: resolve   dup id. dup >name [M] find-name ?found  swap >body @
+: resolve   dup >name [M] find-name ?found  swap >body @
    \ TODO: merge with LEAVE resolution.
    begin dup while 2dup @ >r swap ! r> repeat 2drop 1 ;
 : resolve-forward-references   ['] target ['] resolve traverse-wordlist ;
@@ -292,7 +295,7 @@ only forth definitions
 
 finders meta-xt   ?compile, meta-number execute
 
-: ?.name   state @ if space 2dup type then ;
+: ?.name   ( state @ if space 2dup type then ) ;
 
 \ 1. Search host order.  If found, always execute!
 \ 2. If not found, search target dictionary.  If found, always compile!
@@ -325,7 +328,7 @@ only forth definitions also meta-interpreter also host-interpreter
 
 : .,   ." , " ;
 : .{  ." struct word " >name .mangled ." _word = { " ;
-: .name   dup c@ (.) .,  [char] " emit >name type [char] " emit ., ;
+: .name   dup c@ (.) .,  >name .quoted ., ;
 : .link   >nextxt ?dup if >name ." &" .mangled ." _word, " else ." 0, " then ;
 : .code   >code @ drop ." enter_code, " ;
 : .does   >does @ drop ." 0, {" cr ;
@@ -345,10 +348,13 @@ only forth definitions also meta-interpreter also host-interpreter
 
 interpreter-context
 .( #include "forth.h" ) cr
+\ These are referenced in the compiler output.
+.( struct word compilecomma_word; ) cr
+.( struct word _squote__word; ) cr
 meta-compile targets/c/nucleus.fth
 meta-compile kernel.fth
 resolve-forward-references
 disassemble-target-dictionary
 
 only forth definitions
-cr .( Used: ) t-used .
+\ cr .( Used: ) t-used .
