@@ -41,7 +41,7 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 create code-line  128 allot
 create t-dictionary  17000 allot
 
-: ?first   over c@ 1 swap case
+: ?first   over c@ 1 swap case  [char] - of ." minus" endof
    [char] 0 of ." zero" endof  [char] 1 of ." one" endof
    [char] 2 of ." two" endof   [char] 3 of ." three" endof
    [char] 4 of ." four" endof  [char] 5 of ." five" endof
@@ -55,7 +55,7 @@ create t-dictionary  17000 allot
    [char] ' of ." tick" endof  [char] = of ." equal" endof
    [char] . of ." dot" endof  [char] " of ." quote" endof
    [char] [ of ." lbracket" endof  [char] ] of ." rbracket" endof
-   [char] + of ." plus" endof  [char] - of ." minus" endof
+   [char] + of ." plus" endof  \ [char] - of ." minus" endof
    [char] * of ." star" endof  [char] # of ." number" endof
    [char] / of ." slash" endof  [char] \ of ." backslash" endof
    [char] @ of ." fetch" endof  [char] ! of ." store" endof
@@ -120,6 +120,8 @@ next-offset constant to_next
 code-offset constant to_code
 does-offset constant to_does
 body-offset constant to_body
+
+: forward:   parse-name 2drop ;
 
 0 value latestxt
 ( *** Target compiler included here. *** )
@@ -194,8 +196,8 @@ finders meta-postpone   postpone, forward compile,
 : [undefined]   parse-name find-name if drop 0 else 2drop -1 then ; immediate
 : [defined]     postpone [undefined] 0= ; immediate
 
-: ?end ( xt nt -- nt 0 | xt 1 )   2dup >nextxt = if nip 0 else drop 1 then ;
-: >end ( xt -- a )   ['] forth ['] ?end traverse-wordlist ;
+: ?end ( xt nt -- nt 0 | xt 1 )   2dup < if rot drop swap -1 else drop 0 then ;
+: >end ( xt -- a )   here swap ['] forth ['] ?end traverse-wordlist drop ;
 
 cr .( META-INTERPRETER WORDS: ) cr
 previous words cr
@@ -319,7 +321,7 @@ only forth definitions also meta-interpreter also host-interpreter
 : t-see-line   cr dup .addr  @ t-disassemble ;
 : body-bounds   dup >end swap >body ;
 : t-see-xt   ." : " dup t-id.  body-bounds do i t-see-line cell +loop ;
-: t-see   t' t-see-xt ." ;" cr ;
+: t-see   t' t-see-xt ." ;" ;
 
 : .,   ." , " ;
 : .{  ." struct word " >name .mangled ." _word = { " ;
@@ -331,17 +333,22 @@ only forth definitions also meta-interpreter also host-interpreter
 : .number   (.) ." U" cell ;
 : .cell   ."   (cell)" dup t-xt? if .xt else .number then ., cr ;
 : .body   body-bounds ?do i @ .cell +loop ;
-: .}   ." } }" cr ;
-: dis   dup .{  dup .name  dup .link  dup .code  dup .does  .body  .}  1 ;
-: disassemble-target-dictionary   ['] forth ['] dis traverse-wordlist ;
+: .}   ." } };" cr ;
+: .word   dup .{  dup .name  dup .link  dup .code  dup .does  .body  .} ;
+: >prevxt   >r latestxt begin dup >nextxt r@ <> while >nextxt repeat r> drop ;
+: disassemble-target-dictionary
+   0 begin >prevxt dup .word dup latestxt = until drop ;
 
 
 
 ( Start metacompilation. )
 
 interpreter-context
+.( #include "forth.h" ) cr
 meta-compile targets/c/nucleus.fth
 meta-compile kernel.fth
 resolve-forward-references
 disassemble-target-dictionary
+
+only forth definitions
 cr .( Used: ) t-used .
