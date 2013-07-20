@@ -1,6 +1,9 @@
 \ -*- forth -*- Copyright 2013 Lars Brinkhoff
 
 code cold \ int main (void)
+  extern struct word warm_word, dp_word, SP_word, RP_word,
+    data_stack_word, return_stack_word, end_of_dictionary_word,
+    jmpbuf_word, sigint_word;
   static cell dictionary[15000];
   void signal_handler (int);
   xt_t *IP = (xt_t *)warm_word.param;
@@ -31,6 +34,7 @@ code cold \ int main (void)
 end-code
 
 code signal_handler \ void signal_handler (int i)
+  extern struct word jmpbuf_word;
   sigset_t set;
   sigemptyset (&set);
   sigaddset (&set, i);

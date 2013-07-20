@@ -39,8 +39,8 @@
 (defvar *state* 'interpret-word)
 (defvar *input*)
 (defvar *output*)
-(defvar *header*)
 (defvar *ip* 0)
+(defvar *finished-p* t)
 (defvar *code* (make-array '(0) :adjustable t :fill-pointer 0))
 
 (defun trivial-quit ()
@@ -54,25 +54,22 @@
   (implementation-dependent-quit))
 
 #-ecl
-(declaim (ftype function interpret-file compile-word header-name mangle-char
-		mangle-word output output-line output-name output-end-of-word
-		quoted read-word whitespacep))
+(declaim (ftype function interpret-file compile-word mangle-char mangle-word
+		output output-line output-name output-finish quoted read-word
+		whitespacep))
 
 (defun compile-forth (&rest input-files
 		      &aux
-		      (output-file (output-name input-files))
-		      (header-file (header-name input-files)))
+		      (output-file (output-name input-files)))
   (with-open-file (*output* output-file :direction :output
 			                :if-exists :supersede)
     (output-line "#include \"forth.h\"")
-    (output "#include \"~A\"" (namestring header-file))
-    (with-open-file (*header* header-file :direction :output
-					  :if-exists :supersede)
-      (format *header* "~&code_t enter_code, dodoes_code;~%")
-      (let ((*previous-word* "0"))
-	(dolist (file input-files)
-	  (interpret-file file))
-	(output-end-of-word))))
+    ;; These are referenced in the compiler output.
+    (output-line "struct word nop_word, perform_word, abort_word, here_word;")
+    (let ((*previous-word* "0"))
+      (dolist (file input-files)
+	(interpret-file file))
+      (output-finish)))
   (trivial-quit))
 
 (defun interpret-file (file)
@@ -128,12 +125,10 @@
 (defun output-name (files)
   (merge-pathnames (make-pathname :type "c") (car (last files))))
 
-(defun output-end-of-word ()
-  (unless (string= *previous-word* "0")
-    (output-line "} };")))
-
-(defun header-name (files)
-  (merge-pathnames (make-pathname :type "h") (car (last files))))
+(defun output-finish ()
+  (unless *finished-p* ;(string= *previous-word* "0")
+    (output-line "} };"))
+  (setq *finished-p* t))
 
 (defvar *peeked-word* nil)
 
@@ -193,23 +188,19 @@
       ((immediate-word word)	(funcall (immediate-word word)))
       (t			(push word *control-stack*)))))
 
-(defun declare-word (word)
-  (push word *vocabulary*)
-  (format *header* "~&struct word ~A_word;~%" (mangle-word word)))
-
-(defun output-header (name code does &optional immediatep codep)
-  (declare-word name)
+(defun output-header (name code does &optional immediatep)
+  (push name *vocabulary*)
   (let* ((mangled (mangle-word name))
 	 (latestxt (tick name))
 	 (name (trunc-word name))
 	 (len (length name)))
     (when immediatep
       (setq len (- len)))
-    (unless codep
-      (output-end-of-word))
+    (output-finish)
     (output "struct word ~A_word = { ~D, \"~A\", ~A, ~A, ~A, {"
 	    mangled len (quoted name) *previous-word* code does)
-    (setq *previous-word* latestxt)))
+    (setq *previous-word* latestxt)
+    (setq *finished-p* nil)))
 
 (defun mangle-word (name)
   (cond
@@ -289,6 +280,10 @@
 	    (aref *code* i) (/= (1+ i) end) i))
   (setq *state* 'interpret-word))
 
+(definterpreted |FORWARD:| ()
+  (output-finish)
+  (output "struct word ~A_word;" (mangle-word (read-word))))
+
 (definterpreted defer ()
   (output-header (read-word) "dodoes_code" (word-body "perform"))
   (output "  (cell)~A" (tick "abort")))
@@ -312,7 +307,7 @@
   (let* ((name (read-word))
 	 (mangled (format nil "~A_code" (mangle-word name)))
 	 (special-code-p nil))
-    (output-end-of-word)
+    (output-finish)
     (cond
       ((equal (read-word) "\\")
        (let ((ret-type (read-word)))
@@ -329,7 +324,7 @@
     (unless special-code-p
       (output-line "    return IP;"))
     (output-line "}")
-    (output-header name (format nil "(code_t *)~A" mangled) "0" nil t)))
+    (output-header name (format nil "(code_t *)~A" mangled) "0" nil)))
 
 ;;;definterpreted end-code
 

@@ -12,9 +12,9 @@ all: forth
 forth: kernel.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
-kernel.o: kernel.c kernel.h targets/c/forth.h
+kernel.o: kernel.c targets/c/forth.h
 
-%.c %.h: %.fth c.fth $(nucleus) $(boot) params.lisp
+%.c: %.fth c.fth $(nucleus) $(boot) params.lisp
 	./lisp.sh '(progn (load "$(boot)") (compile-forth "$(nucleus)" "$<"))'
 
 params.lisp: params
@@ -27,7 +27,7 @@ params: targets/c/params.c Makefile
 	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -f forth *.o kernel.c kernel2.c kernel.h params*
+	rm -f forth *.o kernel.c kernel2.c params*
 
 kernel2.c: forth kernel.fth c.fth params.fth $(nucleus) $(meta)
 	echo 'include $(meta) bye' | ./forth > $@

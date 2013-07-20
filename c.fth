@@ -14,10 +14,13 @@ variable current
 \ Compile the contents of a, then store x in a.
 : chain, ( x a -- )   dup @ , ! ; 
 
+forward: latestxt
+forward: >body
 : link, ( nt -- )       to latestxt  current @ >body @ , ;
 : reveal                latestxt  current @ >body ! ;
 : #name                 NAME_LENGTH 1 - ;
 : name, ( a u -- )      #name min c,  #name string, ;
+forward: parse-name
 : header, ( code -- )   align here  parse-name name,  link, ( code ) , 0 , ;
 
 
@@ -69,6 +72,7 @@ variable state
 variable csp
 
 : .latest   latestxt >name type ;
+forward: abort
 : !csp   csp @ if ." Nested definition: " .latest cr abort then  sp@ csp ! ;
 : ?csp   sp@ csp @ <> if ." Unbalanced definition: " .latest cr abort then
    0 csp ! ;

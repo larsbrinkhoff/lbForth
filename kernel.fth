@@ -25,6 +25,7 @@ variable RP
 : sp@   SP @ cell + ;
 : sp!   SP ! ;
 : rp@   RP @ cell + ;
+forward: ,
 : rp!   postpone (literal) RP , postpone ! ; immediate
 
 variable  temp
@@ -33,6 +34,7 @@ variable  temp
 : 3drop   2drop drop ;
 
 : r@   rp@ cell+ @ ;
+forward: swap
 : i    r> r@ swap >r ;
 
 : swap   >r temp ! r> temp @ ;
@@ -57,9 +59,11 @@ variable  temp
 : invert   -1 nand ;
 : negate   invert 1 + ;
 : -        negate + ;
+forward: >
 : cabs     dup 127 > if 256 swap - then ;
 
 : branch    r> @ >r ;
+forward: <
 : (+loop)   r> swap r> + r@ over >r < invert swap >r ;
 : unloop    r> 2r> 2drop >r ;
 
@@ -196,6 +200,7 @@ defer refill
 
 create fib   256 allot
 
+forward: source-id
 : file-refill ( -- flag )   0 >in !  0 src !  -1
    fib 256 bounds do
       i 1 source-id read-file abort" Read error."

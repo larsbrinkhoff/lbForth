@@ -39,6 +39,8 @@ struct word
 #define NEXT_XT (*IP++)
 #define EXECUTE(XT)  IP = (XT)->code (IP, XT)
 
+extern struct word SP_word, RP_word;
+
 #define POP(TYPE)	((TYPE)(*(*((cell **)SP_word.param))++))
 #define PUSH(X)		(*--(*((cell **)SP_word.param)) = (cell)(X))
 #define RPOP(TYPE)	((TYPE)(*(*((cell **)RP_word.param))++))
