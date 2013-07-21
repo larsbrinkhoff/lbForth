@@ -164,12 +164,8 @@ t-dictionary dp !
 : find-name   #name min 2dup ['] forth search-wordlist dup if 2nip then ;
 
 only forth definitions
-: forward-reference   [T] create immediate [M] here ,  0 [M] ,
-   does> ( ." FREF:" dup 0 >body - id. ) [M] here over @ [M] ,  swap ! ;
-: forward ( a u -- )   ( ." FNEW:" 2dup type )  input>r string-input
-   forward-reference  r>input ;
 : ?forward   2dup ['] target search-wordlist if nip nip execute
-   else forward then ;
+   else cr ." Undefined: " type abort cr then ;
 : pph   compile, 2drop ;
 
 only forth definitions also meta-interpreter also host-interpreter
@@ -183,7 +179,7 @@ finders pp   ppt ppn pph
 interpreter-context definitions also host-interpreter
 
 : postpone,   t-postpone (literal) , t-postpone compile, ;
-finders meta-postpone   postpone, forward compile,
+finders meta-postpone   postpone, abort compile,
 
 : ]   1 state !  compiler-context ;
 : constant   .def CONSTANT  0 header, , reveal ;
@@ -202,7 +198,20 @@ finders meta-postpone   postpone, forward compile,
 : ?end ( xt nt -- nt 0 | xt 1 )   2dup < if rot drop swap -1 else drop 0 then ;
 : >end ( xt -- a )   here swap ['] forth ['] ?end traverse-wordlist drop ;
 
-: forward:   ." struct word " parse-name .mangled ." _word;" cr ;
+: forward, ( a -- )   here swap chain, ;
+
+only forth definitions
+create forward-references 0 ,
+: .forward   >in @  ." struct word " parse-name .mangled ." _word;" cr  >in ! ;
+also meta-interpreter definitions previous
+: forward: ( "name" -- )   .forward  [T] create immediate 0 ,
+   latestxt forward-references chain,  does> [M] forward, ;
+only forth definitions
+: ?found   0= if cr ." Unresolved forward reference: " type cr abort then ;
+: resolve ( xt -- )   dup >name [M] find-name ?found  swap >body @
+   begin dup while 2dup @ >r swap ! r> repeat 2drop ;
+: resolve-all-forward-references   forward-references
+  begin @ ?dup while dup resolve  >body cell+ repeat ;
 
 \ cr .( META-INTERPRETER WORDS: ) cr  previous words cr
 
@@ -280,12 +289,6 @@ immediate: does>   immediate: (        immediate: \
 
 only forth definitions
 
-: ?found   0= if cr ." Unresolved forward reference: " type cr abort then ;
-: resolve   dup >name [M] find-name ?found  swap >body @
-   \ TODO: merge with LEAVE resolution.
-   begin dup while 2dup @ >r swap ! r> repeat 2drop 1 ;
-: resolve-forward-references   ['] target ['] resolve traverse-wordlist ;
-
 : ?compile,   state @ abort" Metacompile to host definition?!?" execute ;
 
 : ?literal,   state @ if [M] literal then ;
@@ -348,12 +351,9 @@ only forth definitions also meta-interpreter also host-interpreter
 
 interpreter-context
 .( #include "forth.h" ) cr
-\ These are referenced in the compiler output.
-.( struct word compilecomma_word; ) cr
-.( struct word _squote__word; ) cr
 meta-compile targets/c/nucleus.fth
 meta-compile kernel.fth
-resolve-forward-references
+resolve-all-forward-references
 disassemble-target-dictionary
 
 only forth definitions

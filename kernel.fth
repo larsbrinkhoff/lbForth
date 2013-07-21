@@ -26,6 +26,7 @@ variable RP
 : sp!   SP ! ;
 : rp@   RP @ cell + ;
 forward: ,
+forward: compile,
 : rp!   postpone (literal) RP , postpone ! ; immediate
 
 variable  temp
@@ -86,6 +87,7 @@ defer quit
 
 : abort   data_stack 100 cells + sp!  quit ;
 
+forward: (s")
 : ?stack   data_stack 99 cells + sp@ < abort" Stack underflow" ;
 
 variable state
