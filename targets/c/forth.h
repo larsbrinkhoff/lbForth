@@ -17,9 +17,6 @@
 #endif
 
 typedef long int cell;
-typedef unsigned long ucell;
-typedef long long dcell;
-typedef unsigned long long udcell;
 typedef struct word *nt_t;
 typedef struct word *xt_t;
 typedef xt_t * REGPARM code_t (xt_t *, nt_t);
@@ -36,7 +33,7 @@ struct word
   cell param[];
 };
 
-#define NEXT_XT (*IP++)
+#define NEXT_XT  (*IP++)
 #define EXECUTE(XT)  IP = (XT)->code (IP, XT)
 
 extern struct word SP_word, RP_word;
