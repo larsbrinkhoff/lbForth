@@ -42,6 +42,7 @@ create code-line  128 allot
 create t-dictionary  17000 allot
 
 : ?first   over c@ 1 swap case  [char] - of ." minus" endof
+   [char] < of ." less" endof  [char] > of ." greater" endof
    [char] 0 of ." zero" endof  [char] 1 of ." one" endof
    [char] 2 of ." two" endof   [char] 3 of ." three" endof
    [char] 4 of ." four" endof  [char] 5 of ." five" endof
@@ -67,6 +68,8 @@ create t-dictionary  17000 allot
    [char] " of ." \" [char] " emit endof
    dup emit endcase ;
 : .quoted   [char] " emit  bounds ?do i c@ .qc loop  [char] " emit ;
+
+: "(s")"   [ parse-name (s") ] sliteral ;
 
 
 
@@ -235,11 +238,11 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 : ;   reveal t-postpone exit t-postpone [ ; immediate
 : literal   t-postpone (literal) , ; immediate
 : cell   cell t-postpone literal ; immediate
-: name_length   name_length t-postpone literal ; immediate
-: to_next   to_next t-postpone literal ; immediate
-: to_code   to_code t-postpone literal ; immediate
-: to_does   to_does t-postpone literal ; immediate
-: to_body   to_body t-postpone literal ; immediate
+: name_length   name-size t-postpone literal ; immediate
+: to_next   next-offset t-postpone literal ; immediate
+: to_code   code-offset t-postpone literal ; immediate
+: to_does   does-offset t-postpone literal ; immediate
+: to_body   body-offset t-postpone literal ; immediate
 : [']   t-postpone (literal) parse-name target, ; immediate
 : is   t-postpone (literal) parse-name target, t-postpone >body
    t-postpone ! ; immediate
@@ -329,17 +332,39 @@ only forth definitions also meta-interpreter also host-interpreter
 : t-see-xt   ." : " dup t-id.  body-bounds do i t-see-line cell +loop ;
 : t-see   t' t-see-xt ." ;" ;
 
+: .ref   ." &" >name .mangled ." _word" ;
+: .a ( xt a1 -- xt )   over .ref over - case
+      0 of endof
+      next-offset of ." .next" endof
+      code-offset of ." .code" endof
+      does-offset of ." .does" endof
+      dup ." .param[" body-offset - cell / (.) ." ]"
+   endcase ;
+: .addr ( a -- )   >r here latestxt begin dup while
+   r@ dup 2over swap within if .a else drop then
+   nip dup >nextxt  repeat r> 3drop ;
+
 : .,   ." , " ;
 : .{  ." struct word " >name .mangled ." _word = { " ;
 : .name   dup c@ (.) .,  >name .quoted ., ;
-: .link   >nextxt ?dup if >name ." &" .mangled ." _word, " else ." 0, " then ;
+: .link   >nextxt ?dup if .ref ., else ." 0, " then ;
 : .code   >code @ drop ." enter_code, " ;
-: .does   >does @ drop ." 0, {" cr ;
-: .xt   ." &" >name .mangled ." _word" cell ;
+: .does   >does @ drop ." 0, {" ;
+: .cr   cr ."   (cell)" ;
+: .(literal)   ['] (literal) .ref ., .cr ;
+: .branch ( a xt -- u )   .ref ., .cr @ .addr 2 cells ;
+: .literal ( a xt -- u )   .ref ., .cr @ (.) ." U" 2 cells ;
+: .sliteral ( a xt -- u )   drop .(literal) @+ tuck .quoted .,
+   .cr .(literal) dup (.)  aligned 2 cells + ;
+: .xt ( a xt -- u )   dup >name s" branch" compare 0= if .branch else
+   dup >name s" 0branch" compare 0= if .branch else
+   dup >name s" (literal)" compare 0= if .literal else
+   dup >name "(s")" compare 0= if .sliteral else
+   .ref drop cell then then then then ;
 : .number   (.) ." U" cell ;
-: .cell   ."   (cell)" dup t-xt? if .xt else .number then ., cr ;
-: .body   body-bounds ?do i @ .cell +loop ;
-: .}   ." } };" cr ;
+: .cell   .cr dup t-xt? if .xt else nip .number then ., ;
+: .body   body-bounds ?do i @+ .cell +loop ;
+: .}   cr ." } };" cr ;
 : .word   dup .{  dup .name  dup .link  dup .code  dup .does  .body  .} ;
 : >prevxt   >r latestxt begin dup >nextxt r@ <> while >nextxt repeat r> drop ;
 : disassemble-target-dictionary
