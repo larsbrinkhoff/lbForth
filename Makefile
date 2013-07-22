@@ -1,18 +1,20 @@
 CC = gcc
 M32 = -m32
-CFLAGS = -g $(M32) -O2 -fomit-frame-pointer -fno-unit-at-a-time -I. -Itargets/c
-LDFLAGS = -g $(M32)
+CFLAGS = $(M32) -O2 -fomit-frame-pointer -fno-unit-at-a-time
+CPPFLAGS = -I$(TARGET)
+LDFLAGS = $(M32)
 
-boot = targets/c/meta.lisp
-meta = targets/c/meta.fth
-nucleus = targets/c/nucleus.fth
+TARGET = targets/c
+boot = $(TARGET)/meta.lisp
+meta = $(TARGET)/meta.fth
+nucleus = $(TARGET)/nucleus.fth
 
 all: forth
 
 forth: kernel.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
-kernel.o: kernel.c targets/c/forth.h
+kernel.o: kernel.c $(TARGET)/forth.h
 
 %.c: %.fth c.fth $(nucleus) $(boot) params.lisp
 	./lisp.sh '(progn (load "$(boot)") (compile-forth "$(nucleus)" "$<"))'
@@ -23,11 +25,11 @@ params.lisp: params
 params.fth: params
 	./$< -forth > $@
 
-params: targets/c/params.c Makefile
-	$(CC) $(CFLAGS) $< -o $@
+params: $(TARGET)/params.c $(TARGET)/forth.h Makefile
+	$(CC) $(CFLAGS) $(CPPFLAGS) $< -o $@
 
 clean:
 	rm -f forth *.o kernel.c kernel2.c params*
 
 kernel2.c: forth kernel.fth c.fth params.fth $(nucleus) $(meta)
-	echo 'include $(meta) bye' | ./forth > $@
+	echo 'include $(meta)  bye' | ./forth | tail -n+3 > $@
