@@ -22,21 +22,22 @@ static void lisp_defvar (const char *name, int value)
   printf ("(defvar *%s* %d)\n", name, value);
 }
 
-static int arg (int argc, const char **argv, const char *x)
+static void usage (const char *name, int value)
 {
-  return argc == 2 && strcmp (argv[1], x) == 0;
+  error ("Specify -forth or -lisp");
 }
 
 int main (int argc, const char **argv)
 {
-  void (*output) (const char *, int);
+  void (*output) (const char *, int) = usage;
 
-  if (arg (argc, argv, "-forth"))
-    output = forth_constant;
-  else if (arg (argc, argv, "-lisp"))
-    output = lisp_defvar;
-  else
-    error ("Specify -forth or -lisp.");
+  if (argc == 2)
+    {
+      if (strcmp (argv[1], "-forth") == 0)
+	output = forth_constant;
+      else if (strcmp (argv[1], "-lisp") == 0)
+	output = lisp_defvar;
+    }
 
   check (sizeof (cell *));
   check (sizeof (char *));
