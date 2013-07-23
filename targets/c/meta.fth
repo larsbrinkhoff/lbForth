@@ -77,8 +77,8 @@ create t-dictionary  17000 allot
 
 only also host-interpreter definitions
 
-: ]   ] interpreter-context also host-interpreter ;
-: :   : interpreter-context also host-compiler ;
+: ]   ] interpreter-context also host-compiler ;
+: :   : ] ;
 
 copy ,       copy '         copy allot     copy defer  copy immediate
 copy create  copy variable  copy constant  copy value  
@@ -91,8 +91,8 @@ copy create  copy variable  copy constant  copy value
 
 only also host-compiler definitions
 
-: [   postpone [ interpreter-context also host-compiler ; immediate
-: ;   postpone ; interpreter-context also host-interpreter ; immediate
+: [   postpone [ interpreter-context also host-interpreter ; immediate
+: ;   postpone ; postpone [ ; immediate
 
 immediate: [defined]  immediate: [undefined]
 immediate: literal    immediate: [']          immediate: postpone
@@ -165,6 +165,8 @@ t-dictionary dp !
 : end-code   ;
 
 : find-name   #name min 2dup ['] forth search-wordlist dup if 2nip then ;
+
+: >resolve@   @ begin ?dup while dup @ here rot ! repeat ;
 
 only forth definitions
 : ?forward   2dup ['] target search-wordlist if nip nip execute
@@ -267,7 +269,7 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 
 interpreter-context definitions also host-interpreter
 : resolving   postpone t-postpone  postpone <resolve ; immediate
-only also meta-interpreter also meta-compiler definitions also host-interpreter
+interpreter-context also meta-compiler definitions also host-interpreter
 : begin       <mark ; immediate
 : again       resolving branch ; immediate
 : until       resolving 0branch ; immediate
