@@ -152,15 +152,15 @@ t-dictionary dp !
 : create   .def CREATE  0 header, reveal ;
 
 : .code1   ." xt_t * REGPARM " latestxt >name .mangled
-   ." _code (xt_t *IP, struct word *word)" cr ;
+   ." _code (xt_t *IP, struct word *word)" cr s"     return IP;" ;
 
 \ TODO: remember the C function name for later output.
-: .code2   source >in @ /string type cr ;
+: .code2   source >in @ /string type cr s" " ;
 
 : code   .def CODE  0 header, reveal
    parse-name s" \" compare if .code1 else .code2 then ." {" cr
    begin refill 0= abort" Refill?" source s" end-code" compare
-   while source type cr repeat ." }" cr ;
+   while source type cr repeat type cr ." }" cr ;
 
 : end-code   ;
 
