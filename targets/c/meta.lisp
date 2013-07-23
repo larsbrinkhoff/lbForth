@@ -50,7 +50,9 @@
   (ext:quit)
   #+ecl
   (si:quit)
-  #-(or sbcl clisp ecl)
+  #+ccl
+  (ccl:quit)
+  #-(or sbcl clisp ecl ccl)
   (implementation-dependent-quit))
 
 #-ecl
@@ -150,6 +152,7 @@
 (defun peek-word (&rest args)
   (setq *peeked-word* (apply #'read-word args)))
 
+#-ccl
 (defun whitespacep (char)
   (or (char= char #\Tab)
       (char= char #\Space)

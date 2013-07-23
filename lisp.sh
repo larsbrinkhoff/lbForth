@@ -12,6 +12,7 @@ try() {
 try sbcl "--noinform --eval"
 try clisp "-q -x"
 try ecl "-eval"
+try ccl "--eval"
 
 echo No Lisp found.
 exit 1
