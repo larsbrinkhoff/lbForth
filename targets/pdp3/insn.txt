@@ -1,0 +1,145 @@
+
+			     INDEX ADDER
+
+The Index Adder is a 15-bit ring accumulator.  The sum of an
+instruction base address, Y, and the contents of an index register,
+C(x), are formed in this register.  This register holds the previous
+content of the PC in the jsp instruction.  The IA also servers as the
+step counter in shift, multiply, and divide.
+
+
+			       INDEXING
+
+In PDP-3, 511 regsters of the core memory are available for use as
+automatic index registers.  These registers are memory locations
+001-777.  Address 000 specifies that no index register is to be used
+with the instructions.  The contents of octal digits 7 through 11 of
+the selected index register are added to the unmodified address of the
+instruction.
+
+This sum is used to locate the operand.  The addition is done in the
+IA which is a 15-bit one's complement adder.
+
+Three special instructions snx, spx and lir, are available to
+facilitate resetting, advancing, and sampling of the index registers.
+
+
+			 INDIRECT ADDRESSING
+
+An instruction which is to use an indirect address will have a ONE in
+bit six of the instruction word.  The original address, Y, of the
+instruction will not be used to locate the operand of the instruction,
+as is the normal case.  Instead, it is used to locate a memory
+register whose contents in octal digits 7 through 11 will be used as
+the address of the original instruction.  This new address is known as
+the indirect address for the instruction and will be used to lcoate
+the operand.  If the memory register containing the indirect address
+also has a 1 in bit six, the indirect addressing procedure is repeated
+again and a third address is located.  There is no limit to the number
+of times this process can be repeated.
+
+Index registers may be used in conjuction with indirect addressing.
+In this case, the address after being modifiied by the selected index
+register is used to locate the indirect address.
+
+The indirect address can be acted on by an index register and deferred
+again is desired.  Each use of an index register of an indirect
+address extends the operating time of the original instruction by 5
+microseconds.
+
+
+			  INSTRUCION FORMAT
+
+		0   5 6  9     17 18              35
+		|----|   |-------||----------------|
+		OOOOOOI..XXXXXXXXXYYYYYYYYYYYYYYYYYY
+
+
+			       OPCODES
+
+02	and
+04	ior
+06	xor
+							(10 xct)
+14	lir	Y->CR(X)	Load Index Register
+16	dia	IA->CR(Y)	Deposit Index Adder	(cal/jda)
+20	lac
+22	lio
+24	dac
+26	dap
+30	dip
+32	dio
+							(34 dzm)
+							(36 tad)
+40	add
+42	sub
+44	spx	Z<0 => PC++	Skip on Positive Index	(idx)
+46	snx	Z>=0 => PC++	Skip on Negative Index	(isp)
+50	sad
+52	sas
+54	mul	C(AC)*C(Z)->AC:IO
+56	div	AC:IO/Z->IO(quotient),AC(remainder)
+60	jmp	Z->PC
+62	jsp	PC->IA, Z->PC
+64	skp
+ 00000f	szf
+ 0000f0	szs
+ 000100	sza
+ 000200	spa
+ 000400	sma
+ 001000	szo
+ 002000	spi
+							(004000 sni)
+66	sft
+661	ral
+662	ril
+663	rcl
+665	sal
+666	sil
+667	scl
+671	rar
+672	rir
+673	rcr
+675	sar
+676	sir
+677	scr
+							(70 law)
+72	iot
+ 000001	rpa			Read Paper Tape: alphanumeric mode
+ 000002	rpb			Read Paper Tape: binary mode
+ 000003	tyo			Typewriter: output
+ 000004	tyi			Typewriter: input
+ 000005	ppa			Punch Paper Tape: alphanumeric mode
+ 000006	ppb			Punch Paper Tape: binary mode
+ 00nn60	mrb			Magnetic Tape: read a binary record
+ 00nn61	mra			Magnetic Tape: read an alphanumeric record
+ 00nn62	mbb			Magnetic Tape: backspace a binary record
+ 00nn63	mba			Magnetic Tape: backspace an alphanumeric record
+ 00nn64	mwb			Magnetic Tape: write a binary record
+ 00nn65	mwa			Magnetic Tape: write an alphanumeric record
+ 00nn66	mlp			Magnetic Tape: move tape to lead point (rewind)
+ 00nn70	mps			Magnetic Tape: pause and skip
+ 00nn71	mec			Magnetic Tape: examine and clear
+ ?				Cathode-Ray-Tube Display
+ ?				Real Time Clock
+	psp			Line Printer: space paper
+	plb			Line Printer: load buffer
+	pnt			Line Printer: print
+76	opr
+ 00000f	clf
+ 00001f	stf
+ 000200	cla
+ 000400	hlt
+ 001000	cma
+ 002000	lat
+ 004000	cli
+
+
+			STANDARD INPUT-OUTPUT
+
+Paper tape reader, paper tape punch, typewriter.
+
+
+			OPTIONAL INPUT-OUTPUT
+
+Sequence break system, high speed I/O channel, magnetic tape

@@ -1,0 +1,65 @@
+Instruction format:
+
+ 0     3 4 5                      17
+ O O O O I Y Y Y Y Y Y Y Y Y Y Y Y Y
+
+Opcode
+
+00	cal
+04	dac
+10	jms
+14	dzm
+20	lac
+24	xor
+30	add
+34	tad
+40	xct
+44	isz
+50	and
+54	sad
+60	jmp
+64		Extended Arithmetic Element
+ 00001	"or SC"
+ 00002	"or MQ"
+ 00004	"comp MQ"
+ 00100	mul
+ 00300	div
+ 00400	"normalize"
+ 00500	"long right shift"
+ 00600	"long left shift"
+ 00700	"AC left shift"
+ 01000	"clear AC"
+ 02000	"or AC"
+ 04000	"load sign"
+ 10000	"clear MQ"
+ 20000	"load link"
+70	iot
+71		Floating Point (PDP-15)
+72		Index Operate (PDP-15)
+ 01000	pax
+ 02000	pal
+ 03000	aac
+ 04000	pxa
+ 05000	axs
+ 06000	pxl
+ 10000	pla
+ 11000	plx
+ 14000	clac
+ 15000	clx
+ 16000	cllr
+ 17000	axr
+74	opr
+ 00001	cma
+ 00002	cml
+ 00004	oas
+ 00010	ral
+ 00020	rar
+ 00040	hlt
+ 00100	sma
+ 00200	sza
+ 00400	snl
+ 01000	invert skip
+ 02000	rotate twice
+ 04000	cll
+ 10000	cla
+76	law
