@@ -16,12 +16,11 @@ variable current
 
 forward: latestxt
 forward: >body
-: link, ( nt -- )       to latestxt  current @ >body @ , ;
-: reveal                latestxt  current @ >body ! ;
-: #name                 NAME_LENGTH 1 - ;
-: name, ( a u -- )      #name min c,  #name string, ;
-forward: parse-name
-: header, ( code -- )   align here  parse-name name,  link, ( code ) , 0 , ;
+: link, ( nt -- )      to latestxt  current @ >body @ , ;
+: reveal               latestxt  current @ >body ! ;
+: #name ( -- u )       NAME_LENGTH 1 - ;
+: name, ( a u -- )     #name min c,  #name string, ;
+: header, ( a u -- )   align here >r name, r> link, ;
 
 
 
@@ -77,7 +76,7 @@ forward: abort
 : ?csp   sp@ csp @ <> if ." Unbalanced definition: " .latest cr abort then
    0 csp ! ;
 
-: :   [ ' enter >code @ ] literal header, ] !csp ;
+: :   parse-name [ ' enter >code @ ] literal header, ] !csp ;
 : ;   reveal postpone exit postpone [ ?csp ; immediate
 
 
@@ -85,7 +84,7 @@ forward: abort
 ( From core.fth )
 
 : immediate   latestxt dup c@ negate swap c! ;
-: create    [ ' dodoes >code @ ] literal header, reveal (does>) ;
+: create    parse-name [ ' dodoes >code @ ] literal header, reveal (does>) ;
 : constant   create , does> @ ;
 : variable   create cell allot ;
 

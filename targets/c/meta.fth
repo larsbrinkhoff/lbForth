@@ -149,7 +149,9 @@ t-dictionary dp !
 : (.def)   cr type space  >in @ parse-name type >in ! ;
 : .def   parse-name 2drop ; immediate \ postpone sliteral postpone (.def) ; immediate
 
-: create   .def CREATE  0 header, reveal ;
+: dummy-header,   parse-name header, 0 , 0 , ;
+
+: create   .def CREATE  dummy-header, reveal ;
 
 : .code1   ." xt_t * REGPARM " latestxt >name .mangled
    ." _code (xt_t *IP, struct word *word)" cr s"     return IP;" ;
@@ -157,7 +159,7 @@ t-dictionary dp !
 \ TODO: remember the C function name for later output.
 : .code2   source >in @ /string type cr s" " ;
 
-: code   .def CODE  0 header, reveal
+: code   .def CODE  dummy-header, reveal
    parse-name s" \" compare if .code1 else .code2 then ." {" cr
    begin refill 0= abort" Refill?" source s" end-code" compare
    while source type cr repeat type cr ." }" cr ;
@@ -187,11 +189,11 @@ interpreter-context definitions also host-interpreter
 finders meta-postpone   postpone, abort compile,
 
 : ]   1 state !  compiler-context ;
-: constant   .def CONSTANT  0 header, , reveal ;
-: variable   .def VARIABLE  0 header, 0 , reveal ;
-: :   .def COLON  0 header, ] ;
-: defer   .def DEFER  0 header, 0 , reveal ;
-: value   .def VALUE  0 header, , reveal ;
+: constant   .def CONSTANT  dummy-header, , reveal ;
+: variable   .def VARIABLE  dummy-header, 0 , reveal ;
+: :   .def COLON  dummy-header, ] ;
+: defer   .def DEFER  dummy-header, 0 , reveal ;
+: value   .def VALUE  dummy-header, , reveal ;
 
 : '   parse-name find-name 0=
    if cr ." Undefined, and cannot tick: " type cr abort then ;
