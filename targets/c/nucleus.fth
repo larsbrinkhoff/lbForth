@@ -5,8 +5,10 @@ code cold \ int main (void)
     data_stack_word, return_stack_word, end_of_dictionary_word,
     jmpbuf_word, sigint_word;
   static cell dictionary[15000];
+  size_t start = (size_t)&dictionary, end;
   void signal_handler (int);
   xt_t *IP = (xt_t *)warm_word.param;
+  long page_size;
 
   dp_word.param[0] = (cell)dictionary;
   SP_word.param[0] = (cell)(&data_stack_word.param[100]);
@@ -17,6 +19,16 @@ code cold \ int main (void)
   signal (SIGINT, signal_handler);
   siginterrupt (SIGSEGV, 1);
   signal (SIGSEGV, signal_handler);
+
+  end = start + sizeof dictionary;
+  page_size = sysconf (_SC_PAGESIZE);
+  start &= -page_size;
+  end = (end + page_size - 1) & -page_size;
+  if (mprotect ((void *)start, end - start, PROT_READ | PROT_WRITE | PROT_EXEC))
+    {
+      perror ("mprotect");
+      return 1;
+    }
 
   for (;;)
     {
@@ -169,16 +181,4 @@ code read-file ( addr n1 fileid -- n2 ior )
     n2 = fread (addr, 1, n1, fileid);
     PUSH (n2);
     PUSH (ferror (fileid) ? errno : 0);
-end-code
-
-code rwx! ( start end -- ior )
-    size_t end = POP (size_t);
-    size_t start = POP (size_t);
-    long page_size = sysconf (_SC_PAGESIZE);
-    start &= -page_size;
-    end = (end + page_size - 1) & -page_size;
-    if (mprotect ((void *)start, end - start, PROT_READ | PROT_WRITE | PROT_EXEC))
-      PUSH (-3);
-    else
-      PUSH (0);
 end-code

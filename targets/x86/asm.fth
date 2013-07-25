@@ -9,12 +9,9 @@ vocabulary assembler
 
 also assembler definitions
 
-0 value code-start
-
 : (;code)      r> code! ;
-: start-code   here to code-start  also assembler ;
-: end-code     code-start here rwx! abort" Error calling mprotect"
-               align previous ;
+: start-code   also assembler ;
+: end-code     align previous ;
 
 base @  hex
 
