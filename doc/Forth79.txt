@@ -1,0 +1,1230 @@
+
+      +-----------------------------------------------------+
+      | The  following glossary has been extracted from the |
+      | Forth-79  Standard.  It gives the  description  and |
+      | operation  of words required in a Forth-79 Standard |
+      | System.  Though  all  care has been  taken,  it  is |
+      | possible  that  errors  may  have  resulted  during |
+      | transcription. Full copies of the Forth-79 Standard |
+      | may be obtained from the Forth Interest Group, P.O. |
+      | Box 8231, San Jose, CA 95155 USA.                   |
+      +-----------------------------------------------------+
+
+
+
+                         FORTH-79 STANDARD
+
+
+                         A PUBLICATION OF
+                     THE FORTH STANDARDS TEAM
+
+
+                           OCTOBER 1980
+
+
+The  existence of a FORTH Standard does not in any respect preclude
+anyone,  whether the individual has approved this Standard or  not,
+from  implementing,   marketing,   purchasing  or  using  products,
+processes,  or  procedures not conforming to the  Standard.   FORTH
+Standards are subject to periodic review and users are cautioned to
+obtain the latest editions.
+
+
+                         0.  FOREWORD
+
+The computer language FORTH was created by Mr.  Charles Moore as an
+extensible,    multi-level   environment  containing elements of an
+operating  system,  a machine monitor,  and facilities for  program
+development and testing.
+
+This  Standard  is a direct descendant of FORTH-77,  a work of  the
+FORTH Users Group (Europe).
+
+                         1.  PURPOSE
+
+The purpose of this FORTH Standard is to allow transportability  of
+standard  FORTH  programs  in  source  form  among  standard  FORTH
+systems.   A  standard  program shall execute equivalently  on  all
+standard FORTH systems.
+
+                         2.  SCOPE
+
+This  standard shall apply to any Standard FORTH program  executing
+on  any  Standard  FORTH  system,   providing  sufficient  computer
+resources (memory, mass storage) are available.
+
+
+                         9.  GLOSSARY NOTATION
+
+Order
+
+     The  Glossary  definitions are listed  in  ASCII  alphabetical
+     order.
+
+Stack Notation
+
+     The  first  line of each entry describes the execution of  the
+     definition:
+
+          i.e., before -- after
+
+     In  this  notation,   the top of the stack is  to  the  right.
+     Words may also be shown in context when appropriate.
+
+Attributes
+
+     Capitalized symbols indicate attributes of the defined words:
+
+     C    The  word may only be used during compilation of a  colon
+          definition.
+
+     I    Indicates  that  the word is IMMEDIATE and  will  execute
+          during compilation, unless special action is taken.
+
+     U    A user variable.
+
+Capitalization
+
+     Word  names  as  used within the dictionary  are  conveniently
+     written in upper case characters.   Within this Standard lower
+     case  will  be  used when reference is made  to  the  run-time
+     machine code, not directly accessible.
+
+Pronunciation
+
+     The  natural language pronunciation of word names is given  in
+     double quotes (").
+
+Stack Parameters
+
+     Unless otherwise stated, all reference to numbers apply to 16-
+     bit signed integers.   The implied range of values is shown as
+     {from..to}.   The  content  of an address is shown  by  double
+     curly  brackets,  particularly for the contents of  variables,
+     i.e.,  BASE {{2..70}}.
+
+addr                                                   {0..65,535}
+
+     A value representing the address of a byte,  within the  FORTH
+     standard memory space.   This addressed byte may represent the
+     first byte of a larger data field in memory.
+
+byte                                                   {0..255}
+
+     A  value representing an 8 bit byte.   When in a larger field,
+     the higher bits are zero.
+
+char                                                   {0..127}
+
+     A value representing a 7 bit ASCII character code.   When in a
+     larger field, the higher bits are zero.
+
+d                                  {-2,147,483,648..2,147,483,647}
+
+     32 bit signed 'double' number.   The most significant 16-bits,
+     with sign, is most accessible on the stack.
+
+flag
+
+     A numerical value with two logical states;   0 = false,   non-
+     zero = true.
+
+n                                                 {-32,768..32,767}
+
+     16 bit signed integer number.
+
+     Any other symbol refers to an arbitrary signed 16-bit  integer
+     in the range {-32,768..32,767}, unless otherwise noted.
+
+Input Text
+
+     <name>
+
+     An arbitrary FORTH word accepted from the input stream.   This
+     notation refers to text from the input stream,  not to  values
+     on  the data stack.   If the input stream is exhausted  before
+     encountering <name>, an error condition exists.
+
+
+                         10.  REQUIRED WORD SET
+
+
+The  words  of  the  Required Word Set are  grouped  to  show  like
+characteristics.  No implementation requirements should be inferred
+from this grouping.
+
+Nucleus Words
+
+!   *   */   */MOD   +   +!   +loop   -   /
+/MOD   0<   0=   0>   1+   1-   2+   2-   <
+=   >   >R   ?DUP   @   ABS   AND   begin   C!
+C@   colon   CMOVE   constant   create   D+
+D<   DEPTH   DNEGATE   do   does>
+DROP   DUP   else   EXECUTE   EXIT   FILL   I
+if   J   LEAVE   literal   loop   MAX   MIN
+MOD   MOVE   NEGATE   NOT   OR   OVER   PICK
+R>   R@   repeat   ROLL   ROT   semicolon
+SWAP   then   U*   U/   until   variable
+while   XOR
+
+(note  that  lower  case entries refer to just  the  run-time  code
+corresponding to a compiling word.)
+
+Interpreter Words
+
+#   #>   #S   '   (   -TRAILING   .
+79-STANDARD   <#   >IN   ?   ABORT   BASE   BLK
+CONTEXT   CONVERT   COUNT   CR   CURRENT
+DECIMAL   EMIT   EXPECT   FIND   FORTH   HERE
+HOLD   KEY   PAD   QUERY   QUIT   SIGN   SPACE
+SPACES   TYPE   U.   WORD
+
+Compiler Words
+
++LOOP   ,   ."   :   ;   ALLOT   BEGIN
+COMPILE   CONSTANT   CREATE   DEFINITIONS   DO
+DOES>   ELSE   FORGET   IF   IMMEDIATE
+LITERAL   LOOP   REPEAT   STATE   THEN   UNTIL
+VARIABLE   VOCABULARY   WHILE   [   [COMPILE]   ]
+
+Device Words
+
+BLOCK   BUFFER   EMPTY-BUFFERS   LIST
+LOAD   SAVE-BUFFERS   SCR   UPDATE
+
+
+
+!              n addr --                     112            "store"
+     Store n at addr.
+
+#              ud1 -- ud2                    158            "sharp"
+     Generate  from  an unsigned double number d1,  the next  ASCII
+     character which is placed in an output string.   Result d2  is
+     the  quotient after division by BASE is maintained for further
+     processing.  Used between <# and #> .
+
+#>             d -- addr n                   190    "sharp-greater"
+     End pictured numeric output conversion.   Drop d,  leaving the
+     text address, and character count, suitable for TYPE.
+
+#S             ud -- 0 0                     209          "sharp-s"
+     Convert  all digits of an unsigned 32-bit  number  ud,  adding
+     each  to the pictured numeric output text,  until remainder is
+     zero.   A  single  zero is added to the output string  if  the
+     number was initially zero.  Use only between <# and #>.
+
+'              -- addr                       I,171           "tick"
+     Used in the form:
+          '  <name>
+     If  executing,  leave the parameter field address of the  next
+     word accepted from the input stream.   If  compiling,  compile
+     this  address  as a literal;  later execution will place  this
+     value  on the stack.   An error condition exists if not  found
+     after a search of the CONTEXT and FORTH vocabularies.   Within
+     a  colon-definition  '  <name> is identical to [  '  <name>  ]
+     LITERAL.
+
+(              --                            I,122          "paren"
+     Used in the form:
+          ( ccc)
+     Accept  and ignore comment characters from the  input  stream,
+     until  the  next  right parenthesis.   As  a  word,  the  left
+     parenthesis  must be followed by one blank.   It may freely be
+     used while executing or compiling.   An error condition exists
+     if the input stream is exhausted before the right parenthesis.
+
+*              n1 n2 -- n3                   138            "times"
+     Leave the arithmetic product of n1 times n2.
+
+*/             n1 n2 n3 -- n4                220     "times-divide"
+     Multiply  n1  by  n2,  divide the result by n3 and  leave  the
+     quotient n4.   n4 is rounded toward zero.   The product of  n1
+     times  n2  is maintained as an intermediate 32-bit  value  for
+     greater precision than the otherwise equivalent  sequence:  n1
+     n2 * n3 /
+
+*/MOD          n1 n2 n3 -- n4 n5             192 "times-divide-mod"
+     Multiply  n1  by  n2,  divide the result by n3 and  leave  the
+     remainder n4 and quotient n5.   A 32-bit intermediate  product
+     is used as for */ .  The remainder has the same sign as n1.
+
++              n1 n2 -- n3                   121             "plus"
+     Leave the arithmetic sum of n1 plus n2.
+
++!             n addr --                     157       "plus-store"
+     Add  n to the 16-bit value at the address,  by the  convention
+     given for + .
+
++LOOP          n --                          I,C,141    "plus-loop"
+     Add  the  signed  increment  n to the  loop  index  using  the
+     convention for +,  and compare the total to the limit.  Return
+     execution to the corresponding DO until the new index is equal
+     to or greater than the limit (n>0),  or until the new index is
+     less  than the limit (n<0).   Upon the exiting from the  loop,
+     discard  the  loop control  parameters,  continuing  execution
+     ahead.   Index and  limit are  signed  integers in  the  range
+     {-32,768..32,767}.
+
+     (Comment:  It is a historical precedent that the limit for n<0
+     is irregular.   Further consideration of the characteristic is
+     unlikely.)
+
+,              n --                          143            "comma"
+     Allot two bytes in the dictionary, storing n there.
+
+-              n1 n2 -- n3                   134            "minus"
+     Subtract n2 from n1 and leave the difference n3.
+
+-TRAILING      addr n1 -- addr n2            148    "dash-trailing"
+     Adjust  the character count n1 of a text string  beginning  at
+     addr  to  exclude trailing blanks,  i.e.,  the  characters  at
+     addr+n2 to addr+n1-1 are blanks.  An error condition exists if
+     n1 is negative.
+
+.              n --                          193              "dot"
+     Display  n converted according to BASE in a free field  format
+     with one trailing blank.  Display only a negative sign.
+
+."                                           I,133      "dot-quote"
+     Interpreted or used in a colon definition in the form:
+          ." ccc"
+     Accept the following text from the input stream, terminated by
+     "  (double-quote).   If executing,  transmit this text to  the
+     selected output device.   If compiling,  compile so that later
+     execution  will  transmit  the  text to  the  selected  output
+     device.   At least 127 characters are allowed in the text.  If
+     the  input stream is exhausted before the terminating  double-
+     quote, an error condition exists.
+
+/              n1 n2 -- n3                   178           "divide"
+     Divide  n1  by n2 and leave the quotient n3.   n3  is  rounded
+     toward zero.
+
+/MOD           n1 n2 -- n3 n4                198       "divide-mod"
+     Divide  n1 by n2 and leave the remainder n3 and  quotient  n4.
+     n3 has the same sign as n1.
+
+0<             n -- flag                     144        "zero-less"
+     True if n is less than zero (negative)
+
+0=             n -- flag                     180      "zero-equals"
+     True if n is zero.
+
+0>             n -- flag                     118     "zero-greater"
+     True if n is greater than zero.
+
+1+             n -- n+1                      107         "one-plus"
+     Increment n by one, according to the operation of + .
+
+1-             n -- n-1                      105        "one-minus"
+     Decrement n by one, according to the operation of - .
+
+2+             n -- n+2                      135         "two-plus"
+     Increment n by two, according to the operation of + .
+
+2-             n -- n-1                      129        "two-minus"
+     Decrement n by two, according to the operation of - .
+
+79-STANDARD                                  119
+     Execute assuring that a FORTH-79 Standard system is available,
+     otherwise an error condition exists.
+
+:                                            116            "colon"
+     A defining word executed in the form:
+          :  <name>  ...  ;
+     Select  the  CONTEXT  vocabulary to be identical  to  CURRENT.
+     Create  a  dictionary entry for <name>  in  CURRENT,  and  set
+     compile   mode.    Words  thus  defined  are  called   'colon-
+     definitions'.   The  compilation addresses of subsequent words
+     from the input stream which are not immediate words are stored
+     in  the  dictionary  to  be  executed  when  <name>  is  later
+     executed.  IMMEDIATE words are executed as encountered.
+
+     If a word is not found after a search of the CONTEXT and FORTH
+     vocabularies,  conversion and compilation of a literal  number
+     is attempted,  with regard to the current BASE;  that failing,
+     an error condition exists .
+
+;                                            I,C,196   "semi-colon"
+     Terminate  a  colon  definition  and  stop  compilation.    If
+     compiling  from mass storage and the input stream is exhausted
+     before encountering ; an error condition exists.
+
+<              n1 n2 -- flag                 139        "less-than"
+     True if n1 is less than n2.
+
+     -32768 32767 <  must return true.
+     -32768 0 <  must be distinguished.
+
+<#                                           169       "less-sharp"
+     Initialize pictured numeric output.  The words:
+          #  #>  #S  <#  HOLD  SIGN
+     can   be used to specify the conversion of a  double-precision
+     number into an ASCII character string stored in  right-to-left
+     order.
+
+=              n1 n2 -- flag                 173           "equals"
+     True if n1 is equal to n2.
+
+>              n1 n2 -- flag                 102     "greater-than"
+     True if n1 is greater than n2.
+
+>IN            -- addr                       U,201          "to-in"
+     Leave  the  address of a variable which contains  the  present
+     character offset within the input stream {{0..1023}}
+     See:  WORD  (  ."  FIND
+
+>R             n --                          C,200           "to-r"
+     Transfer n to the return stack.   Every >R must be balanced by
+     a  R> in the same control structure nesting level of a  colon-
+     definition.
+
+?              addr --                       194    "question-mark"
+     Display the number at address, using the format of "." .
+
+?DUP           n -- n ( n )                  184       "query-dupe"
+     Duplicate n if it is non-zero.
+
+@              addr -- n                     199            "fetch"
+     Leave on the stack the number contained at addr.
+
+ABORT                                        101
+     Clear  the  data and return stacks,  setting  execution  mode.
+     Return control to the terminal.
+
+ABS            n1 -- n1                      108         "absolute"
+     Leave the absolute value of a number.
+
+ALLOT          n --                          154
+     Add  n  bytes  to the parameter field  of  the  most  recently
+     defined word.
+
+AND            n1 n2 -- n3                   183
+     Leave the bitwise logical 'and' of n1 and n2.
+
+BASE           -- addr                       U,115
+     Leave  the address of a variable containing the current input-
+     output numeric conversion base.  {{2..70}}
+
+BEGIN                                        I,C,147
+     Used in a colon-definition in the form:
+          BEGIN ... flag UNTIL   or
+          BEGIN ... flag WHILE ... REPEAT
+     BEGIN  marks  the  start of a  word  sequence  for  repetitive
+     execution.   A BEGIN-UNTIL loop will be repeated until flag is
+     true.   A  BEGIN-WHILE-REPEAT loop will be repeated until flag
+     is  false.   The words after UNTIL or REPEAT will be  executed
+     when  either loop is finished.   flag is always dropped  after
+     being tested.
+
+BLK            -- addr                       U,132          "b-l-k"
+     Leave  the address of a variable containing the number of  the
+     mass storage block being interpreted as the input stream.   If
+     the  content  is  zero,  the input stream is  taken  from  the
+     terminal.
+
+BLOCK          n -- addr                     191
+     Leave the address of the first byte in block n.   If the block
+     is not already in memory,  it is transferred from mass storage
+     into whichever memory buffer has been least recently accessed.
+     If  the  block occupying that buffer has  been  UPDATEd  (i.e.
+     modified), it is rewritten onto mass storage before block n is
+     read  into the buffer.   n is an unsigned number.   If correct
+     mass storage read or write is not possible, an error condition
+     exists.  Only data within the latest block referenced by BLOCK
+     is valid by byte address, due to sharing of the block buffers.
+
+BUFFER         n -- addr                     130
+     Obtain the next block buffer,  assigning it to block  n.   The
+     block  is  not  read  from  mass  storage.   If  the  previous
+     contents  of  the  buffer has been marked as  UPDATEd,  it  is
+     written to mass storage.   If correct writing to mass  storage
+     is not possible,  an error condition exists.  The address left
+     is the first byte within the buffer for data storage.  n is an
+     unsigned number.
+
+C!             n addr --                     219          "c-store"
+     Store the least significant 8-bits of n at addr.
+
+C@             addr -- byte                  156          "c-fetch"
+     Leave  on  the stack the contents of the byte  at  addr  (with
+     higher bits zero, in a 16-bit field).
+
+CMOVE          addr1 addr2 n --              153           "c-move"
+     Move  n  bytes  beginning  at address  addr1  to  addr2.   The
+     contents  of  addr1  is moved  first  proceeding  toward  high
+     memory.  If n is zero nothing is moved.
+
+COMPILE                                      C,146
+     When  a  word containing COMPILE executes,  the  16-bit  value
+     following   the  compilation  address  of  COMPILE  is  copied
+     (compiled) into the dictionary.   i.e.,  COMPILE DUP will copy
+     the compilation address of DUP.
+          COMPILE  [ 0 , ]   will copy zero.
+
+CONSTANT       n --                          185
+     A defining word used in the form:
+          n CONSTANT <name>
+     to  create  a dictionary entry for <name>,  leaving n  in  its
+     parameter  field.   When <name> is later executed,  n will  be
+     left on the stack.
+
+CONTEXT        -- addr                       U,151
+     Leave  the address of a variable specifying the vocabulary  in
+     which   dictionary   searches   are   to   be   made,   during
+     interpretation of the input stream.
+
+CONVERT        d1 addr1 -- d2 addr2          195
+     Convert  to the equivalent stack number the text beginning  at
+     addr1+1  with regard to BASE.   The new value  is  accumulated
+     into double number d1, being left as d2.  addr2 is the address
+     of the first non-convertible character.
+
+COUNT          addr -- addr+1 n              159
+     Leave  the  address  addr+1 and the character  count  of  text
+     beginning  at addr.   The first byte at addr must contain  the
+     character count n.  Range of n is {0..255}.
+
+CR                                           160              "c-r"
+     Cause  a carriage-return and line-feed to occur at the current
+     output device.
+
+CREATE                                       239
+     A defining word used in the form:
+          CREATE  <name>
+     to  create a dictionary entry for <name>,  without  allocating
+     any  parameter  field memory.   When  <name>  is  subsequently
+     executed,  the address of the first byte of <name>'s parameter
+     field is left on the stack.
+
+CURRENT        -- addr                       U,137
+     Leave the address of a variable specifying the vocabulary into
+     which new word definitions are to be entered.
+
+D+             d1 d2 --- d3                  241           "d-plus"
+     Leave the arithmetic sum of d1 plus d2.
+
+D<             d1 d2 -- flag                 244      "d-less-than"
+     True if d1 is less than d2.
+
+DECIMAL                                      197
+     Set the input-output numeric conversion base to ten.
+
+DEFINITIONS                                  155
+     Set  CURRENT  to  the CONTEXT vocabulary  so  that  subsequent
+     definitions  will  be  created in  the  vocabulary  previously
+     selected as CONTEXT.
+
+DEPTH          -- n                          238
+     Leave the number of the quantity of 16-bit values contained in
+     the data stack, before n added.
+
+DNEGATE        d -- -d                       245         "d-negate"
+     Leave the two's complement of a double number.
+
+DO             n1 n2 --                      I,C,142
+     Used in a colon-definition:
+          DO ... LOOP   or
+          DO ... +LOOP
+     Begin a loop which will terminate based on control parameters.
+     The loop index begins at n2, and terminates based on the limit
+     n1.   At LOOP or +LOOP, the index is modified by a positive or
+     negative  value.   The range of a DO-LOOP is determined by the
+     terminating word.   DO-LOOP may be nested.  Capacity for three
+     levels  of  nesting  is specified as a  minimum  for  standard
+     systems.
+
+DOES>                                        I,C,168         "does"
+     Define  the run-time action of a word created by a  high-level
+     defining word.  Used in the form:
+          :  <name> ... CREATE ... DOES> ... ;
+          and then   <namex>  <name>
+     Marks  the  termination of the defining part of  the  defining
+     word <name> and begins the defining of the run-time action for
+     words  that will later be defined by <name>.   On execution of
+     <namex>  the  sequence  of  words  between  DOES>  and  ;  are
+     executed, with the address of <namex>'s parameter field on the
+     stack.
+
+DROP           n --                          233
+     Drop the top number from the stack.
+
+DUP            n -- n n                      205             "dupe"
+     Leave a copy of the top stack number.
+
+ELSE           --                            I,C,167
+     Used in a colon-definition in the form:
+          IF ... ELSE ... THEN
+     ELSE executes after the true part following IF.   ELSE  forces
+     execution  to skip till just after THEN.   It has no effect on
+     the stack.  (see IF)
+
+EMIT           char --                       207
+     Transmit character to the current output device.
+
+EMPTY-BUFFERS                                145
+     Mark all block buffers as empty, without necessarily affecting
+     their actual contents.  UPDATEd blocks are not written to mass
+     storage.
+
+EXIT                                         C,117
+     When compiled within a colon-definition,  terminate  execution
+     of that definition,  at that point.   May not be used within a
+     DO...LOOP.
+
+EXPECT         addr n --                     189
+     Transfer  characters  from  the terminal  beginning  at  addr,
+     upward,  until a "return" or the count of n has been received.
+     Take  no action for n less than or equal to zero.   One or two
+     nulls are added at the end of text.
+
+FILL           addr n byte --                234
+     Fill  memory beginning at address with a sequence of n  copies
+     of  byte.   If the quantity n is less than or equal  to  zero,
+     take no action.
+
+FIND           -- addr                       203
+     Leave the compilation address of the next word name,  which is
+     accepted from the input stream.   If that word cannot be found
+     in  the  dictionary after a search of CONTEXT and FORTH  leave
+     zero.
+
+FORGET                                       186
+     Execute in the form:
+          FORGET  <name>
+     Delete  from  the dictionary <name> (which is in  the  CURRENT
+     vocabulary)  and  all  words added  to  the  dictionary  after
+     <name>,  regardless  of  their vocabulary.   Failure  to  find
+     <name> in CURRENT or FORTH is an error condition.
+
+FORTH                                        I,187
+     The name of the primary vocabulary.  Execution makes FORTH the
+     CONTEXT  vocabulary.   New  definitions become a part  of  the
+     FORTH  until  a differing CURRENT vocabulary  is  established.
+     User  vocabularies  conclude by 'chaining'  to  FORTH,  so  it
+     should  be  considered that FORTH is 'contained'  within  each
+     user's vocabulary.
+
+HERE           -- addr                       188
+     Return the address of the next available dictionary location.
+
+HOLD           char --                       175
+     Insert char into a pictured numeric output string.   May  only
+     be used between <# and #> .
+
+I              -- n                          C,136
+     Copy the loop index onto the data stack.   May only be used in
+     the form:
+          DO ... I ... LOOP   or
+          DO ... I ... +LOOP
+
+IF             flag --                       I,C,210
+     Used in a colon-definition in the form:
+          flag  IF ... ELSE ... THEN   or
+          flag  IF ... THEN
+     If  flag is true,  the words following IF are executed and the
+     words following ELSE are skipped.   The ELSE part is optional.
+     If flag is false, words between IF and ELSE, or between IF and
+     THEN  (when  no  ELSE is  used),  are  skipped.   IF-ELSE-THEN
+     conditionals may be nested.
+
+IMMEDIATE                                    103
+     Marks the most recently made dictionary entry as a word  which
+     will  be  executed when encountered during compilation  rather
+     than compiled.
+
+J              -- n                          C,225
+     Return  the index of the next outer loop.   May only  be  used
+     within a nested DO-LOOP in the form:
+          DO ... DO ... J ... LOOP ... LOOP
+
+KEY            -- char                       100
+     Leave the ASCII value of the next available character from the
+     current input device.
+
+LEAVE                                        C,213
+     Force  termination  of a DO-LOOP at the next LOOP or +LOOP  by
+     setting  the  loop  limit equal to the current  value  of  the
+     index.   The  index itself remains  unchanged,  and  execution
+     proceeds   normally   until  the  loop  terminating  word   is
+     encountered.
+
+LIST           n --                          109
+     List  the ASCII symbolic contents of screen n on  the  current
+     output device, setting SCR to contain n.  n is unsigned.
+
+LITERAL        n --                          I,215
+     If  compiling,  then  compile  the stack value n as  a  16-bit
+     literal, which when later executed, will leave n on the stack.
+
+LOAD           n --                          202
+     Begin  interpretation  of  screen n by  making  it  the  input
+     stream;  preserve  the  locators of the present  input  stream
+     (from  >IN  and  BLK).   If interpretation is  not  terminated
+     explicitly  it  will be terminated when the  input  stream  is
+     exhausted.    Control   then  returns  to  the  input   stream
+     containing  LOAD,  determined by the input stream locators >IN
+     and BLK.
+
+LOOP                                         I,C,124
+     Increment  the DO-LOOP index by one,  terminating the loop  if
+     the  new  index is equal to or greater than  the  limit.   The
+     limit  and  index  are signed numbers in  the  range  {-32,768
+     ..32,767}.
+
+MAX            n1 n2 -- n3                   218              "max"
+     Leave the greater of two numbers.
+
+MIN            n1 n2 -- n3                   127              "min"
+     Leave the lesser of two numbers.
+
+MOD            n1 n2 -- n3                   104
+     Divide n1 by n2,  leaving the remainder n3, with the same sign
+     as n1.
+
+MOVE           addr1 addr2 n --              113
+     Move the specified quantity n of 16-bit memory cells beginning
+     at addr1 into memory at addr2.  The contents of addr1 is moved
+     first.  If n is negative or zero, nothing is moved.
+
+NEGATE         n -- -n                       177
+     Leave the two's complement of a number,  i.e.,  the difference
+     of zero less n.
+
+NOT            flag1 -- flag2                165
+     Reverse the boolean value of flag1.  This is identical to 0=.
+
+OR             n1 n2 -- n3                   223
+     Leave the bitwise inclusive-or of two numbers.
+
+OVER           n1 n2 -- n1 n2 n1             170
+     Leave a copy of the second number on the stack.
+
+PAD            -- addr                       226
+     The  address of a scratch area used to hold character  strings
+     for  intermediate processing.   The minimum capacity of PAD is
+     64 characters (addr through addr+63).
+
+PICK           n1 -- n2                      240
+     Return the contents of the n1-th stack value,  not counting n1
+     itself.  An error condition results for n less than one.
+          2 PICK  is equivalent to OVER.  {1..n}
+
+QUERY                                        235
+     Accept input of up to 80 characters (or until a 'return') from
+     the operator's terminal, into the terminal input buffer.  WORD
+     may  be  used  to accept text from this buffer  as  the  input
+     stream, by setting >IN and BLK to zero.
+
+QUIT                                         211
+     Clear  the return stack,  setting execution mode,  and  return
+     control to the terminal.  No message is given.
+
+R>             -- n                          C,110         "r-from"
+     Transfer n from the return stack to the data stack.
+
+R@             -- n                          C,228        "r-fetch"
+     Copy the number on top of the return stack to the data stack.
+
+REPEAT         --                            I,C,120
+     Used in a colon-definition in the form:
+          BEGIN ... WHILE ... REPEAT
+     At  run-time,  REPEAT returns to just after the  corresponding
+     BEGIN.
+
+ROLL           n --                          236
+     Extract  the  n-th stack value to the top of  the  stack,  not
+     counting  n  itself,  moving  the remaining  values  into  the
+     vacated position.   An error condition results for n less than
+     one.  {1..n}
+          3  ROLL  =  ROT
+          1  ROLL  =  null operation
+
+ROT            n1 n2 n3 -- n2 n3 n1          212             "rote"
+     Rotate the top three values, bringing the deepest to the top.
+
+SAVE-BUFFERS                                 221
+     Write  all  blocks to mass-storage that have been  flagged  as
+     UPDATEd.   An  error condition results if mass-storage writing
+     is not completed.
+
+SCR            -- addr                       U,217
+     Leave  the address of a variable containing the number of  the
+     screen most recently listed.
+
+SIGN           n --                          C,140
+     Insert  the ASCII "-" (minus sign) into the  pictured  numeric
+     output string, if n is negative.
+
+SPACE                                        232
+     Transmit an ASCII blank to the current output device.
+
+SPACES         n --                          231
+     Transmit  n  spaces  to the current output  device.   Take  no
+     action for n of zero or less.
+
+STATE          -- addr                       U,164
+     Leave  the address of the variable containing the  compilation
+     state.  A non-zero content indicates compilation is occurring,
+     but the value itself may be installation dependent.
+
+SWAP           n1 n2 -- n2 n1                230
+     Exchange the top two stack values.
+
+THEN                                         I,C,161
+     Used in a colon-definition in the form:
+          IF ... ELSE ... THEN   or
+          IF ... THEN
+     THEN  is  the point where execution resumes after ELSE  or  IF
+     (when no ELSE is present).
+
+TYPE           addr n --                     222
+     Transmit  n  characters beginning at address  to  the  current
+     output device.  No action takes place for n less than or equal
+     to zero.
+
+U*             un1 un2 -- ud3                242          "u-times"
+     Perform an unsigned multiplication of un1 by un2,  leaving the
+     double number product ud3.  All values are unsigned.
+
+U.             un --                         106            "u-dot"
+     Display  un converted according to BASE as an unsigned number,
+     in a free-field format, with one trailing blank.
+
+U/MOD          ud1 un2 -- un3 un4            243     "u-divide-mod"
+     Perform  the  unsigned division of double number ud1  by  un2,
+     leaving the remainder un3,  and the quotient un4.   All values
+     are unsigned.
+
+U<             un1 un2 -- flag               150      "u-less-than"
+     Leave the flag representing the magnitude comparison of un1  <
+     un2 where un1 and un2 are treated as 16-bit unsigned integers.
+
+UNTIL          flag --                       I,C,,237
+     Within a colon-definition, mark the end of a BEGIN-UNTIL loop,
+     which will terminate based on flag.  If flag is true, the loop
+     is  terminated.   If flag is false,  execution returns to  the
+     first word after BEGIN.  BEGIN-UNTIL structures may be nested.
+
+UPDATE                                       229
+     Mark  the  most recently referenced block  as  modified.   The
+     block  will subsequently be automatically transferred to  mass
+     storage  should  its memory buffer be needed for storage of  a
+     different block, or upon execution of SAVE-BUFFERS.
+
+VARIABLE                                     227
+     A defining word executed in the form:
+          VARIABLE  <name>
+     to  create a dictionary entry for <name> and allot  two  bytes
+     for  storage  in the parameter field.   The  application  must
+     initialize  the stored value.   When <name> is later executed,
+     it will place the storage address on the stack.
+
+VOCABULARY                                   208
+     A defining word executed in the form:
+          VOCABULARY  <name>
+     to  create (in the CURRENT vocabulary) a dictionary entry  for
+     <name>,   which   specifies  a  new  ordered  list   of   word
+     definitions.   Subsequent execution of <name> will make it the
+     CONTEXT   vocabulary.    When   <name>  becomes  the   CURRENT
+     vocabulary (see DEFINITIONS), new definitions will be  created
+     in that list.
+
+     In lieu of any further specification, new vocabularies 'chain'
+     to  FORTH.   That  is,  when  a dictionary  search  through  a
+     vocabulary is exhausted, FORTH will be searched.
+
+WHILE          flag --                       I,C,149
+     Used in the form:
+          BEGIN ... flag WHILE ... REPEAT
+     Select conditional execution based on flag.   On a true  flag,
+     continue execution through to REPEAT,  which then returns back
+     to just after BEGIN.   On a false flag, skip execution to just
+     after REPEAT, exiting the structure.
+
+WORD           char -- addr                  181
+     Receive  characters  from the input stream until the  non-zero
+     delimiting  character  is encountered or the input  stream  is
+     exhausted,  ignoring leading delimiters.   The characters  are
+     stored  as  a  packed string with the character count  in  the
+     first  character position.   The actual delimiter  encountered
+     (char  or  null)  is stored at the end of  the  text  but  not
+     included  in the count.   If the input stream was exhausted as
+     WORD is called,  then a zero length will result.   The address
+     of the beginning of this packed string is left on the stack.
+
+XOR            n1 n2 -- n3                   174             "x-or"
+     Leave the bitwise exclusive-or of two numbers.
+
+[                                            I,125   "left-bracket"
+     End the compilation mode.   The text from the input stream  is
+     subsequently executed.  See ]
+
+[COMPILE]                                I,C,179  "bracket-compile"
+     Used in a colon-definition in the form:
+          [COMPILE] <name>
+     Forces  compilation  of  the  following  word.    This  allows
+     compilation  of  an IMMEDIATE word when it would otherwise  be
+     executed.
+
+]                                            126    "right-bracket"
+     Sets the compilation mode.   The text from the input stream is
+     subsequently compiled.  See [
+
+
+               11. EXTENSION WORD SETS
+
+
+11.1  DOUBLE NUMBER WORD SET
+
+
+2!             d addr --                                "two-store"
+     Store  d  in 4 consecutive bytes beginning at addr,  as for  a
+     double number.
+
+2@             addr -- d                                "two-fetch"
+     Leave on the stack the contents of the four consecutive  bytes
+     beginning at addr, as for a double number.
+
+2CONSTANT      d --                                  "two-constant"
+     A defining word used in the form:
+          d  2CONSTANT  <name>
+     to  create  a dictionary entry for <name>,  leaving d  in  its
+     parameter  field.   When <name> is later executed,  d will  be
+     left on the stack.
+
+2DROP          d --                                      "two-drop"
+     Drop the top double number on the stack.
+
+2DUP           d -- d d                                  "two-dupe"
+     Duplicate the top double number on the stack.
+
+2OVER          d1 d2 -- d1 d2 d1                         "two-over"
+     Leave a copy of the second double number on the stack.
+
+2ROT           d1 d2 d3 -- d2 d3 d1                      "two-rote"
+     Rotate the third double number to the top of the stack.
+
+2SWAP          d1 d2 -- d2 d1                            "two-swap"
+     Exchange the top two double numbers on the stack.
+
+2VARIABLE                                            "two-variable"
+     A defining word used in the form:
+               2VARIABLE  <name>
+     to  create a dictionary entry of <name> and assign four  bytes
+     for  storage  in the parameter field.   When <name>  is  later
+     executed,  it  will leave the address of the first byte of its
+     parameter field is placed on the stack.
+
+D+             d1 d2 -- d3                   241           "d-plus"
+     Leave the arithmetic sum of d1 and d2.
+
+D-             d1 d2 -- d3                   129          "d-minus"
+     Subtract d2 from d1 and leave the difference d3.
+
+D.             d --                          129            "d-dot"
+     Display d converted according to BASE in a free field  format,
+     with one trailing blank.  Display the sign only if negative.
+
+D.R            d n --                                     "d-dot-r"
+     Display  d converted according to BASE,  right aligned in an c
+     character field. Display the sign only if negative.
+
+D0=            d -- flag                            "d-zero-equals"
+     Leave true if d is zero.
+
+D<             d1 d2 -- flag                 244           "d-less"
+     True if d1 is less than d2.
+
+D=             d1 d2 -- flag                              "d-equal"
+     True if d1 equals d2.
+
+DABS           d1 -- d2                                "d-absolute"
+     Leave as a positive double number d2,  the absolute value of a
+     double number, d1.  {0..2,147,483,647}
+
+DMAX           d1 d2 -- d3                                  "d-max"
+     Leave the larger of two double numbers.
+
+DMIN           d1 d2 -- d3                                  "d-min"
+     Leave the smaller of two double numbers.
+
+DNEGATE        d -- -d                       245
+     Leave  the double number two's complement of a double  number,
+     i.e., the difference 0 less d.
+
+DU<            ud1 ud2 -- flag                           "d-u-less"
+     True if ud1 is less than ud2.  Both numbers are unsigned.
+
+
+11.2  ASSEMBLER WORD SET
+
+;CODE                                    C,I,206  "semi-colon-code"
+     Used in the form:
+          : <name> ...  ;CODE
+     Stop  compilation  and  terminate  a  defining  word   <name>.
+     ASSEMBLER  becomes  the CONTEXT vocabulary.   When  <name>  is
+     executed in the form:
+          <name>  <namex>
+     to  define the new <namex>,  the execution address of  <namex>
+     will  contain  the address of the code sequence following  the
+     ;CODE  in <name>.   Execution of any <namex> will  cause  this
+     machine code sequence to be executed.
+
+ASSEMBLER                                    I,166
+     Select assembler as the CONTEXT vocabulary.
+
+CODE                                         111
+     A defining word used in the form:
+          CODE  <name> ... END-CODE
+     to  create  a dictionary entry for <name> to be defined  by  a
+     following  sequence  of assembly  language  words.   ASSEMBLER
+     becomes the context vocabulary.
+
+END-CODE
+     Terminate a code definition,  resetting the CONTEXT vocabulary
+     to the CURRENT vocabulary.   If no errors have  occurred,  the
+     code definition is made available for use.
+
+
+                        REFERENCE WORD SET
+
+This word set is furnished as a reference document.  It is a set of
+formerly    standardized    words   and   candidate    words    for
+standardization.
+
+      +-----------------------------------------------------+
+      | The  following words represent only the more common |
+      | of the definitions actually listed in the  FORTH-79 |
+      | Standard.                                           |
+      +-----------------------------------------------------+
+
+                        REFERENCE WORD SET
+                             FORTH-79
+
+The Reference Word Set contain both Standard Word Definitions (with
+serial  number  identifiers  in the range  100  through  999),  and
+uncontrolled word definitions.
+
+Uncontrolled definitions are included for public reference of words
+that   have   present  usage  and/or  are  candidates  for   future
+standardization.
+
+No   restrictions  are  placed  on  the  definition  or  usage   of
+uncontrolled  words.   However,  use of these names for  procedures
+differing from the given definitions is discouraged.
+
+
+-->                                          I,131     "next-block"
+     Continue interpretation on the next sequential block.   May be
+     used within a colon definition that crosses a block boundary.
+
+-MATCH         addr1 n1 addr2 n2 -- addr3 f            "dash-match"
+     Attempt  to  find the n2-character string beginning  at  addr2
+     somewhere  in  the  n1-character string  beginning  at  addr1.
+     Return  the last+1 character address addr3 of the match  point
+     and a flag which is zero if a match exists.
+
+-TEXT          addr1 n1 addr2 -- n2                     "dash-text"
+     Compare two strings over the length n1 beginning at addr1  and
+     addr2.   Return  zero if the strings are equal.   If  unequal,
+     return   n2,   the  difference  between  the  last  characters
+     compared:  addr1(i) - addr2(i)
+
+.R             n1 n2 --                                     "dot-r"
+     Print n1 right aligned in a field of n2 characters,  according
+     to  BASE.   If  n2  is less than  1,  no  leading  blanks  are
+     supplied.
+
+/LOOP          n --                                       "up-loop"
+     A DO-LOOP terminating word.   The loop index is incremented by
+     the  unsigned  magnitude  of n.   Until  the  resultant  index
+     exceeds  the  limit,  execution  returns  to  just  after  the
+     corresponding   DO:   otherwise,   the  index  and  limit  are
+     discarded.  Magnitude logic is used.
+
+2*             n1 -- n2                                 "two-times"
+     Leave 2*(n1).
+
+;S                                                         "semi-s"
+     Stop interpretation of a block.  For execution only.
+
+<>             n1 n2 -- flag                            "not-equal"
+     Leave true if n1 is not equal to n2.
+
+<CMOVE         addr1 addr2 n --                    "reverse-c-move"
+     Copy  n bytes beginning at addr1 to addr2.   The move proceeds
+     within the bytes from high memory toward low memory.
+
+ABORT"         flag --                       I,C      "abort-quote"
+     Used in a colon-definition in the form:
+               ABORT" stack empty"
+     If the flag is true,  print the following text,  till ".  Then
+     execute ABORT.
+
+AGAIN                                        I,C,114
+     Effect  an  unconditional jump back to the start of  a  BEGIN-
+     AGAIN loop.
+
+ASCII          -- char (executing)
+               --      (compiling)           I,C
+     Leave  the  ASCII  character  value  of  the  next   non-blank
+     character in the input stream.   If compiling, compile it as a
+     literal, which will be later left when executed.
+
+B/BUF          -- 1024                           "bytes-per-buffer"
+     A constant leaving 1024, the number of bytes per block buffer.
+
+BELL
+     Activate  a terminal bell or noise-maker as appropriate to the
+     device in use.
+
+BL             -- n                          176              "b-l"
+     Leave the ASCII character value for space (decimal 32).
+
+BLANKS         addr n --                     152
+     Fill  an area of memory over n bytes with the value for  ASCII
+     blank,  starting at addr.  If n is less than or equal to zero,
+     take no action.
+
+C,             n --                                       "c-comma"
+     Store  the  low-order  8 bits of n at the  next  byte  in  the
+     dictionary, advancing the dictionary pointer.
+
+COM            n1 -- n2
+     Leave the one's complement of n1.
+
+DPL            -- addr                                      "d-p-l"
+     A   variable  containing  the  number  of  places  after   the
+     fractional point for output conversion.  If DPL contains zero,
+     the  last character output will be a decimal point.   No point
+     is  output if DPL contains a negative value.   DPL may be  set
+     explicitly,  or by certain output words,  but is unaffected by
+     number input.
+
+DUMP           addr n --                     123
+     List the contents of n addresses at addr.  Each line of values
+     may be preceded by the address of the first value.
+
+EDITOR                                       I,172
+     The  name  of  the  editor  vocabulary.   When  this  name  is
+     executed, EDITOR is established as the CONTEXT vocabulary.
+
+END                                          I,C,224
+     A synonym for UNTIL.
+
+ERASE          addr n --                     182
+     Fill  an area of memory over n bytes with zeros,  starting  at
+     addr.  If n is zero or less, take no action.
+
+FLD            -- addr                                      "f-l-d"
+     A variable pointing to the field length reserved for a  number
+     during output conversion.
+
+FLUSH
+     A synonym for SAVE-BUFFERS.
+
+H.             n --
+     Output  n  as a hexadecimal integer with one  trailing  blank.
+     The current base is unchanged.
+
+HEX            --                            162
+     Set the numeric input-output conversion base to sixteen.
+
+I'             -- n                          C            "i-prime"
+     Used within a colon-definition executed only from within a DO-
+     LOOP to return the corresponding loop index.
+
+INDEX          n1 n2 --
+     Print  the first line of each screen over the range  {n1..n2}.
+     This  displays  the first line of each screen of source  text,
+     which conventionally contains a title.
+
+INTERPRET
+     Begin interpretation at the character indexed by the  contents
+     of  >IN  relative  to  the  block  number  contained  in  BLK,
+     continuing  until  the  input stream  is  exhausted.   If  BLK
+     contains  zero,  interpret characters from the terminal  input
+     buffer.
+
+K              -- n                          C
+     Within a nested DO-LOOP,  return the index of the second outer
+     loop.
+
+LAST           -- addr
+     A variable containing the address of the beginning of the last
+     dictionary  entry  made,  which may not yet be a  complete  or
+     valid entry.
+
+LINE           n -- addr
+     Leave  the  address of the beginning of line n for the  screen
+     whose number is contained in SCR.  The range of n is {0..15}.
+
+MS             n --
+     Delay for approximately n milliseconds.
+
+NUMBER         addr -- n
+     Convert  the count and character string at addr,  to a  signed
+     32-bit integer, using the current base.  If numeric conversion
+     is not possible,  an error condition exists.   The string  may
+     contain a preceding negative sign.
+
+O.             n --
+     Print n in octal format with one trailing blank.  The value in
+     base is unaffected.
+
+OCTAL
+     Set the number base to 8.
+
+OFFSET         -- addr                       128
+     A  variable that contains the offset added to the block number
+     on  the stack by BLOCK to determine the actual physical  block
+     number.   The user must add any desired offset when  utilizing
+     BUFFER.
+
+PAGE
+     Clear the terminal screen or perform an action suitable to the
+     output device currently active.
+
+S0             -- addr                                     "s-zero"
+     Returns the address of the bottom of the stack, when empty.
+
+SP@            -- addr                       214        "s-p-fetch"
+     Return  the address of the top of the stack,  just before  SP@
+     was executed.
+
+TEXT           c --
+     Accept  characters from the input stream,  as for  WORD,  into
+     PAD, blank-filling the remainder of PAD to 64 characters.
+
+THRU           n1 n2 --
+     Load consecutively the blocks from n1 through n2.
+
+U.R            un1 n2 --                     216          "u-dot-r"
+     Output un1 as an unsigned number right justified in a field n2
+     characters  wide.   If  n2  is  smaller  than  the  characters
+     required for n1, no leading spaces are given.
+
+USER           n --
+     A defining word used in the form:
+          n  USER  <name>
+     which  creates a user variable <name>.   n is the cell  offset
+     within  the  user area where the value for <name>  is  stored.
+     Execution  of  <name> leaves its absolute  user  area  storage
+     address.
+
+VLIST
+     List  the  word names of the CONTEXT vocabulary starting  with
+     the most recent definition.
+
+WHERE
+     Output information about the status of FORTH,  (e.g., after an
+     error  abort).   Indicate at least the last word compiled  and
+     the last block accessed.
+
+\LOOP          n --                          I,C        "down-loop"
+     A DO-LOOP terminating word.   The loop index is decremented by
+     n  and  the loop terminated when the resultant  index  becomes
+     equal to or less than the limit.  Magnitude logic is used, and
+     n must be positive.
+
