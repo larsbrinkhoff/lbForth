@@ -1,8 +1,14 @@
-Subset of Forth94.
+( Subset of Forth94 )
 
-The bootstrapping process uses a meta compiler written in Lisp to
+The bootstrapping process uses a metacompiler written in Lisp to
 target a small inner interpreter and a handful of code words written
-in C.
+in C.  Work is under way to rewrite the metacompiler in Forth, and to
+add a real target using assembly language code words.
 
-Work is under way to rewrite the meta compiler in Forth, and to add a
-real target using assembly language code words.
+( Further reading )
+
+INSTALL          \ How to build.
+doc              \ Classic (and recent) texts not related to this project.
+lib/README       \ Information about libraries.
+targets/README   \ Information about current and possibly future targets.
+test/readme.html \ Original readme for Hayes' test suite.
