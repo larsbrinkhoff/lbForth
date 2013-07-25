@@ -33,8 +33,7 @@ drop
 : does,     ;
 : (does>)   r> does! ;
 : does>     [ ' (does>) ] literal compile, does, ; immediate
-: create    parse-name header, [ ' dodoes >code @ ] literal , 0 ,
-   reveal (does>) ;
+: create    parse-name header, [ ' dodoes >code @ ] literal ,  reveal (does>) ;
 
 : postpone,   [ ' literal compile, ' compile, ] literal compile, ;
 \ Same as:    postpone literal  postpone compile, ;

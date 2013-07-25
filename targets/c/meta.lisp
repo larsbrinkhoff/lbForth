@@ -201,7 +201,7 @@
       (setq len (- len)))
     (output-finish)
     (output "struct word ~A_word = { ~D, \"~A\", ~A, ~A, ~A, {"
-	    mangled len (quoted name) *previous-word* code does)
+	    mangled len (quoted name) *previous-word* does code)
     (setq *previous-word* latestxt)
     (setq *finished-p* nil)))
 

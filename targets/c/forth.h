@@ -28,8 +28,8 @@ struct word
   char nlen;
   char name[NAME_LENGTH - 1];
   nt_t next;
-  code_t *code;
   cell *does;
+  code_t *code;
   cell param[];
 };
 

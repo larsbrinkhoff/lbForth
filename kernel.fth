@@ -191,7 +191,7 @@ variable csp
 : !csp   csp @ s" Nested" ?bad  sp@ csp ! ;
 : ?csp   sp@ csp @ <> s" Unbalanced" ?bad  0 csp ! ;
 
-: :   parse-name header, [ ' enter >code @ ] literal , 0 , ] !csp ;
+: :   parse-name header, [ ' enter >code @ ] literal , ] !csp ;
 : ;   reveal postpone exit postpone [ ?csp ; immediate
 
 \ ----------------------------------------------------------------------

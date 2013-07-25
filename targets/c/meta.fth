@@ -149,7 +149,7 @@ t-dictionary dp !
 : (.def)   cr type space  >in @ parse-name type >in ! ;
 : .def   parse-name 2drop ; immediate \ postpone sliteral postpone (.def) ; immediate
 
-: dummy-header,   parse-name header, 0 , 0 , ;
+: dummy-header,   parse-name header, 0 , ;
 
 : create   .def CREATE  dummy-header, reveal ;
 

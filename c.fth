@@ -20,7 +20,7 @@ forward: >body
 : reveal               latestxt  current @ >body ! ;
 : #name ( -- u )       NAME_LENGTH 1 - ;
 : name, ( a u -- )     #name min c,  #name string, ;
-: header, ( a u -- )   align here >r name, r> link, ;
+: header, ( a u -- )   align here >r name, r> link, 0 , ;
 
 
 
