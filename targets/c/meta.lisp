@@ -87,7 +87,7 @@
   (incf *ip*))
 
 (defun trunc-word (word)
-  (subseq word 0 (min (length word) 15)))
+  (subseq word 0 (min (length word) (1- *name-size*))))
 
 (defun tick (word)
   (format nil "&~A_word" (mangle-word word)))
@@ -279,8 +279,7 @@
   (do ((end (fill-pointer *code*))
        (i 0 (1+ i)))
       ((= i end))
-    (output "  (cell)~A~:[~;,~] /* ~D */"
-	    (aref *code* i) (/= (1+ i) end) i))
+    (output "  (cell)~A~:[~;,~]" (aref *code* i) (/= (1+ i) end)))
   (setq *state* 'interpret-word))
 
 (definterpreted |FORWARD:| ()
