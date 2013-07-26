@@ -112,6 +112,7 @@ defer number
 : unex   2r> r> 3drop ;
 \ Put xt and 'unex on return stack, then jump to that.
 : execute   ['] unex >r >r rp@ >r ;
+\ : execute   [ here 3 cells + ] literal ! [ 0 , ] ;
 : perform   @ execute ;
 
 defer catch
@@ -133,10 +134,6 @@ include c.fth
 \ ((~y)&(x^d)) ^ (d&x);
 \ : <   2dup - >r invert over r@ xor and swap r> and xor 0< ;
 : >   swap < ;
-
-: >code   TO_CODE + ;
-: >does   TO_DOES + ;
-: >body   TO_BODY + ;
 
 variable >in
 

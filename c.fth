@@ -26,6 +26,9 @@ forward: >body
 
 : >name    count cabs ;
 : >lfa     TO_NEXT + ;
+: >does    TO_DOES + ;
+: >code    TO_CODE + ;
+: >body    TO_BODY + ;
 : >nextxt   >lfa @ ;
 
 
@@ -99,4 +102,8 @@ forward: abort
    [ char : ] literal emit  bl emit
    count type cr abort ;
 
+( From tools.fth )
+
+: [undefined]   parse-name find-name if drop 0 else 2drop -1 then ; immediate
+: [defined]     postpone [undefined] 0= ; immediate
 [then]
