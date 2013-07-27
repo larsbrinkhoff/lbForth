@@ -55,7 +55,7 @@ variable span
 
 : u>   swap u< ;
 
-: unused   end_of_dictionary @ here - ;
+: unused   dictionary_end @ here - ;
 
 : within   over - under - u< ;
 

@@ -16,7 +16,7 @@ create data_stack     110 cells allot
 create return_stack   256 cells allot
 create jmpbuf         jmp_buf allot
 
-variable end_of_dictionary
+variable dictionary_end
 
 variable SP
 variable RP
