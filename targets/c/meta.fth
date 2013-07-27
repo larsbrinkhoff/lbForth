@@ -86,6 +86,8 @@ create does-table
 : find-does   does-table begin @+ 2dup >end >r 2over compare
    while r> @+ >end cell+ repeat 2drop r> ;
 
+: save-function-name ( a u -- xt )   [T] header, latestxt ;
+
 
 
 ( Host words to override defining words in metacompiler. )
@@ -185,8 +187,8 @@ interpreter-context definitions also host-interpreter
 : .code1   ." xt_t * REGPARM " latestxt >name .mangled
    ." _code (xt_t *IP, struct word *word)" cr s"     return IP;" latestxt ;
 
-\ TODO: remember the C function name for later output.
-: .code2   source >in @ /string type cr s" " latestxt ;
+: .code2   source >in @ /string type cr s" "
+   parse-name 2drop parse-name save-function-name ;
 
 : code   parse-name header,
    parse-name s" \" compare if .code1 else .code2 then , reveal
@@ -365,7 +367,8 @@ only forth definitions also meta-interpreter also host-interpreter
 : .{  ." struct word " >name .mangled ." _word = { " ;
 : .name   dup c@ (.) .,  >name .quoted ., ;
 : .link   >nextxt .ref ., ;
-: .code   >code @ ?dup if >name .mangled ." _code" else ." 0" then ." , {" ;
+: .code   >code @ dup t-xt? if >name .mangled ." _code"
+   else ." (code_t *)" >name type then ." , {" ;
 : .does   >does @ .addr ., ;
 : .cr   cr ."   (cell)" ;
 : .(literal)   ['] (literal) .ref ., .cr ;
