@@ -76,6 +76,16 @@ create t-dictionary  17000 allot
 
 : "(s")"   [ parse-name (s") ] sliteral ;
 
+create does-table
+   s" create" dup , string,    s" nop" dup , string,      0 ,
+   s" variable" dup , string,  s" nop" dup , string,      0 ,
+   s" constant" dup , string,  s" dup" dup , string,      cell ,
+   s" value" dup , string,     s" dup" dup , string,      cell ,
+   s" defer" dup , string,     s" perform" dup , string,  0 ,
+: >end ( a1 u -- a2 )   + aligned ;
+: find-does   does-table begin @+ 2dup >end >r 2over compare
+   while r> @+ >end cell+ repeat 2drop r> ;
+
 
 
 ( Host words to override defining words in metacompiler. )
@@ -151,11 +161,6 @@ t-dictionary dp !
 
 : cells   cell * ;
 
-: (.def)   cr type space  >in @ parse-name type >in ! ;
-: .def   parse-name 2drop ; immediate \ postpone sliteral postpone (.def) ; immediate
-
-: dummy-header,   parse-name header, 0 , ;
-
 : find-name   #name min 2dup ['] forth search-wordlist dup if 2nip then ;
 
 only forth definitions also meta-interpreter also host-interpreter
@@ -168,9 +173,14 @@ finders pp   ppt ppn pph
    interpreter-context also host-compiler pp ; immediate
 : code,   find-name -1 <> abort" Undefined?" >code @ , ;
 : postcode   parse-name postpone sliteral postpone code, ; immediate
+
+: does!     latestxt >does ! ;
+: (does>)   r> drop find-does @+ 2dup >end >r find-name drop >body r> @ + does! ;
+only also host-compiler definitions
+: does>     latestxt >name postpone sliteral postpone (does>) ; immediate
 interpreter-context definitions also host-interpreter
 
-: create   .def CREATE  dummy-header, reveal ;
+: create    parse-name header, postcode dodoes reveal does> ;
 
 : .code1   ." xt_t * REGPARM " latestxt >name .mangled
    ." _code (xt_t *IP, struct word *word)" cr s"     return IP;" latestxt ;
@@ -178,7 +188,7 @@ interpreter-context definitions also host-interpreter
 \ TODO: remember the C function name for later output.
 : .code2   source >in @ /string type cr s" " latestxt ;
 
-: code   .def CODE  parse-name header,
+: code   parse-name header,
    parse-name s" \" compare if .code1 else .code2 then , reveal
    ." {" cr begin refill 0= abort" Refill?" source s" end-code" compare
    while source type cr repeat type cr ." }" cr ;
@@ -191,11 +201,11 @@ interpreter-context definitions also host-interpreter
 finders meta-postpone   postpone, abort compile,
 
 : ]   1 state !  compiler-context ;
-: constant   .def CONSTANT  dummy-header, , reveal ;
-: variable   .def VARIABLE  dummy-header, 0 , reveal ;
-: :   .def COLON  parse-name header, postcode enter ] ;
-: defer   .def DEFER  dummy-header, 0 , reveal ;
-: value   .def VALUE  dummy-header, , reveal ;
+: constant   create , does> @ ;
+: variable   create cell allot ;
+: :       parse-name header, postcode enter ] ;
+: defer   create s" abort" target,  does> @ execute ;
+: value   create ,  does> @ ;
 
 : '   parse-name find-name 0=
    if cr ." Undefined, and cannot tick: " type cr abort then ;
@@ -290,7 +300,7 @@ interpreter-context also meta-compiler definitions also host-interpreter
 : loop    1 t-postpone literal t-postpone +loop ; immediate
 
 immediate: [if]    immediate: [else]   immediate: [then]
-immediate: does>   immediate: (        immediate: \
+immediate: (       immediate: \
 
 \ cr .( META-COMPILER WORDS: ) cr  also meta-compiler words cr previous
 
@@ -322,7 +332,7 @@ finders meta-xt   ?compile, meta-number execute
    source-id close-file abort" Close?"  r>input ;
 
 interpreter-context definitions also host-interpreter
-: include   .def INCLUDE  meta-compile ;
+: include   meta-compile ;
 
 only forth definitions also meta-interpreter also host-interpreter
 : t-id.     >name type space ;
@@ -338,7 +348,7 @@ only forth definitions also meta-interpreter also host-interpreter
 : t-see-xt   ." : " dup t-id.  body-bounds do i t-see-line cell +loop ;
 : t-see   t' t-see-xt ." ;" ;
 
-: .ref   ." &" >name .mangled ." _word" ;
+: .ref   ?dup if ." &" >name .mangled ." _word" else ." 0" then ;
 : .a ( xt a1 -- xt )   over .ref over - case
       0 of endof
       next-offset of ." .next" endof
@@ -346,16 +356,17 @@ only forth definitions also meta-interpreter also host-interpreter
       does-offset of ." .does" endof
       dup ." .param[" body-offset - cell / (.) ." ]"
    endcase ;
-: .addr ( a -- )   >r here latestxt begin dup while
+: .addr ( a -- )   ?dup 0= if ." 0" exit then
+   >r here latestxt begin dup while
    r@ dup 2over swap within if .a else drop then
    nip dup >nextxt  repeat r> 3drop ;
 
 : .,   ." , " ;
 : .{  ." struct word " >name .mangled ." _word = { " ;
 : .name   dup c@ (.) .,  >name .quoted ., ;
-: .link   >nextxt ?dup if .ref ., else ." 0, " then ;
+: .link   >nextxt .ref ., ;
 : .code   >code @ ?dup if >name .mangled ." _code" else ." 0" then ." , {" ;
-: .does   >does @ (.) ., ;
+: .does   >does @ .addr ., ;
 : .cr   cr ."   (cell)" ;
 : .(literal)   ['] (literal) .ref ., .cr ;
 : .branch ( a xt -- u )   .ref ., .cr @ .addr 2 cells ;

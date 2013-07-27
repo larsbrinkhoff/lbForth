@@ -66,8 +66,6 @@
   (with-open-file (*output* output-file :direction :output
 			                :if-exists :supersede)
     (output-line "#include \"forth.h\"")
-    ;; These are referenced in the compiler output.
-    (output-line "struct word nop_word, perform_word, abort_word, here_word;")
     (let ((*previous-word* "0"))
       (dolist (file input-files)
 	(interpret-file file))

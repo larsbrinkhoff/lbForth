@@ -10,6 +10,8 @@
 \ Return stack:		>r r>
 \ I/O:			emit open-file read-file close-file
 
+: nop ;
+
 create data_stack     110 cells allot
 create return_stack   256 cells allot
 create jmpbuf         jmp_buf allot
@@ -83,6 +85,13 @@ forward: <
 : cr   10 emit ;
 : type   ?dup if bounds do i c@ emit loop else drop then ;
 
+: unex   2r> r> 3drop ;
+\ Put xt and 'unex on return stack, then jump to that.
+: execute   ['] unex >r >r rp@ >r ;
+\ : execute   [ here 3 cells + ] literal ! [ 0 , ] ;
+: perform   @ execute ;
+
+forward: abort
 defer quit
 
 : abort   data_stack 100 cells + sp!  quit ;
@@ -108,12 +117,6 @@ defer number
    ?dup if ." Undefined: " type cr abort then
    drop r> if negate then
    postpone literal ;
-
-: unex   2r> r> 3drop ;
-\ Put xt and 'unex on return stack, then jump to that.
-: execute   ['] unex >r >r rp@ >r ;
-\ : execute   [ here 3 cells + ] literal ! [ 0 , ] ;
-: perform   @ execute ;
 
 defer catch
 : dummy-catch   execute 0 ;
@@ -211,8 +214,6 @@ variable 'source-id
 : source-id   'source-id @ ;
 : restore-input   drop  is refill  src !  src cell+ !  'source-id !  >in !  0 ;
 : save-input   >in @  source-id  source  ['] refill >body @  5 ;
-
-: nop ;
 
 defer backtrace
 
