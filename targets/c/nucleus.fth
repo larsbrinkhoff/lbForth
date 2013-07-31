@@ -104,6 +104,8 @@ code @ ( addr -- x )
     PUSH (*addr);
 end-code
 
+\ : +   begin ?dup while 2dup xor -rot and 2* repeat ;
+
 code + ( x y -- x+y )
     cell y = POP (cell);
     cell x = POP (cell);
