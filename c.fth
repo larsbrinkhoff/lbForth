@@ -79,7 +79,7 @@ forward: abort
 : ?csp   sp@ csp @ <> if ." Unbalanced definition: " .latest cr abort then
    0 csp ! ;
 
-: :   parse-name [ ' enter >code @ ] literal header, ] !csp ;
+: :   parse-name header, postcode enter ] !csp ;
 : ;   reveal postpone exit postpone [ ?csp ; immediate
 
 
@@ -87,7 +87,7 @@ forward: abort
 ( From core.fth )
 
 : immediate   latestxt dup c@ negate swap c! ;
-: create    parse-name [ ' dodoes >code @ ] literal header, reveal (does>) ;
+: create    parse-name header, postcode dodoes reveal (does>) ;
 : constant   create , does> @ ;
 : variable   create cell allot ;
 

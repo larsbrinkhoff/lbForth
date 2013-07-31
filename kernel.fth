@@ -190,7 +190,7 @@ variable csp
 : !csp   csp @ s" Nested" ?bad  sp@ csp ! ;
 : ?csp   sp@ csp @ <> s" Unbalanced" ?bad  0 csp ! ;
 
-: :   parse-name header, [ ' enter >code @ ] literal , ] !csp ;
+: :   parse-name header, postcode enter ] !csp ;
 : ;   reveal postpone exit postpone [ ?csp ; immediate
 
 \ ----------------------------------------------------------------------

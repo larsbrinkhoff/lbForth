@@ -9,8 +9,8 @@
 ;;
 ;; ( \ [IF] [ELSE] [THEN] [DEFINED] [UNDEFINED] INCLUDE
 ;; : ; IMMEDIATE DOES> DEFER CODE END-CODE
-;; VARIABLE VALUE CREATE ALLOT , ' CELLS >CODE @ INVERT RSHIFT CHAR > = -
-;; [CHAR] ['] [ ] LITERAL POSTPONE TO IS ." S" ABORT"
+;; VARIABLE VALUE CREATE ALLOT , ' CELLS INVERT RSHIFT CHAR > = -
+;; [CHAR] ['] [ ] LITERAL POSTPONE POSTCODE TO IS ." S" ABORT"
 ;; IF ELSE THEN DO LEAVE LOOP +LOOP BEGIN AGAIN WHILE REPEAT UNTIL
 ;; CELL JMP_BUF NAME_LENGTH TO_NEXT TO_CODE TO_DOES TO_BODY
 ;; .CS
@@ -19,9 +19,6 @@
 ;;
 ;; Many words are immediate and only work in compilation mode,
 ;; i.e. they always append code to the current definition.
-;;
-;; When >CODE is interpeted, the top of the control stack must be the
-;; result of ' (tick).  Likewise, @ only works on the result of >CODE.
 ;;
 ;; CODE may be followed by a \ comment which specifies the generated C
 ;; function declaration.
@@ -372,6 +369,10 @@
 	  (emit-literal (tick word))
 	  (emit-word ",")))))
 
+(defimmediate postcode ()
+  (emit-literal (format nil "~A_code" (mangle-word (read-word))))
+  (emit-word ","))
+
 (defimmediate |."| ()
   (let ((string (read-word #\")))
     (emit-literal (concatenate 'string "\"" (quoted string) "\""))
@@ -511,19 +512,6 @@
 (defun ends-with-p (string1 string2)
   (let ((n (- (length string1) (length string2))))
     (and (>= n 0) (string= string1 string2 :start1 n))))
-
-(definterpreted >code ()
-  (let ((x (pop *control-stack*)))
-    (check-type x string)
-    (assert (ends-with-p x "_word"))
-    (push (format nil "~A.code" x) *control-stack*)))
-
-(definterpreted |@| ()
-  (let ((x (pop *control-stack*)))
-    (check-type x string)
-    (assert (ends-with-p x "_word.code"))
-    (let ((y (subseq x 1 (- (length x) 10))))
-      (push (format nil "~A_code" y) *control-stack*))))
 
 (definterpreted invert ()
   (let ((x (pop-integer)))

@@ -3,13 +3,15 @@
 (* Need to support these words:
  * ( \ [IF] [ELSE] [THEN] [DEFINED] [UNDEFINED] INCLUDE
  * : ; IMMEDIATE DOES> DEFER CODE END-CODE
- * VARIABLE VALUE CREATE ALLOT , ' CELLS >CODE @ INVERT RSHIFT = CHAR -
+ * VARIABLE VALUE CREATE ALLOT , ' CELLS INVERT RSHIFT = CHAR -
  * [CHAR] ['] [ ] LITERAL POSTPONE IS TO  ." S"
  * IF ELSE THEN DO LEAVE LOOP +LOOP BEGIN AGAIN WHILE REPEAT UNTIL
  * CELL JMP_BUF NAME_LENGTH TO_NEXT TO_CODE TO_DOES TO_BODY
  *)
 
 require search.fth
+require lib/bitmap.fth
+
 only forth definitions  decimal
 
 vocabulary target           \ Holds compiled target words.
@@ -39,7 +41,14 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 : immediate:   copy immediate ;
 
 create code-line  128 allot
-create t-dictionary  17000 allot
+
+17000 constant t-space
+create t-dictionary  t-space allot
+t-space bitmap t-map
+: >map ( a1 -- a2 x )   t-dictionary - t-map ;
+: addr! ( a -- )   >map 1bit ;
+: addr? ( a -- f )   >map bit@ ;
+
 
 : ?first   over c@ 1 swap case  [char] - of ." minus" endof
    [char] < of ." less" endof  [char] > of ." greater" endof
@@ -128,7 +137,7 @@ immediate: loop    immediate: ."       immediate: s"
 
 (* [DEFINED] [UNDEFINED] INCLUDE
  * : IMMEDIATE DOES> DEFER CODE END-CODE
- * VARIABLE VALUE CREATE ALLOT , ' CELLS >CODE
+ * VARIABLE VALUE CREATE ALLOT , ' CELLS
  * CELL JMP_BUF NAME_LENGTH
  *
  * From host:
@@ -165,7 +174,7 @@ t-dictionary dp !
 
 only forth definitions also meta-interpreter also host-interpreter
 finders tpp   compile, ?forward abort
-: target,   find-name tpp ;
+: target,   [M] here addr!  find-name tpp ;
 : ppt   drop postpone sliteral postpone target, ;
 : ppn   drop ppt ;
 finders pp   ppt ppn pph
@@ -197,7 +206,8 @@ interpreter-context definitions also host-interpreter
 
 : >resolve@   @ begin ?dup while dup @ here rot ! repeat ;
 
-: postpone,   t-postpone (literal) , t-postpone compile, ;
+: a,   here addr! , ;
+: postpone,   t-postpone (literal) a, t-postpone compile, ;
 finders meta-postpone   postpone, abort compile,
 
 : ]   1 state !  compiler-context ;
@@ -273,6 +283,8 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 : then         >resolve ; immediate
 
 : postpone   parse-name find-name meta-postpone ; immediate
+: postcode   t-postpone (literal) parse-name save-function-name a,
+   t-postpone , ; immediate
 
 : s"   t-postpone (sliteral)  [char] " parse  dup ,  string, ; immediate
 : ."   [M] s"  t-postpone type ; immediate
@@ -356,10 +368,14 @@ only forth definitions also meta-interpreter also host-interpreter
       does-offset of ." .does" endof
       dup ." .param[" body-offset - cell / (.) ." ]"
    endcase ;
-: .addr ( a -- )   ?dup 0= if ." 0" exit then
+: .t-addr
    >r here latestxt begin dup while
    r@ dup 2over swap within if .a else drop then
    nip dup >nextxt  repeat r> 3drop ;
+: t-addr? ( a -- f )   t-dictionary t-dictionary t-space + within ;
+: .addr ( a -- )   ?dup 0= if ." 0" exit then
+   dup t-addr? if .t-addr exit then
+   >name type ." _code" ;
 
 : .,   ." , " ;
 : .{  ." struct word " >name .mangled ." _word = { " ;
@@ -371,7 +387,8 @@ only forth definitions also meta-interpreter also host-interpreter
 : .cr   cr ."   (cell)" ;
 : .(literal)   ['] (literal) .ref ., .cr ;
 : .branch ( a xt -- u )   .ref ., .cr @ .addr 2 cells ;
-: .literal ( a xt -- u )   .ref ., .cr @ (.) ." U" 2 cells ;
+: .literal ( a xt -- u )   .ref ., .cr dup addr? if @ .addr
+   else @ (.) ." U" then 2 cells ;
 : .sliteral ( a xt -- u )   drop .(literal) @+ tuck .quoted .,
    .cr .(literal) dup (.)  aligned 2 cells + ;
 : .xt ( a xt -- u )   dup >name s" branch" compare 0= if .branch else
