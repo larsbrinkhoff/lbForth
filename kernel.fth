@@ -131,7 +131,7 @@ include c.fth
 \ TODO: This is wrong if "-" overflows.
 \ : <   - [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
 : 0<   [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
-: xor   2dup nand >r r@ nand swap r> nand nand ;
+: xor   2dup nand 1+ dup + + + ;
 : <   2dup xor 0< if drop 0< else - 0< then ;
 \ If d=x-y and sX is the sign bit, this computes "less than":
 \ ((~y)&(x^d)) ^ (d&x);
