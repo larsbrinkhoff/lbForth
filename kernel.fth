@@ -96,7 +96,7 @@ defer quit
 
 : abort   data_stack 100 cells + sp!  quit ;
 
-forward: (s")
+forward: (sliteral)
 : ?stack   data_stack 99 cells + sp@ < abort" Stack underflow" ;
 
 variable state
@@ -125,8 +125,7 @@ defer catch
 
 include c.fth
 
-: (s") ( -- addr n ) ( R: ret1 -- ret2 )
-   r> dup @ swap cell+ 2dup + aligned >r swap ;
+: (sliteral)   r> dup @ swap cell+ 2dup + aligned >r swap ;
 
 \ TODO: This is wrong if "-" overflows.
 \ : <   - [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;

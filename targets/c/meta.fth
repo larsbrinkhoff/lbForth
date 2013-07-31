@@ -74,8 +74,6 @@ create t-dictionary  17000 allot
 
 : pph   compile, 2drop ;
 
-: "(s")"   [ parse-name (s") ] sliteral ;
-
 create does-table
    s" create" dup , string,    s" nop" dup , string,      0 ,
    s" variable" dup , string,  s" nop" dup , string,      0 ,
@@ -276,7 +274,7 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 
 : postpone   parse-name find-name meta-postpone ; immediate
 
-: s"   t-postpone (s")  [char] " parse  dup ,  string, ; immediate
+: s"   t-postpone (sliteral)  [char] " parse  dup ,  string, ; immediate
 : ."   [M] s"  t-postpone type ; immediate
 : [char]   char t-postpone literal ; immediate
 : abort"   t-postpone if [M] s" t-postpone cr t-postpone type t-postpone cr
@@ -379,7 +377,7 @@ only forth definitions also meta-interpreter also host-interpreter
 : .xt ( a xt -- u )   dup >name s" branch" compare 0= if .branch else
    dup >name s" 0branch" compare 0= if .branch else
    dup >name s" (literal)" compare 0= if .literal else
-   dup >name "(s")" compare 0= if .sliteral else
+   dup >name s" (sliteral)" compare 0= if .sliteral else
    .ref drop cell then then then then ;
 : .number   (.) ." U" cell ;
 : .cell   .cr dup t-xt? if .xt else nip .number then ., ;

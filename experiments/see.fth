@@ -23,9 +23,9 @@ create see-xts
    \ n r+ again unloop => n loop
    ' (literal) ,  ' see-literal ,
    ' branch ,     ' see-branch ,
-   \ 0branch (s") ... (abort") => abort"
+   \ 0branch (sliteral) ... (abort") => abort"
    ' 0branch ,    ' see-0branch ,
-   ' (s") ,       ' see-s" ,
+   ' (sliteral) , ' see-s" ,
  \ ' 2>r ,        ' see-do , \ check for 2>r (?do)
  \ ' (+loop) ,    ' see-loop ,
  \ ' r+ ,         ' see-loop ,
@@ -112,11 +112,11 @@ here constant see-end
  5: (literal)		"postpone word" (default)
  6: <xt>
  7: compile,
- 8: (s")		s" ..."
+ 8: (sliteral)		s" ..."
  9: <u>
 10: ccc...
 11: (0branch)		"abort" ...""
-12: (s")
+12: (sliteral)
 13: 
 
 1: (does>)		"does>"

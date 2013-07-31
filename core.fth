@@ -81,7 +81,8 @@ finders postpone-xt   postpone, abort compile,
 create squote   128 allot
 
 : s"   [char] " parse  >r squote r@ cmove  squote r> ;
-: s"   postpone (s")  [char] " parse  dup ,  string, ; immediate compile-only
+: s"   postpone (sliteral) [char] " parse dup , string, ;
+   immediate compile-only
 
 : (abort")    cr type cr abort ;
 : abort"   postpone if postpone s" postpone (abort") postpone then ; immediate
