@@ -1,0 +1,10 @@
+install:
+  - sudo apt-get install -y gcc-multilib
+  - sudo apt-get install -y sbcl
+script:
+  - make
+  - make params.fth
+  - echo 'include targets/c/meta.fth bye' | timeout 60 ./forth
+notifications:
+  email:
+    - lars@nocrew.org
