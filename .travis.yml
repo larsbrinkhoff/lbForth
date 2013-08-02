@@ -4,7 +4,7 @@ install:
 script:
   - make
   - make params.fth
-  - echo 'include targets/c/meta.fth bye' | timeout 60 ./forth
+  - echo 'include targets/c/meta.fth bye' | timeout 60 ./forth | grep Meta-OK
 notifications:
   email:
     - lars@nocrew.org

@@ -415,6 +415,9 @@ meta-compile targets/c/nucleus.fth
 meta-compile kernel.fth
 resolve-all-forward-references
 disassemble-target-dictionary
-
 only forth definitions
-\ cr .( Used: ) t-used .
+
+\ This is output as the very last line to signal that the metacompiler
+\ ran to completion.  Since it will become part of the C file, it's
+\ formatted as a C comment.
+.( /* Meta-OK */ ) cr
