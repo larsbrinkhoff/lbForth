@@ -55,11 +55,6 @@ code signal_handler \ void signal_handler (int i)
   longjmp ((void *)jmpbuf_word.param, i);
 end-code
 
-code enter ( -- ) ( R: -- ret )
-    RPUSH (IP);
-    IP = (xt_t *)(word->param);
-end-code
-
 code exit ( R: ret -- )
     IP = RPOP (xt_t *);
 end-code

@@ -9,7 +9,7 @@
 ;;
 ;; ( \ [IF] [ELSE] [THEN] [DEFINED] [UNDEFINED] INCLUDE
 ;; : ; IMMEDIATE DOES> DEFER CODE END-CODE
-;; VARIABLE VALUE CREATE ALLOT , ' CELLS INVERT RSHIFT CHAR > = -
+;; VARIABLE VALUE CREATE ALLOT HERE , ' CELLS INVERT RSHIFT CHAR > = + -
 ;; [CHAR] ['] [ ] LITERAL POSTPONE POSTCODE TO IS ." S" ABORT"
 ;; IF ELSE THEN DO LEAVE LOOP +LOOP BEGIN AGAIN WHILE REPEAT UNTIL
 ;; CELL JMP_BUF NAME_LENGTH TO_NEXT TO_CODE TO_DOES TO_BODY
@@ -63,6 +63,7 @@
   (with-open-file (*output* output-file :direction :output
 			                :if-exists :supersede)
     (output-line "#include \"forth.h\"")
+    (output-line "struct word colon_word;")
     (let ((*previous-word* "0"))
       (dolist (file input-files)
 	(interpret-file file))
@@ -270,7 +271,7 @@
 
 (defimmediate |;| ()
   (emit-word "exit")
-  (output-header *this-word* "enter_code" "0" (immediatep))
+  (output-header *this-word* "dodoes_code" (word-body ":" 13) (immediatep))
   (do ((end (fill-pointer *code*))
        (i 0 (1+ i)))
       ((= i end))
@@ -413,6 +414,9 @@
 (defimmediate then ()
   (resolve-branch))
 
+(definterpreted here ()
+  (push *ip* *control-stack*))
+
 (defvar *leave*)
 
 (defimmediate do ()
@@ -456,6 +460,12 @@
 
 (defimmediate until ()
   (emit-branch "0branch" (pop *control-stack*)))
+
+(definterpreted + ()
+  (let ((n2 (pop *control-stack*))
+	(n1 (pop *control-stack*)))
+    ;; HUGE UGLY HACK ALERT!
+    (push (+ n1 (floor n2 *cell-size*)) *control-stack*)))
 
 (definterpreted - ()
   (let ((n2 (pop *control-stack*))

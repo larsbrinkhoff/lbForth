@@ -79,7 +79,7 @@ forward: abort
 : ?csp   sp@ csp @ <> if ." Unbalanced definition: " .latest cr abort then
    0 csp ! ;
 
-: :   parse-name header, postcode enter ] !csp ;
+: :   parse-name header, postcode dodoes  ] !csp  does> >r ;
 : ;   reveal postpone exit postpone [ ?csp ; immediate
 
 

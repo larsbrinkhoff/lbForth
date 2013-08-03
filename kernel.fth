@@ -1,8 +1,8 @@
 \ -*- forth -*- Copyright 2004, 2013 Lars Brinkhoff
 
-\ This kernel needs, at a minimum, these 17 primitives:
+\ This kernel needs, at a minimum, these 16 primitives:
 \
-\ Definitions:		enter dodoes exit
+\ Definitions:		dodoes exit
 \ Control flow:		0branch
 \ Literals:		(literal)
 \ Memory access:	! @ c! c@
@@ -190,7 +190,8 @@ variable csp
 : !csp   csp @ s" Nested" ?bad  sp@ csp ! ;
 : ?csp   sp@ csp @ <> s" Unbalanced" ?bad  0 csp ! ;
 
-: :   parse-name header, postcode enter ] !csp ;
+: :   parse-name header, postcode dodoes  ] !csp
+   [ here cell + ] ['] nop latestxt >does ! exit then >r ;
 : ;   reveal postpone exit postpone [ ?csp ; immediate
 
 \ ----------------------------------------------------------------------

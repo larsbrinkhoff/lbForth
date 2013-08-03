@@ -49,8 +49,10 @@ here constant see-end
 : .immediate ( xt -- )          immediate? 0> if ."  immediate" then ;
 : .; ( xt -- )                  ."  ;" immediate? 0> if ."  immediate" then ;
 : see-colon ( xt -- )           ." : " dup id.  dup xt-bounds see-thread  .; ;
+: colon? ( xt -- f )            >does @ [ ' : >does @ ] literal = ;
 
 : see-does ( xt -- )
+   dup colon? if see-colon exit then
    ." create " dup id.
    dup xt-bounds see-data
    cr ." does> "
@@ -64,62 +66,14 @@ here constant see-end
    ." end-code" ;
 
 create see-codes
-   ' enter >code @ ,  ' see-colon ,
+   [defined] enter [if] ' enter >code @ ,  ' see-colon , [then]
    ' dodoes >code @ ,  ' see-does ,
 here constant see-end
 
-: SEE-XT ( xt -- )
+: see-xt2 ( xt -- )
     dup >code @ ( xt cfa )
     see-end see-codes do
        dup i @ = if drop i cell+ @ execute unloop exit then
     2 cells +loop drop see-code ;
 
-: SEE   ' SEE-XT cr ;
-
-(
-   if x else y then
-1: 0branch		<6> "if"
-2: <6>
-3: x			"x"
-4: branch		<6 7> "ahead"
-5: <7>
-6: y			<7> "y" "[ 1 cs-roll ] then"
-7:			"then"
-
-   begin x again
-1: x			"begin" "x"
-2: branch		"again"
-3: <1>
-
-   begin x until
-1: x			"begin" "x"
-2: 0branch		"until"
-3: <1>
-
-   begin x while y repeat
-1: x			"begin" "x"
-2: 0branch		<7> "if"
-3: <7>
-4: y			"y"
-5: branch		"again"
-6: <1>			"then"
-7:
-
- 1: (literal)		"<n>"	"[char] x"
- 2: <n>
- 3: (literal)		"['] word"
- 4: <xt>
- 5: (literal)		"postpone word" (default)
- 6: <xt>
- 7: compile,
- 8: (sliteral)		s" ..."
- 9: <u>
-10: ccc...
-11: (0branch)		"abort" ...""
-12: (sliteral)
-13: 
-
-1: (does>)		"does>"
-2: <latstxt>		"recurse"
-3: exit			";" (last in body)
-)
+: see2   ' see-xt2 cr ;

@@ -24,6 +24,11 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 : compiler-context   only previous meta-compiler ;
 : meta-context   compiler-context also meta-interpreter ;
 
+\ Offset, within the definition of :, to the runtime action of :.
+\ Obviously, the constant should match the string.
+13 cells constant colon-runtime-offset
+: colon-runtime   c" &colon_word.param[13]" ;
+
 : [h   r> get-order n>r  only forth >r ;
 : h]   r> nr> set-order >r ;
 : [H]  [h ' h] compile, ; immediate
@@ -90,10 +95,13 @@ create does-table
    s" value" dup , string,     s" dup" dup , string,      cell ,
    s" defer" dup , string,     s" perform" dup , string,  0 ,
 : >end ( a1 u -- a2 )   + aligned ;
-: find-does   does-table begin @+ 2dup >end >r 2over compare
+: find-does ( a1 u -- a2 )   does-table begin @+ 2dup >end >r 2over compare
    while r> @+ >end cell+ repeat 2drop r> ;
 
-: save-function-name ( a u -- xt )   [T] header, latestxt ;
+: s,    here over allot  swap cmove ;
+: save-function-name ( a1 u -- a2 )   here -rot  dup c, s, ;
+: append, ( c-addr a u )   dup >r s,  dup c@ r> + swap c! ;
+: save-code-name ( a1 u -- a2 )   save-function-name dup s" _code" append, ;
 
 
 
@@ -171,6 +179,7 @@ t-dictionary dp !
 : cells   cell * ;
 
 : find-name   #name min 2dup ['] forth search-wordlist dup if 2nip then ;
+: target-xt  find-name -1 <> abort" Undefined or immediate word" ;
 
 only forth definitions also meta-interpreter also host-interpreter
 finders tpp   compile, ?forward abort
@@ -180,13 +189,16 @@ finders tpp   compile, ?forward abort
 finders pp   ppt ppn pph
 : t-postpone   parse-name 2dup meta-context [H] find-name
    interpreter-context also host-compiler pp ; immediate
-: code,   find-name -1 <> abort" Undefined?" >code @ , ;
+: code,   target-xt >code @ , ;
 : postcode   parse-name postpone sliteral postpone code, ; immediate
 
-: does!     latestxt >does ! ;
-: (does>)   r> drop find-does @+ 2dup >end >r find-name drop >body r> @ + does! ;
+: does!   latestxt >does ! ;
+: (does>)   find-does @+ 2dup >end >r target-xt >body r> @ + does! ;
+: (:-does>)   colon-runtime does! ;
 only also host-compiler definitions
-: does>     latestxt >name postpone sliteral postpone (does>) ; immediate
+: does>   latestxt >name 2dup s" :" compare
+   if postpone sliteral postpone (does>)
+   else 2drop postpone (:-does>) then  postpone exit ; immediate
 interpreter-context definitions also host-interpreter
 
 : create    parse-name header, postcode dodoes reveal does> ;
@@ -213,7 +225,7 @@ finders meta-postpone   postpone, abort compile,
 : ]   1 state !  compiler-context ;
 : constant   create , does> @ ;
 : variable   create cell allot ;
-: :       parse-name header, postcode enter ] ;
+: :   parse-name header, postcode dodoes  ] ( !csp )  does> >r ;
 : defer   create s" abort" target,  does> @ execute ;
 : value   create ,  does> @ ;
 
@@ -228,6 +240,9 @@ finders meta-postpone   postpone, abort compile,
 : >end ( xt -- a )   here swap ['] forth ['] ?end traverse-wordlist drop ;
 
 : forward, ( a -- )   here swap chain, ;
+
+: check-colon-runtime   s" :" target-xt >body colon-runtime-offset + @
+   s" >r" target-xt <> if ." Bad offset into colon definition." cr bye then ;
 
 only forth definitions
 create forward-references 0 ,
@@ -283,7 +298,7 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 : then         >resolve ; immediate
 
 : postpone   parse-name find-name meta-postpone ; immediate
-: postcode   t-postpone (literal) parse-name save-function-name a,
+: postcode   t-postpone (literal) parse-name save-code-name a,
    t-postpone , ; immediate
 
 : s"   t-postpone (sliteral)  [char] " parse  dup ,  string, ; immediate
@@ -375,14 +390,14 @@ only forth definitions also meta-interpreter also host-interpreter
 : t-addr? ( a -- f )   t-dictionary t-dictionary t-space + within ;
 : .addr ( a -- )   ?dup 0= if ." 0" exit then
    dup t-addr? if .t-addr exit then
-   >name type ." _code" ;
+   count type ;
 
 : .,   ." , " ;
 : .{  ." struct word " >name .mangled ." _word = { " ;
 : .name   dup c@ (.) .,  >name .quoted ., ;
 : .link   >nextxt .ref ., ;
 : .code   >code @ dup t-xt? if >name .mangled ." _code"
-   else ." (code_t *)" >name type then ." , {" ;
+    else ." (code_t *)" count type then ." , {" ;
 : .does   >does @ .addr ., ;
 : .cr   cr ."   (cell)" ;
 : .(literal)   ['] (literal) .ref ., .cr ;
@@ -411,9 +426,11 @@ only forth definitions also meta-interpreter also host-interpreter
 
 interpreter-context
 .( #include "forth.h" ) cr
+.( struct word colon_word; ) cr
 meta-compile targets/c/nucleus.fth
 meta-compile kernel.fth
 resolve-all-forward-references
+check-colon-runtime
 disassemble-target-dictionary
 only forth definitions
 
