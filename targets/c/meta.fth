@@ -404,13 +404,14 @@ only forth definitions also meta-interpreter also host-interpreter
 : .branch ( a xt -- u )   .ref ., .cr @ .addr 2 cells ;
 : .literal ( a xt -- u )   .ref ., .cr dup addr? if @ .addr
    else @ (.) ." U" then 2 cells ;
-: .sliteral ( a xt -- u )   drop .(literal) @+ tuck .quoted .,
-   .cr .(literal) dup (.)  aligned 2 cells + ;
+\ Duming as a C string doesn't work so well at the moment.
+\ : .sliteral ( a xt -- u )   drop .(literal) @+ tuck .quoted .,
+\    .cr .(literal) dup (.)  aligned 2 cells + ;
 : .xt ( a xt -- u )   dup >name s" branch" compare 0= if .branch else
    dup >name s" 0branch" compare 0= if .branch else
    dup >name s" (literal)" compare 0= if .literal else
-   dup >name s" (sliteral)" compare 0= if .sliteral else
-   .ref drop cell then then then then ;
+   \ dup >name s" (sliteral)" compare 0= if .sliteral else
+   .ref drop cell then then then ;
 : .number   (.) ." U" cell ;
 : .cell   .cr dup t-xt? if .xt else nip .number then ., ;
 : .body   body-bounds ?do i @+ .cell +loop ;
