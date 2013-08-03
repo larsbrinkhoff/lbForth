@@ -1,6 +1,6 @@
 \ PDP-1 nucleus.
 
-[undefined] assembler [if] s" experiments/asm-pdp1.fth" included [then]
+require targets/pdp1/asm.fth
 
 also assembler
 base @  8 base !
