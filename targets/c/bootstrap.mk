@@ -5,29 +5,25 @@ CPPFLAGS = -I$(TARGET)
 LDFLAGS = $(M32)
 
 TARGET = targets/c
-meta = $(TARGET)/meta.fth
+meta = $(TARGET)/meta.lisp
 nucleus = $(TARGET)/nucleus.fth
 
+# Bootstrap metacompiler, written in Lisp.
 %.c: %.fth
-	echo 'include $(meta)  bye' | ./forth | tail -n+3 > $@
+	./lisp.sh '(progn (load "$(meta)") (compile-forth "$(nucleus)" "$<"))'
 
-all: .bootstrap forth
-
-.bootstrap: targets/c/meta.lisp
-	make -f$(TARGET)/bootstrap.mk
+all: forth
 
 forth: kernel.o
 	$(CC) $(LDFLAGS) $^ -o $@
+	touch .bootstrap $(TARGET)/forth.h
 
 kernel.o: kernel.c $(TARGET)/forth.h
 
-kernel.c: kernel.fth c.fth params.fth $(nucleus) $(meta)
+kernel.c: kernel.fth c.fth $(nucleus) $(meta) params.lisp
 
-params.fth: params
-	./$< -forth > $@
+params.lisp: params
+	./$< -lisp > $@
 
 params: $(TARGET)/params.c $(TARGET)/forth.h Makefile
 	$(CC) $(CFLAGS) $(CPPFLAGS) $< -o $@
-
-clean:
-	rm -f forth .bootstrap *.o kernel.c kernel2.c params*

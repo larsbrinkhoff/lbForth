@@ -1,8 +1,12 @@
-To build the bootstrap Forth, type "make".  This will metacompile the
-kernel for the C target, then call gcc to generate an executable which
-runs under Linux, MacOS X, or Cygwin.
+To build, type "make".  This will first build the bootstrap Forth by
+metacompiling the kernel for the C target, and then call gcc to
+generate an executable which runs under Linux, MacOS X, or Cygwin.
 
 The bootstrap metacompiler is written in Lisp.  An attempt is made to
 automatically detect an implementation, but if that fails you will
 have to provide some assistance.  Currently, CLISP, Clozure CL, ECL,
 and SBCL are supported.
+
+After the bootstrap Forth has been built, it will rebuild itself using
+the Forth metacompiler.  Subsequent build will skip the bootstrap
+stage.

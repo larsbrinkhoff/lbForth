@@ -2,4 +2,5 @@
 forth
 kernel.c
 params*
+.bootstrap
 *~
