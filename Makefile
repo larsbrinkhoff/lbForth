@@ -14,7 +14,8 @@ nucleus = $(TARGET)/nucleus.fth
 all: .bootstrap forth
 
 .bootstrap: targets/c/meta.lisp
-	make -f$(TARGET)/bootstrap.mk
+	make -f$(TARGET)/bootstrap.mk CC="$(CC)" CFLAGS="$(CFLAGS)" \
+	CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 forth: kernel.o
 	$(CC) $(LDFLAGS) $^ -o $@
@@ -30,4 +31,4 @@ params: $(TARGET)/params.c $(TARGET)/forth.h Makefile
 	$(CC) $(CFLAGS) $(CPPFLAGS) $< -o $@
 
 clean:
-	rm -f forth .bootstrap *.o kernel.c kernel2.c params*
+	rm -f forth .bootstrap *.o kernel.c params*
