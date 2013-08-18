@@ -1,5 +1,7 @@
 ( Metacompiler for C target. )
 
+\ This is in a state of a mess at the moment.
+
 (* Need to support these words:
  * ( \ [IF] [ELSE] [THEN] [DEFINED] [UNDEFINED] INCLUDE
  * : ; IMMEDIATE DOES> DEFER CODE END-CODE

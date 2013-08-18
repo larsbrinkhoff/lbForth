@@ -1,6 +1,11 @@
 \ -*- forth -*- Copyright 2004, 2013 Lars Brinkhoff
 
-\ This kernel needs, at a minimum, these 16 primitives:
+\ This kernel, together with a target-specific nucleus, provides
+\ everything needed to load and compile the rest of the system from
+\ source code.  And not much else.  The kernel itself is compiled by
+\ the metacompiler.
+
+\ At a minimum, these 16 primitives must be provided by the nucleus:
 \
 \ Definitions:		dodoes exit
 \ Control flow:		0branch

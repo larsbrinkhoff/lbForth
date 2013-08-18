@@ -3,7 +3,10 @@
 ;;; Meta compiler to C target.
 ;;
 ;; Usage: (compile-forth "nucleus.fth" <optionally more sources> "kernel.fth")
-;; Output: kernel.c and kernel.h.
+;;
+;; The output is a C file containing a dictionary with a linked list
+;; of "struct word" as defined by forth.h.  CODE words are emitted as
+;; C functions, and colon definitions generate indirect threaded code.
 
 ;;; Words (partially) supported by this meta compiler:
 ;;

@@ -8,5 +8,4 @@ have to provide some assistance.  Currently, CLISP, Clozure CL, ECL,
 and SBCL are supported.
 
 After the bootstrap Forth has been built, it will rebuild itself using
-the Forth metacompiler.  Subsequent build will skip the bootstrap
-stage.
+the Forth metacompiler.  Subsequent builds will skip the bootstrap stage.

@@ -2,8 +2,9 @@
 
 The bootstrapping process uses a metacompiler written in Lisp to
 target a small inner interpreter and a handful of code words written
-in C.  Work is under way to rewrite the metacompiler in Forth, and to
-add a real target using assembly language code words.
+in C.  There is also a new metacompiler written in Forth which is
+intended to replace the Lisp version in the future.  Work is under way
+to add a real target using assembly language code words.
 
 ( Further reading )
 
@@ -12,3 +13,15 @@ doc              \ Classic (and recent) texts not related to this project.
 lib/README       \ Information about libraries.
 targets/README   \ Information about current and possibly future targets.
 test/readme.html \ Original readme for Hayes' test suite.
+
+( Implementation guide )
+
+The Forth kernel contains everything needed to read and compile the
+rest of the system from source code, and not much else.  It's composed
+of two parts: a target-specific file nucleus.fth containing all
+primitive CODE words, and a target-independent kernel.fth.  These two
+are compiled by the metacompiler.
+
+When the kernel starts, it jumps to the word called WARM.  This is
+responsible for loading the rest of the system and entering the text
+interpreter.

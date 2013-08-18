@@ -1,2 +1,3 @@
+bitmap.fth	An array of bits.
 forward.fth	Declare forward references to be resolved at a later time.
 macros.fth	Use ]] [[ to simplify postponing words.
