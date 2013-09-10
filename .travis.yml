@@ -4,6 +4,7 @@ install:
 script:
   - make
   - grep 'Meta-OK' kernel.c
+  - make check
 notifications:
   email:
     - lars@nocrew.org

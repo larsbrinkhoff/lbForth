@@ -4,6 +4,9 @@ CFLAGS = $(M32) -O2 -fomit-frame-pointer -fno-unit-at-a-time
 CPPFLAGS = -I$(TARGET)
 LDFLAGS = $(M32)
 
+GREP = grep -a
+ERROR_PATTERNS = -e 'INCORRECT RESULT' -e 'WRONG NUMBER'
+
 TARGET = targets/c
 meta = $(TARGET)/meta.fth
 nucleus = $(TARGET)/nucleus.fth
@@ -30,5 +33,15 @@ params.fth: params
 params: $(TARGET)/params.c $(TARGET)/forth.h Makefile
 	$(CC) $(CFLAGS) $(CPPFLAGS) $< -o $@
 
+check: test-output test-errors
+	test `cat test-errors` -le 81
+	$(GREP) Test-OK $<
+
+test-output: test-input all
+	./forth < $< > $@
+
+test-errors: test-output
+	$(GREP) $(ERROR_PATTERNS) $< | wc -l > $@
+
 clean:
-	rm -f forth .bootstrap *.o kernel.c params*
+	rm -f forth .bootstrap *.o kernel.c params* test-output test-errors

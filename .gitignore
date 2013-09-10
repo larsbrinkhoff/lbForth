@@ -3,4 +3,6 @@ forth
 kernel.c
 params*
 .bootstrap
+test-output
+test-errors
 *~
