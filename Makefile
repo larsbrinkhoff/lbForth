@@ -17,7 +17,7 @@ nucleus = $(TARGET)/nucleus.fth
 all: .bootstrap forth
 
 .bootstrap: targets/c/meta.lisp
-	make -f$(TARGET)/bootstrap.mk CC="$(CC)" CFLAGS="$(CFLAGS)" \
+	$(MAKE) -f$(TARGET)/bootstrap.mk CC="$(CC)" CFLAGS="$(CFLAGS)" \
 	CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 forth: kernel.o

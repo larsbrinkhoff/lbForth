@@ -21,4 +21,4 @@ params.lisp: params
 	./$< -lisp > $@
 
 params:
-	make params
+	$(MAKE) params
