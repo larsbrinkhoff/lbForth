@@ -1,10 +1,11 @@
 TARGET = targets/c
-meta = $(TARGET)/meta.lisp
+LISP = ./lisp/lisp.sh
+meta = lisp/meta.lisp
 nucleus = $(TARGET)/nucleus.fth
 
 # Bootstrap metacompiler, written in Lisp.
 %.c: %.fth
-	./lisp.sh '(progn (load "$(meta)") (compile-forth "$(nucleus)" "$<"))'
+	$(LISP) '(progn (load "$(meta)") (compile-forth "$(nucleus)" "$<"))'
 
 all: forth
 

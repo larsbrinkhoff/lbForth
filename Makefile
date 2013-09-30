@@ -16,9 +16,13 @@ nucleus = $(TARGET)/nucleus.fth
 
 all: .bootstrap forth
 
-.bootstrap: targets/c/meta.lisp
+.bootstrap: lisp/meta.lisp
 	$(MAKE) -f$(TARGET)/bootstrap.mk CC="$(CC)" CFLAGS="$(CFLAGS)" \
 	CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
+
+lisp/meta.lisp:
+	git submodule init
+	git submodule update
 
 forth: kernel.o
 	$(CC) $(LDFLAGS) $^ -o $@
