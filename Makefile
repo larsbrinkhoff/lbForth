@@ -21,8 +21,7 @@ all: .bootstrap forth
 	CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 lisp/meta.lisp:
-	git submodule init
-	git submodule update
+	git submodule update --init
 
 forth: kernel.o
 	$(CC) $(LDFLAGS) $^ -o $@
