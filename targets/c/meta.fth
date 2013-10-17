@@ -90,15 +90,20 @@ t-space bitmap t-map
 
 : pph   compile, 2drop ;
 
-create does-table
-   s" create" dup , string,    s" nop" dup , string,      0 ,
-   s" variable" dup , string,  s" nop" dup , string,      0 ,
-   s" constant" dup , string,  s" dup" dup , string,      cell ,
-   s" value" dup , string,     s" dup" dup , string,      cell ,
-   s" defer" dup , string,     s" perform" dup , string,  0 ,
 : >end ( a1 u -- a2 )   + aligned ;
-: find-does ( a1 u -- a2 )   does-table begin @+ 2dup >end >r 2over compare
-   while r> @+ >end cell+ repeat 2drop r> ;
+: does: ( u "name1" "name2" -- )   create cells , parse-name dup , string,
+   does> @+ swap @+ ;
+vocabulary does-table  also does-table definitions previous
+
+0 does: create nop
+0 does: variable nop
+1 does: constant dup
+1 does: value dup
+0 does: defer perform
+
+only forth definitions
+
+: find-does ( a1 u -- a2 )   also does-table evaluate previous ;
 
 : s,    here over allot  swap cmove ;
 : save-function-name ( a1 u -- a2 )   here -rot  dup c, s, ;
@@ -195,7 +200,7 @@ finders pp   ppt ppn pph
 : postcode   parse-name postpone sliteral postpone code, ; immediate
 
 : does!   latestxt >does ! ;
-: (does>)   find-does @+ 2dup >end >r target-xt >body r> @ + does! ;
+: (does>)   find-does target-xt >body + does! ;
 : (:-does>)   colon-runtime does! ;
 only also host-compiler definitions
 : does>   latestxt >name 2dup s" :" compare
