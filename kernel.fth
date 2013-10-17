@@ -190,8 +190,7 @@ create interpreters  ' execute , ' number , ' execute ,
 variable csp
 
 : .latest   latestxt >name type ;
-: ?bad   rot if type ." definition: " latestxt >name type cr abort
-   else 2drop then ;
+: ?bad   rot if type ."  definition: " .latest cr abort else 2drop then ;
 : !csp   csp @ s" Nested" ?bad  sp@ csp ! ;
 : ?csp   sp@ csp @ <> s" Unbalanced" ?bad  0 csp ! ;
 

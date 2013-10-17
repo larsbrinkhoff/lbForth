@@ -75,9 +75,9 @@ variable csp
 
 : .latest   latestxt >name type ;
 forward: abort
-: !csp   csp @ if ." Nested definition: " .latest cr abort then  sp@ csp ! ;
-: ?csp   sp@ csp @ <> if ." Unbalanced definition: " .latest cr abort then
-   0 csp ! ;
+: ?bad   rot if type ."  definition: " .latest cr abort else 2drop then ;
+: !csp   csp @ s" Nested" ?bad  sp@ csp ! ;
+: ?csp   sp@ csp @ <> s" Unbalanced" ?bad  0 csp ! ;
 
 : :   parse-name header, postcode dodoes  ] !csp  does> >r ;
 : ;   reveal postpone exit postpone [ ?csp ; immediate
