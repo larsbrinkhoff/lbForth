@@ -1,18 +1,19 @@
 refill   Copyright 2004, 2013 Lars Brinkhoff
 drop
 
-
 : immediate   latestxt dup c@ negate swap c! ;
+: \   refill drop ; immediate
 
-: \   source nip >in ! ; immediate
-
-: char   parse-name drop c@ ;
+\ This is the first file to be loaded and compiled by the kernel.
+\ Since the kernel only defines a bare minimum of words, we have to
+\ build basic language constructs almost from scratch.
 
 : >mark      here 0 , ;
 : >resolve   here swap ! ;
 : <mark      here ;
 : <resolve   , ;
 
+: char   parse-name drop c@ ;
 : '   parse-name find-name 0branch [ >mark ] exit [ >resolve ]
    [ char U ] literal emit  [ char n ] literal emit
    [ char d ] literal emit  [ char e ] literal emit
@@ -22,7 +23,7 @@ drop
    [ char w ] literal emit  [ char o ] literal emit
    [ char r ] literal emit  [ char d ] literal emit
    [ char : ] literal emit  bl emit
-   count type cr abort ;
+   type cr abort ;
 
 : here!   here - allot ;
 : >h      here >r here! ;

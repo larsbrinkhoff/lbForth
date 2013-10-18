@@ -22,6 +22,12 @@ of two parts: a target-specific file nucleus.fth containing all
 primitive CODE words, and a target-independent kernel.fth.  These two
 are compiled by the metacompiler.
 
+The C target nucleus used for bootstrapping has only twelve proper
+primitives.  There is also the COLD word which compiles to main(), a
+signal handler, and four I/O words.
+
 When the kernel starts, it jumps to the word called WARM.  This is
 responsible for loading the rest of the system and entering the text
-interpreter.
+interpreter.  The first file loaded by WARM is core.fth, which
+implements the CORE wordset.  Because the kernel only has a bare
+minimum of words, the start of core.fth looks a little strange.
