@@ -146,9 +146,9 @@ variable >in
 
 variable base
 
-variable forth
-variable compiler-words
-variable included-files
+create forth  0 , 0 ,
+create compiler-words  0 , ' forth ,
+create included-files  0 , ' compiler-words ,
 
 create context   ' forth , ' forth , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
 
