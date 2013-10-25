@@ -16,7 +16,6 @@ require lib/bitmap.fth
 
 only forth definitions  decimal
 
-vocabulary target           \ Holds compiled target words.
 vocabulary host-compiler    \ Overrides metacompiler definitions.
 vocabulary host-interpreter \ Overrides metacompiler definitions.
 vocabulary meta-compiler    \ Words executed in interpretation state.
@@ -31,15 +30,7 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 13 cells constant colon-runtime-offset
 : colon-runtime   c" &colon_word.param[13]" ;
 
-: [h   r> get-order n>r  only forth >r ;
-: h]   r> nr> set-order >r ;
-: [H]  [h ' h] compile, ; immediate
-: [m   r> get-order n>r  meta-context >r ;
-: m]   r> nr> set-order >r ;
-: [M]  [m ' m] compile, ; immediate
-: [t   r> get-order n>r get-current >r only previous target definitions >r ;
-: t]   r> r> set-current nr> set-order >r ;
-: [T]  postpone [t ' compile, postpone t] ; immediate
+: [M]  get-order n>r  meta-context ' compile,  nr> set-order ; immediate
 
 : input>r   r> save-input n>r >r ;
 : r>input   r> nr> restore-input abort" Restore-input?" >r ;
@@ -85,12 +76,15 @@ t-space bitmap t-map
    dup emit endcase ;
 : .quoted   [char] " emit  bounds ?do i c@ .qc loop  [char] " emit ;
 
-: ?forward   2dup ['] target search-wordlist if nip nip execute
-   else cr ." Undefined: " type abort cr then ;
+vocabulary forward
+create forward-references 0 ,
+: create-forward   also forward definitions
+   create previous immediate 0 ,  latestxt forward-references chain, ;
+: .forward   >in @  ." struct word " parse-name .mangled ." _word;" cr  >in ! ;
+: ?forward   get-order n>r only previous forward evaluate nr> set-order ;
 
 : pph   compile, 2drop ;
 
-: >end ( a1 u -- a2 )   + aligned ;
 : does: ( u "name1" "name2" -- )   create cells , parse-name dup , string,
    does> @+ swap @+ ;
 vocabulary does-table  also does-table definitions previous
@@ -104,6 +98,7 @@ vocabulary does-table  also does-table definitions previous
 only forth definitions
 
 : find-does ( a1 u -- a2 )   also does-table evaluate previous ;
+: host-find-name   get-order n>r  meta-context find-name  nr> set-order ;
 
 : s,    here over allot  swap cmove ;
 : save-function-name ( a1 u -- a2 )   here -rot  dup c, s, ;
@@ -188,14 +183,16 @@ t-dictionary dp !
 : find-name   #name min 2dup ['] forth search-wordlist dup if 2nip then ;
 : target-xt  find-name -1 <> abort" Undefined or immediate word" ;
 
+: forward, ( a -- )   here swap chain, ;
+: forward: ( "name" -- )   .forward  create-forward  does> forward, ;
+
 only forth definitions also meta-interpreter also host-interpreter
 finders tpp   compile, ?forward abort
-: target,   [M] here addr!  find-name tpp ;
+: target,   here addr!  find-name tpp ;
 : ppt   drop postpone sliteral postpone target, ;
 : ppn   drop ppt ;
 finders pp   ppt ppn pph
-: t-postpone   parse-name 2dup meta-context [H] find-name
-   interpreter-context also host-compiler pp ; immediate
+: t-postpone   parse-name 2dup host-find-name pp ; immediate
 : code,   target-xt >code @ , ;
 : postcode   parse-name postpone sliteral postpone code, ; immediate
 
@@ -246,17 +243,9 @@ finders meta-postpone   postpone, abort compile,
 : ?end ( xt nt -- nt 0 | xt 1 )   2dup < if rot drop swap -1 else drop 0 then ;
 : >end ( xt -- a )   here swap ['] forth ['] ?end traverse-wordlist drop ;
 
-: forward, ( a -- )   here swap chain, ;
-
 : check-colon-runtime   s" :" target-xt >body colon-runtime-offset + @
    s" >r" target-xt <> if ." Bad offset into colon definition." cr bye then ;
 
-only forth definitions
-create forward-references 0 ,
-: .forward   >in @  ." struct word " parse-name .mangled ." _word;" cr  >in ! ;
-also meta-interpreter definitions previous
-: forward: ( "name" -- )   .forward  [T] create immediate 0 ,
-   latestxt forward-references chain,  does> [M] forward, ;
 only forth definitions
 : ?found   0= if cr ." Unresolved forward reference: " type cr abort then ;
 : resolve ( xt -- )   dup >name [M] find-name ?found  swap >body @
