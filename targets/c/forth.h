@@ -17,6 +17,8 @@
 #endif
 
 typedef long int cell;
+typedef char char_t;
+typedef unsigned char uchar_t;
 typedef struct word *nt_t;
 typedef struct word *xt_t;
 typedef xt_t * REGPARM code_t (xt_t *, nt_t);
@@ -25,8 +27,8 @@ typedef xt_t * REGPARM code_t (xt_t *, nt_t);
 
 struct word
 {
-  char nlen;
-  char name[NAME_LENGTH - 1];
+  uchar_t nlen;
+  char_t name[NAME_LENGTH - 1];
   nt_t next;
   cell *does;
   code_t *code;

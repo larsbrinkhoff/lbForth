@@ -130,13 +130,13 @@ code nand ( x y -- ~(x&y) )
 end-code
 
 code c! ( c addr -- )
-    char *addr = POP (char *);
+    char_t *addr = POP (char_t *);
     cell c = POP (cell);
     *addr = c;
 end-code
 
 code c@ ( addr -- c )
-    unsigned char *addr = POP (unsigned char *);
+    uchar_t *addr = POP (uchar_t *);
     PUSH (*addr);
 end-code
 
@@ -154,28 +154,37 @@ code close-file ( fileid -- ior )
     PUSH (fclose (fileid) == 0 ? 0 : errno);
 end-code
 
-code open-file ( addr n mode -- fileid ior )
+code open-file ( addr u mode -- fileid ior )
     char *mode = POP (char *);
-    int n = POP (cell);
-    char *addr = POP (char *);
-    char *name = malloc (n + 1);
+    int i, u = POP (cell);
+    char_t *addr = POP (char_t *);
+    char *name = malloc (u + 1);
     FILE *fileid;
 
-    memcpy (name, addr, n);
-    name[n] = 0;
+    for (i = 0; i < u; i++)
+      name[i] = *addr++;
+    name[i] = 0;
     fileid = fopen (name, mode);
+    free (name);
     PUSH (fileid);
     PUSH (fileid == 0 ? errno : 0 );
 end-code
 
-code read-file ( addr n1 fileid -- n2 ior )
+code read-file ( addr u1 fileid -- u2 ior )
+    static char buffer[1024];
     FILE *fileid = POP (FILE *);
+    cell u1 = POP (cell);
+    char_t *addr = POP (char_t *);
+    size_t u2;
+    int i;
+
     if (fileid == 0)
       fileid = stdin;
-    cell n1 = POP (cell);
-    char *addr = POP (char *);
-    size_t n2;
-    n2 = fread (addr, 1, n1, fileid);
-    PUSH (n2);
+    if (u1 > sizeof buffer)
+      u1 = sizeof buffer;
+    u2 = fread (buffer, 1, u1, fileid);
+    for (i = 0; i < u2; i++)
+      addr[i] = buffer[i];
+    PUSH (u2);
     PUSH (ferror (fileid) ? errno : 0);
 end-code
