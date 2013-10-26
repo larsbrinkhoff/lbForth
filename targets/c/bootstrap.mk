@@ -16,7 +16,7 @@ forth: kernel.o
 
 kernel.o: kernel.c $(TARGET)/forth.h
 
-kernel.c: kernel.fth c.fth $(nucleus) $(meta) params.lisp
+kernel.c: kernel.fth dictionary.fth $(nucleus) $(meta) params.lisp
 
 params.lisp: params
 	./$< -lisp > $@

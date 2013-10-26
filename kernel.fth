@@ -128,7 +128,7 @@ defer catch
 
 : cmove ( addr1 addr2 n -- )   bounds do  dup c@  i c!  1+  loop drop ;
 
-include c.fth
+include dictionary.fth
 
 : (sliteral)   r> dup @ swap cell+ 2dup + aligned >r swap ;
 

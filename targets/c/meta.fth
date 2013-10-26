@@ -167,7 +167,7 @@ body-offset constant to_body
 
 0 value latestxt
 ( *** Target compiler included here. *** )
-include c.fth
+include dictionary.fth
 variable forth
 0 forth !
 ' forth current !

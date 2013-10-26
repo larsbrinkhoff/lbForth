@@ -28,7 +28,7 @@ forth: kernel.o
 
 kernel.o: kernel.c $(TARGET)/forth.h
 
-kernel.c: kernel.fth c.fth params.fth $(nucleus) $(meta)
+kernel.c: kernel.fth dictionary.fth params.fth $(nucleus) $(meta)
 
 params.fth: params
 	./$< -forth > $@

@@ -1,3 +1,9 @@
+\ Definitions that are common to both the kernel and the metacompiler.
+\ Word fields: >NAME >LFA >DOES >CODE >BODY.
+\ Compiling words: , COMPILE, HEADER,.
+\ Defining words: : ; IMMEDIATE CREATE CONSTANT VARIABLE.
+\ Wordlist: TRAVERSE-WORDLIST SEARCH-WORDLIST.
+
 variable dp
 : here      dp @ ;
 : allot     dp +! ;
@@ -14,22 +20,19 @@ variable current
 \ Compile the contents of a, then store x in a.
 : chain, ( x a -- )   dup @ , ! ; 
 
-forward: latestxt
-forward: >body
-: link, ( nt -- )      to latestxt  current @ >body @ , ;
-: reveal               latestxt  current @ >body ! ;
-: #name ( -- u )       NAME_LENGTH 1 - ;
-: name, ( a u -- )     #name min c,  #name string, ;
-: header, ( a u -- )   align here >r name, r> link, 0 , ;
-
-
-
 : >name    count cabs ;
 : >lfa     TO_NEXT + ;
 : >does    TO_DOES + ;
 : >code    TO_CODE + ;
 : >body    TO_BODY + ;
 : >nextxt   >lfa @ ;
+
+forward: latestxt
+: link, ( nt -- )      to latestxt  current @ >body @ , ;
+: reveal               latestxt  current @ >body ! ;
+: #name ( -- u )       NAME_LENGTH 1 - ;
+: name, ( a u -- )     #name min c,  #name string, ;
+: header, ( a u -- )   align here >r name, r> link, 0 , ;
 
 
 
