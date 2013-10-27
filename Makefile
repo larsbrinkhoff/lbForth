@@ -36,15 +36,15 @@ params.fth: params
 params: $(TARGET)/params.c $(TARGET)/forth.h Makefile
 	$(CC) $(CFLAGS) $(CPPFLAGS) $< -o $@
 
-check: test-output test-errors
-	test `cat test-errors` -le 81
-	$(GREP) Test-OK $<
-
-test-output: test-input all
-	./forth < $< > $@
+check: test-errors
+	test `cat $<` -le 81
 
 test-errors: test-output
 	$(GREP) $(ERROR_PATTERNS) $< | wc -l > $@
+
+test-output: test-input all
+	./forth < $< > $@
+	$(GREP) Test-OK $@
 
 clean:
 	rm -f forth .bootstrap *.o kernel.c params* test-output test-errors
