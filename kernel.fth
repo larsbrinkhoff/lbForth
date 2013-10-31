@@ -152,11 +152,11 @@ create included-files  0 , ' compiler-words ,
 
 create context   ' forth , ' forth , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
 
-: find-name ( a u -- a u 0 | xt ? )
-   #name min context >r begin r> dup cell+ >r @ ?dup while
-      >r 2dup r> search-wordlist ?dup
-      if 2nip r> drop exit then
-   repeat r> drop 0 ;
+: r@+   r> r> dup cell+ >r @ swap >r ;
+: search-context ( a u context -- a 0 | xt ? )   >r begin r@+ ?dup while
+   (find) ?dup until else drop 0 then r> drop ;
+: find-name ( a u -- a u 0 | xt ? )   swap over #name min context
+   search-context ?dup if rot drop else swap 0 then ;
 
 : key   here dup 1 0 read-file 0 = 1 = nand 0= abort" Read error"  c@ ;
 

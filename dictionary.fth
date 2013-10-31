@@ -62,9 +62,10 @@ forward: latestxt
 : ?nt>xt ( -1 ca u nt -- 0 xt i? 0 | -1 ca u -1 )
    3dup nt= if >r 3drop 0 r> dup immediate? 0
    else drop -1 then ;
+: (find) ( ca u wl -- ca u 0 | xt 1 | xt -1 )
+   2>r -1 swap 2r> ['] ?nt>xt traverse-wordlist rot if 0 then ;
 : search-wordlist ( ca u wl -- 0 | xt 1 | xt -1 )
-   2>r -1 swap 2r> ['] ?nt>xt traverse-wordlist
-   rot if 2drop 0 then ;
+   (find) ?dup 0= if 2drop 0 then ;
 
 
 
