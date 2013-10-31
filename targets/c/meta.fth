@@ -164,13 +164,13 @@ next-offset constant to_next
 code-offset constant to_code
 does-offset constant to_does
 body-offset constant to_body
+body-offset 2 cells + constant /wordlist
 
 0 value latestxt
 ( *** Target compiler included here. *** )
 include dictionary.fth
-variable forth
-0 forth !
-' forth current !
+create t-wordlist  /wordlist allot  t-wordlist /wordlist erase
+t-wordlist current !
 t-dictionary dp !
              
 : >mark   here 0 , ;
@@ -180,7 +180,7 @@ t-dictionary dp !
 
 : cells   cell * ;
 
-: find-name   #name min 2dup ['] forth search-wordlist dup if 2nip then ;
+: find-name   #name min 2dup t-wordlist search-wordlist dup if 2nip then ;
 : target-xt  find-name -1 <> abort" Undefined or immediate word" ;
 
 : forward, ( a -- )   here swap chain, ;
@@ -241,7 +241,7 @@ finders meta-postpone   postpone, abort compile,
 : [defined]     postpone [undefined] 0= ; immediate
 
 : ?end ( xt nt -- nt 0 | xt 1 )   2dup < if rot drop swap -1 else drop 0 then ;
-: >end ( xt -- a )   here swap ['] forth ['] ?end traverse-wordlist drop ;
+: >end ( xt -- a )   here swap t-wordlist ['] ?end traverse-wordlist drop ;
 
 : check-colon-runtime   s" :" target-xt >body colon-runtime-offset + @
    s" >r" target-xt <> if ." Bad offset into colon definition." cr bye then ;
@@ -360,10 +360,10 @@ interpreter-context definitions also host-interpreter
 only forth definitions also meta-interpreter also host-interpreter
 : t-id.     >name type space ;
 : t-.nt     t-id. 1 ;
-: t-words   ['] forth ['] t-.nt traverse-wordlist ;
+: t-words   t-wordlist ['] t-.nt traverse-wordlist ;
 : t-used    here t-dictionary - ;
-: t'        parse-name ['] forth search-wordlist 0= abort" Unknown?" ;
-: t-xt?     1 ['] forth ['] xt?? traverse-wordlist nip 0= ;
+: t'        parse-name t-wordlist search-wordlist 0= abort" Unknown?" ;
+: t-xt?     1 t-wordlist ['] xt?? traverse-wordlist nip 0= ;
 
 : t-disassemble   dup . dup t-xt? if t-id. else drop then ;
 : t-see-line   cr dup .addr  @ t-disassemble ;
