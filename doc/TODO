@@ -1,4 +1,9 @@
-Clean up metacompiler.  Also make it work with cell sizes other than four.
+Clean up metacompiler.
+
+Some mechanism for hooking in compilation wordlists.  Also for
+metacompilation.
+
+Make backtrace more useful by searching all vocabularies.
 
 Separate XT from NT.  Make XT point directly at code field.
 
