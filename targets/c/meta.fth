@@ -40,7 +40,7 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 
 create code-line  128 allot
 
-17000 constant t-space
+4000 cells constant t-space
 create t-dictionary  t-space allot
 t-space bitmap t-map
 : >map ( a1 -- a2 x )   t-dictionary - t-map ;
