@@ -17,7 +17,7 @@ nucleus = $(TARGET)/nucleus.fth
 
 all: .bootstrap forth
 
-.bootstrap: lisp/meta.lisp
+.bootstrap: lisp/meta.lisp lisp/words.lisp
 	$(MAKE) -f$(TARGET)/bootstrap.mk CC="$(CC)" CFLAGS="$(CFLAGS)" \
 	CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 

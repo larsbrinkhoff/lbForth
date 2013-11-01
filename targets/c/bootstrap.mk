@@ -5,7 +5,7 @@ nucleus = $(TARGET)/nucleus.fth
 
 # Bootstrap metacompiler, written in Lisp.
 %.c: %.fth
-	$(LISP) '(progn (load "$(meta)") (compile-forth "$(nucleus)" "$<"))'
+	$(LISP) '(load "$(meta)") (compile-forth "$(nucleus)" "$<")'
 
 all: forth
 
