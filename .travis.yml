@@ -1,11 +1,13 @@
+env:
+  matrix:
+    - M32=
+    - M32=-m32
 install:
   - sudo apt-get update
-  - sudo apt-get install gcc-multilib
   - sudo apt-get install sbcl
+  - test -z "$M32" || sudo apt-get install gcc-multilib
 script:
-  - make
-  - grep 'Meta-OK' kernel.c
-  - make check
+  - make check  M32=$M32
 notifications:
   email:
     - lars@nocrew.org

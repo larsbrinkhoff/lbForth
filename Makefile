@@ -13,6 +13,7 @@ nucleus = $(TARGET)/nucleus.fth
 
 %.c: %.fth
 	echo 'include $(meta)  bye' | ./forth | tail -n+3 > $@
+	$(GREP) Meta-OK $@
 
 all: .bootstrap forth
 
