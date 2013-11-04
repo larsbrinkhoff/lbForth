@@ -156,8 +156,8 @@ defer decode
                else ." unknown " swap . . then ;
 : unknown      u. ;
 
-: => ( op m "str w1 w2" -- )   , , bl parse ' , ' ,       dup , string, ;
-: -> ( op m "str w" -- )       , , bl parse ' , ['] nop , dup , string, ;
+: => ( op m "str w1 w2" -- )   , , bl parse ' , ' ,       s, ;
+: -> ( op m "str w" -- )       , , bl parse ' , ['] nop , s, ;
 : ---> ( op m "w" -- )         , ,          ' , ['] nop , 0 , ;
 : ===> ( op m "w1 w2" -- )     , ,          ' , ' ,       0 , ;
 

@@ -40,8 +40,8 @@ reg-table: reg-name   r0 r1 r2 r3 r4 r5 sp pc
                dup 0030 and 0380 = if ." @xxx(" 0 reg-name ." )" else
                then then then then then then then then ;
 
-: => ( op m "str w1 w2" -- )   , , bl parse ' , ' ,       dup , string, ;
-: -> ( op m "str w" -- )       , , bl parse ' , ['] nop , dup , string, ;
+: => ( op m "str w1 w2" -- )   , , bl parse ' , ' ,       s, ;
+: -> ( op m "str w" -- )       , , bl parse ' , ['] nop , s, ;
 : ---> ( op m "w" -- )         , ,          ' , ['] nop , 0 , ;
 : ===> ( op m "w1 w2" -- )     , ,          ' , ' ,       0 , ;
 

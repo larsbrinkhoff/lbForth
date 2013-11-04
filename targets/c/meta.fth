@@ -85,7 +85,7 @@ create forward-references 0 ,
 
 : pph   compile, 2drop ;
 
-: does: ( u "name1" "name2" -- )   create cells , parse-name dup , string,
+: does: ( u "name1" "name2" -- )   create cells , parse-name s,
    does> @+ swap @+ ;
 vocabulary does-table  also does-table definitions previous
 
@@ -100,9 +100,9 @@ only forth definitions
 : find-does ( a1 u -- a2 )   also does-table evaluate previous ;
 : host-find-name   get-order n>r  meta-context find-name  nr> set-order ;
 
-: s,    here over allot  swap cmove ;
-: save-function-name ( a1 u -- a2 )   here -rot  dup c, s, ;
-: append, ( c-addr a u )   dup >r s,  dup c@ r> + swap c! ;
+: us,    here over allot  swap cmove ;
+: save-function-name ( a1 u -- a2 )   here -rot  dup c, us, ;
+: append, ( c-addr a u )   dup >r us,  dup c@ r> + swap c! ;
 : save-code-name ( a1 u -- a2 )   save-function-name dup s" _code" append, ;
 
 
@@ -246,6 +246,8 @@ finders meta-postpone   postpone, abort compile,
 : check-colon-runtime   s" :" target-xt >body colon-runtime-offset + @
    s" >r" target-xt <> if ." Bad offset into colon definition." cr bye then ;
 
+: s,   dup , string, ;
+
 only forth definitions
 : ?found   0= if cr ." Unresolved forward reference: " type cr abort then ;
 : resolve ( xt -- )   dup >name [M] find-name ?found  swap >body @
@@ -297,7 +299,7 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 : postcode   t-postpone (literal) parse-name save-code-name a,
    t-postpone , ; immediate
 
-: s"   t-postpone (sliteral)  [char] " parse  dup ,  string, ; immediate
+: s"   t-postpone (sliteral)  [char] " parse  s, ; immediate
 : ."   [M] s"  t-postpone type ; immediate
 : [char]   char t-postpone literal ; immediate
 : abort"   t-postpone if [M] s" t-postpone cr t-postpone type t-postpone cr
