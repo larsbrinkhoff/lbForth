@@ -109,7 +109,7 @@ only forth definitions
 
 ( Host words to override defining words in metacompiler. )
 
-only also host-interpreter definitions
+only forth also host-interpreter definitions
 
 : ]   ] interpreter-context also host-compiler ;
 : :   : ] ;
@@ -123,7 +123,7 @@ copy create  copy variable  copy constant  copy value
 
 ( Host words to override compiling words in metacompiler. )
 
-only also host-compiler definitions
+only forth also host-compiler definitions
 
 : [   postpone [ interpreter-context also host-interpreter ; immediate
 : ;   postpone ; postpone [ ; immediate
@@ -199,7 +199,7 @@ finders pp   ppt ppn pph
 : does!   latestxt >does ! ;
 : (does>)   find-does target-xt >body + does! ;
 : (:-does>)   colon-runtime does! ;
-only also host-compiler definitions
+only forth also host-compiler definitions
 : does>   latestxt >name 2dup s" :" compare
    if postpone sliteral postpone (does>)
    else 2drop postpone (:-does>) then  postpone exit ; immediate
@@ -268,7 +268,7 @@ only forth definitions
  * CELL
  *)
 
-only also meta-interpreter also meta-compiler definitions also host-interpreter
+only forth also meta-interpreter also meta-compiler definitions also host-interpreter
 
 : [defined]   parse-name find-name if drop -1 else 2drop 0 then ; immediate
 : [undefined]   postpone [defined] 0= ; immediate
@@ -290,7 +290,7 @@ only also meta-interpreter also meta-compiler definitions also host-interpreter
 
 interpreter-context definitions also host-interpreter
 : unresolved   postpone t-postpone  postpone >mark ; immediate
-only also meta-interpreter also meta-compiler definitions also host-interpreter
+only forth also meta-interpreter also meta-compiler definitions also host-interpreter
 : ahead        unresolved branch ; immediate
 : if           unresolved 0branch ; immediate
 : then         >resolve ; immediate
