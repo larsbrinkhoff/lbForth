@@ -223,10 +223,10 @@ variable hld
 
 : string-refill   0 ;
 
-: string-input ( a u -- )   -1 'source-id !  src ! src cell+ !  0 >in !
-   ['] string-refill ['] refill >body ! ;
+: string-input ( a u -- )   -1 ['] source-id >body !  src ! src cell+ !
+   0 >in !  ['] string-refill ['] refill >body ! ;
 
-: evaluate   save-input n>r  string-input  interpret
+: evaluate   save-input n>r  string-input interpret
    nr> restore-input abort" Bad restore-input" ;
 
 create tib   256 allot
@@ -237,13 +237,13 @@ create tib   256 allot
       i c!  1 src +!
    loop ;
 
-: terminal-input   0 'source-id !  tib src cell+ !
-   ['] terminal-refill ['] refill >body ! ;
+: ok   state @ 0= if ."  ok" cr then ;
 
-: ?prompt   state @ 0= if ."  ok" cr then ;
+: terminal-input   0 ['] source-id >body !  tib src cell+ !
+   ['] terminal-refill ['] refill >body !  ['] ok ['] ?prompt >body ! ;
 
 : (quit)   return_stack 256 cells + rp!  0 csp !  postpone [
-   terminal-input  ['] ?prompt interpret-loop  bye ;
+   terminal-input interpreting  bye ;
 
 ' (quit) ' quit >body !
 

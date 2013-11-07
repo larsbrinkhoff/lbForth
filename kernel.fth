@@ -168,7 +168,7 @@ create src  2 cells allot
 : <source ( -- char|-1 )   source >in @ dup rot = if
    2drop -1 else + c@  1 >in +! then ;
 
-: blank?   dup bl =  over 8 = or  over 9 = or  over 10 = or  over 13 = or nip ;
+: blank?   dup bl =  over 8 = or  over 9 = or  over 10 = or  swap 13 = or ;
 : skip ( "<blanks>" -- )   begin source? while
    <source blank? 0= until -1 >in +! then ;
 : parse-name ( "<blanks>name<blank>" -- a u )   skip  source drop >in @ +
@@ -179,9 +179,8 @@ create src  2 cells allot
 defer also
 
 create interpreters  ' execute , ' number , ' execute ,
-
-: interpret-xt   1+ cells  interpreters + @ catch
-                 if ." Exception" cr then ;
+: ?exception   if cr ." Exception!" cr then ;
+: interpret-xt   1+ cells  interpreters + @ catch ?exception ;
 
 : [   0 state !  ['] execute interpreters !  previous ; immediate
 : ]   1 state !  ['] compile, interpreters !
@@ -203,21 +202,22 @@ variable csp
 ( Core extension words. )
 
 defer refill
+defer ?prompt
+0 value source-id
 
 create fib   256 allot
 
-forward: source-id
 : file-refill ( -- flag )   0 >in !  0 src !  -1
    fib 256 bounds do
-      i 1 source-id read-file abort" Read error."
+      i 1 source-id read-file if drop 0 leave then
       dup 0=  i c@ 10 =  or  if src @ or 0= if drop 0 then leave then
       drop  1 src +!
    loop ;
 
-variable 'source-id
-: source-id   'source-id @ ;
-: restore-input   drop  is refill  src !  src cell+ !  'source-id !  >in !  0 ;
-: save-input   >in @  source-id  source  ['] refill >body @  5 ;
+: restore-input   drop  is ?prompt  is refill  src !  src cell+ !
+   ['] source-id >body !  >in !  0 ;
+: save-input   >in @  source-id  source  ['] refill >body @
+   ['] ?prompt >body @  6 ;
 
 defer backtrace
 
@@ -230,17 +230,15 @@ defer backtrace
 : n>r   r> over >r swap begin ?dup while rot r> 2>r 1 - repeat >r ;
 : nr>   r> r@ begin ?dup while 2r> >r rot rot 1 - repeat r> swap >r ;
 
-: interpret  begin parse-name dup while
+: interpret   begin parse-name dup while
    find-name interpret-xt ?stack repeat 2drop ;
+: interpreting   begin refill while interpret ?prompt repeat ;
 
-: interpret-loop   >r begin ['] refill catch if ." Exception" cr -1 then while
-   interpret r@ execute repeat r> drop ;
+: file-input ( fileid -- )    ['] source-id >body !  fib src cell+ !
+   ( 0 blk ! )  ['] file-refill is refill  ['] nop is ?prompt ;
 
-: file-input ( fileid -- )    'source-id !  fib src cell+ !
-   ( 0 blk ! )  ['] file-refill is refill ;
-
-: include-file ( fileid -- )   save-input n>r  file-input
-   ['] nop interpret-loop  source-id close-file drop
+: include-file ( fileid -- )   save-input n>r
+   file-input interpreting  source-id close-file drop
    nr> restore-input abort" Bad restore-input" ;
 
 : r/o   s" r" drop ;
