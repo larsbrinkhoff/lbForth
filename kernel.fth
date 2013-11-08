@@ -227,8 +227,9 @@ defer backtrace
 : n>r   r> over >r swap begin ?dup while rot r> 2>r 1 - repeat >r ;
 : nr>   r> r@ begin ?dup while 2r> >r rot rot 1 - repeat r> swap >r ;
 
-: interpret   begin parse-name dup while
-   find-name interpret-xt ?stack repeat 2drop ;
+defer parsed
+: (parsed) ( a u -- )   find-name interpret-xt ;
+: interpret   begin parse-name dup while parsed ?stack repeat 2drop ;
 : interpreting   begin refill while interpret ?prompt repeat ;
 
 : file-input ( fileid -- )    ['] source-id >body !  fib src cell+ !
@@ -248,6 +249,7 @@ defer backtrace
    ['] nop dup is backtrace is also
    ['] dummy-catch is catch
    ['] (number) is number
+   ['] (parsed) is parsed
    ['] latestxt dup to latestxt forth !
    ['] forth current !
    0 compiler-words !

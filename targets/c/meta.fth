@@ -339,19 +339,12 @@ only forth definitions
 
 finders meta-xt   ?compile, meta-number execute
 
-: ?.name   ( state @ if space 2dup type then ) ;
-
 \ 1. Search host order.  If found, always execute!
 \ 2. If not found, search target dictionary.  If found, always compile!
 
-: meta-interpret   begin parse-name  ?.name  dup while
-   find-name meta-xt ?stack repeat 2drop ;
-
-: meta-loop   begin refill while meta-interpret repeat ;
-
-: meta-compile   parse-name r/o open-file abort" Open?"  input>r
-   file-input interpreter-context meta-loop
-   source-id close-file abort" Close?"  r>input ;
+: meta-parsed ( a u -- )   find-name meta-xt ;
+: meta-compile   action-of parsed  ['] meta-parsed is parsed
+   parse-name included  is parsed ;
 
 interpreter-context definitions also host-interpreter
 : include   meta-compile ;
