@@ -60,10 +60,6 @@ forward: swap
 : nip    swap drop ;
 : 2nip   2>r 2drop 2r> ;
 
-: cells   [ cell 1 > ] [if] dup + [then]
-   [ cell 2 > ] [if] dup + [then]
-   [ cell 4 > ] [if] dup + [then] ;
-
 : invert   -1 nand ;
 : negate   invert 1 + ;
 : -        negate + ;
@@ -98,6 +94,7 @@ forward: <
 
 forward: abort
 defer quit
+forward: cells
 
 : abort   data_stack 100 cells + sp!  quit ;
 

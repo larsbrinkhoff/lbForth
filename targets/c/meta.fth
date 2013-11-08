@@ -166,7 +166,6 @@ does-offset constant to_does
 body-offset constant to_body
 body-offset 2 cells + constant /wordlist
 
-0 value latestxt
 ( *** Target compiler included here. *** )
 include dictionary.fth
 create t-wordlist  /wordlist allot  t-wordlist /wordlist erase
@@ -177,8 +176,6 @@ t-dictionary dp !
 : >resolve   here swap ! ;
 : <mark      here ;
 : <resolve   , ;
-
-: cells   cell * ;
 
 : find-name   #name min 2dup t-wordlist search-wordlist dup if 2nip then ;
 : target-xt  find-name -1 <> abort" Undefined or immediate word" ;

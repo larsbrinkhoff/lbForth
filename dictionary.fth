@@ -67,47 +67,6 @@ forward: latestxt
 : search-wordlist ( ca u wl -- 0 | xt 1 | xt -1 )
    (find) ?dup 0= if 2drop 0 then ;
 
-
-
-0 [if]
-variable state
-: [   0 state !  ['] execute interpreters !  previous ; immediate
-: ]   1 state !  ['] compile, interpreters !
-   also ['] compiler-words context ! ;
-
-variable csp
-
-: .latest   latestxt >name type ;
-forward: abort
-: ?bad   rot if type ."  definition: " .latest cr abort else 2drop then ;
-: !csp   csp @ s" Nested" ?bad  sp@ csp ! ;
-: ?csp   sp@ csp @ <> s" Unbalanced" ?bad  0 csp ! ;
-
-: :   parse-name header, postcode dodoes  ] !csp  does> >r ;
-: ;   reveal postpone exit postpone [ ?csp ; immediate
-
-
-
-( From core.fth )
-
-: immediate   latestxt dup c@ negate swap c! ;
-: create    parse-name header, postcode dodoes reveal (does>) ;
-: constant   create , does> @ ;
-: variable   create cell allot ;
-
-: '   parse-name find-name 0branch [ >mark ] exit [ >resolve ]
-   [ char U ] literal emit  [ char n ] literal emit
-   [ char d ] literal emit  [ char e ] literal emit
-   [ char f ] literal emit  [ char i ] literal emit
-   [ char n ] literal emit  [ char e ] literal emit
-   [ char d ] literal emit  bl emit
-   [ char w ] literal emit  [ char o ] literal emit
-   [ char r ] literal emit  [ char d ] literal emit
-   [ char : ] literal emit  bl emit
-   count type cr abort ;
-
-( From tools.fth )
-
-: [undefined]   parse-name find-name if drop 0 else 2drop -1 then ; immediate
-: [defined]     postpone [undefined] 0= ; immediate
-[then]
+: cells   [ cell 1 > ] [if] dup + [then]
+   [ cell 2 > ] [if] dup + [then]
+   [ cell 4 > ] [if] dup + [then] ;
