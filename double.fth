@@ -1,7 +1,7 @@
 ( Double-Number words. )
 
 : 2constant   create , ,  does> 2@ ;
-: 2literal    swap postpone literal postpone literal ; immediate
+: 2literal    swap postpone literal postpone literal ; compile-only
 : 2variable   create 2 cells allot ;
 
 \ d.

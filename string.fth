@@ -18,7 +18,7 @@
 	over c@ r@ !
     repeat r> 2drop ;
 
-: sliteral   postpone (sliteral) s, ; immediate
+: sliteral   postpone (sliteral) s, ; compile-only
 
 : /string ( caddr u n -- caddr+1 u-1 )   swap over - under + ;
 

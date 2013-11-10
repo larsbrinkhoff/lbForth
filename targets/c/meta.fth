@@ -128,16 +128,17 @@ only forth also host-compiler definitions
 : [   postpone [ interpreter-context also host-interpreter ; immediate
 : ;   postpone ; postpone [ ; immediate
 
-immediate: [defined]  immediate: [undefined]
+immediate: [defined]  immediate: [undefined]  immediate: case
 immediate: literal    immediate: [']          immediate: postpone
-immediate: is         immediate: to
-immediate: abort"     immediate: [char]
+immediate: is         immediate: to           immediate: sliteral
+immediate: abort"     immediate: [char]       immediate: +loop
+immediate: of         immediate: endof        immediate: endcase
 
 immediate: (       immediate: if       immediate: else   immediate: \
-immediate: [if]    immediate: [else]   immediate: [then]
+immediate: [if]    immediate: [else]   immediate: [then] immediate: ?do
 immediate: then    immediate: begin    immediate: until  immediate: while
 immediate: repeat  immediate: again    immediate: do     immediate: leave
-immediate: loop    immediate: ."       immediate: s"
+immediate: loop    immediate: ."       immediate: s"     immediate: does>
 
 \ cr .( HOST COMPILING WORDS: ) cr  words
 

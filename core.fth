@@ -29,11 +29,16 @@ drop
 : >h      here >r here! ;
 : h>      r> here! ;
 
+: hide   latestxt >nextxt  current @ >body ! ;
+: link   current @ >body @  latestxt >lfa ! ;
+: compile-only   hide  current @  [ ' compiler-words ] literal current !
+   link  reveal  current !  immediate ;
+
 : code!     latestxt >code ! ;
 : does!     latestxt >does ! ;
 : does,     ;
 : (does>)   r> does! ;
-: does>     [ ' (does>) ] literal compile, does, ; immediate
+: does>     [ ' (does>) ] literal compile, does, ; compile-only
 : create    parse-name header, [ ' dodoes >code @ ] literal ,  reveal (does>) ;
 
 : postpone,   [ ' literal compile, ' compile, ] literal compile, ;
@@ -43,41 +48,34 @@ drop
 
 finders postpone-xt   postpone, abort compile,
 
-: postpone   parse-name find-name postpone-xt ; immediate
+: postpone   parse-name find-name postpone-xt ; compile-only
 
 : unresolved   postpone postpone  postpone >mark ; immediate
-: ahead        unresolved branch ; immediate
-: if           unresolved 0branch ; immediate
-: then         >resolve ; immediate
+: ahead   unresolved branch ; compile-only
+: if   unresolved 0branch ; compile-only
+: then   >resolve ; compile-only
 
 : resolving   postpone postpone  postpone <resolve ; immediate
-: begin       <mark ; immediate
-: again       resolving branch ; immediate
-: until       resolving 0branch ; immediate
+: begin   <mark ; compile-only
+: again   resolving branch ; compile-only
+: until   resolving 0branch ; compile-only
 
-: else     postpone ahead swap postpone then ; immediate
-: while    postpone if swap ; immediate
-: repeat   postpone again postpone then ; immediate
+: else   postpone ahead swap postpone then ; compile-only
+: while   postpone if swap ; compile-only
+: repeat   postpone again postpone then ; compile-only
 
-: recurse   latestxt compile, ; immediate
+: recurse   latestxt compile, ; compile-only
 
 : 1-   -1 + ;
 
 : parse   >r  source drop >in @ +
    0 begin source? while <source r@ <> while 1+ repeat then r> drop ;
 
-: [char]   char postpone literal ; immediate
+: [char]   char postpone literal ; compile-only
 
 : (   begin [char] ) parse 2drop
       source drop >in @ 1- + c@ [char] ) <> while
       refill while repeat then ; immediate
-
-: hide   latestxt >nextxt  current @ >body ! ;
-
-: link   current @ >body @  latestxt >lfa ! ;
-
-: compile-only   hide  current @  [ ' compiler-words ] literal current !
-                 link  reveal  current !  immediate ;
 
 create squote   128 allot
 
@@ -86,7 +84,8 @@ create squote   128 allot
 : s"   postpone (sliteral) [char] " parse s, ; compile-only
 
 : (abort")    cr type cr abort ;
-: abort"   postpone if postpone s" postpone (abort") postpone then ; immediate
+: abort"   postpone if postpone s" postpone (abort") postpone then ;
+   compile-only
 
 : ?:   >in @ >r  parse-name find-name
    if r> 2drop  begin source 1- + c@ [char] ; = refill abort" ?" until
@@ -137,7 +136,8 @@ create squote   128 allot
 : u.      (.) space ;
 : .       ?.- u. ;
 
-: ."   postpone s"  postpone type ; immediate
+: ."   [char] " parse type ;
+: ."   postpone s"  postpone type ; compile-only
 
 : postpone-number   ." Undefined: " count type cr abort ;
 ' postpone-number  ' postpone-xt >body cell+ !
@@ -169,12 +169,12 @@ variable leaves
 
 : r+   r> r> rot + >r >r ;
 
-: do      leaves @  0 leaves !  postpone 2>r  postpone begin  0 ; immediate
-: leave   postpone branch  here leaves chain, ; immediate
+: do   leaves @  0 leaves !  postpone 2>r  postpone begin  0 ; compile-only
+: leave   postpone branch  here leaves chain, ; compile-only
 : +loop   ?dup if swap postpone r+ postpone again postpone then
-          else postpone (+loop) postpone until then
-          leaves >resolve@  leaves !  postpone unloop ; immediate
-: loop    1 postpone literal postpone +loop ; immediate
+   else postpone (+loop) postpone until then
+   leaves >resolve@  leaves !  postpone unloop ; compile-only
+: loop   1 postpone literal postpone +loop ; compile-only
 
 : j   rp@ 3 cells + @ ;
 
@@ -219,7 +219,7 @@ variable hld
 \ : dum* ( ud u -- ud' )   dup >r um* drop swap r> um* rot + ;
 \ : dum/mod ( ud1 u1 -- ud2 u2 )   dup under u/mod swap under um/mod ;
 
-: [']   ' postpone literal ; immediate
+: [']   ' postpone literal ; compile-only
 
 : string-refill   0 ;
 

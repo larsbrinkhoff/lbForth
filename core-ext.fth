@@ -11,19 +11,19 @@
    [ ' : >does @ ] literal latestxt >does ! ;
 
 : (?do)   r> 2r> 2dup > rot rot 2>r swap >r ;
-: ?do     leaves @  0 leaves !
-   postpone 2>r postpone begin postpone (?do) postpone if ; immediate
+: ?do   leaves @  0 leaves !
+   postpone 2>r postpone begin postpone (?do) postpone if ; compile-only
 
 : string+   count + aligned ;
-: (c")      r> dup string+ >r ;
-: c"        postpone (c")  [char] " parse  dup c,  string, ; immediate
+: (c")   r> dup string+ >r ;
+: c"   postpone (c")  [char] " parse  dup c,  string, ; compile-only
 
 : convert   char+ 65535 >number drop ;
 
-: case      0 ; immediate
-: of        postpone over  postpone =  postpone if  postpone drop ; immediate
-: endof     postpone else  swap 1+ ; immediate
-: endcase   postpone drop  0 ?do postpone then loop ; immediate
+: case   0 ; compile-only
+: of   postpone over  postpone =  postpone if  postpone drop ; compile-only
+: endof   postpone else  swap 1+ ; compile-only
+: endcase   postpone drop  0 ?do postpone then loop ; compile-only
 
 : erase   0 fill ;
 
@@ -60,7 +60,7 @@ variable span
 
 : within   over - under - u< ;
 
-: [compile]   ' compile, ; immediate
+: [compile]   ' compile, ; compile-only
 
 \ ----------------------------------------------------------------------
 
@@ -68,12 +68,12 @@ variable span
 
 : buffer:   create allot ;
 
-: defer       create ['] abort ,  does> @ execute ;
-: defer!      >body ! ;
-: defer@      >body @ ;
-: is          ' defer! ;
-: is          postpone ['] postpone defer! ; compile-only
-: action-of   ' defer@ ; immediate
+: defer   create ['] abort ,  does> @ execute ;
+: defer!   >body ! ;
+: defer@   >body @ ;
+: is   ' defer! ;
+: is   postpone ['] postpone defer! ; compile-only
+: action-of   ' defer@ ;
 : action-of   postpone ['] postpone defer@ ; compile-only
 
 : holds   bounds swap begin 2dup < while 1- dup c@ hold repeat 2drop ;
