@@ -77,13 +77,13 @@ finders postpone-xt   postpone, abort compile,
 : link   current @ >body @  latestxt >lfa ! ;
 
 : compile-only   hide  current @  [ ' compiler-words ] literal current !
-                 link  reveal  current ! ;
+                 link  reveal  current !  immediate ;
 
 create squote   128 allot
 
 : s,   dup , string, ;
 : s"   [char] " parse  >r squote r@ cmove  squote r> ;
-: s"   postpone (sliteral) [char] " parse s, ; immediate compile-only
+: s"   postpone (sliteral) [char] " parse s, ; compile-only
 
 : (abort")    cr type cr abort ;
 : abort"   postpone if postpone s" postpone (abort") postpone then ; immediate

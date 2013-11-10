@@ -41,4 +41,4 @@
 
 : to   ' >body dup ['] 2value < if ! else dup cell+ swap @ execute then ;
 : to   ' >body dup ['] 2value < if postpone literal postpone !
-   else dup cell+ postpone literal @ compile, then ; immediate compile-only
+   else dup cell+ postpone literal @ compile, then ; compile-only

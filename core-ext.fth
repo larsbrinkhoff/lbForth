@@ -44,9 +44,9 @@ variable span
 
 : value   create ,  does> @ ;
 : to      ' >body ! ;
-: to      ' >body postpone literal postpone ! ; immediate compile-only
+: to      ' >body postpone literal postpone ! ; compile-only
 : +to     ' >body +! ;
-: +to     ' >body postpone literal postpone +! ; immediate compile-only
+: +to     ' >body postpone literal postpone +! ; compile-only
 
 : tuck    swap over ;
 
@@ -72,9 +72,9 @@ variable span
 : defer!      >body ! ;
 : defer@      >body @ ;
 : is          ' defer! ;
-: is          postpone ['] postpone defer! ; immediate compile-only
+: is          postpone ['] postpone defer! ; compile-only
 : action-of   ' defer@ ; immediate
-: action-of   postpone ['] postpone defer@ ; immediate compile-only
+: action-of   postpone ['] postpone defer@ ; compile-only
 
 : holds   bounds swap begin 2dup < while 1- dup c@ hold repeat 2drop ;
 
