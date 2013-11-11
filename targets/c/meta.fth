@@ -14,7 +14,9 @@
 require search.fth
 require lib/bitmap.fth
 
-only forth definitions  decimal
+: reset   only forth definitions  decimal ;
+reset
+re: abort   reset empty bye ;
 
 vocabulary host-compiler    \ Overrides metacompiler definitions.
 vocabulary host-interpreter \ Overrides metacompiler definitions.
@@ -81,7 +83,7 @@ create forward-references 0 ,
 : create-forward   also forward definitions
    create previous immediate 0 ,  latestxt forward-references chain, ;
 : .forward   >in @  ." struct word " parse-name .mangled ." _word;" cr  >in ! ;
-: ?forward   get-order n>r only previous forward evaluate nr> set-order ;
+: ?forward   get-order n>r only forward evaluate nr> set-order ;
 
 : pph   compile, 2drop ;
 
@@ -179,7 +181,7 @@ t-dictionary dp !
 : <resolve   , ;
 
 : find-name   #name min 2dup t-wordlist search-wordlist dup if 2nip then ;
-: target-xt  find-name -1 <> abort" Undefined or immediate word" ;
+: target-xt  find-name -1 <> ?undef ;
 
 : forward, ( a -- )   here swap chain, ;
 : forward: ( "name" -- )   .forward  create-forward  does> forward, ;
@@ -231,8 +233,7 @@ finders meta-postpone   postpone, abort compile,
 : defer   create s" abort" target,  does> @ execute ;
 : value   create ,  does> @ ;
 
-: '   parse-name find-name 0=
-   if cr ." Undefined, and cannot tick: " type cr abort then ;
+: '   parse-name find-name 0= ?undef ;
 : immediate   latestxt dup c@ negate swap c! ;
 
 : [undefined]   parse-name find-name if drop 0 else 2drop -1 then ; immediate

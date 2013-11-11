@@ -14,16 +14,7 @@ drop
 : <resolve   , ;
 
 : char   parse-name drop c@ ;
-: '   parse-name find-name 0branch [ >mark ] exit [ >resolve ]
-   [ char U ] literal emit  [ char n ] literal emit
-   [ char d ] literal emit  [ char e ] literal emit
-   [ char f ] literal emit  [ char i ] literal emit
-   [ char n ] literal emit  [ char e ] literal emit
-   [ char d ] literal emit  bl emit
-   [ char w ] literal emit  [ char o ] literal emit
-   [ char r ] literal emit  [ char d ] literal emit
-   [ char : ] literal emit  bl emit
-   type cr abort ;
+: '   parse-name find-name 0= ?undef ;
 
 : here!   here - allot ;
 : >h      here >r here! ;
@@ -139,7 +130,7 @@ create squote   128 allot
 : ."   [char] " parse type ;
 : ."   postpone s"  postpone type ; compile-only
 
-: postpone-number   ." Undefined: " count type cr abort ;
+: postpone-number   undef ;
 ' postpone-number  ' postpone-xt >body cell+ !
 
 : /     /mod nip ;
@@ -280,7 +271,6 @@ create tib   256 allot
    dup r> r@ + = if 2drop 2r> else 2r> 2drop then ;
 
 : (number) ( a u -- )   0 rot rot 0 rot rot >number
-   ?dup if cr ." Undefined: " type cr abort then
-   2drop postpone literal ;
+   ?dup ?undef  2drop postpone literal ;
 
 ' (number) ' number >body !

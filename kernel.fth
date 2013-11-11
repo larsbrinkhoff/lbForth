@@ -105,6 +105,9 @@ variable state
 
 : literal   state @ if postpone (literal) , then ; immediate
 
+: undef ( a u -- )   ." Undefined: " type cr abort ;
+: ?undef ( a u x -- a u )   if undef then ;
+
 defer number
 
 \ Sorry about the long definition, but I didn't want to leave many
@@ -116,8 +119,7 @@ defer number
       over c@ [char] 0 - dup -1 > while dup 10 < while
       2>r 1+ swap dup dup + dup + + dup +  r> + swap r> 1 -
    repeat then drop then
-   ?dup if ." Undefined: " type cr abort then
-   drop r> if negate then
+   ?dup ?undef drop r> if negate then
    postpone literal ;
 
 defer catch
