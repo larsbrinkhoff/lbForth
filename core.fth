@@ -231,6 +231,8 @@ variable hld
 
 create tib   256 allot
 
+: key   here dup 1 0 read-file abort" Read error"  0= if bye then  c@ ;
+
 : terminal-refill   0 >in !  0 src !  -1
    tib 256 bounds do
       key dup 10 = if drop leave then

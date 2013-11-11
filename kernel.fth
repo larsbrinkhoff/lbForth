@@ -155,8 +155,6 @@ create context   ' forth , ' forth , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
 : find-name ( a u -- a u 0 | xt ? )   swap over #name min context
    search-context ?dup if rot drop else swap 0 then ;
 
-: key   here dup 1 0 read-file 0 = 1 = nand 0= abort" Read error"  c@ ;
-
 : or   invert swap invert nand ;
 
 create src  2 cells allot

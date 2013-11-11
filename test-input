@@ -1,4 +1,4 @@
 : move cmove ;
 include test/runtests.fth
 123
-.( Test-OK ) cr bye
+.( Test-OK ) cr
