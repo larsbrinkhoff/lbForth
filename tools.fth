@@ -109,7 +109,17 @@ is backtrace
 
 ( Forth2012 tools extension words. )
 
-\ TODO: synonym
+: c-o ( xt -- )   alias compile-only ;
+finders ]alias  drop undef c-o
+: com ( a u a u "name" -- )   2drop ] find-name ]alias ;
+: def ( a u xt "name" -- )   >in @ swap alias >in !  2dup com ;
+: imm ( a u xt "name" -- )   alias immediate 2drop ;
+finders [alias  def com imm
+: [find ( a u "name" -- )   2dup postpone [ find-name [alias ;
+: next-name ( -- u1 a u2 )   >in @ parse-name 2drop parse-name 2>r
+   >in @ swap >in ! 2r> ;
+: state! ( flag -- )   if ] else postpone [ then ;
+: synonym ( "name1" "name2" -- )   state @ next-name [find >in ! state! ;
 
 : [undefined]   parse-name find-name if drop 0 else 2drop -1 then ; immediate
 : [defined]     postpone [undefined] 0= ; immediate

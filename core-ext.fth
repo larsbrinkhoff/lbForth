@@ -68,7 +68,9 @@ variable span
 
 : buffer:   create allot ;
 
-: defer   create ['] abort ,  does> @ execute ;
+: alias ( xt "name" -- )   create ,  does> perform ;
+
+: defer   ['] abort alias ;
 : defer!   >body ! ;
 : defer@   >body @ ;
 : is   ' defer! ;
