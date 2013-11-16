@@ -1,0 +1,57 @@
+Record of changes to the ANS Forth test suite from version 0.9 onwards
+
+Version 0.9 1 April 2012
+~~~~~~~~~~~~~~~~~~~~~~~~~
+All test programs placed in the public domain.
+
+All tests work with both tester.fr and ttester.fs
+
+coreplustest.fth
+   - multiple ELSE's in an IF statement
+   - DO +LOOP tests with large increments
+   - Ackermann function test for RECURSE added
+   - >IN manipulation in interpreter mode
+   - immediate CONSTANTs, VARIABLEs and CREATEd words tested
+   - recursive :NONAME definitions moved to core extension test file
+   - parsing behaviour of S" ." and ( tested
+
+coreexttest.fth
+   - SAVE-INPUT and RESTORE-INPUT tests modified to work with ttester.fs
+   - CONVERT test deleted, obsolete word removed from Forth 200X
+   - immediate VALUEs tested
+   - recursive :NONAME tests added
+   - PARSE and .( tests added
+   - Parsing behaviour of C" tested
+
+doubletest.fth
+   - immediate 2CONSTANTs and 2VARIABLEs tested
+
+memorytest.fth
+   - Definition of CHECKMEM modified to work with ttester.fs
+
+toolstest.fth
+   - Further tests on [IF] [ELSE] [THEN]
+
+Version 0.8
+~~~~~~~~~~~
+   - Tests added to stringtests.fth
+
+Version 0.7
+~~~~~~~~~~~
+   - Includes a readme.html.
+   - Name changes to avoid redefinition warnings.
+
+Version 0.6
+~~~~~~~~~~~
+   - corrected the case of some words to ensure the tests will run on a
+     case-sensitive system
+
+Version 0.5
+~~~~~~~~~~~
+   - includes a correction to the file-access tests.
+
+Version 0.4
+~~~~~~~~~~~
+   - to make some tests independent of cell size
+   - to use T{ and }T instead of { and } as the test words. This avoids
+     a clash with the Forth 200X use of { and } for Locals.

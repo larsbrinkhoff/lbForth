@@ -6,9 +6,9 @@
 
 CR .( Running ANS Forth test programs, version 0.9) CR
 
-	S" test/tester.fth" INCLUDED
+	S" test/hayes/tester.fth" INCLUDED
 \   S" ttester.fth" INCLUDED
-	S" test/core.fth" INCLUDED
+	S" test/hayes/core.fth" INCLUDED
    S" coreplustest.fth" INCLUDED
 \	S" coreexttest.fth" INCLUDED
 \	S" doubletest.fth" INCLUDED
