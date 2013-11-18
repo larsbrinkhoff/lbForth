@@ -4,7 +4,7 @@ code cold \ int main (void)
   extern struct word warm_word, dp_word, SP_word, RP_word,
     data_stack_word, return_stack_word, dictionary_end_word,
     jmpbuf_word, sigint_word;
-  static cell dictionary[15000];
+  static cell dictionary[16000];
   size_t start = (size_t)&dictionary, end;
   void signal_handler (int);
   xt_t *IP = (xt_t *)warm_word.param;

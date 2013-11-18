@@ -22,9 +22,10 @@ vocabulary host-compiler    \ Overrides metacompiler definitions.
 vocabulary host-interpreter \ Overrides metacompiler definitions.
 vocabulary meta-compiler    \ Words executed in interpretation state.
 vocabulary meta-interpreter \ Immediate words used in compilation state.
+vocabulary target
 
 : interpreter-context   only forth also meta-interpreter ;
-: compiler-context   only previous meta-compiler ;
+: compiler-context   only target also meta-compiler ;
 : meta-context   compiler-context also meta-interpreter ;
 
 \ Offset, within the definition of :, to the runtime action of :.
@@ -36,6 +37,14 @@ vocabulary meta-interpreter \ Immediate words used in compilation state.
 
 : input>r   r> save-input n>r >r ;
 : r>input   r> nr> restore-input abort" Restore-input?" >r ;
+
+defer number,
+defer t-compile,
+action-of number constant host-number
+
+: (create) ( a u -- )   input>r string-input create r>input ;
+: host-word ( xt a u -- )   get-current >r ['] target set-current
+   (create) , r> set-current  does> @ t-compile, ;
 
 : copy   >in @ >r : r> >in !  ' compile, postpone ; ;
 : immediate:   copy immediate ;
@@ -78,17 +87,16 @@ t-space bitmap t-map
    dup emit endcase ;
 : .quoted   [char] " emit  bounds ?do i c@ .qc loop  [char] " emit ;
 
-vocabulary forward
 create forward-references 0 ,
-: create-forward   also forward definitions
-   create previous immediate 0 ,  latestxt forward-references chain, ;
+: create-forward   also target definitions
+   create previous 0 ,  latestxt forward-references chain, ;
 : .forward   >in @  ." struct word " parse-name .mangled ." _word;" cr  >in ! ;
-: ?forward   get-order n>r only forward evaluate nr> set-order ;
 
 : pph   compile, 2drop ;
 
+defer does+
 : does: ( u "name1" "name2" -- )   create cells , parse-name s,
-   does> @+ swap @+ ;
+   does> @+ swap @+ does+ ;
 vocabulary does-table  also does-table definitions previous
 
 0 does: create nop
@@ -100,7 +108,11 @@ vocabulary does-table  also does-table definitions previous
 only forth definitions
 
 : find-does ( a1 u -- a2 )   also does-table evaluate previous ;
-: host-find-name   get-order n>r  meta-context find-name  nr> set-order ;
+: host-find-name   get-order n>r  compiler-context find-name  nr> set-order ;
+: target-evaluate   get-order n>r  only target evaluate  nr> set-order ;
+: t-find   get-order n>r  only target find-name  nr> set-order ;
+: target-xt   t-find 0= ?undef  >body @ ;
+: t-defined?   t-find if drop -1 else 2drop 0 then ;
 
 : us,    here over allot  swap cmove ;
 : save-function-name ( a1 u -- a2 )   here -rot  dup c, us, ;
@@ -175,29 +187,36 @@ create t-wordlist  /wordlist allot  t-wordlist /wordlist erase
 t-wordlist current !
 t-dictionary dp !
              
+\ Redefine HEADER, to create a word in the host dictionary.
+' compile, is t-compile,
+: header,   2dup here -rot host-word  header, ;
+
 : >mark   here 0 , ;
 : >resolve   here swap ! ;
 : <mark      here ;
 : <resolve   , ;
 
-: find-name   #name min 2dup t-wordlist search-wordlist dup if 2nip then ;
-: target-xt  find-name -1 <> ?undef ;
+\ : find-name   #name min 2dup t-wordlist search-wordlist dup if 2nip then ;
 
 : forward, ( a -- )   here swap chain, ;
 : forward: ( "name" -- )   .forward  create-forward  does> forward, ;
 
+: <body   here cell - dup @ >body swap ! ;
+: <code   here cell - dup @ >code @ swap ! ;
+
 only forth definitions also meta-interpreter also host-interpreter
-finders tpp   compile, ?forward abort
-: target,   here addr!  find-name tpp ;
+
+: target,   here addr!  target-evaluate ;
 : ppt   drop postpone sliteral postpone target, ;
 : ppn   drop ppt ;
 finders pp   ppt ppn pph
 : t-postpone   parse-name 2dup host-find-name pp ; immediate
-: code,   target-xt >code @ , ;
+: code,   target, <code ;
 : postcode   parse-name postpone sliteral postpone code, ; immediate
 
+:noname   target-xt >body + ; is does+
 : does!   latestxt >does ! ;
-: (does>)   find-does target-xt >body + does! ;
+: (does>)   find-does does! ;
 : (:-does>)   colon-runtime does! ;
 only forth also host-compiler definitions
 : does>   latestxt >name 2dup s" :" compare
@@ -223,20 +242,18 @@ interpreter-context definitions also host-interpreter
 : >resolve@   @ begin ?dup while dup @ here rot ! repeat ;
 
 : a,   here addr! , ;
-: postpone,   t-postpone (literal) a, t-postpone compile, ;
-finders meta-postpone   postpone, abort compile,
 
-: ]   1 state !  compiler-context ;
+: ]   compiler-context  ['] number, is number ;
 : constant   create , does> @ ;
 : variable   create cell allot ;
 : :   parse-name header, postcode dodoes  ] ( !csp )  does> >r ;
 : defer   create s" abort" target,  does> @ execute ;
 : value   create ,  does> @ ;
 
-: '   parse-name find-name 0= ?undef ;
+: '   parse-name target-xt ; \ find-name 0= ?undef ;
 : immediate   latestxt dup c@ negate swap c! ;
 
-: [undefined]   parse-name find-name if drop 0 else 2drop -1 then ; immediate
+: [undefined]   parse-name t-defined? ; immediate
 : [defined]     postpone [undefined] 0= ; immediate
 
 : ?end ( xt nt -- nt 0 | xt 1 )   2dup < if rot drop swap -1 else drop 0 then ;
@@ -248,8 +265,7 @@ finders meta-postpone   postpone, abort compile,
 : s,   dup , string, ;
 
 only forth definitions
-: ?found   0= if cr ." Unresolved forward reference: " type cr abort then ;
-: resolve ( xt -- )   dup >name [M] find-name ?found  swap >body @
+: resolve ( xt -- )   dup >name target-xt  swap >body @
    begin dup while 2dup @ >r swap ! r> repeat 2drop ;
 : resolve-all-forward-references   forward-references
   begin @ ?dup while dup resolve  >body cell+ repeat ;
@@ -269,10 +285,10 @@ only forth definitions
 
 only forth also meta-interpreter also meta-compiler definitions also host-interpreter
 
-: [defined]   parse-name find-name if drop -1 else 2drop 0 then ; immediate
+: [defined]   parse-name t-defined? ; immediate
 : [undefined]   postpone [defined] 0= ; immediate
 
-: [   0 state !  interpreter-context ; immediate
+: [   host-number is number  interpreter-context ; immediate
 : ;   reveal t-postpone exit t-postpone [ ; immediate
 : literal   t-postpone (literal) , ; immediate
 : cell   cell t-postpone literal ; immediate
@@ -282,8 +298,7 @@ only forth also meta-interpreter also meta-compiler definitions also host-interp
 : to_does   does-offset t-postpone literal ; immediate
 : to_body   body-offset t-postpone literal ; immediate
 : [']   t-postpone (literal) parse-name target, ; immediate
-: is   t-postpone (literal) parse-name target, t-postpone >body
-   t-postpone ! ; immediate
+: is   t-postpone (literal) parse-name target, <body t-postpone ! ; immediate
 : to   t-postpone (literal) parse-name target, t-postpone >body
    t-postpone ! ; immediate
 
@@ -294,16 +309,18 @@ only forth also meta-interpreter also meta-compiler definitions also host-interp
 : if           unresolved 0branch ; immediate
 : then         >resolve ; immediate
 
-: postpone   parse-name find-name meta-postpone ; immediate
+\ : postpone   parse-name find-name meta-postpone ; immediate
 : postcode   t-postpone (literal) parse-name save-code-name a,
    t-postpone , ; immediate
+: compile   t-postpone (literal)  parse-name target,
+   t-postpone compile, ; immediate
+: [compile]   parse-name target, ; immediate
 
 : s"   t-postpone (sliteral)  [char] " parse  s, ; immediate
 : ."   [M] s"  t-postpone type ; immediate
 : [char]   char t-postpone literal ; immediate
 : abort"   t-postpone if [M] s" t-postpone cr t-postpone type t-postpone cr
    t-postpone abort t-postpone then ; immediate
-\ : abort"   t-postpone if [M] s" t-postpone (abort") t-postpone then ; immediate
 
 interpreter-context definitions also host-interpreter
 : resolving   postpone t-postpone  postpone <resolve ; immediate
@@ -332,24 +349,9 @@ immediate: (       immediate: \
 
 only forth definitions
 
-: ?compile,   state @ abort" Metacompile to host definition?!?" execute ;
-
-: ?literal,   state @ if [M] literal then ;
-
-: meta-number  2>r 0 0 2r@ >number nip if 2drop 2r> target,
-   else 2r> 3drop ?literal, then ;
-
-finders meta-xt   ?compile, meta-number execute
-
-\ 1. Search host order.  If found, always execute!
-\ 2. If not found, search target dictionary.  If found, always compile!
-
-: meta-parsed ( a u -- )   find-name meta-xt ;
-: meta-compile   action-of parsed  ['] meta-parsed is parsed
-   parse-name included  is parsed ;
-
-interpreter-context definitions also host-interpreter
-: include   meta-compile ;
+: meta-number ( a u -- )   2>r 0 0 2r@ >number nip if 2r> undef
+   else 2r> 3drop [M] literal then ;
+' meta-number is number,
 
 only forth definitions also meta-interpreter also host-interpreter
 : t-id.     >name type space ;
@@ -394,7 +396,7 @@ only forth definitions also meta-interpreter also host-interpreter
 : .branch ( a xt -- u )   .ref ., .cr @ .addr 2 cells ;
 : .literal ( a xt -- u )   .ref ., .cr dup addr? if @ .addr
    else @ (.) ." U" then 2 cells ;
-\ Duming as a C string doesn't work so well at the moment.
+\ Dumping as a C string doesn't work so well at the moment.
 \ : .sliteral ( a xt -- u )   drop .(literal) @+ tuck .quoted .,
 \    .cr .(literal) dup (.)  aligned 2 cells + ;
 : .xt ( a xt -- u )   dup >name s" branch" compare 0= if .branch else
@@ -418,8 +420,8 @@ only forth definitions also meta-interpreter also host-interpreter
 interpreter-context
 .( #include "forth.h" ) cr
 .( struct word colon_word; ) cr
-meta-compile targets/c/nucleus.fth
-meta-compile kernel.fth
+include targets/c/nucleus.fth
+include kernel.fth
 resolve-all-forward-references
 check-colon-runtime
 disassemble-target-dictionary
