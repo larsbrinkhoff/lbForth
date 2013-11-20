@@ -34,7 +34,7 @@ variable RP
 : rp@   RP @ cell + ;
 forward: ,
 forward: compile,
-: rp!   postpone (literal) RP , postpone ! ; immediate
+: rp!   compile (literal) RP , compile ! ; immediate
 
 variable  temp
 : drop    temp ! ;
@@ -103,7 +103,7 @@ forward: (sliteral)
 
 variable state
 
-: literal   state @ if postpone (literal) , then ; immediate
+: literal   state @ if compile (literal) , then ; immediate
 
 : undef ( a u -- )   ." Undefined: " type cr abort ;
 : ?undef ( a u x -- a u )   if undef then ;
@@ -120,7 +120,7 @@ defer number
       2>r 1+ swap dup dup + dup + + dup +  r> + swap r> 1 -
    repeat then drop then
    ?dup ?undef drop r> if negate then
-   postpone literal ;
+   [compile] literal ;
 
 defer catch
 : dummy-catch   execute 0 ;
@@ -192,7 +192,7 @@ variable csp
 
 : :   parse-name header, postcode dodoes  ] !csp
    [ here cell + ] ['] nop latestxt >does ! exit then >r ;
-: ;   reveal postpone exit postpone [ ?csp ; immediate
+: ;   reveal compile exit [compile] [ ?csp ; immediate
 
 \ ----------------------------------------------------------------------
 
@@ -255,7 +255,7 @@ defer parsed
    0 compiler-words !
    0 included-files !
    10 base !
-   postpone [
+   [compile] [
    s" core.fth" included
    s" core-ext.fth" included
    s" string.fth" included
