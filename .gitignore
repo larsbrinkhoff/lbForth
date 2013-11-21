@@ -5,4 +5,5 @@ params*
 .bootstrap
 test-output
 test-errors
+smoke-test
 *~

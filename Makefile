@@ -44,9 +44,13 @@ check: test-errors
 test-errors: test-output
 	$(GREP) $(ERROR_PATTERNS) $< | wc -l > $@
 
-test-output: test-input all
+test-output: test/test-input smoke-test
 	./forth < $< > $@
 	$(GREP) Test-OK $@
+
+smoke-test: all
+	echo 'words cr .( Smoke-OK )' | ./forth > $@
+	grep 'Smoke-OK' $@
 
 clean:
 	rm -f forth .bootstrap *.o kernel.c params* test-output test-errors
