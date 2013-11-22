@@ -103,7 +103,8 @@ forward: (sliteral)
 
 variable state
 
-: literal   state @ if compile (literal) , then ; immediate
+: literal   compile (literal) , ; immediate
+: ?literal ( x -- )   state @ if [compile] literal then ;
 
 : undef ( a u -- )   ." Undefined: " type cr abort ;
 : ?undef ( a u x -- a u )   if undef then ;
@@ -119,8 +120,7 @@ defer number
       over c@ [char] 0 - dup -1 > while dup 10 < while
       2>r 1+ swap dup dup + dup + + dup +  r> + swap r> 1 -
    repeat then drop then
-   ?dup ?undef drop r> if negate then
-   [compile] literal ;
+   ?dup ?undef drop r> if negate then  ?literal ;
 
 defer catch
 : dummy-catch   execute 0 ;
