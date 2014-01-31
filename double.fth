@@ -42,3 +42,7 @@
 : to   ' >body dup ['] 2value < if ! else dup cell+ swap @ execute then ;
 : to   ' >body dup ['] 2value < if postpone literal postpone !
    else dup cell+ postpone literal @ compile, then ; compile-only
+
+( ... )
+
+: 2tuck   over >r rot >r rot over r> r> rot ;
