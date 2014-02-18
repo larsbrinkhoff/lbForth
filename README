@@ -12,7 +12,6 @@ INSTALL          \ How to build.
 doc              \ Classic (and recent) texts not related to this project.
 lib/README       \ Information about libraries.
 targets/README   \ Information about current and possibly future targets.
-test/readme.html \ Original readme for Hayes' test suite.
 
 ( Implementation guide )
 
