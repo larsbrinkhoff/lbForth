@@ -28,7 +28,7 @@ forth-wordlist set-current
 : ?voc-limit   dup 8 > abort" Max 8 contexts allowed" ;
 : set-order   dup -1 = if drop only else ?voc-limit order! then ;
 :noname   get-order 1+ over swap set-order ; is also
-re: previous   get-order 1- ?dup if nip order! else only then ;
+:noname   get-order 1- ?dup if nip order! else only then ; is previous
 : order   ." Order: " context begin dup @ ?dup while id. cell+ repeat
    drop cr ." Current: " current @ id. cr ;
 

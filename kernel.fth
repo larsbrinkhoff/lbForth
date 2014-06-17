@@ -1,4 +1,4 @@
-\ -*- forth -*- Copyright 2004, 2013 Lars Brinkhoff
+\ -*- forth -*- Copyright 2004, 2013, 2014 Lars Brinkhoff
 
 \ This kernel, together with a target-specific nucleus, provides
 \ everything needed to load and compile the rest of the system from
@@ -145,11 +145,11 @@ variable >in
 
 variable base
 
-create forth  0 , 0 ,
-create compiler-words  0 , ' forth ,
-create included-files  0 , ' compiler-words ,
+create forth  2 cells allot
+create compiler-words  2 cells allot
+create included-files  2 cells allot
+create context  9 cells allot
 
-create context   ' forth , ' forth , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
 
 : r@+   r> r> dup cell+ >r @ swap >r ;
 : search-context ( a u context -- a 0 | xt ? )   >r begin r@+ ?dup while
@@ -171,9 +171,10 @@ create src  2 cells allot
 : parse-name ( "<blanks>name<blank>" -- a u )   skip  source drop >in @ +
    0 begin source? while 1+ <source blank? until 1 - then ;
 
-: previous   ['] forth context ! ;
+: (previous)   ['] forth context ! ;
 
 defer also
+defer previous
 
 create interpreters  ' execute , ' number , ' execute ,
 : ?exception   if cr ." Exception!" cr then ;
@@ -250,10 +251,15 @@ defer parsed
    ['] dummy-catch is catch
    ['] (number) is number
    ['] (parsed) is parsed
+   ['] (previous) is previous
    ['] latestxt dup to latestxt forth !
    ['] forth current !
-   0 compiler-words !
-   0 included-files !
+
+   0 forth cell+ !
+   0 compiler-words !  ['] forth compiler-words cell+ !
+   0 included-files !  ['] compiler-words included-files cell+ !
+   ['] forth dup context ! context cell+ ! 0 context 2 cells + !
+
    10 base !
    [compile] [
    s" core.fth" included
