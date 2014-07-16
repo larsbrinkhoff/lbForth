@@ -142,6 +142,15 @@ include dictionary.fth
 : >   swap < ;
 
 variable >in
+variable input
+: input@ ( u -- a )   cells input @ + ;
+: 'source          0 input@ ;
+: #source          1 input@ ;
+: source#          2 input@ ;
+: 'refill          3 input@ ;
+: 'prompt          4 input@ ;
+: source>          5 input@ ;
+\ 'source-data     6 input@ ;
 
 variable base
 
@@ -159,8 +168,7 @@ create context  9 cells allot
 
 : or   invert swap invert nand ;
 
-create src  2 cells allot
-: source   src dup cell+ @ swap @ ;
+: source   'source @  #source @ ;
 : source? ( -- flag )   >in @ source nip < ;
 : <source ( -- char|-1 )   source >in @ dup rot = if
    2drop -1 else + c@  1 >in +! then ;
@@ -199,23 +207,22 @@ variable csp
 
 ( Core extension words. )
 
-defer refill
-defer ?prompt
-0 value source-id
+: refill   0 >in !  'refill perform ;
+: ?prompt    'prompt perform ;
+: source-id   source# @ ;
 
-create fib   256 allot
+: file-refill ( -- flag )   0 #source !
+   'source @ 256 bounds do
+      i 1 source-id read-file if 0 unloop exit then
+      0= if source nip unloop exit then
+      i c@ 10 = if leave then
+      1 #source +!
+   loop -1 ;
 
-: file-refill ( -- flag )   0 >in !  0 src !  -1
-   fib 256 bounds do
-      i 1 source-id read-file if drop 0 leave then
-      dup 0=  i c@ 10 =  or  if src @ or 0= if drop 0 then leave then
-      drop  1 src +!
-   loop ;
+create file-source   0 , 0 , 0 , ' file-refill , ' nop , 0 , 256 allot
 
-: restore-input   drop  is ?prompt  is refill  src !  src cell+ !
-   ['] source-id >body !  >in !  0 ;
-: save-input   >in @  source-id  source  ['] refill >body @
-   ['] ?prompt >body @  6 ;
+: save-input   >in @ input @ 2 ;
+: restore-input   drop input ! >in ! 0 ;
 
 defer backtrace
 
@@ -233,11 +240,15 @@ defer parsed
 : interpret   begin parse-name dup while parsed ?stack repeat 2drop ;
 : interpreting   begin refill while interpret ?prompt repeat ;
 
-: file-input ( fileid -- )    ['] source-id >body !  fib src cell+ !
-   ( 0 blk ! )  ['] file-refill is refill  ['] nop is ?prompt ;
+: init-file   0 'source !  ['] file-refill 'refill !
+   ['] nop 'prompt !  0 source> ! ;
+: new-file   here source> !  here input !  6 cells 256 + allot init-file ;
+: next-file   source> @  ?dup if input ! else new-file then ;
+: alloc-file   file-source input ! begin 'source @ while next-file repeat ;
+: file-input ( fileid -- )   alloc-file  source# !  6 input@ 'source ! ;
 
 : include-file ( fileid -- )   save-input n>r
-   file-input interpreting  source-id close-file drop
+   file-input interpreting  source-id close-file drop  0 'source !
    nr> restore-input abort" Bad restore-input" ;
 
 : r/o   s" r" drop ;
@@ -254,6 +265,7 @@ defer parsed
    ['] (previous) is previous
    ['] latestxt dup to latestxt forth !
    ['] forth current !
+   file-source input !
 
    0 forth cell+ !
    0 compiler-words !  ['] forth compiler-words cell+ !

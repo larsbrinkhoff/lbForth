@@ -214,8 +214,10 @@ variable hld
 
 : string-refill   0 ;
 
-: string-input ( a u -- )   -1 ['] source-id >body !  src ! src cell+ !
-   0 >in !  ['] string-refill ['] refill >body ! ;
+create string-source   0 , 0 , -1 , ' string-refill , ' nop ,
+
+: string-input ( a u -- )   string-source input !  0 >in !
+   #source !  'source ! ;
 
 : evaluate   save-input n>r  string-input interpret
    nr> restore-input abort" Bad restore-input" ;
@@ -224,16 +226,17 @@ create tib   256 allot
 
 : key   here dup 1 0 read-file abort" Read error"  0= if bye then  c@ ;
 
-: terminal-refill   0 >in !  0 src !  -1
+: terminal-refill   0 #source !  -1
    tib 256 bounds do
       key dup 10 = if drop leave then
-      i c!  1 src +!
+      i c!  1 #source +!
    loop ;
 
 : ok   state @ 0= if ."  ok" cr then ;
 
-: terminal-input   0 ['] source-id >body !  tib src cell+ !
-   ['] terminal-refill ['] refill >body !  ['] ok ['] ?prompt >body ! ;
+create terminal-source   tib , 0 , 0 , ' terminal-refill , ' ok ,
+
+: terminal-input   terminal-source input ! ;
 
 : (quit)   return_stack 256 cells + rp!  0 csp !  postpone [
    terminal-input interpreting  bye ;
