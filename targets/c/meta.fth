@@ -162,7 +162,7 @@ immediate: loop    immediate: ."       immediate: s"     immediate: does>
 
 (* [DEFINED] [UNDEFINED] INCLUDE
  * : IMMEDIATE DOES> DEFER CODE END-CODE
- * VARIABLE VALUE CREATE ALLOT , ' CELLS
+ * VARIABLE VALUE CONSTANT CREATE ALLOT , ' CELLS
  * CELL JMP_BUF NAME_LENGTH
  *
  * From host:

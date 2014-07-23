@@ -150,7 +150,7 @@ variable input
 : 'refill          3 input@ ;
 : 'prompt          4 input@ ;
 : source>          5 input@ ;
-\ 'source-data     6 input@ ;
+6 cells constant /input-source
 
 variable base
 
@@ -200,7 +200,7 @@ variable csp
 : ?csp   sp@ csp @ <> s" Unbalanced" ?bad  0 csp ! ;
 
 : :   parse-name header, postcode dodoes  ] !csp
-   [ here cell + ] ['] nop latestxt >does ! exit then >r ;
+   [ here cell + ] ['] nop latestxt >does ! exit then >r ;  \ "does> >r"
 : ;   reveal compile exit [compile] [ ?csp ; immediate
 
 \ ----------------------------------------------------------------------
@@ -211,15 +211,17 @@ variable csp
 : ?prompt    'prompt perform ;
 : source-id   source# @ ;
 
+256 constant /file
+
 : file-refill ( -- flag )   0 #source !
-   'source @ 256 bounds do
+   'source @ /file bounds do
       i 1 source-id read-file if 0 unloop exit then
       0= if source nip unloop exit then
       i c@ 10 = if leave then
       1 #source +!
    loop -1 ;
 
-create file-source   0 , 0 , 0 , ' file-refill , ' nop , 0 , 256 allot
+0 value file-source
 
 : save-input   >in @ input @ 2 ;
 : restore-input   drop input ! >in ! 0 ;
@@ -240,11 +242,13 @@ defer parsed
 : interpret   begin parse-name dup while parsed ?stack repeat 2drop ;
 : interpreting   begin refill while interpret ?prompt repeat ;
 
-: init-file   0 'source !  ['] file-refill 'refill !
-   ['] nop 'prompt !  0 source> ! ;
-: new-file   here source> !  here input !  6 cells 256 + allot init-file ;
-: next-file   source> @  ?dup if input ! else new-file then ;
-: alloc-file   file-source input ! begin 'source @ while next-file repeat ;
+: 0source   'prompt !  'refill !  source# !  'source !  0 source> ! ;
+: source, ( 'source sourceid refill prompt -- )
+   input @ >r  here input !  /input-source allot  0source  r> input ! ;
+: file,   0 0 ['] file-refill ['] nop source,  /file allot ;
+: +file   here source> !  file, ;
+: file>   source> @  ?dup if input ! else +file then ;
+: alloc-file   file-source input ! begin 'source @ while file> repeat ;
 : file-input ( fileid -- )   alloc-file  source# !  6 input@ 'source ! ;
 
 : include-file ( fileid -- )   save-input n>r
@@ -265,7 +269,7 @@ defer parsed
    ['] (previous) is previous
    ['] latestxt dup to latestxt forth !
    ['] forth current !
-   file-source input !
+   here to file-source  file,
 
    0 forth cell+ !
    0 compiler-words !  ['] forth compiler-words cell+ !

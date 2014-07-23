@@ -214,7 +214,7 @@ variable hld
 
 : string-refill   0 ;
 
-create string-source   0 , 0 , -1 , ' string-refill , ' nop ,
+create string-source   0 -1 ' string-refill ' nop source,
 
 : string-input ( a u -- )   string-source input !  0 >in !
    #source !  'source ! ;
@@ -234,7 +234,7 @@ create tib   256 allot
 
 : ok   state @ 0= if ."  ok" cr then ;
 
-create terminal-source   tib , 0 , 0 , ' terminal-refill , ' ok ,
+create terminal-source   tib 0 ' terminal-refill ' ok source,
 
 : terminal-input   terminal-source input ! ;
 
