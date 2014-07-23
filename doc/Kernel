@@ -1,0 +1,24 @@
+
+COLD
+  |
+  v            	     ABORT
+WARM -------------\  |
+ |             	  |  |
+ v             	  v  v
+INCLUDE-FILE   	  QUIT ----\
+ |       |     	    |      |
+ v       v     	    v      v
+REFILL INTERPRET  REFILL INTERPRET
+                          |  |  |
+                  /------/   |  \------\
+                  v          v         v
+                WORD       FIND  NUMBER/EXECUTE/COMPILE,
+				 | |               |
+                    /------------/ |               |
+                    v              v               v
+                  >NUMBER        LITERAL           ,
+
+Parsing
+Defining
+Compiling
+Searching

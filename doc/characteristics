@@ -2,6 +2,7 @@ Long history.
 Most popular somwhere around 1980.
 Unfamiliar syntax.
 Allows exotic identifiers.
+Conventionally uses hyphen as a word delimiter in long identifiers.
 (Usually) no type declarations.
 Extensible syntax (actually programmable).
 Comfortable metaprogramming.

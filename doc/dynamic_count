@@ -1,0 +1,37 @@
+After first prompt:
+
+n_exit		158347998
+n_dodoes	97461965
+n_to_r		87008438
+n_fetch		29785381
+n_r_from	26122385
+n_literal	24048202
+n_plus		19039646
+n_store		15848162
+n_zerobranch	5281586
+n_nand		4581997
+n_cfetch	537589
+n_read_file	16227
+n_cstore	4159
+n_emit		11
+n_close_file	5
+n_open_file	5
+
+After metacompilation:
+
+n_exit		521786719
+n_dodoes	320546806
+n_to_r		286366850
+n_fetch		99557047
+n_r_from	85126917
+n_literal	79990376
+n_plus		64053532
+n_store		50977293
+n_zerobranch	17837861
+n_nand		15307495
+n_cfetch	1579563
+n_emit		57666
+n_read_file	53860
+n_cstore	16118
+n_close_file	13
+n_open_file	13
