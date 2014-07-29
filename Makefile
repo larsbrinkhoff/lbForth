@@ -6,7 +6,7 @@ LDFLAGS = $(M32)
 
 GREP = grep -a
 ERROR_PATTERNS = -e 'INCORRECT RESULT' -e 'WRONG NUMBER'
-EXPECTED_ERRORS = 81
+EXPECTED_ERRORS = 80
 
 TARGET = targets/c
 meta = $(TARGET)/meta.fth
@@ -39,7 +39,7 @@ params: $(TARGET)/params.c $(TARGET)/forth.h Makefile
 	$(CC) $(CFLAGS) $(CPPFLAGS) $< -o $@
 
 check: test-errors
-	test `cat $<` -le $(EXPECTED_ERRORS)
+	test `cat $<` -eq $(EXPECTED_ERRORS)
 
 test-errors: test-output
 	$(GREP) $(ERROR_PATTERNS) $< | wc -l > $@

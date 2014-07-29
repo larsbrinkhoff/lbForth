@@ -189,7 +189,7 @@ variable hld
 : sign   0< if [char] - hold then ;
 : #>     2drop hld @  pad hld @ - ;
 
-: spaces   dup 0 > if 0 do space loop then ;
+: spaces   ?dup 0 > if 0 do space loop then ;
 
 : u<   2dup xor 0< if nip 0< else - 0< then ;
 : u+d ( u1 u2 -- d )   dup rot + dup rot u< negate ;
