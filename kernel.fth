@@ -195,7 +195,7 @@ create interpreters  ' execute , ' number , ' execute ,
 variable csp
 
 : .latest   latestxt >name type ;
-: ?bad   rot if type ."  definition: " .latest cr abort else 2drop then ;
+: ?bad   rot if type ."  definition: " .latest cr abort then 2drop ;
 : !csp   csp @ s" Nested" ?bad  sp@ csp ! ;
 : ?csp   sp@ csp @ <> s" Unbalanced" ?bad  0 csp ! ;
 
@@ -207,14 +207,13 @@ variable csp
 
 ( Core extension words. )
 
-: refill   0 >in !  'refill perform ;
+: refill   0 >in !  0 #source !  'refill perform ;
 : ?prompt    'prompt perform ;
 : source-id   source# @ ;
 
 256 constant /file
 
-: file-refill ( -- flag )   0 #source !
-   'source @ /file bounds do
+: file-refill   'source @ /file bounds do
       i 1 source-id read-file if 0 unloop exit then
       0= if source nip unloop exit then
       i c@ 10 = if leave then
