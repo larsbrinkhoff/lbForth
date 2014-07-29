@@ -27,7 +27,6 @@ variable current
 : >body    TO_BODY + ;
 : >nextxt   >lfa @ ;
 
-forward: latestxt
 : link, ( nt -- )      to latestxt  current @ >body @ , ;
 : reveal               latestxt  current @ >body ! ;
 : #name ( -- u )       NAME_LENGTH 1 - ;

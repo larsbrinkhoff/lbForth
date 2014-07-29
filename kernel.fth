@@ -42,8 +42,6 @@ variable  temp
 : 3drop   2drop drop ;
 
 : r@   rp@ cell+ @ ;
-forward: swap
-: i    r> r@ swap >r ;
 
 : swap   >r temp ! r> temp @ ;
 : over   >r >r r@ r> temp ! r> temp @ ;
@@ -63,8 +61,6 @@ forward: swap
 : invert   -1 nand ;
 : negate   invert 1 + ;
 : -        negate + ;
-forward: >
-: cabs     dup 127 > if 256 swap - then ;
 
 : branch    r> @ >r ;
 forward: <
@@ -82,6 +78,7 @@ forward: <
 : bounds   over + swap ;
 : count    dup 1+ swap c@ ;
 
+: i    r> r@ swap >r ;
 : bl   32 ;
 : cr   10 emit ;
 : type   ?dup if bounds do i c@ emit loop else drop then ;
@@ -92,20 +89,29 @@ forward: <
 \ : execute   [ here 3 cells + ] literal ! [ 0 , ] ;
 : perform   @ execute ;
 
-forward: abort
-defer quit
-forward: cells
-
-: abort   data_stack 100 cells + sp!  quit ;
-
-forward: (sliteral)
-: ?stack   data_stack 99 cells + sp@ < abort" Stack underflow" ;
-
 variable state
 
 : literal   compile (literal) , ; immediate
 : ?literal ( x -- )   state @ if [compile] literal then ;
 
+: 0<   [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
+: xor   2dup nand 1+ dup + + + ;
+: <   2dup xor 0< if drop 0< else - 0< then ;
+: >   swap < ;
+
+: cmove ( addr1 addr2 n -- )   bounds do  dup c@  i c!  1+  loop drop ;
+
+: cabs     dup 127 > if 256 swap - then ;
+
+0 value latestxt
+
+include dictionary.fth
+
+: (sliteral)   r> dup @ swap cell+ 2dup + aligned >r swap ;
+
+forward: abort
+defer quit
+: abort   data_stack 100 cells + sp!  quit ;
 : undef ( a u -- )   ." Undefined: " type cr abort ;
 : ?undef ( a u x -- a u )   if undef then ;
 
@@ -121,25 +127,6 @@ defer number
       2>r 1+ swap dup dup + dup + + dup +  r> + swap r> 1 -
    repeat then drop then
    ?dup ?undef drop r> if negate then  ?literal ;
-
-defer catch
-: dummy-catch   execute 0 ;
-
-: cmove ( addr1 addr2 n -- )   bounds do  dup c@  i c!  1+  loop drop ;
-
-include dictionary.fth
-
-: (sliteral)   r> dup @ swap cell+ 2dup + aligned >r swap ;
-
-\ TODO: This is wrong if "-" overflows.
-\ : <   - [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
-: 0<   [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
-: xor   2dup nand 1+ dup + + + ;
-: <   2dup xor 0< if drop 0< else - 0< then ;
-\ If d=x-y and sX is the sign bit, this computes "less than":
-\ ((~y)&(x^d)) ^ (d&x);
-\ : <   2dup - >r invert over r@ xor and swap r> and xor 0< ;
-: >   swap < ;
 
 variable >in
 variable input
@@ -183,6 +170,7 @@ create context  9 cells allot
 
 defer also
 defer previous
+defer catch
 
 create interpreters  ' execute , ' number , ' execute ,
 : ?exception   if cr ." Exception!" cr then ;
@@ -238,6 +226,7 @@ defer backtrace
 
 defer parsed
 : (parsed) ( a u -- )   find-name interpret-xt ;
+: ?stack   data_stack 99 cells + sp@ < abort" Stack underflow" ;
 : interpret   begin parse-name dup while parsed ?stack repeat 2drop ;
 : interpreting   begin refill while interpret ?prompt repeat ;
 
@@ -259,6 +248,9 @@ defer parsed
 : included   2dup align here >r  name,  r> included-files chain, 0 , 0 ,
    r/o open-file abort" Read error." include-file ;
 
+: dummy-catch   execute 0 ;
+
+\ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
 : warm
    ." lbForth" cr
    ['] nop dup is backtrace is also
@@ -266,7 +258,7 @@ defer parsed
    ['] (number) is number
    ['] (parsed) is parsed
    ['] (previous) is previous
-   ['] latestxt dup to latestxt forth !
+   ['] warm dup to latestxt forth !
    ['] forth current !
    here to file-source  file,
 
@@ -284,6 +276,3 @@ defer parsed
    s" file.fth" included
    ." ok" cr
    quit ;
-
-\ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
-0 value latestxt
