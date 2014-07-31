@@ -1,4 +1,4 @@
-\ -*- forth -*- Copyright 2004, 2013 Lars Brinkhoff
+\ -*- forth -*- Copyright 2004, 2013-2014 Lars Brinkhoff
 
 ( String words. )
 
@@ -15,8 +15,10 @@
 	1-
 	r> 1- >r
 	under 1-
-	over c@ r@ !
+	over c@ r@ c!
     repeat r> 2drop ;
+
+: move   >r 2dup u< if r> cmove> else r> cmove then ;
 
 : sliteral   postpone (sliteral) s, ; compile-only
 

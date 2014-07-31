@@ -1,4 +1,3 @@
-: move cmove ;
 include test/hayes/runtests.fth
 123
 .( Test-OK ) cr

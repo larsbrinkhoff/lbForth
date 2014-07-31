@@ -175,8 +175,6 @@ variable leaves
 
 : max   2dup > if drop else nip then ;
 
-\ TODO: move
-
 : s>d   dup 0< ;
 
 : pad   here 1024 + ;

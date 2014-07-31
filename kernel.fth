@@ -99,7 +99,7 @@ variable state
 : <   2dup xor 0< if drop 0< else - 0< then ;
 : >   swap < ;
 
-: cmove ( addr1 addr2 n -- )   bounds do  dup c@  i c!  1+  loop drop ;
+: cmove ( addr1 addr2 n -- )   ?dup if bounds do  dup c@  i c!  1+  loop drop else 2drop then ;
 
 : cabs     dup 127 > if 256 swap - then ;
 
