@@ -90,7 +90,8 @@ t-space bitmap t-map
 create forward-references 0 ,
 : create-forward   also target definitions
    create previous 0 ,  latestxt forward-references chain, ;
-: .forward   >in @  ." struct word " parse-name .mangled ." _word;" cr  >in ! ;
+: .extern   ." extern struct word " .mangled ." _word;" cr ;
+: .forward   >in @  parse-name .extern  >in ! ;
 
 : pph   compile, 2drop ;
 
@@ -419,7 +420,7 @@ only forth definitions also meta-interpreter also host-interpreter
 
 interpreter-context
 .( #include "forth.h" ) cr
-.( struct word colon_word; ) cr
+s" :" .extern
 include targets/c/nucleus.fth
 include kernel.fth
 resolve-all-forward-references
