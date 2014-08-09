@@ -235,6 +235,8 @@ create terminal-source   tib 0 ' terminal-refill ' ok source,
 
 : terminal-input   terminal-source input ! ;
 
+: rp!   postpone (literal) RP , postpone ! ; immediate
+
 : (quit)   return_stack 256 cells + rp!  0 csp !  postpone [
    terminal-input interpreting  bye ;
 

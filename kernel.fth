@@ -32,9 +32,7 @@ variable RP
 : sp@   SP @ cell + ;
 : sp!   SP ! ;
 : rp@   RP @ cell + ;
-forward: ,
-forward: compile,
-: rp!   compile (literal) RP , compile ! ; immediate
+\ rp! in core.fth
 
 variable  temp
 : drop    temp ! ;
@@ -91,9 +89,6 @@ forward: <
 
 variable state
 
-: literal   compile (literal) , ; immediate
-: ?literal ( x -- )   state @ if [compile] literal then ;
-
 : 0<   [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
 : xor   2dup nand 1+ dup + + + ;
 : <   2dup xor 0< if drop 0< else - 0< then ;
@@ -115,6 +110,9 @@ defer quit
 : abort   data_stack 100 cells + sp!  quit ;
 : undef ( a u -- )   ." Undefined: " type cr abort ;
 : ?undef ( a u x -- a u )   if undef then ;
+
+: literal   compile (literal) , ; immediate
+: ?literal ( x -- )   state @ if [compile] literal then ;
 
 defer number
 
