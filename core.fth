@@ -26,9 +26,7 @@ drop
    link  reveal  current !  immediate ;
 
 : code!     latestxt >code ! ;
-: does!     latestxt >does ! ;
 : does,     ;
-: (does>)   r> does! ;
 : does>     [ ' (does>) ] literal compile, does, ; compile-only
 : create    parse-name header, [ ' dodoes >code @ ] literal ,  reveal (does>) ;
 

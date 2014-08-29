@@ -186,8 +186,12 @@ variable csp
 : !csp   csp @ s" Nested" ?bad  sp@ csp ! ;
 : ?csp   sp@ csp @ <> s" Unbalanced" ?bad  0 csp ! ;
 
-: :   parse-name header, postcode dodoes  ] !csp
-   [ here cell + ] ['] nop latestxt >does ! exit then >r ;  \ "does> >r"
+: does!   latestxt >does ! ;
+: (does>)   r> does! ;
+
+\ If you change the definition of :, you also need to update the
+\ offset to the runtime code in the metacompiler(s).
+: :   parse-name header, postcode dodoes  ] !csp  does> >r ;
 : ;   reveal compile exit [compile] [ ?csp ; immediate
 
 \ ----------------------------------------------------------------------

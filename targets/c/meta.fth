@@ -30,8 +30,8 @@ vocabulary target
 
 \ Offset, within the definition of :, to the runtime action of :.
 \ Obviously, the constant should match the string.
-13 cells constant colon-runtime-offset
-: colon-runtime   c" &colon_word.param[13]" ;
+8 cells constant colon-runtime-offset
+: colon-runtime   c" &colon_word.param[8]" ;
 
 : [M]  get-order n>r  meta-context ' compile,  nr> set-order ; immediate
 
@@ -322,6 +322,7 @@ only forth also meta-interpreter also meta-compiler definitions also host-interp
 : [char]   char t-postpone literal ; immediate
 : abort"   t-postpone if [M] s" t-postpone cr t-postpone type t-postpone cr
    t-postpone abort t-postpone then ; immediate
+: does>   t-postpone (does>) ; immediate
 
 interpreter-context definitions also host-interpreter
 : resolving   postpone t-postpone  postpone <resolve ; immediate
