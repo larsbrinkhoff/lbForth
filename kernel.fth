@@ -81,10 +81,8 @@ forward: <
 : cr   10 emit ;
 : type   ?dup if bounds do i c@ emit loop else drop then ;
 
-: unex   2r> r> 3drop ;
-\ Put xt and 'unex on return stack, then jump to that.
-: execute   ['] unex >r >r rp@ >r ;
-\ : execute   [ here 3 cells + ] literal ! [ 0 , ] ;
+\ Put the xt inside the definition of EXECUTE, overwriting the last nop.
+: execute   [ here cell + ] ['] nop ! then nop ;
 : perform   @ execute ;
 
 variable state
