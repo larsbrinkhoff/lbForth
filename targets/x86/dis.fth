@@ -1,5 +1,5 @@
-s" targets/x86/asm.fth" included
-
+require search.fth
+[undefined] assembler [if] vocabulary assembler [then]
 also assembler definitions
 
 variable there
@@ -146,20 +146,22 @@ defer decode
 : imm16        drop h^ u. ;
 : imm32        drop ^ u. ;
 : imm32/48     drop h^ u. ." :" a^ u. ;
-: cs           drop ." cs" ;
-: ds           drop ." ds" ;
-: es           drop ." es" ;
-: ss           drop ." ss" ;
+: cs           drop .cs ;
+: ds           drop .ds ;
+: es           drop .es ;
+: ss           drop .ss ;
 : none         drop ;
 : aam/aad      c^ dup 0a =
                if drop 01 and if ." aad" else ." aam" then
                else ." unknown " swap . . then ;
 : unknown      u. ;
 
+also forth \ Override bl.
 : => ( op m "str w1 w2" -- )   , , bl parse ' , ' ,       s, ;
 : -> ( op m "str w" -- )       , , bl parse ' , ['] nop , s, ;
 : ---> ( op m "w" -- )         , ,          ' , ['] nop , 0 , ;
 : ===> ( op m "w1 w2" -- )     , ,          ' , ' ,       0 , ;
+previous
 
 create table-start
 \  op mask  name     xt
