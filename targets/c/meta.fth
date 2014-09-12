@@ -18,11 +18,37 @@ require lib/bitmap.fth
 reset
 re: abort   reset empty bye ;
 
-vocabulary host-compiler    \ Overrides metacompiler definitions.
-vocabulary host-interpreter \ Overrides metacompiler definitions.
-vocabulary meta-compiler    \ Words executed in interpretation state.
-vocabulary meta-interpreter \ Immediate words used in compilation state.
+(* A note about the vocabularies.
+
+ TARGET holds the host definition of target words.  When executed,
+ they compile an xt into the target image.  There are no immediate
+ words in this vocabulary.  Compiling words must be defined in the
+ META-COMPILER vocabulary.
+
+ HOST-INTERPRETER and HOST-COMPILER are mostly aliases for host words,
+ which are then used in the implementation of the metacompiler.  They
+ are needed override the metacompiler definitions with the same names.
+
+ The META-INTERPRETER vocabulary is searched outside colon definitions
+ when metacompiling target code.  It consists mostly of defining words
+ which writes to the target image.  META-COMPILER is searched inside
+ definitions and consists mostly of target compiling words.
+
+   Search order.
+
+ In the metacompiler implementation, the interpreter search order is:
+ FORTH META-INTERPRETER HOST-INTERPRETER.  The compiler search order
+ is: FORTH META-INTERPRETER HOST-COMPILER.
+
+ When interpreting target code, the search order is: FORTH
+ META-INTERPRETER.  When compiling, the search order is: TARGET
+ META-COMPILER. *)
+
 vocabulary target
+vocabulary host-compiler
+vocabulary host-interpreter
+vocabulary meta-compiler
+vocabulary meta-interpreter
 
 : interpreter-context   only forth also meta-interpreter ;
 : compiler-context   only target also meta-compiler ;
@@ -33,7 +59,7 @@ vocabulary target
 8 cells constant colon-runtime-offset
 : colon-runtime   c" &colon_word.param[8]" ;
 
-: [M]  get-order n>r  meta-context ' compile,  nr> set-order ; immediate
+: [M]  also meta-compiler ' compile, previous ; immediate
 
 : input>r   r> save-input n>r >r ;
 : r>input   r> nr> restore-input abort" Restore-input?" >r ;
