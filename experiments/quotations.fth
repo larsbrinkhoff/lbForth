@@ -47,10 +47,10 @@ variable xt
   1 f execute . )
 
 
-\ Closures with shared state.
+\ "Closures" with shared state.
 \ : counter ( n -- xt1 xt2 xt3 )
 \    here swap ,  dup [does> ! ;]  over [does> @ ;]  rot [does> +! ;] ;
 \ : setter   create , does> @ ! ;
 \ : getter   create , does> @ @ ;
 \ : counter ( n "name1 name2 name3" -- )
-\    here swap ,  dup setter  dup getter  dup create , does> @ +! ;
+\    here swap ,  dup setter  dup getter  create , does> @ +! ;
