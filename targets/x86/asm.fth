@@ -20,19 +20,21 @@ also assembler definitions
 
 base @  hex
 
-variable ds
+variable d
+variable s
+variable mod/reg/rm
 variable dir?
 variable 'disp
 variable disp
 variable 'imm
 variable imm
-variable mod/reg/rm
+variable 'reg
 
-: !op8   ;
-: !op32   ds @ 1 or ds ! ;
-: !op16   ds @ 1 and 0= if 66 c, !op32 then ;
+: !op8    0 s ! ;
+: !op32   1 s ! ;
+: !op16   ." OP16" s @ 0= if 66 c, !op32 then ;
 
-: !reg   dir? @ if ds @ 2 or ds ! then dir? off ;
+: !reg   dir? @ if 2 d ! then dir? off ;
 : !mem   dir? off ;
 
 : imm8    imm @ c, ;
@@ -40,16 +42,25 @@ variable mod/reg/rm
 : imm32   imm @ , ;
 : disp32   disp @ , ;
 
-: reset   imm off  ['] nop dup 'disp ! 'imm !  c0 mod/reg/rm !
-   ds off  dir? on ;
-: start-code   also assembler reset ;
+: disp!   'disp ! disp ! ;
+: !disp8   ['] disp8 disp! ;
+: !disp32   ['] disp32 disp! ;
 
 : mod     mod/reg/rm @ c0 and ;
+: mod/rm     mod/reg/rm @ c7 and ;
+: mod/reg     mod/reg/rm @ f8 and ;
 : rm<<3   mod/reg/rm @ 3 and 3 lshift ;
-: reg   mod + rm<<3 + mod/reg/rm !  !reg ;
-: ind   rm<<3 + mod/reg/rm !  !mem ;
-: ind-off   80 + ind ;
-: addr   05 + ind ;
+: reg1   3 lshift mod/rm + mod/reg/rm !  !reg ;
+: reg2   mod/reg + mod/reg/rm !  !mem ;
+: ind   mod/reg/rm @ 38 and + mod/reg/rm !  !mem ;
+: byte?   dup >r -81 80 r> within ;
+: !disp   byte? if !disp8 40 else !disp32 80 then ;
+: ind-off   swap !disp + ind ;
+: addr   !disp32  05 ind ;
+
+: reset   imm off  ['] nop dup 'disp ! 'imm !  c0 mod/reg/rm !
+   d off  s off  dir? on   ['] reg1 'reg ! ;
+: start-code   also assembler reset ;
 
 : addr?   dup -1 = ;
 : op   addr? if drop execute else addr then ;
@@ -60,7 +71,9 @@ variable mod/reg/rm
 
 : mod/reg/rm,   mod/reg/rm @ c, ;
 : suffixes,   ?sib, ?disp, ?imm, reset ;
-: 2op   create ,  does> @ >r op op r> ds @ + c, mod/reg/rm, suffixes, ;
+: ds   d @ s @ + ;
+: 2op   create ,  does> @ >r op op r> ds + c, mod/reg/rm, suffixes, ;
+: 2op-no-ds   create ,  does> @ >r op op r> c, mod/reg/rm, suffixes, ;
 
 00 2op add,
 08 2op or,
@@ -76,7 +89,7 @@ variable mod/reg/rm
 84 2op test,
 86 2op xchg,
 88 2op mov,
-8D 2op lea,
+8D 2op-no-ds lea,
 : nop,     90 c, ;
 : ret,     c3 c, ;
 : call,    e8 c, , ;
@@ -85,12 +98,14 @@ variable mod/reg/rm
 \ not, f6 10
 
 : #   ['] nop -1  ['] imm32 'imm ! ;
-: )   2drop ['] ind -1 ;
-: )#   ['] ind  swap disp ! -1  ['] disp32 'disp ! ;
+: )   2drop ['] ind -1  ['] reg1 'reg ! ;
+: )#   2drop  ['] ind-off -1  ['] reg1 'reg ! ;
 
-: reg8    create ,  does> @ ['] reg -1 !op8 ;
-: reg16   create ,  does> @ ['] reg -1 !op16 ;
-: reg32   create ,  does> @ ['] reg -1 !op32 ;
+: reg@   'reg @  ['] reg2 'reg ! ;
+
+: reg8    create ,  does> @ reg@ -1 !op8 ;
+: reg16   create ,  does> @ reg@ -1 !op16 ;
+: reg32   create ,  does> @ reg@ -1 !op32 ;
 : reg:    dup reg8 dup reg16 dup reg32 1+ ;
 
 0
@@ -105,20 +120,46 @@ base !  only forth definitions  also assembler
 
 previous
 
-hex
-code test-mov
-  eax ebx mov,		\ 8B D8
-  ebx ecx mov,		\ 8B CB
-  ecx ebx mov,		\ 8B D9
-  ecx ) edx mov,	\ 8B 11
-  edx ) ecx mov,	\ 8B 0A
-  ecx edx ) mov,	\ 89 11
-  edx ecx ) mov,	\ 89 0A
-end-code
-' test-mov >body 10 cdump
-decimal
+: fail? ( c a -- a' f ) 1- tuck c@ <> ;
+: .fail   cr ." FAIL: " source 5 - type cr ;
+: ?fail   fail? if .fail abort then ;
+: check   here begin depth 1- while ?fail repeat drop ;
 
-\ : bar   create 42 , ;code  base @ hex
-\    8b c, 52 c, 1c c, \ mov 28(%edx),%edx
-\    next,
-\ end-code  base !
+.( Assembler test: )
+code assembler-test
+   hex
+   eax ebx mov,             89 C3  check
+   ebx ecx mov,             89 D9  check
+   ecx ebx mov,             89 CB  check
+   ecx ) edx mov,           8B 11  check
+   edx ) ecx mov,           8B 0A  check
+   ecx edx ) mov,           89 0A  check
+   edx ecx ) mov,           89 11  check
+   -80 eax )# eax mov,      8B 40 80  check
+   edi 7F edi )# mov,       89 7F 7F  check
+   eax -81 eax )# mov,      89 80 7F FF FF FF  check
+   edi 80 edi )# mov,       89 BF 80 00 00 00  check
+   10203040 eax mov,        8B 05 40 30 20 10  check
+   edi 10203040 mov,        89 3D 40 30 20 10  check
+   decimal
+end-code
+.( OK ) cr
+
+: %sp sp ;
+
+: foobar   create , ;code
+   0 >body edx )# edx mov,
+   %sp ecx mov,
+   cell negate ecx )# ecx lea,
+   ecx %sp mov,
+   edx ecx ) mov,
+   ret,
+end-code
+
+code my-fetch
+   %sp edx mov,
+   edx ) ecx mov,
+   ecx ) ecx mov,
+   ecx edx ) mov,
+   ret,
+end-code
