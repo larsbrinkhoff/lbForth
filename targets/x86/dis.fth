@@ -156,6 +156,16 @@ defer decode
                else ." unknown " swap . . then ;
 : unknown      u. ;
 
+(*
+vocabulary opcodes
+: name   also opcodes definitions create previous definitions ;
+: 8<<    8 lshift swap ;
+: ?shift   dup 100 < if 8<< 8<< then ;
+: data   ?shift , , , , ;
+: =>   name ' ' data ;
+: ->   name ['] nop ' data ;
+*)
+
 also forth \ Override bl.
 : => ( op m "str w1 w2" -- )   , , bl parse ' , ' ,       s, ;
 : -> ( op m "str w" -- )       , , bl parse ' , ['] nop , s, ;
@@ -188,6 +198,7 @@ create table-start
 \  0fa1 ffff -> pop fs
 \  0fa2 ffff -> cpuid
 \  0fb0 fffe -> cmpxchg
+   10 fc -> adc      mod/reg/rm
    16 ff -> push     ss
    17 ff -> pop      ss
    18 fc -> sbb      mod/reg/rm
