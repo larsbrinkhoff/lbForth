@@ -32,7 +32,7 @@ variable 'reg
 
 : !op8    0 s ! ;
 : !op32   1 s ! ;
-: !op16   ." OP16" s @ 0= if 66 c, !op32 then ;
+: !op16   s @ 0= if 66 c, !op32 then ;
 
 : !reg   dir? @ if 2 d ! then dir? off ;
 : !mem   dir? off ;
@@ -42,9 +42,11 @@ variable 'reg
 : imm32   imm @ , ;
 : disp32   disp @ , ;
 
+: byte?   -81 80 rot within ;
 : disp!   'disp ! disp ! ;
 : !disp8   ['] disp8 disp! ;
 : !disp32   ['] disp32 disp! ;
+: !disp   dup byte? if !disp8 40 else !disp32 80 then ;
 
 : mod     mod/reg/rm @ c0 and ;
 : mod/rm     mod/reg/rm @ c7 and ;
@@ -53,8 +55,6 @@ variable 'reg
 : reg1   3 lshift mod/rm + mod/reg/rm !  !reg ;
 : reg2   mod/reg + mod/reg/rm !  !mem ;
 : ind   mod/reg/rm @ 38 and + mod/reg/rm !  !mem ;
-: byte?   dup >r -81 80 r> within ;
-: !disp   byte? if !disp8 40 else !disp32 80 then ;
 : ind-off   swap !disp + ind ;
 : addr   !disp32  05 ind ;
 
@@ -72,30 +72,49 @@ variable 'reg
 : mod/reg/rm,   mod/reg/rm @ c, ;
 : suffixes,   ?sib, ?disp, ?imm, reset ;
 : ds   d @ s @ + ;
+: 0op   create ,  does> @ c, reset ;
+: 1reg   create ,  does> @ >r 2drop r> + c, reset ;
 : 2op   create ,  does> @ >r op op r> ds + c, mod/reg/rm, suffixes, ;
+: 2op-no-d   create ,  does> @ >r op op r> s @ + c, mod/reg/rm, suffixes, ;
 : 2op-no-ds   create ,  does> @ >r op op r> c, mod/reg/rm, suffixes, ;
 
 00 2op add,
 08 2op or,
-\ cmove, 0f 44
-\ movzbl, 0f b6
+\ 0F44 cmove,
+\ 0FB6 movzbl,
+10 2op adc,
 18 2op sbb,
 20 2op and,
+26 0op es,
 28 2op sub,
+2E 0op cs,
 30 2op xor,
+36 0op ss,
 38 2op cmp,
-: push,   2drop 50 + c, ;
-: pop,   2drop 54 + c, ;
-84 2op test,
-86 2op xchg,
+3E 0op ds,
+50 1reg push,
+58 1reg pop,
+64 0op fs,
+65 0op gs,
+\ 66 op size prefix
+\ 67 address size prefix
+\ 68 push imm32
+\ 6A push imm8
+\ 70 jcc
+\ 80 immediate add/or/adc/sbb/and/sub/xor/cmp
+84 2op-no-d test,
+86 2op-no-d xchg,
 88 2op mov,
 8D 2op-no-ds lea,
-: nop,     90 c, ;
-: ret,     c3 c, ;
-: call,    e8 c, , ;
-: jump,    e9 c, , ;
-: repz,    f3 c, ;
-\ not, f6 10
+90 0op nop,
+\ B0 immediate mov
+\ A8 test
+C3 0op ret,
+\ E8 call,
+\ E9 jmp,
+F0 0op lock,
+F2 0op rep,
+F3 0op repz,
 
 : #   ['] nop -1  ['] imm32 'imm ! ;
 : )   2drop ['] ind -1  ['] reg1 'reg ! ;
@@ -128,6 +147,7 @@ previous
 .( Assembler test: )
 code assembler-test
    hex
+
    eax ebx mov,             89 C3  check
    ebx ecx mov,             89 D9  check
    ecx ebx mov,             89 CB  check
@@ -141,6 +161,13 @@ code assembler-test
    edi 80 edi )# mov,       89 BF 80 00 00 00  check
    10203040 eax mov,        8B 05 40 30 20 10  check
    edi 10203040 mov,        89 3D 40 30 20 10  check
+
+   eax ebx ) test,          85 03  check
+   eax ) ebx xchg,          87 18  check
+   eax push,                50  check     
+   ebx pop,                 5B  check
+   nop,                     90  check
+
    decimal
 end-code
 .( OK ) cr
