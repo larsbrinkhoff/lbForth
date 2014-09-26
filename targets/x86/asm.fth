@@ -25,6 +25,8 @@ variable d
 variable s
 variable mod/reg/rm
 variable dir?
+variable 'sib
+variable sib
 variable 'disp
 variable disp
 variable 'imm2
@@ -35,6 +37,7 @@ variable 'reg
 : !reg   dir? @ if 2 d ! then dir? off ;
 : !mem   dir? off ;
 
+: sib,   sib @ c, ;
 : imm8    imm @ c, ;
 : disp8   disp @ c, ;
 : imm16   imm @ dup c, 8 rshift c, ;
@@ -44,6 +47,9 @@ variable 'reg
 : !op8    0 s !  ['] imm8 'imm2 ! ;
 : !op32   1 s !  ['] imm32 'imm2 ! ;
 : !op16   s @ 0= if 66 c, !op32 then  ['] imm16 'imm2 ! ;
+
+: !sib   ['] sib, 'sib ! ;
+: sib!   3 lshift + sib ! ;
 
 : byte?   -81 80 rot within ;
 : disp!   'disp ! disp ! ;
@@ -59,7 +65,9 @@ variable 'reg
 : reg1   3 lshift reg! !reg ;
 : reg2   rm! !mem ;
 : ind   dup mod! rm! !mem ;
-: ind-off   swap !disp + ind ;
+: ind#   swap !disp + ind ;
+: idx   04 ind  sib! ;
+: idx#   rot !disp 04 + ind  sib! ;
 : addr   !disp32  05 ind ;
 
 : alu?   -1 38 opcode @ within ;
@@ -68,18 +76,19 @@ variable 'reg
 : ?>imm-op   alu? if reg>>3 opcode @ reg! 80 opcode ! ?sign-extended then ;
 : imm-op   imm !  'imm2 @ 'imm !  ?>imm-op ;
 
-: 0reg   ['] reg1 'reg ! ;
-: 0imm   imm off  ['] nop 'imm ! ;
-: 0disp   ['] nop 'disp ! ;
 : 0ds   d off  s off ;
+: 0reg   ['] reg1 'reg ! ;
 : 0mod/reg/rm   c0 mod/reg/rm ! ;
-: reset   0imm 0disp 0reg 0ds  0mod/reg/rm  dir? on ;
-: start-code   also assembler reset ;
+: 0sib   ['] nop 'sib ! ;
+: 0disp   ['] nop 'disp ! ;
+: 0imm   imm off  ['] nop 'imm ! ;
+: 0asm   0imm 0disp 0reg 0ds 0mod/reg/rm 0sib  dir? on ;
+: start-code   also assembler 0asm ;
 
 : addr?   dup -1 = ;
 : op   addr? if drop execute else addr then ;
 
-: ?sib, ;
+: ?sib,   'sib perform ;
 : ?disp,   'disp perform ;
 : ?imm,    'imm perform ;
 
@@ -87,11 +96,11 @@ variable 'reg
 : opcode!   @ opcode ! ;
 : opcode,   opcode @ ds + c, ;
 : mod/reg/rm,   mod/reg/rm @ c, ;
-: suffixes,   ?sib, ?disp, ?imm, reset ;
+: suffixes,   ?sib, ?disp, ?imm, 0asm ;
 
-: 0op   create ,  does> @ c, reset ;
-: 1reg   create ,  does> @ >r 2drop r> + c, reset ;
-: reg-imm   create ,  does> @ >r 2drop r> + s @ 3 lshift + c, op ?imm, reset ;
+: 0op   create ,  does> @ c, 0asm ;
+: 1reg   create ,  does> @ >r 2drop r> + c, 0asm ;
+: reg-imm   create ,  does> @ >r 2drop r> + s @ 3 lshift + c, op ?imm, 0asm ;
 : 2op   create ,  does> opcode! op op opcode, mod/reg/rm, suffixes, ;
 : 2op-no-d   create ,  does> opcode! op op d off opcode, mod/reg/rm, suffixes, ;
 : 2op-no-ds   create ,  does> opcode! op op 0ds opcode, mod/reg/rm, suffixes, ;
@@ -138,9 +147,11 @@ F0 0op lock,
 F2 0op rep,
 F3 0op repz,
 
+: sp?   dup 4 = ;
+
 : #   ['] imm-op -1 ;
-: )   2drop ['] ind -1  0reg ;
-: )#   2drop  ['] ind-off -1  0reg ;
+: )   2drop  sp? if 4 ['] idx !sib else  ['] ind then -1  0reg ;
+: )#   2drop  sp? if 4 ['] idx# !sib else ['] ind# then -1  0reg ;
 
 : reg@   'reg @  ['] reg2 'reg ! ;
 
@@ -183,6 +194,9 @@ code assembler-test
    edi 80 edi )# mov,       89 BF 80 00 00 00  check
    10203040 eax mov,        8B 05 40 30 20 10  check  \ A1 40 30 20 10
    edi 10203040 mov,        89 3D 40 30 20 10  check
+
+   ebx esp ) mov,           89 1C 24  check
+   esi 4 esp )# mov,        89 74 24 04  check
 
    42 # al movi,            B0 42  check
    42 # ax movi,            66 B8 42 00  check
