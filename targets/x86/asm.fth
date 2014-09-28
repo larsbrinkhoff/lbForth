@@ -60,20 +60,22 @@ variable 'reg
 : mod!   mod/reg/rm c0 !bits ;
 : reg@   mod/reg/rm 38 @bits ;
 : reg!   mod/reg/rm 38 !bits ;
-: rm!   mod/reg/rm 7 !bits ;
+: rm@   mod/reg/rm 7 @bits ;
+: rm!   rm@ 3 lshift reg!  mod/reg/rm 7 !bits ;
 
-: reg1   3 lshift reg! !reg ;
-: reg2   rm! !mem ;
-: ind   dup mod! rm! !mem ;
+: reg   'reg perform ;
+: reg1   rm! !reg ;
+: reg2   3 lshift reg! ;
+
+: ind   dup mod! rm! !mem  ['] reg2 'reg ! ;
 : ind#   swap !disp + ind ;
 : idx   04 ind  sib! ;
 : idx#   rot !disp 04 + ind  sib! ;
 : addr   !disp32  05 ind ;
 
 : alu?   -1 38 opcode @ within ;
-: reg>>3   reg@ 3 rshift rm! ;
 : ?sign-extended   d off  imm @ byte? if 2 d !  ['] imm8 'imm ! then ;
-: ?>imm-op   alu? if reg>>3 opcode @ reg! 80 opcode ! ?sign-extended then ;
+: ?>imm-op   alu? if opcode @ reg! 80 opcode ! ?sign-extended then ;
 : imm-op   imm !  'imm2 @ 'imm !  ?>imm-op ;
 
 : 0ds   d off  s off ;
@@ -104,6 +106,7 @@ variable 'reg
 : 2op   create ,  does> opcode! op op opcode, mod/reg/rm, suffixes, ;
 : 2op-no-d   create ,  does> opcode! op op d off opcode, mod/reg/rm, suffixes, ;
 : 2op-no-ds   create ,  does> opcode! op op 0ds opcode, mod/reg/rm, suffixes, ;
+: 1op   create , ,  does> @+ reg1 opcode! op d off opcode, mod/reg/rm, suffixes, ;
 
 00 2op add,
 08 2op or,
@@ -146,6 +149,8 @@ C3 0op ret,
 F0 0op lock,
 F2 0op rep,
 F3 0op repz,
+F6 2 1op not,
+F6 3 1op neg,
 
 : sp?   dup 4 = ;
 
@@ -153,11 +158,9 @@ F3 0op repz,
 : )   2drop  sp? if 4 ['] idx !sib else  ['] ind then -1  0reg ;
 : )#   2drop  sp? if 4 ['] idx# !sib else ['] ind# then -1  0reg ;
 
-: reg@   'reg @  ['] reg2 'reg ! ;
-
-: reg8    create ,  does> @ reg@ -1 !op8 ;
-: reg16   create ,  does> @ reg@ -1 !op16 ;
-: reg32   create ,  does> @ reg@ -1 !op32 ;
+: reg8    create ,  does> @ ['] reg -1 !op8 ;
+: reg16   create ,  does> @ ['] reg -1 !op16 ;
+: reg32   create ,  does> @ ['] reg -1 !op32 ;
 : reg:    dup reg8 dup reg16 dup reg32 1+ ;
 
 0
@@ -170,6 +173,8 @@ base !  only forth definitions  also assembler
 : code    create  latestxt >body code!  start-code  ;
 : ;code   postpone (;code) reveal postpone [ ?csp start-code ; immediate
 
+0asm
+
 previous
 
 : fail? ( c a -- a' f ) 1- tuck c@ <> ;
@@ -181,9 +186,9 @@ previous
 code assembler-test
    hex
 
-   eax ebx mov,             89 C3  check
-   ebx ecx mov,             89 D9  check
-   ecx ebx mov,             89 CB  check
+   eax ebx mov,             8B D8  check \ 89 C3
+   ebx ecx mov,             8B CB  check \ 89 D9
+   ecx ebx mov,             8B D9  check \ 89 CB
    ecx ) edx mov,           8B 11  check
    edx ) ecx mov,           8B 0A  check
    ecx edx ) mov,           89 0A  check
@@ -216,6 +221,12 @@ code assembler-test
    ebx pop,                 5B  check
    ret,                     C3  check
    nop,                     90  check
+
+ \ ecx ) ecx movzbl,        0F B6 09  check
+ \ ecx eax cmove,           0F 44 C1  check
+ \ 10203040 call,           E8 40 30 20 10  check
+   edx not,                 F7 D2  check
+   ecx neg,                 F7 D9  check
 
    decimal
 end-code
