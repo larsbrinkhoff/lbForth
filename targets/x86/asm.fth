@@ -107,6 +107,7 @@ variable 'reg
 : 2op-no-d   create ,  does> opcode! op op d off opcode, mod/reg/rm, suffixes, ;
 : 2op-no-ds   create ,  does> opcode! op op 0ds opcode, mod/reg/rm, suffixes, ;
 : 1op   create , ,  does> @+ reg1 opcode! op d off opcode, mod/reg/rm, suffixes, ;
+: 1addr   create ,  does> @ c, , 0asm ;
 
 00 2op add,
 08 2op or,
@@ -137,6 +138,7 @@ variable 'reg
 B0 reg-imm movi,
 88 2op mov,
 8D 2op-no-ds lea,
+\ 8F/0 pop, rm
 90 0op nop,
 \ B0 immediate mov to reg8
 \ B8 immediate mov to reg8/16
@@ -144,13 +146,27 @@ B0 reg-imm movi,
 C3 0op ret,
 \ C6/0 immediate mov to r/m
 \ C7/0 immediate mov to r/m
-\ E8 call,
-\ E9 jmp,
+E8 1addr call,
+E9 1addr jmp,
+\ EB jmp rel8
 F0 0op lock,
 F2 0op rep,
 F3 0op repz,
+F4 0op hlt,
+F5 0op cmc,
 F6 2 1op not,
 F6 3 1op neg,
+F8 0op clc,
+F9 0op stc,
+FA 0op cli,
+FB 0op sti,
+FC 0op cld,
+FD 0op std,
+\ FE 0 inc rm
+\ FF 1 dec rm
+\ FF 2 call rm
+\ FF 4 jmp rm
+\ FF 6 push rm
 
 : sp?   dup 4 = ;
 
@@ -213,24 +229,29 @@ code assembler-test
    42 # cx add,             66 83 C1 42  check
    42 # edx add,            83 C2 42  check
    10203040 # esi add,      81 C6 40 30 20 10  check
-   \ 10203040 # eax add,    \ 05 42 40 30 20 10
+ \ 10203040 # eax add,      \ 05 42 40 30 20 10
 
+   -4 ecx )# ebx lea,       8D 59 FC  check
+   8 # esp sub,             83 EC 08  check
    eax ebx ) test,          85 03  check
    eax ) ebx xchg,          87 18  check
    eax push,                50  check
    ebx pop,                 5B  check
    ret,                     C3  check
    nop,                     90  check
+   clc,                     F8  check
+   std,                     FD  check
 
  \ ecx ) ecx movzbl,        0F B6 09  check
  \ ecx eax cmove,           0F 44 C1  check
- \ 10203040 call,           E8 40 30 20 10  check
+   10203040 call,           E8 40 30 20 10  check
+   10203040 jmp,            E9 40 30 20 10  check
    edx not,                 F7 D2  check
    ecx neg,                 F7 D9  check
 
    decimal
 end-code
-.( OK ) cr
+.( PASS ) cr
 
 : %sp sp ;
 
