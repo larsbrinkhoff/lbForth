@@ -45,8 +45,8 @@ variable 'reg
 : disp32   disp @ , ;
 
 : !op8    0 s !  ['] imm8 'imm2 ! ;
-: !op32   1 s !  ['] imm32 'imm2 ! ;
-: !op16   s @ 0= if 66 c, !op32 then  ['] imm16 'imm2 ! ;
+: !op32   'imm2 @ 0= if 1 s !  ['] imm32 'imm2 ! then ;
+: !op16   'imm2 @ 0= if 1 s !  ['] imm16 'imm2 ! 66 c, then ;
 
 : !sib   ['] sib, 'sib ! ;
 : sib!   3 lshift + sib ! ;
@@ -83,7 +83,7 @@ variable 'reg
 : 0mod/reg/rm   c0 mod/reg/rm ! ;
 : 0sib   ['] nop 'sib ! ;
 : 0disp   ['] nop 'disp ! ;
-: 0imm   imm off  ['] nop 'imm ! ;
+: 0imm   imm off  ['] nop 'imm !  'imm2 off ;
 : 0asm   0imm 0disp 0reg 0ds 0mod/reg/rm 0sib  dir? on ;
 : start-code   also assembler 0asm ;
 
@@ -96,7 +96,8 @@ variable 'reg
 
 : ds   d @ s @ + ;
 : opcode!   @ opcode ! ;
-: opcode,   opcode @ ds + c, ;
+: ?twobyte   dup FF > if dup 8 rshift c, then ;
+: opcode,   opcode @ ?twobyte ds + c, ;
 : mod/reg/rm,   mod/reg/rm @ c, ;
 : suffixes,   ?sib, ?disp, ?imm, 0asm ;
 
@@ -111,8 +112,9 @@ variable 'reg
 
 00 2op add,
 08 2op or,
-\ 0F44 cmove,
-\ 0FB6 movzbl,
+0F44 2op-no-ds cmove,  \ Todo: other condition codes.
+0FB6 2op-no-ds movzx,
+0FBE 2op-no-ds movsx,
 10 2op adc,
 18 2op sbb,
 20 2op and,
@@ -216,6 +218,7 @@ code assembler-test
    10203040 eax mov,        8B 05 40 30 20 10  check  \ A1 40 30 20 10
    edi 10203040 mov,        89 3D 40 30 20 10  check
 
+   bl ecx ) mov,            88 19  check
    ebx esp ) mov,           89 1C 24  check
    esi 4 esp )# mov,        89 74 24 04  check
 
@@ -242,8 +245,8 @@ code assembler-test
    clc,                     F8  check
    std,                     FD  check
 
- \ ecx ) ecx movzbl,        0F B6 09  check
- \ ecx eax cmove,           0F 44 C1  check
+   ecx ) ecx movzx,         0F B6 09  check
+   ecx eax cmove,           0F 44 C1  check
    10203040 call,           E8 40 30 20 10  check
    10203040 jmp,            E9 40 30 20 10  check
    edx not,                 F7 D2  check
