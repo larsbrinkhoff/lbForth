@@ -1,3 +1,5 @@
+\ Copyright 2014 Lars Brinkhoff
+
 \ Assembler for x86.
 
 \ Adds to FORTH vocabulary: ASSEMBLER CODE ;CODE.
@@ -23,6 +25,7 @@ base @  hex
 variable opcode
 variable d
 variable s
+variable 'mod/reg/rm
 variable mod/reg/rm
 variable dir?
 variable 'sib
@@ -37,6 +40,7 @@ variable 'reg
 : !reg   dir? @ if 2 d ! then dir? off ;
 : !mem   dir? off ;
 
+: mod/reg/rm,   mod/reg/rm @ c, ;
 : sib,   sib @ c, ;
 : imm8    imm @ c, ;
 : disp8   disp @ c, ;
@@ -73,38 +77,39 @@ variable 'reg
 : idx#   rot !disp 04 + ind  sib! ;
 : addr   !disp32  05 ind ;
 
-: alu?   -1 38 opcode @ within ;
-: ?sign-extended   d off  imm @ byte? if 2 d !  ['] imm8 'imm ! then ;
-: ?>imm-op   alu? if opcode @ reg! 80 opcode ! ?sign-extended then ;
-: imm-op   imm !  'imm2 @ 'imm !  ?>imm-op ;
-
 : 0ds   d off  s off ;
 : 0reg   ['] reg1 'reg ! ;
-: 0mod/reg/rm   c0 mod/reg/rm ! ;
+: 0mod/reg/rm   c0 mod/reg/rm !  ['] mod/reg/rm, 'mod/reg/rm ! ;
 : 0sib   ['] nop 'sib ! ;
 : 0disp   ['] nop 'disp ! ;
 : 0imm   imm off  ['] nop 'imm !  'imm2 off ;
 : 0asm   0imm 0disp 0reg 0ds 0mod/reg/rm 0sib  dir? on ;
 : start-code   also assembler 0asm ;
 
+: alu?   -1 38 opcode @ within ;
+: mov?   88 opcode @ = ;
+: ?sign-extended   d off  imm @ byte? if 2 d !  ['] imm8 'imm ! then ;
+: ?imm-opcode   alu? if opcode @ reg! 80 opcode ! ?sign-extended then
+   mov? if B0 s @ 3 lshift + rm@ + opcode !  0ds  ['] nop 'mod/reg/rm ! then ;
+: imm-op   imm !  'imm2 @ 'imm !  ?imm-opcode ;
+
 : addr?   dup -1 = ;
 : op   addr? if drop execute else addr then ;
 
+: ?mod/reg/rm,   'mod/reg/rm perform ;
 : ?sib,   'sib perform ;
 : ?disp,   'disp perform ;
 : ?imm,    'imm perform ;
+: suffixes,   ?sib, ?disp, ?imm, 0asm ;
 
 : ds   d @ s @ + ;
 : opcode!   @ opcode ! ;
 : ?twobyte   dup FF > if dup 8 rshift c, then ;
 : opcode,   opcode @ ?twobyte ds + c, ;
-: mod/reg/rm,   mod/reg/rm @ c, ;
-: suffixes,   ?sib, ?disp, ?imm, 0asm ;
 
 : 0op   create ,  does> @ c, 0asm ;
 : 1reg   create ,  does> @ >r 2drop r> + c, 0asm ;
-: reg-imm   create ,  does> @ >r 2drop r> + s @ 3 lshift + c, op ?imm, 0asm ;
-: 2op   create ,  does> opcode! op op opcode, mod/reg/rm, suffixes, ;
+: 2op   create ,  does> opcode! op op opcode, ?mod/reg/rm, suffixes, ;
 : 2op-no-d   create ,  does> opcode! op op d off opcode, mod/reg/rm, suffixes, ;
 : 2op-no-ds   create ,  does> opcode! op op 0ds opcode, mod/reg/rm, suffixes, ;
 : 1op   create , ,  does> @+ reg1 opcode! op d off opcode, mod/reg/rm, suffixes, ;
@@ -137,7 +142,6 @@ variable 'reg
 \ 80 immediate add/or/adc/sbb/and/sub/xor/cmp
 84 2op-no-d test,
 86 2op-no-d xchg,
-B0 reg-imm movi,
 88 2op mov,
 8D 2op-no-ds lea,
 \ 8F/0 pop, rm
@@ -222,10 +226,10 @@ code assembler-test
    ebx esp ) mov,           89 1C 24  check
    esi 4 esp )# mov,        89 74 24 04  check
 
-   42 # al movi,            B0 42  check
-   42 # ax movi,            66 B8 42 00  check
-   42 # eax movi,           B8 42 00 00 00  check
- \ 42 # eax ) movi,         \ C7 00 42 00 00 00  check
+   42 # al mov,             B0 42  check
+   42 # ax mov,             66 B8 42 00  check
+   42 # eax mov,            B8 42 00 00 00  check
+ \ 42 # eax ) mov,          \ C7 00 42 00 00 00  check
 
    42 # al add,             82 C0 42  check  \ 04 42
    42 # bh add,             82 C7 42  check
