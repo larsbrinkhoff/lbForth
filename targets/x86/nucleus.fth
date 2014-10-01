@@ -1,13 +1,18 @@
-\ Nucleus for x86.
-
-require targets/x86/asm.fth
+\ Nucleus for x86.  Copyright 2014 Lars Brinkhoff.
 
 \	Legacy	ITC	DTC	STC
-\ IP	eax			pc
-\ W	edx
+\ IP	eax	eax		pc
+\ W	edx	edx
 \ SP	memory	esp	esp
 \ RP	memory			esp
 \ T
+
+also assembler definitions
+: next,    ret, ;
+: sp   [ also forth ] sp [ previous ] ;
+previous definitions
+
+hex
 
 code cold
   \ Initialise dp, IP, SP, RP.
@@ -160,7 +165,7 @@ end-code
 code c@
    SP edx mov,
    edx ) ecx mov,
-   ecx ) ecx movzbl,
+   ecx ) ecx movzx,
    ecx edx ) mov,
    next,
 end-code
@@ -170,3 +175,5 @@ end-code
 \ code close-file ( fileid -- ior )
 \ code open-file ( addr u mode -- fileid ior )
 \ code read-file ( addr u1 fileid -- u2 ior )
+
+decimal
