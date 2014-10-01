@@ -259,22 +259,3 @@ code assembler-test
    decimal
 end-code
 .( PASS ) cr
-
-: %sp sp ;
-
-: foobar   create , ;code
-   0 >body edx )# edx mov,
-   %sp ecx mov,
-   cell negate ecx )# ecx lea,
-   ecx %sp mov,
-   edx ecx ) mov,
-   ret,
-end-code
-
-code my-fetch
-   %sp edx mov,
-   edx ) ecx mov,
-   ecx ) ecx mov,
-   ecx edx ) mov,
-   ret,
-end-code
