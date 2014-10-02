@@ -42,7 +42,7 @@ variable 'imm
 defer reg
 
 \ Set opcode.  And destination: register or memory.
-: opcode!   @ opcode ! ;
+: opcode!   2@ opcode ! >r ;
 : !reg   dir? @ if 2 d ! then dir? off ;
 : !mem   dir? off ;
 
@@ -54,6 +54,7 @@ defer reg
 : rm@   mrrm 7 @bits ;
 : rm!   rm@ 3 lshift reg!  mrrm 7 !bits ;
 : reg>opcode   rm@ opcode 07 !bits ;
+: opcode>reg   opcode @ dup 3 rshift rm!  8 rshift opcode ! ;
 
 \ Write parts of instruction to memory.
 : ds   d @ s @ + ;
@@ -122,16 +123,18 @@ defer reg
 : op   addr? if addr else drop execute then ;
 
 \ Write opcode and all applicable instruction suffixes to memory.
-: instruction,   opcode, ?mrrm, ?sib, ?disp, ?imm, 0asm ;
+: instruction,   opcode! opcode, ?mrrm, ?sib, ?disp, ?imm, 0asm ;
 
 \ Instruction formats.
-: 0op   create ,  does> opcode! -mrrm instruction, ;
-: 1reg   create ,  does> opcode! op 0ds reg>opcode -mrrm instruction, ;
-: 1op   create , ,  does> @+ reg1 opcode! op d off instruction, ;
-: 2op   create ,  does> opcode! op op instruction, ;
-: 2op-d   create ,  does> opcode! op op d off instruction, ;
-: 2op-ds   create ,  does> opcode! op op 0ds instruction, ;
-: 1addr   create ,  does> opcode! op -mrrm instruction, ;
+: mnemonic ( u a "name" -- ) create swap 2, does> instruction, ;
+: format:   create ] !csp  does> mnemonic ;
+format: 0op   -mrrm ;
+format: 1reg   op 0ds reg>opcode -mrrm ;
+format: 1op   opcode>reg op d off ;
+format: 2op   op op ;
+format: 2op-d   op op d off ;
+format: 2op-ds   op op 0ds ;
+format: 1addr   op -mrrm ;
 
 \ Instruction mnemonics.
 00 2op add,
@@ -167,7 +170,7 @@ defer reg
 90 0op nop,
 \ B0 immediate mov to reg8
 \ B8 immediate mov to reg8/16
-\ A8 test
+\ A8 immediate test
 C3 0op ret,
 \ C6/0 immediate mov to r/m
 \ C7/0 immediate mov to r/m
@@ -179,8 +182,8 @@ F2 0op rep,
 F3 0op repz,
 F4 0op hlt,
 F5 0op cmc,
-F6 2 1op not,
-F6 3 1op neg,
+F610 1op not,
+F618 1op neg,
 F8 0op clc,
 F9 0op stc,
 FA 0op cli,
