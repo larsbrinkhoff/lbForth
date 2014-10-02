@@ -1,3 +1,5 @@
+\ Copyright Lars Brinkhoff 2013-2014.
+
 require search.fth
 [undefined] assembler [if] vocabulary assembler [then]
 also assembler definitions
@@ -12,8 +14,10 @@ base @  hex
 
 : 4chars,      here 4 cmove  4 allot ;
 : >regname     [ 4 cell+ ] literal * + dup 4 + @ ;
+also forth
 : reg-table:   create  8 0 do bl word count swap 4chars, , loop
                does> -rot rshift 7 and >regname type ;
+previous
 
 reg-table: reg-name8     al  cl  dl  bl  ah  ch  dh  bh
 reg-table: reg-name16    ax  cx  dx  bx  sp  bp  si  di
@@ -359,59 +363,3 @@ base !  previous definitions  also assembler
    repeat drop ;
 
 previous
-
-\ 080489d0 <r_from_code>:
-\  80489d0:       8b 15 40 91 04 08       mov    edx,DWORD PTR ds:0x8049140
-\  80489d6:       8b 0a                   mov    ecx,DWORD PTR [edx]
-\  80489d8:       83 c2 04                add    edx,0x4
-\  80489db:       89 15 40 91 04 08       mov    DWORD PTR ds:0x8049140,edx
-\  80489e1:       8b 15 3c 91 04 08       mov    edx,DWORD PTR ds:0x804913c
-\  80489e7:       83 ea 04                sub    edx,0x4
-\  80489ea:       89 15 3c 91 04 08       mov    DWORD PTR ds:0x804913c,edx
-\  80489f0:       89 0a                   mov    DWORD PTR [edx],ecx
-\  80489f2:       c3                      ret
-
-\ 8048c93:       c7 04 24 00 00 00 00    mov    DWORD PTR [esp],0x0
-\ 8048c9a:       e8 6d f9 ff ff          call   804860c <exit@plt>
-
-\  8048a80:       83 ec 1c                sub    esp,0x1c
-\  8048a83:       89 7c 24 18             mov    DWORD PTR [esp+0x18],edi
-\  8048a87:       89 c7                   mov    edi,eax
-\  8048a89:       a1 3c 91 04 08          mov    eax,ds:0x804913c
-\  8048a8e:       89 5c 24 10             mov    DWORD PTR [esp+0x10],ebx
-\  8048a92:       89 74 24 14             mov    DWORD PTR [esp+0x14],esi
-\  8048a96:       8b 30                   mov    esi,DWORD PTR [eax]
-\  8048a98:       8b 58 04                mov    ebx,DWORD PTR [eax+0x4]
-\  8048a9b:       83 c0 08                add    eax,0x8
-\  8048a9e:       a3 3c 91 04 08          mov    ds:0x804913c,eax
-\  8048aa3:       c7 04 24 1e 00 00 00    mov    DWORD PTR [esp],0x1e
-\  8048aaa:       e8 8d fa ff ff          call   804853c <sysconf@plt>
-\  8048aaf:       c7 44 24 08 07 00 00    mov    DWORD PTR [esp+0x8],0x7
-\  8048ab6:       00 
-\  8048ab7:       89 c2                   mov    edx,eax
-\  8048ab9:       f7 da                   neg    edx
-\  8048abb:       8d 44 30 ff             lea    eax,[eax+esi-0x1]
-\  8048abf:       21 d3                   and    ebx,edx
-\  8048ac1:       21 d0                   and    eax,edx
-\  8048ac3:       29 d8                   sub    eax,ebx
-\  8048ac5:       89 44 24 04             mov    DWORD PTR [esp+0x4],eax
-\  8048ac9:       89 1c 24                mov    DWORD PTR [esp],ebx
-\  8048acc:       e8 bb fa ff ff          call   804858c <mprotect@plt>
-\  8048ad1:       85 c0                   test   eax,eax
-\  8048ad3:       74 2b                   je     8048b00 <rwxstore_code+0x80>
-\  8048ad5:       a1 3c 91 04 08          mov    eax,ds:0x804913c
-\  8048ada:       83 e8 04                sub    eax,0x4
-\  8048add:       a3 3c 91 04 08          mov    ds:0x804913c,eax
-\  8048ae2:       c7 00 fd ff ff ff       mov    DWORD PTR [eax],0xfffffffd
-\  8048ae8:       89 f8                   mov    eax,edi
-\  8048aea:       8b 5c 24 10             mov    ebx,DWORD PTR [esp+0x10]
-\  8048aee:       8b 74 24 14             mov    esi,DWORD PTR [esp+0x14]
-\  8048af2:       8b 7c 24 18             mov    edi,DWORD PTR [esp+0x18]
-\  8048af6:       83 c4 1c                add    esp,0x1c
-\  8048af9:       c3                      ret    
-\  8048afa:       8d b6 00 00 00 00       lea    esi,[esi+0x0]
-\  8048b00:       a1 3c 91 04 08          mov    eax,ds:0x804913c
-\  8048b05:       83 e8 04                sub    eax,0x4
-\  8048b08:       a3 3c 91 04 08          mov    ds:0x804913c,eax
-\  8048b0d:       c7 00 00 00 00 00       mov    DWORD PTR [eax],0x0
-\  8048b13:       eb d3                   jmp    8048ae8 <rwxstore_code+0x68>
