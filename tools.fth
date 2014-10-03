@@ -20,7 +20,7 @@
 : dump-line    dup u. space  dup dump-cells  space dump-chars cr ;
 : dump         bounds do i dump-line 16 +loop ;
 
-: c?      c@ . ;
+: c?      c@ 0 <# # #s #> type space ;
 : cdump   bounds do i c? loop cr ;
 
 : id. ( xt -- )   >name ?dup if type else ." :noname@" 1- (.) then space ;
