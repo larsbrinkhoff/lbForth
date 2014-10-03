@@ -39,10 +39,11 @@ variable sib    defer ?sib,
 variable disp   defer ?disp,
 variable imm    defer ?imm,
 variable 'imm
+defer immediate-opcode
 defer reg
 
 \ Set opcode.  And destination: register or memory.
-: opcode!   2@ opcode ! >r ;
+: opcode!   3@ is immediate-opcode >r opcode ! ;
 : !reg   dir? @ if 2 d ! then dir? off ;
 : !mem   dir? off ;
 
@@ -110,12 +111,10 @@ defer reg
 : end-code     align previous ;
 
 \ Implements addressing mode: immediate.
-: alu?   -1 38 opcode @ within ;
-: mov?   88 opcode @ = ;
 : ?sign-extended   d off  imm @ byte? if 2 d !  ['] imm8, is ?imm, then ;
-: ?imm-opcode   alu? if opcode @ reg! 80 opcode ! ?sign-extended then
-   mov? if B0 s @ 3 lshift + rm@ + opcode ! 0ds -mrrm then ;
-: imm-op   imm! ?imm-opcode ;
+: alu#   opcode @ reg! 80 opcode ! ?sign-extended ;
+: mov#   B0 s @ 3 lshift + rm@ + opcode ! 0ds -mrrm ;
+: imm-op   imm! immediate-opcode ;
 
 \ Process one operand.  All operands except a direct address
 \ have the stack picture ( n*x xt -1 ).
@@ -126,7 +125,7 @@ defer reg
 : instruction,   opcode! opcode, ?mrrm, ?sib, ?disp, ?imm, 0asm ;
 
 \ Instruction formats.
-: mnemonic ( u a "name" -- ) create swap 2, does> instruction, ;
+: mnemonic ( u a "name" -- ) create ['] nop 3,  does> instruction, ;
 : format:   create ] !csp  does> mnemonic ;
 format: 0op   -mrrm ;
 format: 1reg   op 0ds reg>opcode -mrrm ;
@@ -136,21 +135,23 @@ format: 2op-d   op op d off ;
 format: 2op-ds   op op 0ds ;
 format: 1addr   op -mrrm ;
 
+: immediate:   ' latestxt >body ! ;
+
 \ Instruction mnemonics.
-00 2op add,
-08 2op or,
+00 2op add,  immediate: alu#
+08 2op or,   immediate: alu#
 0F44 2op-ds cmove,  \ Todo: other condition codes.
 0FB6 2op-ds movzx,
 0FBE 2op-ds movsx,
-10 2op adc,
-18 2op sbb,
-20 2op and,
+10 2op adc,  immediate: alu#
+18 2op sbb,  immediate: alu#
+20 2op and,  immediate: alu#
 26 0op es,
-28 2op sub,
+28 2op sub,  immediate: alu#
 2E 0op cs,
-30 2op xor,
+30 2op xor,  immediate: alu#
 36 0op ss,
-38 2op cmp,
+38 2op cmp,  immediate: alu#
 3E 0op ds,
 50 1reg push,
 58 1reg pop,
@@ -164,7 +165,7 @@ format: 1addr   op -mrrm ;
 \ 80 immediate add/or/adc/sbb/and/sub/xor/cmp
 84 2op-d test,
 86 2op-d xchg,
-88 2op mov,
+88 2op mov,  immediate: mov#
 8D 2op-ds lea,
 \ 8F/0 pop, rm
 90 0op nop,

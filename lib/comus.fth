@@ -2,6 +2,8 @@
 : off   0 swap ! ;
 
 : 2,   , , ;
+: 3,   , , , ;
+: 3@    @+ >r 2@ r> ;
 
 \ Forth83
 : @bits ( a u1 -- u2 ) swap @ and ;
