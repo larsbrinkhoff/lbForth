@@ -134,6 +134,7 @@ format: 2op   op op ;
 format: 2op-d   op op d off ;
 format: 2op-ds   op op 0ds ;
 format: 1addr   op -mrrm ;
+format: 1imm8   !op8 op -mrrm ;
 
 : immediate:   ' latestxt >body ! ;
 
@@ -175,6 +176,7 @@ format: 1addr   op -mrrm ;
 C3 0op ret,
 \ C6/0 immediate mov to r/m
 \ C7/0 immediate mov to r/m
+CD 1imm8 int,
 E8 1addr call,
 E9 1addr jmp,
 \ EB jmp rel8

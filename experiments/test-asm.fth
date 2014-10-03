@@ -60,6 +60,7 @@ code assembler-test
    10203040 jmp,            E9 40 30 20 10  check
    edx not,                 F7 D2  check
    ecx neg,                 F7 D9  check
+   42 # int,                CD 42  check
 
    decimal
 end-code
