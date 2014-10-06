@@ -64,9 +64,9 @@ defer reg
 : mrrm,   mrrm @ c, ;
 : sib,   sib @ c, ;
 : imm8,   imm @ c, ;
-: disp8,   disp @ c, ;
 : imm16,   imm @ h, ;
 : imm32,   imm @ , ;
+: disp8,   disp @ c, ;
 : disp32,   disp @ , ;
 
 \ Set operand size.
@@ -114,6 +114,8 @@ defer reg
 : ?sign-extended   d off  imm @ byte? if 2 d !  ['] imm8, is ?imm, then ;
 : alu#   opcode @ reg! 80 opcode ! ?sign-extended ;
 : mov#   B0 s @ 3 lshift + rm@ + opcode ! 0ds -mrrm ;
+: push#   imm @ byte? if ['] imm8, 6A else ['] imm32, 68 then dup opcode ! rm! is ?imm, ;
+: test#   F6 opcode ! ;
 : imm-op   imm! immediate-opcode ;
 
 \ Process one operand.  All operands except a direct address
@@ -121,22 +123,21 @@ defer reg
 : addr?   dup -1 <> ;
 : op   addr? if addr else drop execute then ;
 
-\ Write opcode and all applicable instruction suffixes to memory.
+\ Define instruction formats.
 : instruction,   opcode! opcode, ?mrrm, ?sib, ?disp, ?imm, 0asm ;
-
-\ Instruction formats.
 : mnemonic ( u a "name" -- ) create ['] nop 3,  does> instruction, ;
 : format:   create ] !csp  does> mnemonic ;
+: immediate:   ' latestxt >body ! ;
+
+\ Instruction formats.
 format: 0op   -mrrm ;
-format: 1reg   op 0ds reg>opcode -mrrm ;
+format: 1reg   op reg>opcode 0ds -mrrm ;
 format: 1op   opcode>reg op d off ;
 format: 2op   op op ;
 format: 2op-d   op op d off ;
 format: 2op-ds   op op 0ds ;
 format: 1addr   op -mrrm ;
 format: 1imm8   !op8 op -mrrm ;
-
-: immediate:   ' latestxt >body ! ;
 
 \ Instruction mnemonics.
 00 2op add,  immediate: alu#
@@ -154,25 +155,17 @@ format: 1imm8   !op8 op -mrrm ;
 36 0op ss,
 38 2op cmp,  immediate: alu#
 3E 0op ds,
-50 1reg push,
+50 1reg push,  immediate: push#
 58 1reg pop,
 64 0op fs,
 65 0op gs,
-\ 66 op size prefix
-\ 67 address size prefix
-\ 68 push imm32
-\ 6A push imm8
 \ 70 jcc
-\ 80 immediate add/or/adc/sbb/and/sub/xor/cmp
-84 2op-d test,
+84 2op-d test,   immediate: test#
 86 2op-d xchg,
 88 2op mov,  immediate: mov#
 8D 2op-ds lea,
 \ 8F/0 pop, rm
 90 0op nop,
-\ B0 immediate mov to reg8
-\ B8 immediate mov to reg8/16
-\ A8 immediate test
 C3 0op ret,
 \ C6/0 immediate mov to r/m
 \ C7/0 immediate mov to r/m

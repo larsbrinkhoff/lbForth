@@ -61,6 +61,9 @@ code assembler-test
    edx not,                 F7 D2  check
    ecx neg,                 F7 D9  check
    42 # int,                CD 42  check
+   42 # push,               6A 42  check
+   10203040 # push,         68 40 30 20 10  check
+   42 # edx ) test,         F7 02 42 00 00 00  check
 
    decimal
 end-code
