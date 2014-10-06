@@ -9,7 +9,9 @@
 
 also assembler definitions
 : next,    ret, ;
-: sp   [ also forth ] sp [ previous ] ;
+: SP   [ also forth ] sp [ previous ] ;
+: IP   eax ;
+: W   edx ;
 previous definitions
 
 hex
@@ -20,40 +22,76 @@ code cold
 end-code
 
 code exit
-   RP edx mov,
-   edx ) eax mov,
-   4 # edx add,
-   edx RP mov,
+(* RP W mov,
+   W ) IP mov,
+   4 # W add,
+   W RP mov, *)
+
+   RP esp xchg,
+   IP pop,
+   RP esp xchg,
+
    next,
 end-code
 
 code dodoes
-   SP ecx mov,
+(* SP ecx mov,
    ebx push,
    -4 ecx )# ebx lea,
    ebx SP mov,
-   1C edx )# ebx lea,
+   1C W )# ebx lea,
    ebx -4 ecx )# mov,
    RP ecx mov,
    -4 ecx )# ebx lea,
    ebx RP mov,
-   eax -4 ecx )# mov,
-   14 edx )# eax mov,
-   ebx pop,
+   IP -4 ecx )# mov,
+   14 W )# IP mov,
+   ebx pop, *)
+
+(* SP esp xchg,
+   1C W )# ecx lea,
+   ecx push,
+   SP esp xchg,
+   RP esp xchg,
+   IP push,
+   RP esp xchg,
+   14 W )# IP mov, *)
+
+   RP ecx mov,
+   4 # ecx sub,
+   IP ecx ) mov,
+   ecx RP mov,
+   14 W )# IP mov,
+   SP ecx mov,
+   4 # ecx sub,
+   1C W )# W lea,
+   W ecx ) mov,
+   ecx SP mov,
+
    next,
 end-code
 
 code 0branch
-   SP edx mov,
+(* SP edx mov,
    ebx push,
-   eax ) ecx mov,
-   4 # eax add,
+   IP ) ecx mov,
+   4 # IP add,
    edx ) ebx mov,
    4 # edx add,
    edx SP mov,
    ebx ebx test,
-   ecx eax cmove,
-   ebx pop,
+   ecx IP cmove,
+   ebx pop, *)
+
+   IP ) W mov,
+   4 # IP add,
+   SP ecx mov,
+   4 # ecx add,
+   ecx SP mov,
+   -4 ecx )# ecx mov,
+   ecx ecx test,
+   W IP cmove,
+
    next,
 end-code
 
@@ -61,8 +99,8 @@ code (literal)
    SP edx mov,
    -4 edx )# ecx lea,
    ecx SP mov,
-   eax ) ecx mov,
-   4 # eax add,
+   IP ) ecx mov,
+   4 # IP add,
    ecx -4 edx )# mov,
    next,
 end-code
@@ -151,22 +189,35 @@ code nand
 end-code
 
 code c!
-   SP edx mov,
+(* SP edx mov,
    ebx push,
    4 edx )# ebx mov,
    edx ) ecx mov,
    8 # edx add,
    edx SP mov,
    bl ecx ) mov,
-   ebx pop,
+   ebx pop, *)
+
+   SP W mov,
+   8 # SP add,
+   4 W )# ecx mov,
+   W ) W mov,
+   cl W ) mov,
+
+(* SP esp xchg,
+   W pop,
+   ecx pop,
+   cl W ) mov,
+   SP esp xchg, *)
+
    next,
 end-code
 
 code c@
-   SP edx mov,
-   edx ) ecx mov,
+   SP W mov,
+   W ) ecx mov,
    ecx ) ecx movzx,
-   ecx edx ) mov,
+   ecx W ) mov,
    next,
 end-code
 
