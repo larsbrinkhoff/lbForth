@@ -66,6 +66,20 @@ code assembler-test
 end-code
 .( PASS ) cr
 
+.( Test ;CODE )
+: test-;code   create , ;code
+   also forth sp previous esp xchg,
+   0 >body edx )# edx mov,
+   edx push,
+   also forth sp previous esp xchg,
+   ret,
+end-code
+
+42 test-;code test
+: check-;code   test 42 <> abort" FAIL" ;
+check-;code
+.( PASS ) cr
+
 \ Redefine CODE and END-CODE to overwrite the code field of the
 \ previously defined code word with the same name.
 : code   source type  >in @ ' >code swap >in !  code  here ;
