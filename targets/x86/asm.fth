@@ -79,11 +79,12 @@ defer reg
 : sib!   3 lshift + sib !  !sib ;
 
 \ Set displacement.
-: byte?   -81 80 rot within ;
+: byte?   -80 80 within ;
 : disp!   is ?disp, disp ! ;
 : !disp8   ['] disp8, disp! ;
 : !disp32   ['] disp32, disp! ;
 : !disp ( a -- u ) dup byte? if !disp8 40 else !disp32 80 then ;
+: relative   disp @ here 5 + - disp ! ;
 
 \ Set immediate operand.
 : imm!   imm !  'imm @ is ?imm, ;
@@ -136,7 +137,7 @@ format: 1op   opcode>reg op d off ;
 format: 2op   op op ;
 format: 2op-d   op op d off ;
 format: 2op-ds   op op 0ds ;
-format: 1addr   op -mrrm ;
+format: 1addr   op relative -mrrm ;
 format: 1imm8   !op8 op -mrrm ;
 
 \ Instruction mnemonics.

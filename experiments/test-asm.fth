@@ -56,8 +56,8 @@ code assembler-test
 
    ecx ) ecx movzx,         0F B6 09  check
    ecx eax cmove,           0F 44 C1  check
-   10203040 call,           E8 40 30 20 10  check
-   10203040 jmp,            E9 40 30 20 10  check
+   here call,               E8 FB FF FF FF  check
+   here jmp,                E9 FB FF FF FF  check
    edx not,                 F7 D2  check
    ecx neg,                 F7 D9  check
    42 # int,                CD 42  check
