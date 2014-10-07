@@ -29,6 +29,9 @@ also assembler definitions
 
 base @  hex
 
+\ This constant signals that an operand is not a direct address.
+deadbeef constant -addr
+
 \ Assembler state.
 variable opcode
 variable d
@@ -120,8 +123,8 @@ defer reg
 : imm-op   imm! immediate-opcode ;
 
 \ Process one operand.  All operands except a direct address
-\ have the stack picture ( n*x xt -1 ).
-: addr?   dup -1 <> ;
+\ have the stack picture ( n*x xt -addr ).
+: addr?   dup -addr <> ;
 : op   addr? if addr else drop execute then ;
 
 \ Define instruction formats.
@@ -196,14 +199,14 @@ FD 0op std,
 : sp?   dup 4 = ;
 
 \ Addressing mode syntax: immediate, indirect, and displaced indirect.
-: #   ['] imm-op -1 ;
-: )   2drop  sp? if 4 ['] idx else ['] ind then -1  0reg ;
-: )#   2drop  sp? if 4 ['] idx# else ['] ind# then -1  0reg ;
+: #   ['] imm-op -addr ;
+: )   2drop  sp? if 4 ['] idx else ['] ind then -addr  0reg ;
+: )#   2drop  sp? if 4 ['] idx# else ['] ind# then -addr  0reg ;
 
 \ Define registers.
-: reg8    create ,  does> @ ['] reg -1 !op8 ;
-: reg16   create ,  does> @ ['] reg -1 !op16 ;
-: reg32   create ,  does> @ ['] reg -1 !op32 ;
+: reg8    create ,  does> @ ['] reg -addr !op8 ;
+: reg16   create ,  does> @ ['] reg -addr !op16 ;
+: reg32   create ,  does> @ ['] reg -addr !op32 ;
 : reg:    dup reg8 dup reg16 dup reg32 1+ ;
 
 \ Register names.
