@@ -27,12 +27,12 @@ base @ hex
 
 ( Section types )
 
-00000020 constant code
-00000040 constant data
-00000080 constant empty
-20000000 constant executable
-40000000 constant readable
-80000000 constant writable
+00000020 constant pe-code
+00000040 constant pe-data
+00000080 constant pe-empty
+20000000 constant pe-executable
+40000000 constant pe-readable
+80000000 constant pe-writable
 
 ( Data types )
 
@@ -52,8 +52,12 @@ base @ hex
 
 ( Optional header; required for executables )
 
-: opthdr, ( -- )   010B h, 01A zeros, 400000 w, 1 w, 1 w, 8 zeros,
-  4 h, 12 zeros, 3 h, 01A zeros, ;
+: sig,   010B h, 01A zeros, ;
+: base,   w, ;
+: align,   1 w, 1 w, 8 zeros, ;
+: major,   4 h, 12 zeros, ;
+: subsys,   3 h, 01A zeros, ;
+: opthdr,   sig,  400000 base,  align,  major,  subsys, ;
 
 ( Data directories. )
 
@@ -68,9 +72,15 @@ base @ hex
 
 ( Lay down a PE header in the dictionary. )
 
-: opthdrsize! ( a -- a )   here over - 58 - over 54 + h! ;
-: hdrsize! ( a -- a u )   here over - 2dup swap 2dup 068 + w!  2dup 090 + w!
-   2dup 094 + w!  ( 2dup 0C4 + 80 + w!  0CC + 80 + w! ) 2drop ;
+variable entry-offset
+0 entry-offset !
+: >entry   swap entry-offset @ + swap ;
+: opthdrsize! ( a -- a )   here over - 58 - over 54 + >entry h! ;
+: entry!   2dup >entry 068 + w! ;
+: img-size!   2dup 090 + w! ;
+: hdr-size!   2dup >entry 094 + w! ;
+: hdrsize! ( a -- a u )   here over - 2dup swap  entry!
+   img-size! hdr-size! ( 2dup 0C4 + 80 + w!  0CC + 80 + w! ) 2drop ;
 
 : pe, ( -- a u )   here  mzhdr, pehdr, opthdr, ( dd, ) opthdrsize!
    ( s" .text" shdr, ) hdrsize! ;
@@ -78,18 +88,5 @@ base @ hex
 : codesize! ( a u -- )   swap  2dup 090 + w+!  ( 2dup 0C0 + 80 + w! )
    ( 0C8 + 80 + w! ) 2drop ;
 : pe! ( a u -- )   padding  over + here swap - codesize! ;
-
-( Test )
-
-0 [if]
-0 constant eax
-: movi, ( x reg -- )   B8 + c, w, ;
-: ret, ( -- )   C3 c, ;
-: exit, ( -- )   42 eax movi,  ret, ;
-
-: output ( a u -- )   bounds do i c@ emit loop ;
-: test   here  pe, exit, pe!  here over - ( 2dup dump ) output ;
-test
-[then]
 
 base !
