@@ -184,7 +184,6 @@ variable csp
 : !csp   csp @ s" Nested" ?bad  sp@ csp ! ;
 : ?csp   sp@ csp @ <> s" Unbalanced" ?bad  0 csp ! ;
 
-: does!   latestxt >does ! ;
 : (does>)   r> does! ;
 
 \ If you change the definition of :, you also need to update the

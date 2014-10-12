@@ -12,8 +12,9 @@ variable dp
 
 : ,          here !  cell allot ;
 : c,         here c!  1 allot ;
-: compile,   , ;
 : string,    here over allot align  swap cmove ;
+
+include targets/ctc.fth
 
 variable current
 
@@ -22,7 +23,6 @@ variable current
 
 : >name    count cabs ;
 : >lfa     TO_NEXT + ;
-: >does    TO_DOES + ;
 : >code    TO_CODE + ;
 : >body    TO_BODY + ;
 : >nextxt   >lfa @ ;

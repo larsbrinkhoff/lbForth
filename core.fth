@@ -25,10 +25,9 @@ drop
 : compile-only   hide  current @  [ ' compiler-words ] literal current !
    link  reveal  current !  immediate ;
 
-: code!     latestxt >code ! ;
-: does,     ;
-: does>     [ ' (does>) ] literal compile, does, ; compile-only
-: create    parse-name header, [ ' dodoes >code @ ] literal ,  reveal (does>) ;
+: dodoes_code   [ ' dodoes >code @ ] literal ;
+: does>     [ ' (does>) ] literal compile,  dodoes_code does, ; compile-only
+: create    parse-name header, dodoes_code ,  reveal does> ;
 
 : postpone,   [ ' literal compile, ' compile, ] literal compile, ;
 \ Same as:    postpone literal  postpone compile, ;

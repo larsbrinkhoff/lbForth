@@ -225,12 +225,12 @@ reg: ah sp esp   reg: ch bp ebp   reg: dh si esi   reg: bh di edi
 drop
 
 \ Runtime for ;CODE.  CODE! is defined elsewhere.
-: (;code)      r> code! ;
+: (;code)   r> latestxt >code code! ;
 
 base !  only forth definitions  also assembler
 
 \ Standard assembler entry points.
-: code    create  latestxt >body code!  start-code  ;
+: code    parse-name header, ?code, start-code  ;
 : ;code   postpone (;code) reveal postpone [ ?csp start-code ; immediate
 
 0asm
