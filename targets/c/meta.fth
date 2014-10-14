@@ -223,8 +223,6 @@ t-dictionary dp !
 : <mark      here ;
 : <resolve   , ;
 
-\ : find-name   #name min 2dup t-wordlist search-wordlist dup if 2nip then ;
-
 : forward, ( a -- )   here swap chain, ;
 : forward: ( "name" -- )   .forward  create-forward  does> forward, ;
 
