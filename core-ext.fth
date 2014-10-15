@@ -7,8 +7,8 @@
 
 : 2r@   r> 2r> 2dup 2>r rot >r ;
 
-: :noname   s" " header, [ ' dodoes >code @ ] literal ,  ] latestxt !csp
-   [ ' : >does @ ] literal latestxt >does ! ;
+: :noname   s" " header, dodoes_code code, ] latestxt !csp
+   [ ' : >does @ ] literal does! ;
 
 : (?do)   r> 2r> 2dup > rot rot 2>r swap >r ;
 : ?do   leaves @  0 leaves !

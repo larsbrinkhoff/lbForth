@@ -13,18 +13,20 @@ variable dp
 : c,         here c!  1 allot ;
 : string,    here over allot align  swap cmove ;
 
-include targets/ctc.fth
-
-variable current
-
-\ Compile the contents of a, then store x in a.
-: chain, ( x a -- )   dup @ , ! ; 
+include targets/c/jump.fth
 
 : >name    count cabs ;
 : >lfa     TO_NEXT + ;
 : >code    TO_CODE + ;
 : >body    TO_BODY + ;
 : >nextxt   >lfa @ ;
+
+include targets/ctc.fth
+
+variable current
+
+\ Compile the contents of a, then store x in a.
+: chain, ( x a -- )   dup @ , ! ; 
 
 : link, ( nt -- )      to latestxt  current @ >body @ , ;
 : reveal               latestxt  current @ >body ! ;
