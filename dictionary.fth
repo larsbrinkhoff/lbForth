@@ -13,7 +13,7 @@ variable dp
 : c,         here c!  1 allot ;
 : string,    here over allot align  swap cmove ;
 
-include targets/c/jump.fth
+include jump.fth
 
 : >name    count cabs ;
 : >lfa     TO_NEXT + ;
@@ -21,7 +21,7 @@ include targets/c/jump.fth
 : >body    TO_BODY + ;
 : >nextxt   >lfa @ ;
 
-include targets/ctc.fth
+include threading.fth
 
 variable current
 

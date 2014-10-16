@@ -1,16 +1,21 @@
+TARGET = c
+THREADING = ctc
+
 CC = gcc
 M32 = -m32
 CFLAGS = $(M32) -O2 -fomit-frame-pointer -fno-unit-at-a-time
-CPPFLAGS = -I$(TARGET)
+CPPFLAGS = -I$(TDIR)
 LDFLAGS = $(M32)
 
 GREP = grep -a
 ERROR_PATTERNS = -e 'INCORRECT RESULT' -e 'WRONG NUMBER'
 EXPECTED_ERRORS = 77
 
-TARGET = targets/c
-meta = $(TARGET)/meta.fth
-nucleus = $(TARGET)/nucleus.fth
+TDIR = targets/$(TARGET)
+meta = $(TDIR)/meta.fth
+nucleus = $(TDIR)/nucleus.fth
+
+DEPS = dictionary.fth params.fth jump.fth threading.fth $(nucleus) $(meta)
 
 %.c: %.fth
 	echo 'include $(meta)  bye' | ./forth | tail -n+3 > $@
@@ -19,7 +24,7 @@ nucleus = $(TARGET)/nucleus.fth
 all: .bootstrap forth
 
 .bootstrap: lisp/meta.lisp lisp/words.lisp
-	$(MAKE) -f$(TARGET)/bootstrap.mk CC="$(CC)" CFLAGS="$(CFLAGS)" \
+	$(MAKE) -ftargets/c/bootstrap.mk CC="$(CC)" CFLAGS="$(CFLAGS)" \
 	CPPFLAGS="$(CPPFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 lisp/meta.lisp:
@@ -28,15 +33,21 @@ lisp/meta.lisp:
 forth: kernel.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
-kernel.o: kernel.c $(TARGET)/forth.h
+kernel.o: kernel.c $(TDIR)/forth.h
 
-kernel.c: kernel.fth dictionary.fth params.fth $(nucleus) $(meta)
+kernel.c: kernel.fth $(DEPS)
 
 params.fth: params
 	./$< -forth > $@
 
-params: $(TARGET)/params.c $(TARGET)/forth.h Makefile
+params: $(TDIR)/params.c $(TDIR)/forth.h Makefile
 	$(CC) $(CFLAGS) $(CPPFLAGS) $< -o $@
+
+jump.fth: $(TDIR)/jump.fth
+	cp $^ $@
+
+threading.fth: targets/$(THREADING).fth
+	cp $^ $@
 
 check: test-errors
 	test `cat $<` -eq $(EXPECTED_ERRORS)

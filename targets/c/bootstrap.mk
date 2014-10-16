@@ -1,7 +1,11 @@
-TARGET = targets/c
+TARGET = c
+THREADING = ctc
+
+TDIR = targets/$(TARGET)
 LISP = ./lisp/lisp.sh
 meta = lisp/meta.lisp
-nucleus = $(TARGET)/nucleus.fth
+nucleus = $(TDIR)/nucleus.fth
+DEPS = dictionary.fth jump.fth threading.fth $(nucleus) $(meta)
 
 # Bootstrap metacompiler, written in Lisp.
 %.c: %.fth
@@ -11,15 +15,21 @@ all: forth
 
 forth: kernel.o
 	$(CC) $(LDFLAGS) $^ -o $@
-	rm kernel.c
+	rm kernel.c jump.fth threading.fth
 	touch .bootstrap
 
-kernel.o: kernel.c $(TARGET)/forth.h
+kernel.o: kernel.c $(TDIR)/forth.h
 
-kernel.c: kernel.fth dictionary.fth $(nucleus) $(meta) params.lisp
+kernel.c: kernel.fth $(DEPS) params.lisp
 
 params.lisp: params
 	./$< -lisp > $@
 
 params:
 	$(MAKE) params
+
+jump.fth: $(TDIR)/jump.fth
+	cp $^ $@
+
+threading.fth: targets/$(THREADING).fth
+	cp $^ $@

@@ -2,6 +2,8 @@
 forth
 kernel.c
 params*
+jump.fth
+threading.fth
 .bootstrap
 test-output
 test-errors
