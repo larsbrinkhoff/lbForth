@@ -1,7 +1,7 @@
 *.o
 forth
 kernel.c
-params*
+/params*
 jump.fth
 threading.fth
 .bootstrap
