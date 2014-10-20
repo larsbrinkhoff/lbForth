@@ -69,6 +69,10 @@ code assembler-test
 end-code
 .( PASS ) cr
 
+\ The tests below involve running assembled code, so doesn't work
+\ in 64-bit mode.
+cell 4 = [if]
+
 .( Test ;CODE )
 : test-;code   create , ;code
    also forth sp previous esp xchg,
@@ -95,3 +99,5 @@ also newcleus definitions
 
 include targets/x86/nucleus.fth
 only forth definitions
+
+[then]

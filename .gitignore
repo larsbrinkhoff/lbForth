@@ -7,6 +7,7 @@ threading.fth
 .bootstrap
 test-output
 test-errors
+test-assembler
 smoke-test
 *~
 TMP

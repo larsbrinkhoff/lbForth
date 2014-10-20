@@ -18,7 +18,7 @@ forth: .bootstrap $(DEPS)
 	touch .bootstrap
 
 
-check: test-errors
+check: test-errors test-assembler
 	test `cat $<` -eq $(EXPECTED_ERRORS)
 
 test-errors: test-output
@@ -27,6 +27,10 @@ test-errors: test-output
 test-output: test/test-input smoke-test
 	./forth < $< > $@
 	$(GREP) Test-OK $@
+
+test-assembler: test/test-asm.fth forth
+	echo 'include $< .( Asm-OK ) ' | ./forth > $@
+	$(GREP) Asm-OK $@
 
 smoke-test: forth
 	echo 'words cr .( Smoke-OK )' | ./forth > $@
