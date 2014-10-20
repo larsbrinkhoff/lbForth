@@ -96,7 +96,8 @@ defer reg
 : !disp8   ['] disp8, disp! ;
 : !disp32   ['] disp32, disp! ;
 : !disp ( a -- u ) dup byte? if !disp8 40 else !disp32 80 then ;
-: relative   disp @ here 5 + - disp ! ;
+: -pc   here 5 + negate ;
+: relative   -pc disp +! ;
 
 \ Set immediate operand.
 : imm!   imm !  'imm @ is ?imm, ;
@@ -104,7 +105,8 @@ defer reg
 \ Implements addressing modes: register, indirect, indexed, and direct.
 : reg1   rm! !reg ;
 : reg2   3 lshift reg! ;
-: ind   dup mod! rm! !mem  ['] reg2 is reg ;
+: !reg2   ['] reg2 is reg ;
+: ind   dup mod! rm! !mem !reg2 ;
 : ind#   swap !disp + ind ;
 : idx   04 ind  sib! ;
 : idx#   rot !disp 04 + ind  sib! ;
@@ -124,10 +126,11 @@ defer reg
 : end-code     align previous ;
 
 \ Implements addressing mode: immediate.
-: ?sign-extended   d off  imm @ byte? if 2 d !  ['] imm8, is ?imm, then ;
-: alu#   opcode @ reg! 80 opcode ! ?sign-extended ;
+: imm8?   imm @ byte? ;
+: ?sign-extend   d off  imm8? if 2 d !  ['] imm8, is ?imm, then ;
+: alu#   opcode @ reg! 80 opcode ! ?sign-extend ;
 : mov#   B0 s @ 3 lshift + rm@ + opcode ! 0ds -mrrm ;
-: push#   imm @ byte? if ['] imm8, 6A else ['] imm32, 68 then dup opcode ! rm! is ?imm, ;
+: push#   imm8? if ['] imm8, 6A else ['] imm32, 68 then dup opcode ! rm! is ?imm, ;
 : test#   F6 opcode ! ;
 : imm-op   imm! immediate-opcode ;
 
@@ -225,7 +228,7 @@ reg: ah sp esp   reg: ch bp ebp   reg: dh si esi   reg: bh di edi
 drop
 
 \ Runtime for ;CODE.  CODE! is defined elsewhere.
-: (;code)   r> latestxt >code code! ;
+: (;code)   r> code! ;
 
 base !  only forth definitions  also assembler
 
