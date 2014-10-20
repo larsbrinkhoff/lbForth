@@ -1,6 +1,7 @@
 os:
   - linux
   - osx
+language: c
 env:
   matrix:
     - M32=
