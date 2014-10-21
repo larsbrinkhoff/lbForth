@@ -14,7 +14,7 @@
 \ - indirect with displacement: "n <reg> )#"
 \ - indexed: not supported yet
 
-require lib/comus.fth
+require lib/common.fth
 require search.fth
 
 vocabulary assembler

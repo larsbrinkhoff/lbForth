@@ -1,4 +1,5 @@
 bitmap.fth	An array of bits.
+common.fth	Common words.
 elf.fth		Write an ELF executable.
 forward.fth	Declare forward references to be resolved at a later time.
 macros.fth	Use ]] [[ to simplify postponing words.
