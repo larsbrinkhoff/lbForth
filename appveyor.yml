@@ -1,0 +1,17 @@
+environment:
+  global:
+    CLISP: http://sourceforge.net/projects/clisp/files/clisp/2.49/clisp-2.49-win32-mingw-big.exe
+cache:
+  - C:\tools\cygwin
+  - C:\tools\clisp
+  - C:\ProgramData\chocolatey
+install:
+  - choco install cygwin cyg-get
+  - set PATH=C:\tools\cygwin\bin;%PATH%;C:\tools\cygwin;C:\tools\clisp
+  - choco install gcc-core make -source cygwin
+  - appveyor DownloadFile %CLISP% -FileName setup.exe
+  - setup.exe /S /D=C:\tools\clisp
+build_script: make all M32= < NUL
+test_script: make check
+artifacts:
+  - path: forth.exe
