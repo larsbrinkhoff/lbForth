@@ -1,0 +1,15 @@
+box: wercker/default
+build:
+    steps:
+        - script:
+            name: update
+            code: sudo apt-get update -y
+        - script:
+            name: install
+            code: sudo apt-get install -y sbcl gcc-multilib
+        - script:
+            name: build
+            code: make all
+        - script:
+            name: test
+            code: make check
