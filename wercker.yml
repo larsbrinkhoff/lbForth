@@ -3,7 +3,7 @@ build:
     steps:
         - script:
             name: update
-            code: sudo apt-get update -y
+            code: lsb_release -ds && sudo apt-get update -yqq
         - script:
             name: install
             code: sudo apt-get install -y sbcl gcc-multilib

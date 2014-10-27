@@ -1,7 +1,8 @@
 install_linux() {
-  sudo apt-get update
-  sudo apt-get install sbcl
-  test -z "$M32" || sudo apt-get install gcc-multilib
+  lsb_release -ds
+  sudo apt-get update -yqq
+  sudo apt-get install -y sbcl
+  test -z "$M32" || sudo apt-get install -y gcc-multilib
 }
 
 install_osx() {
