@@ -6,7 +6,7 @@ env:
   matrix:
     - M32=
     - M32=-m32
-install: sh -e .travis.sh install_${TRAVIS_OS_NAME:-linux}
+install: sh -e install-deps.sh install_${TRAVIS_OS_NAME:-linux}
 script: make check  M32=$M32
 notifications:
   email: lars@nocrew.org

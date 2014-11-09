@@ -2,14 +2,11 @@ box: wercker/default
 build:
     steps:
         - script:
-            name: update
-            code: lsb_release -ds && sudo apt-get update -yqq
-        - script:
             name: install
-            code: sudo apt-get install -y sbcl gcc-multilib
+            code: sh install-deps.sh install_linux
         - script:
             name: build
-            code: make all
+            code: make all M32=$M32
         - script:
             name: test
             code: make check
