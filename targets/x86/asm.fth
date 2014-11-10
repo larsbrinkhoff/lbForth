@@ -50,9 +50,10 @@ variable mrrm   defer ?mrrm,
 variable sib    defer ?sib,
 variable disp   defer ?disp,
 variable imm    defer ?imm,
-variable 'imm
+defer imm,
 defer immediate-opcode
 defer reg
+defer ?opsize
 
 \ Set opcode.  And destination: register or memory.
 : opcode!   3@ is immediate-opcode >r opcode ! ;
@@ -82,9 +83,11 @@ defer reg
 : disp32,   disp @ , ;
 
 \ Set operand size.
-: !op8    0 s !  ['] imm8, 'imm ! ;
-: !op32   'imm @ 0= if 1 s !  ['] imm32, 'imm ! then ;
-: !op16   'imm @ 0= if 1 s !  ['] imm16, 'imm ! 66 c, then ;
+: -opsize   2drop r> drop ;
+: opsize!   is imm,  s !  ['] -opsize is ?opsize ;
+: !op8    0 ['] imm8, ?opsize ;
+: !op32   1 ['] imm32, ?opsize ;
+: !op16   1 ['] imm16, ?opsize 66 c, ;
 
 \ Set SIB byte.
 : !sib   ['] sib, is ?sib, ;
@@ -100,7 +103,7 @@ defer reg
 : relative   -pc disp +! ;
 
 \ Set immediate operand.
-: imm!   imm !  'imm @ is ?imm, ;
+: imm!   imm !  ['] imm, is ?imm, ;
 
 \ Implements addressing modes: register, indirect, indexed, and direct.
 : reg1   rm! !reg ;
@@ -113,13 +116,14 @@ defer reg
 : addr   !disp32  05 ind ;
 
 \ Reset assembler state.
+: 0opsize   ['] opsize! is ?opsize ;
 : 0ds   d off  s off ;
 : 0reg   ['] reg1 is reg ;
 : 0mrrm   c0 mrrm !  ['] mrrm, is ?mrrm, ;
 : 0sib   ['] nop is ?sib, ;
 : 0disp   ['] nop is ?disp, ;
-: 0imm   imm off  ['] nop is ?imm,  'imm off ;
-: 0asm   0imm 0disp 0reg 0ds 0mrrm 0sib  dir? on ;
+: 0imm   imm off  ['] nop is ?imm,  0 is imm, ;
+: 0asm   0imm 0disp 0reg 0ds 0mrrm 0sib 0opsize  dir? on ;
 
 \ Enter and exit assembler mode.
 : start-code   also assembler 0asm ;
@@ -212,8 +216,8 @@ FD 0op std,
 
 \ Addressing mode syntax: immediate, indirect, and displaced indirect.
 : #   ['] imm-op -addr ;
-: )   2drop  sp? if 4 ['] idx else ['] ind then -addr  0reg ;
-: )#   2drop  sp? if 4 ['] idx# else ['] ind# then -addr  0reg ;
+: )   2drop  sp? if 4 ['] idx else ['] ind then -addr  0reg 0opsize ;
+: )#   2drop  sp? if 4 ['] idx# else ['] ind# then -addr  0reg 0opsize ;
 
 \ Define registers.
 : reg8    create ,  does> @ ['] reg -addr !op8 ;

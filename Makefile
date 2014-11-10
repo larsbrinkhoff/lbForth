@@ -28,13 +28,13 @@ test-output: test/test-input smoke-test
 	./forth < $< > $@
 	$(GREP) Test-OK $@
 
-test-assembler: test/test-asm.fth forth
-	echo 'include $< .( Asm-OK ) ' | ./forth > $@
+test-assembler: test/test-asm.fth targets/x86/asm.fth forth
+	echo 'include $< .( Asm-OK )' | ./forth > $@
 	$(GREP) Asm-OK $@
 
 smoke-test: forth
 	echo 'words cr .( Smoke-OK )' | ./forth > $@
-	$(GREP) 'Smoke-OK' $@
+	$(GREP) Smoke-OK $@
 
 clean:
 	$(TMAKE) clean

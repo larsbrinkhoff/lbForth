@@ -28,6 +28,7 @@ code assembler-test
    edi 10203040 mov,        89 3D 40 30 20 10  check
 
    bl ecx ) mov,            88 19  check
+   ecx ) bl mov,            8A 19  check
    ebx esp ) mov,           89 1C 24  check
    esi 4 esp )# mov,        89 74 24 04  check
 
