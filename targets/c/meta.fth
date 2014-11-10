@@ -27,7 +27,7 @@ re: abort   reset empty bye ;
 
  HOST-INTERPRETER and HOST-COMPILER are mostly aliases for host words,
  which are then used in the implementation of the metacompiler.  They
- are needed override the metacompiler definitions with the same names.
+ are needed to override the metacompiler definitions with the same names.
 
  The META-INTERPRETER vocabulary is searched outside colon definitions
  when metacompiling target code.  It consists mostly of defining words
