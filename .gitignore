@@ -1,5 +1,6 @@
 *.o
 forth
+forth.exe
 kernel.c
 /params*
 jump.fth
