@@ -98,7 +98,7 @@ variable state
 
 include dictionary.fth
 
-: lowercase? ( c -- flag )   dup [char] a < if drop 0 exit then [char] z 1+ < ;
+: lowercase? ( c -- flag )   dup [char] a < if drop 0 exit then [ char z 1+ ] literal < ;
 : upcase ( c1 -- c2 )   dup lowercase? if [ char A char a - ] literal + then ;
 : c<> ( c1 c2 -- flag )   upcase swap upcase <> ;
 
