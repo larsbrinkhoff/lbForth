@@ -20,6 +20,7 @@
 : d>s   drop ;
 
 : 4dup   2>r 2>r 2r@ 2r> 2r@ 2swap 2r> ;
+: 2nip   2>r 2drop 2r> ;
 : dmax   4dup d< if 2drop else 2nip then ;
 : dmin   4dup d< if 2nip else 2drop then ;
 

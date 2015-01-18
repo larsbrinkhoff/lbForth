@@ -54,7 +54,6 @@ variable  temp
 : ?dup   dup if dup then ;
 
 : nip    swap drop ;
-: 2nip   2>r 2drop 2r> ;
 
 : invert   -1 nand ;
 : negate   invert 1 + ;
