@@ -1,4 +1,4 @@
-\ -*- forth -*- Copyright 2004, 2013, 2014 Lars Brinkhoff
+\ -*- forth -*- Copyright 2004, 2013, 2014, 2015 Lars Brinkhoff
 
 \ This kernel, together with a target-specific nucleus, provides
 \ everything needed to load and compile the rest of the system from
@@ -298,10 +298,6 @@ defer quit
 
    10 base !
    [compile] [
-   s" core.fth" included
-   s" core-ext.fth" included
-   s" string.fth" included
-   s" tools.fth" included
-   s" file.fth" included
+   s" load.fth" included
    ." ok" cr
    quit ;
