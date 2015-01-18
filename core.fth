@@ -1,4 +1,4 @@
-refill   Copyright 2004, 2013 Lars Brinkhoff
+refill   Copyright 2004, 2013, 2014, 2015 Lars Brinkhoff
 drop
 
 : immediate   latestxt dup c@ negate swap c! ;
@@ -98,6 +98,8 @@ create squote   128 allot
 \ to the number of bits in a cell", this would be acceptable.
 \ : rshift   0 bits/cell rot do 2* over 0< if 1+ then under 2* loop nip ;
 : lshift   begin ?dup while 1- under 2* repeat ;
+
+: >   swap < ;
 
 : u/mod ( n d -- r q )
     ?dup 0= abort" Division by zero"

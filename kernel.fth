@@ -88,12 +88,11 @@ variable state
 : 0<   [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
 : xor   2dup nand 1+ dup + + + ;
 : <   2dup xor 0< if drop 0< else - 0< then ;
-: >   swap < ;
 
 : cmove ( addr1 addr2 n -- )   ?dup if bounds do  dup c@  i c!  1+  loop drop
    else 2drop then ;
 
-: cabs   dup 127 > if 256 swap - then ;
+: cabs   127 over < if 256 swap - then ;
 
 0 value latestxt
 
@@ -111,7 +110,7 @@ include dictionary.fth
   loop drop -1 ;
 : nt= ( ca u nt -- flag )   >name name= ;
 
-: immediate?   c@ 127 > if 1 else -1 then ;
+: immediate?   c@ 127 swap < if 1 else -1 then ;
 
 \ TODO: nt>string nt>interpret nt>compile
 \ Forth83: >name >link body> name> link> n>link l>name
@@ -149,7 +148,7 @@ defer number
    over c@ [char] - = dup >r if swap 1+ swap 1 - then
    0 rot rot
    begin dup while
-      over c@ [char] 0 - dup -1 > while dup 10 < while
+      over c@ [char] 0 - -1 over < while dup 10 < while
       2>r 1+ swap dup dup + dup + + dup +  r> + swap r> 1 -
    repeat then drop then
    ?dup ?undef drop r> if negate then  ?literal ;
