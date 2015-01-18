@@ -72,6 +72,8 @@ create squote   128 allot
 : s"   [char] " parse  >r squote r@ cmove  squote r> ;
 : s"   postpone (sliteral) [char] " parse s, ; compile-only
 
+: (abort)   data_stack 100 cells + sp!  quit ;
+' (abort) ' abort >body !
 : (abort")    cr type cr abort ;
 : abort"   postpone if postpone s" postpone (abort") postpone then ;
    compile-only

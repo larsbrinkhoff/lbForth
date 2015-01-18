@@ -131,9 +131,7 @@ include dictionary.fth
 
 : (sliteral)   r> dup @ swap cell+ 2dup + aligned >r swap ;
 
-forward: abort
-defer quit
-: abort   data_stack 100 cells + sp!  quit ;
+defer abort
 : undef ( a u -- )   ." Undefined: " type cr abort ;
 : ?undef ( a u x -- a u )   if undef then ;
 
@@ -278,6 +276,8 @@ defer parsed
    r/o open-file abort" Read error." include-file ;
 
 : dummy-catch   execute 0 ;
+
+defer quit
 
 \ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
 : warm
