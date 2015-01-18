@@ -76,7 +76,6 @@ forward: <
 : count    dup 1+ swap c@ ;
 
 : i    r> r@ swap >r ;
-: bl   32 ;
 : cr   10 emit ;
 : type   ?dup if bounds do i c@ emit loop else drop then ;
 
@@ -187,6 +186,7 @@ create context  9 cells allot
 : <source ( -- char|-1 )   source >in @ dup rot = if
    2drop -1 else + c@  1 >in +! then ;
 
+32 constant bl
 : blank?   dup bl =  over 8 = or  over 9 = or  over 10 = or  swap 13 = or ;
 : skip ( "<blanks>" -- )   begin source? while
    <source blank? 0= until -1 >in +! then ;
