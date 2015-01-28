@@ -16,10 +16,6 @@ drop
 : char   parse-name drop c@ ;
 : '   parse-name find-name 0= ?undef ;
 
-: here!   here - allot ;
-: >h      here >r here! ;
-: h>      r> here! ;
-
 : hide   latestxt >nextxt  current @ >body ! ;
 : link   current @ >body @  latestxt >lfa ! ;
 : compile-only   hide  current @  [ ' compiler-words ] literal current !

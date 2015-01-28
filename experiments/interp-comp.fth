@@ -3,6 +3,7 @@
 
 variable a
 variable n
+: here!   here - allot ;
 : start   here a !  depth n !  ] ;
 : stop   n @ depth = if postpone exit postpone  [ a @ dup here! >r then ;
 : comp'   state @  ] ' postpone [  swap state! ;
