@@ -162,8 +162,6 @@ variable input
 : source>   5 input@ ;
 6 cells constant /input-source
 
-variable base
-
 create forth  2 cells allot
 create compiler-words  2 cells allot
 create included-files  2 cells allot
@@ -296,7 +294,6 @@ defer quit
    0 included-files !  ['] compiler-words included-files cell+ !
    ['] forth dup context ! context cell+ ! 0 context 2 cells + !
 
-   10 base !
    [compile] [
    s" load.fth" included
    ." ok" cr

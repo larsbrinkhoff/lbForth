@@ -118,6 +118,8 @@ create squote   128 allot
 : abs   dup 0< if negate then ;
 : /mod   2dup xor >r abs under abs u/mod r> +- ;
 
+create base  10 ,
+
 : space   bl emit ;
 : ?.-     dup 0< if [char] - emit negate then ;
 : digit   dup 9 > if [ char A 10 - ] literal else [char] 0 then + ;
