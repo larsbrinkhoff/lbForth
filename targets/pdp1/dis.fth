@@ -21,17 +21,16 @@ base @  8 base !
 
 reg-table: reg-name   r0 r1 r2 r3 r4 r5 sp pc
 
-: nop ;
 : .,           ." , " ;
 
 : reg          0 reg-name ;
 : none         drop ;
 : unknown      u. ;
 
-: => ( op m "str w1 w2" -- )   , , bl parse ' , ' ,       s, ;
-: -> ( op m "str w" -- )       , , bl parse ' , ['] nop , s, ;
-: ---> ( op m "w" -- )         , ,          ' , ['] nop , 0 , ;
-: ===> ( op m "w1 w2" -- )     , ,          ' , ' ,       0 , ;
+: => ( op m "str w1 w2" -- )   , , bl parse ' , ' ,        s, ;
+: -> ( op m "str w" -- )       , , bl parse ' , ['] noop , s, ;
+: ---> ( op m "w" -- )         , ,          ' , ['] noop , 0 , ;
+: ===> ( op m "w1 w2" -- )     , ,          ' , ' ,        0 , ;
 
 create table-start
 \  op     mask      name xt

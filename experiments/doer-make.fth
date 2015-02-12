@@ -1,12 +1,12 @@
 \ From "Thinking Forth".
 
 variable marker
-: doer   create ['] nop >body ,  does> @ >r ;
+: doer   create ['] noop >body ,  does> @ >r ;
 : (make)   r> dup cell+  dup cell+ swap @ >body !  @ ?dup if >r then ;
 : make   ' >body ! postpone [ !csp ;
 : make   postpone (make)  here marker ! 0 , ; compile-only
 : ;and   postpone exit  here marker @ ! ; immediate
-: undo   ['] nop >body  ' >body ! ;
+: undo   ['] noop >body  ' >body ! ;
 
 doer why?
 : recital

@@ -61,7 +61,7 @@ defer ?opsize
 : !mem   dir? off ;
 
 \ Set bits in mod/reg/rm byte.
-: -mrrm   ['] nop is ?mrrm, ;
+: -mrrm   ['] noop is ?mrrm, ;
 : mod!   mrrm c0 !bits ;
 : reg@   mrrm 38 @bits ;
 : reg!   mrrm 38 !bits ;
@@ -120,9 +120,9 @@ defer ?opsize
 : 0ds   d off  s off ;
 : 0reg   ['] reg1 is reg ;
 : 0mrrm   c0 mrrm !  ['] mrrm, is ?mrrm, ;
-: 0sib   ['] nop is ?sib, ;
-: 0disp   ['] nop is ?disp, ;
-: 0imm   imm off  ['] nop is ?imm,  0 is imm, ;
+: 0sib   ['] noop is ?sib, ;
+: 0disp   ['] noop is ?disp, ;
+: 0imm   imm off  ['] noop is ?imm,  0 is imm, ;
 : 0asm   0imm 0disp 0reg 0ds 0mrrm 0sib 0opsize  dir? on ;
 
 \ Enter and exit assembler mode.
@@ -145,7 +145,7 @@ defer ?opsize
 
 \ Define instruction formats.
 : instruction,   opcode! opcode, ?mrrm, ?sib, ?disp, ?imm, 0asm ;
-: mnemonic ( u a "name" -- ) create ['] nop 3,  does> instruction, ;
+: mnemonic ( u a "name" -- ) create ['] noop 3,  does> instruction, ;
 : format:   create ] !csp  does> mnemonic ;
 : immediate:   ' latestxt >body ! ;
 

@@ -15,7 +15,7 @@
 \ Return stack:		>r r>
 \ I/O:			emit open-file read-file close-file
 
-: nop ;
+: noop ;
 
 create data_stack     110 cells allot
 create return_stack   256 cells allot
@@ -79,8 +79,8 @@ forward: <
 : cr   10 emit ;
 : type   ?dup if bounds do i c@ emit loop else drop then ;
 
-\ Put the xt inside the definition of EXECUTE, overwriting the last nop.
-: execute   [ here cell + ] ['] nop ! then nop ;
+\ Put the xt inside the definition of EXECUTE, overwriting the last noop.
+: execute   [ here cell + ] ['] noop ! then noop ;
 : perform   @ execute ;
 
 variable state
@@ -258,7 +258,7 @@ defer parsed
 : 0source   'prompt !  'refill !  source# !  'source !  0 source> ! ;
 : source, ( 'source sourceid refill prompt -- )
    input @ >r  here input !  /input-source allot  0source  r> input ! ;
-: file,   0 0 ['] file-refill ['] nop source,  /file allot ;
+: file,   0 0 ['] file-refill ['] noop source,  /file allot ;
 : +file   here source> !  file, ;
 : file>   source> @  ?dup if input ! else +file then ;
 : alloc-file   file-source input ! begin 'source @ while file> repeat ;
@@ -280,7 +280,7 @@ defer quit
 \ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
 : warm
    ." lbForth" cr
-   ['] nop dup is backtrace is also
+   ['] noop dup is backtrace is also
    ['] dummy-catch is catch
    ['] (number) is number
    ['] (parsed) is parsed

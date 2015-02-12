@@ -212,7 +212,7 @@ variable hld
 
 : string-refill   0 ;
 
-create string-source   0 -1 ' string-refill ' nop source,
+create string-source   0 -1 ' string-refill ' noop source,
 
 : string-input ( a u -- )   string-source input !  0 >in !
    #source !  'source ! ;

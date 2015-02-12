@@ -39,9 +39,8 @@ defer a^
 : !ad16      ['] reg-name16 ['] h^ address! ;
 : !ad32      ['] reg-name32 ['] ^  address! ;
 
-: nop ;
 : segment! is ?segment-reg is segment-reg ;
-: .ds ." ds:" ;   : !ds ['] .ds ['] nop segment! ;
+: .ds ." ds:" ;   : !ds ['] .ds ['] noop segment! ;
 : .es ." es:" ;   : !es ['] .es dup segment! ;
 : .cs ." cs:" ;   : !cs ['] .cs dup segment! ;
 : .ss ." ss:" ;   : !ss ['] .ss dup segment! ;
@@ -167,14 +166,14 @@ vocabulary opcodes
 : ?shift   dup 100 < if 8<< 8<< then ;
 : data   ?shift , , , , ;
 : =>   name ' ' data ;
-: ->   name ['] nop ' data ;
+: ->   name ['] noop ' data ;
 *)
 
 also forth \ Override bl.
-: => ( op m "str w1 w2" -- )   , , bl parse ' , ' ,       s, ;
-: -> ( op m "str w" -- )       , , bl parse ' , ['] nop , s, ;
-: ---> ( op m "w" -- )         , ,          ' , ['] nop , 0 , ;
-: ===> ( op m "w1 w2" -- )     , ,          ' , ' ,       0 , ;
+: => ( op m "str w1 w2" -- )   , , bl parse ' , ' ,        s, ;
+: -> ( op m "str w" -- )       , , bl parse ' , ['] noop , s, ;
+: ---> ( op m "w" -- )         , ,          ' , ['] noop , 0 , ;
+: ===> ( op m "w1 w2" -- )     , ,          ' , ' ,        0 , ;
 previous
 
 create table-start

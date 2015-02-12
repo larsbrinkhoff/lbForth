@@ -126,8 +126,8 @@ defer does+
    does> @+ swap @+ does+ ;
 vocabulary does-table  also does-table definitions previous
 
-0 does: create nop
-0 does: variable nop
+0 does: create noop
+0 does: variable noop
 1 does: constant dup
 1 does: value dup
 0 does: defer perform
