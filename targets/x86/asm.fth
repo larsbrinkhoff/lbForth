@@ -1,4 +1,4 @@
-\ Copyright 2013-2014 Lars Brinkhoff
+\ Copyright 2013-2015 Lars Brinkhoff
 
 \ Assembler for x86.
 

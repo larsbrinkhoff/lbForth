@@ -1,4 +1,4 @@
-\ Copyright Lars Brinkhoff 2013-2014.
+\ Copyright Lars Brinkhoff 2013-2015.
 
 require search.fth
 [undefined] assembler [if] vocabulary assembler [then]

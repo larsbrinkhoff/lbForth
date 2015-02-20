@@ -1,4 +1,4 @@
-refill   Copyright 2004, 2013, 2014, 2015 Lars Brinkhoff
+refill   Copyright 2004, 2013-2015 Lars Brinkhoff
 drop
 
 : immediate   latestxt dup c@ negate swap c! ;
