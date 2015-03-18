@@ -125,10 +125,6 @@ defer ?opsize
 : 0imm   imm off  ['] noop is ?imm,  0 is imm, ;
 : 0asm   0imm 0disp 0reg 0ds 0mrrm 0sib 0opsize  dir? on ;
 
-\ Enter and exit assembler mode.
-: start-code   also assembler 0asm ;
-: end-code     align previous ;
-
 \ Implements addressing mode: immediate.
 : imm8?   imm @ byte? ;
 : ?sign-extend   d off  imm8? if 2 d !  ['] imm8, is ?imm, then ;
@@ -233,6 +229,10 @@ drop
 
 \ Runtime for ;CODE.  CODE! is defined elsewhere.
 : (;code)   r> code! ;
+
+\ Enter and exit assembler mode.
+: start-code   also assembler 0asm ;
+: end-code     align previous ;
 
 base !  only forth definitions  also assembler
 
