@@ -5,3 +5,4 @@ forward.fth	Declare forward references to be resolved at a later time.
 macros.fth	Use ]] [[ to simplify postponing words.
 mem.fth		Read and write 16/32/64-bit words.
 pe.fth		Write a PE executable.
+quotations.fth	Quotations using [: ;] notation.
