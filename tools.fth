@@ -65,13 +65,13 @@ is backtrace
 : see-line ( addr -- )
     cr dup .addr  @ disassemble ;
 
-: see-xt ( xt -- )
+: see' ( xt -- )
     dup >end swap
     >r ." : " r@ id.
     r@ >body do i see-line cell +loop
     ."  ;" r> c@ 127 > if ."  immediate" then ;
 
-: see   ' see-xt cr ;
+: see   ' see' cr ;
 
 : #body   ' dup >end swap >body - ;
 
@@ -140,8 +140,8 @@ finders [alias  def com imm
 finders redefine-xt   redefine redefine (redefi)
 : re:        : latestxt dup count find-name redefine-xt ;
 
-: xt-bounds ( xt -- end start)   dup >end swap >body ;
+: bounds' ( xt -- end start)   dup >end swap >body ;
 : .nt ( nt -- nt )   dup id. ;
-: xref-foo ( xt nt -- xt flag )
-   dup xt-bounds do over i @ = if .nt leave then cell +loop drop 1 ;
-: xref ( "name" -- )   ' context @ ['] xref-foo traverse-wordlist drop ;
+: xref' ( xt nt -- xt flag )
+   dup bounds' do over i @ = if .nt leave then cell +loop drop 1 ;
+: xref ( "name" -- )   ' context @ ['] xref' traverse-wordlist drop ;

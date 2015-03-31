@@ -48,13 +48,13 @@ here constant see-end
 : does-bounds ( xt--end start)  >does @ dup 40 + swap ;
 : .immediate ( xt -- )          immediate? 0> if ."  immediate" then ;
 : .; ( xt -- )                  ."  ;" immediate? 0> if ."  immediate" then ;
-: see-colon ( xt -- )           ." : " dup id.  dup xt-bounds see-thread  .; ;
+: see-colon ( xt -- )           ." : " dup id.  dup bounds' see-thread  .; ;
 : colon? ( xt -- f )            >does @ [ ' : >does @ ] literal = ;
 
 : see-does ( xt -- )
    dup colon? if see-colon exit then
    ." create " dup id.
-   dup xt-bounds see-data
+   dup bounds' see-data
    cr ." does> "
    dup does-bounds see-thread
    .; ;
@@ -70,10 +70,10 @@ create see-codes
    ' dodoes >code @ ,  ' see-does ,
 here constant see-end
 
-: see-xt2 ( xt -- )
+: see2' ( xt -- )
     dup >code @ ( xt cfa )
     see-end see-codes do
        dup i @ = if drop i cell+ @ execute unloop exit then
     2 cells +loop drop see-code ;
 
-: see2   ' see-xt2 cr ;
+: see2   ' see2' cr ;
