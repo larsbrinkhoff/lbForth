@@ -41,4 +41,4 @@ only forth definitions
 
 : body>xt      [ 0 >body ] literal - ;
 : vocabulary   create (wordlist)  does> body>xt context ! ;
-: vocs         voc-link @ begin ?dup while dup id. >body cell+ @ repeat ;
+: vocs         voc-link begin @ ?dup while dup id. >body cell+ repeat ;
