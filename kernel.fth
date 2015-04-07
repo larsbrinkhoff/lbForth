@@ -89,7 +89,7 @@ variable state
 : xor   2dup nand 1+ dup + + + ;
 : <   2dup xor 0< if drop 0< else - 0< then ;
 
-: cmove ( addr1 addr2 n -- )   ?dup if bounds do  dup c@  i c!  1+  loop drop
+: cmove ( addr1 addr2 n -- )   ?dup if bounds do count i c! loop drop
    else 2drop then ;
 
 : cabs   127 over < if 256 swap - then ;
