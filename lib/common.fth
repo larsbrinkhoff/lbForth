@@ -2,6 +2,10 @@
 : off   0 swap ! ;
 
 : c+!   dup >r c@ + r> c! ;
+: c!+   tuck c! 1+ ;
+: c@+   dup 1+ swap c@ ;
+
+: place ( a u a2 ) over swap c@+ cmove ;
 
 : 2,   , , ;
 : 3,   , , , ;
