@@ -64,9 +64,14 @@ finders postpone-xt   postpone, abort compile,
 
 create squote   128 allot
 
-: s,   dup , string, ;
-: s"   [char] " parse  >r squote r@ cmove  squote r> ;
-: s"   postpone (sliteral) [char] " parse s, ; compile-only
+: parse"   [char] " parse ;
+: s,   dup , ", ;
+: ,s"   parse" s, ;
+: s"   parse" >r squote r@ cmove  squote r> ;
+: s"   postpone (sliteral) ,s" ; compile-only
+: ,s"  postpone s" postpone s, ; compile-only
+: ,"   parse" move, ;
+: ,"   postpone s" postpone move, ; compile-only
 
 : (abort)   data_stack 100 cells + sp!  quit ;
 ' (abort) ' abort >body !

@@ -33,7 +33,7 @@ B7 constant arm64
 variable entry-offset
 54 entry-offset !
 
-: ident, ( -- )   7F c, s" ELF" string, 00010101 w, 8 zeros, ;
+: ident, ( -- )   7F c, ," ELF" 00010101 w, 8 zeros, ;
 : type, ( u -- )   executable h, h, 1 w, ;
 : entry, ( a -- a )   dup entry-offset @ + a, ;
 : tables, ( -- )   34 h, 20 h, 1 h, 6 zeros, ;

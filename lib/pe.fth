@@ -36,18 +36,17 @@ base @ hex
 
 ( Data types )
 
-: s, ( a u -- )   here swap dup allot cmove ;
 : zeros, ( u -- )   here swap dup allot erase ;
 : h+! ( u a -- )   dup h@ rot + swap h! ;
 : w+! ( u a -- )   dup w@ rot + swap w! ;
 
 ( MZ header )
 
-: mzhdr, ( -- )   s" MZ" s, 3A zeros, 40 w, ;
+: mzhdr, ( -- )   ," MZ" 3A zeros, 40 w, ;
 
 ( PE header )
 
-: pesig, ( -- )   s" PE" s, 0 h, ;
+: pesig, ( -- )   ," PE" 0 h, ;
 : pehdr, ( -- )   pesig,  x86 h,  10 zeros,  exe h, ;
 
 ( Optional header; required for executables )

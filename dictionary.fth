@@ -9,9 +9,10 @@ variable dp
 : aligned   cell + 1 - cell negate nand invert ;
 : align     dp @ aligned dp ! ;
 
-: ,          here !  cell allot ;
-: c,         here c!  1 allot ;
-: string,    here over allot align  swap cmove ;
+: ,       here !  cell allot ;
+: c,      here c!  1 allot ;
+: move,   here swap dup allot cmove ;
+: ",      move, align ;
 
 include jump.fth
 
@@ -31,7 +32,7 @@ variable current
 : link, ( nt -- )      to latestxt  current @ >body @ , ;
 : reveal               latestxt  current @ >body ! ;
 : #name ( -- u )       NAME_LENGTH 1 - ;
-: name, ( a u -- )     #name min c,  #name string, ;
+: name, ( a u -- )     #name min c,  #name ", ;
 : header, ( a u -- )   align here >r name, r> link, 0 , ;
 
 : cells   [ cell 1 > ] [if] dup + [then]

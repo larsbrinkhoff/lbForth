@@ -16,7 +16,9 @@
 
 : string+   count + aligned ;
 : (c")   r> dup string+ >r ;
-: c"   postpone (c")  [char] " parse  dup c,  string, ; compile-only
+: string,   dup c, ", ;
+: ,c"   parse" string, ;
+: c"   postpone (c") ,c" ; compile-only
 
 : convert   char+ 65535 >number drop ;
 

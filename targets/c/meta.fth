@@ -287,7 +287,7 @@ interpreter-context definitions also host-interpreter
 : check-colon-runtime   s" :" target-xt >body colon-runtime-offset + @
    s" >r" target-xt <> if ." Bad offset into colon definition." cr bye then ;
 
-: s,   dup , string, ;
+: s,   dup , ", ;   \ Redefined to use target dictionary.
 
 only forth definitions
 : resolve ( xt -- )   dup >name target-xt  swap >body @
@@ -341,7 +341,7 @@ only forth also meta-interpreter also meta-compiler definitions also host-interp
    t-postpone compile, ; immediate
 : [compile]   parse-name target, ; immediate
 
-: s"   t-postpone (sliteral)  [char] " parse  s, ; immediate
+: s"   t-postpone (sliteral) parse" s, ; immediate
 : ."   [M] s"  t-postpone type ; immediate
 : [char]   char t-postpone literal ; immediate
 : abort"   t-postpone if [M] s" t-postpone cr t-postpone type t-postpone cr
