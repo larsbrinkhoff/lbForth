@@ -23,3 +23,5 @@
 
 : ascii   char ;
 : ascii   postpone [char] ; compile-only
+
+: clear   begin depth while drop repeat ;

@@ -13,10 +13,11 @@
 
 require search.fth
 require lib/bitmap.fth
+require lib/common.fth
 
 : reset   only forth definitions  decimal ;
 reset
-re: abort   reset empty bye ;
+re: abort   reset clear bye ;
 
 (* A note about the vocabularies.
 

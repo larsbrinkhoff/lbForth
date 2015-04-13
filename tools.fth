@@ -8,10 +8,6 @@
          dup @ . cell -
        repeat r> 2drop ;
 
-: .s"   postpone s" postpone type postpone .s postpone cr ; immediate
-
-: empty   begin depth while drop repeat ;
-
 : ?   @ . ;
 
 : ?dot         dup 32 127 within 0= if drop [char] . then ;
@@ -139,9 +135,3 @@ finders [alias  def com imm
 : (redefi)   immediate redefine ;
 finders redefine-xt   redefine redefine (redefi)
 : re:        : latestxt dup count find-name redefine-xt ;
-
-: bounds' ( xt -- end start)   dup >end swap >body ;
-: .nt ( nt -- nt )   dup id. ;
-: xref' ( xt nt -- xt flag )
-   dup bounds' do over i @ = if .nt leave then cell +loop drop 1 ;
-: xref ( "name" -- )   ' context @ ['] xref' traverse-wordlist drop ;

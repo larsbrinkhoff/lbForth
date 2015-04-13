@@ -7,3 +7,4 @@ mem.fth		Read and write 16/32/64-bit words.
 pe.fth		Write a PE executable.
 quotations.fth	Quotations using [: ;] notation.
 trace.fth	Debug facility.
+where.fth	Where is a word used?
