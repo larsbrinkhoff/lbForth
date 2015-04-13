@@ -111,6 +111,7 @@ format: op300   !op300 ;
 150 op0 preceding-char,
 151 op0 current-column,
 152 op0 indent-to,
+153 op0 scan-buffer, \ Obsolete in v18.
 154 op0 eolp,
 155 op0 eobp,
 156 op0 bolp,
@@ -118,6 +119,7 @@ format: op300   !op300 ;
 160 op0 current-buffer,
 161 op0 set-buffer,
 162 op0 save-current-buffer-1,
+163 op0 set-mark, \ Obsolete in v18
 164 op0 interactive-p, \ Obsolete in 24.1.
 165 op0 forward-char,
 166 op0 forward-word,
