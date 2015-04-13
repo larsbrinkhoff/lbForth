@@ -5,8 +5,9 @@
 \ Adds to FORTH vocabulary: ASSEMBLER CODE ;CODE.
 \ Creates ASSEMBLER vocabulary with: END-CODE and Emacs bytecodes.
 
-require lib/common.fth
 require search.fth
+require lib/base.fth
+require lib/common.fth
 
 vocabulary assembler
 also assembler definitions
@@ -198,11 +199,12 @@ only forth definitions  also assembler
 : code    create ( parse-name header, ?code, ) start-code  ;
 : ;code   postpone (;code) reveal postpone [ ?csp start-code ; immediate
 
+base !  previous
+
 0 [if]
-octal
-: return?   207 = ;
+: return?   o# 207 = ;
 : .byte   ." \" (.) ;
-: dasm    base @ octal swap begin c@+ dup .byte return? until drop  base ! ;
+: dasm    8 base> begin c@+ dup .byte return? until drop ;
 : bytecode   ." #[0 " [char] " emit dasm [char] " emit ."  [42] 2]" cr ;
 
 code bar
@@ -215,5 +217,3 @@ end-code
 
 bar bytecode
 [then]
-
-base !  previous

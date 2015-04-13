@@ -1,3 +1,4 @@
+base.fth        Numbers in various bases.
 bitmap.fth	An array of bits.
 common.fth	Common words.
 elf.fth		Write an ELF executable.
