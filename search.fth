@@ -10,7 +10,7 @@ create voc-link  ' included-files ,
 : set-current      current ! ;
 : definitions      context @ set-current ;
 : (wordlist)       0 ,  latestxt voc-link chain, ;
-: wordlist         :noname (wordlist) ?csp ;
+: wordlist         :noname (wordlist) reveal postpone [ ?csp ;
 
 ( Search-Order extension words. )
 
