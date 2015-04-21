@@ -37,8 +37,6 @@ variable span
 
 : hex   16 base ! ;
 
-\ TODO: marker
-
 : pick   ?dup if swap >r 1- recurse r> swap exit then dup ;
 : roll   ?dup if swap >r 1- recurse r> swap then ;
 
@@ -49,6 +47,28 @@ variable span
 : to      ' >body postpone literal postpone ! ; compile-only
 : +to     ' >body +! ;
 : +to     ' >body postpone literal postpone +! ; compile-only
+
+: @+ ( addr -- a' x )   dup cell+ swap @ ;
+
+create voc-link  ' included-files ,
+
+: current,   current @ , ;
+: context,   context 9 cells move, ;
+: latestxt,   latestxt , ;
+: voc-link,   voc-link @ , ;
+: vocs,   voc-link begin @ ?dup while >body dup @ , cell+ repeat ;
+: marker,   current, context, latestxt, voc-link, vocs, ;
+
+: here!   dup dp ! ;
+: current!   @+ current ! ;
+: context!   dup context 9 cells cmove  9 cells + ;
+: latestxt!   @+ to latestxt ;
+: voc-link!   @+ voc-link ! ;
+: voc! ( a1 a2 -- a1' a2' ) >body >r @+ r@ ! r> ;
+: vocs!   voc-link begin @ ?dup while voc! cell+ repeat ;
+: marker!    here! current! context! latestxt! voc-link! vocs! drop ;
+
+: marker   here marker, create ,  does> @ marker! ;
 
 : tuck    swap over ;
 

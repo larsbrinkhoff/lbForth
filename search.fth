@@ -1,7 +1,5 @@
 ( Search-Order words. )
 
-create voc-link  ' included-files ,
-
 : forth-wordlist   ['] forth ;
 : get-current      current @ ;
 : ord ( n addr )   @+ ?dup if >r under 1+ recurse r> swap
