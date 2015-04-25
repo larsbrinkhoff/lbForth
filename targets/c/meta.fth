@@ -69,9 +69,8 @@ defer number,
 defer t-compile,
 action-of number constant host-number
 
-: (create) ( a u -- )   input>r string-input create r>input ;
 : host-word ( xt a u -- )   get-current >r ['] target set-current
-   (create) , r> set-current  does> @ t-compile, ;
+   "create , r> set-current  does> @ t-compile, ;
 
 : copy   >in @ >r : r> >in !  ' compile, postpone ; ;
 : immediate:   copy immediate ;

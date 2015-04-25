@@ -24,7 +24,8 @@ drop
 : dodoes_code   [ ' dodoes >code @ ] literal ;
 : does>     [ ' (does>) ] literal compile,  dodoes_code does, ; compile-only
 : code,   code! cell allot ;
-: create    parse-name header, dodoes_code code,  reveal does> ;
+: "create   header, dodoes_code code,  reveal does> ;
+: create    parse-name "create ;
 
 : postpone,   [ ' literal compile, ' compile, ] literal compile, ;
 \ Same as:    postpone literal  postpone compile, ;
