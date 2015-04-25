@@ -186,6 +186,8 @@ format: op300   !op300 ;
 266 op1 discardN,
 300 op300 constant,
 
+: discard-preserving-tos,   o# 200 or discardN, ;
+
 \ Runtime for ;CODE.  CODE! is defined elsewhere.
 : (;code)   r> code! ;
 
