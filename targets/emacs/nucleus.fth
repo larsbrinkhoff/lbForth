@@ -147,19 +147,15 @@ code drop
    discard,
 end-code
 
-code 2drop
-   2 discardN,
-end-code
-
 code nip ( x1 x2 -- x2 )
    1 discard-preserving-tos,
 end-code
 
 code swap ( x1 x2 -- x2 x1 )
-   (temp1) varset,
-   (temp2) varset,
-   (temp2) varref,
-   (temp1) varset,
+   dup,
+   2 stack-ref,
+   2 stack-set,
+   2 stack-set,
 end-code
 
 code over ( x1 x2 -- x1 x2 x1 )
@@ -167,11 +163,33 @@ code over ( x1 x2 -- x1 x2 x1 )
 end-code
 
 code rot ( x1 x2 x3 -- x2 x3 x1 )
-   ?
+   dup,
+   3 stack-ref,
+   3 stack-ref,
+   5 stack-set,
+   2 stack-set,
+   2 stack-set,
+end-code
+
+code -rot ( x1 x2 x3 -- x3 x1 x2 )
+   dup,
+   3 stack-ref,
+   3 stack-ref,
+   3 stack-set,
+   3 stack-set,
+   3 stack-set,
 end-code
 
 code tuck ( x1 x2 -- x2 x1 x2 )
-   ?
+   dup,
+   dup,
+   3 stack-ref,
+   3 stack-set,
+   3 stack-set,
+end-code
+
+code 2drop
+   2 discardN,
 end-code
 
 code 2dup ( x1 x2 -- x1 x2 x1 x2 )
@@ -179,7 +197,79 @@ code 2dup ( x1 x2 -- x1 x2 x1 x2 )
    1 stack-ref,
 end-code
 
+code 2nip ( x1 x2 x3 x4 -- x3 x4 )
+   2 stack-set,
+   2 stack-set,
+end-code
+
+code 2swap ( x1 x2 x3 x4 -- x3 x4 x1 x2 )
+   3 stack-ref,
+   3 stack-ref,
+   3 stack-ref,
+   3 stack-ref,
+   6 stack-set,
+   6 stack-set,
+   2 stack-set,
+   2 stack-set,
+end-code
+
 code 2over ( x1 x2 x3 x4 -- x1 x2 x3 x4 x1 x2 )
    3 stack-ref,
    3 stack-ref,
+end-code
+
+code =
+   eq,
+end-code
+
+code 1-
+   sub1,
+end-code
+
+code 1+
+   add1,
+end-code
+
+code >
+   gtr,
+end-code
+
+code <
+   lss,
+end-code
+
+code <=
+   leq,
+end-code
+
+code >=
+   geq,
+end-code
+
+code -
+   diff,
+end-code
+
+code negate
+   negate,
+end-code
+
+code max
+   max,
+end-code
+
+code min
+   min,
+end-code
+
+code *
+   mult,
+end-code
+
+code /
+   quo,
+end-code
+
+code mod
+   rem,
 end-code
