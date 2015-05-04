@@ -4,6 +4,7 @@
 : c+!   dup >r c@ + r> c! ;
 : c!+   tuck c! 1+ ;
 : c@+   dup 1+ swap c@ ;
+: "@+ ( a u -- a' u' c ) >r c@+ r> 1- swap ;
 
 : place ( a u a2 ) over swap c@+ cmove ;
 
