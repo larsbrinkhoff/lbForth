@@ -186,6 +186,8 @@ format: op300   !op300 ;
 266 op1 discardN,
 300 op300 constant,
 
+: constant,   dup o# 77 > if constant2, else constant, then ;
+: stack-set,   dup o# 377 > if stack-set2, else stack-set, then ;
 : discard-preserving-tos,   o# 200 or discardN, ;
 
 \ Runtime for ;CODE.  CODE! is defined elsewhere.
@@ -210,7 +212,7 @@ base !  previous
 : bytecode   ." #[0 " [char] " emit dasm [char] " emit ."  [42] 2]" cr ;
 
 code bar
-   0 constant2,
+   0 constant,
    dup,
    1 discardN,
    here 2 + Rgoto,
