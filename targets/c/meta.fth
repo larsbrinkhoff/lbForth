@@ -281,9 +281,6 @@ interpreter-context definitions also host-interpreter
 : [undefined]   parse-name t-defined? ; immediate
 : [defined]     postpone [undefined] 0= ; immediate
 
-: ?end ( xt nt -- nt 0 | xt 1 )   2dup < if rot drop swap -1 else drop 0 then ;
-: >end ( xt -- a )   here swap t-wordlist ['] ?end traverse-wordlist drop ;
-
 : check-colon-runtime   s" :" target-xt >body colon-runtime-offset + @
    s" >r" target-xt <> if ." Bad offset into colon definition." cr bye then ;
 
@@ -380,18 +377,8 @@ only forth definitions
 ' meta-number is number,
 
 only forth definitions also meta-interpreter also host-interpreter
-: t-id.     >name type space ;
-: t-.nt     t-id. 1 ;
-: t-words   t-wordlist ['] t-.nt traverse-wordlist ;
-: t-used    here t-dictionary - ;
-: t'        parse-name t-wordlist search-wordlist 0= abort" Unknown?" ;
-: t-xt?     1 t-wordlist ['] xt?? traverse-wordlist nip 0= ;
-
-: t-disassemble   dup . dup t-xt? if t-id. else drop then ;
-: t-see-line   cr dup .addr  @ t-disassemble ;
-: body-bounds   dup >end swap >body ;
-: t-see-xt   ." : " dup t-id.  body-bounds do i t-see-line cell +loop ;
-: t-see   t' t-see-xt ." ;" ;
+: t-xt?   >r latestxt begin ?dup while dup r@ <> while >nextxt
+          repeat drop 1 else 0 then r> drop ;
 
 : .ref   ?dup if ." &" >name .mangled ." _word" else ." 0" then ;
 : .a ( xt a1 -- xt )   over .ref over - case
@@ -432,10 +419,12 @@ only forth definitions also meta-interpreter also host-interpreter
    .ref drop cell then then then ;
 : .number   (.) ." U" cell ;
 : .cell   .cr dup t-xt? if .xt else nip .number then ., ;
+: search-prev   >r latestxt begin dup >nextxt r@ <> while >nextxt repeat r> drop ;
+: >prevxt   dup latestxt = if drop here else search-prev then ;
+: body-bounds   dup >prevxt swap >body ;
 : .body   body-bounds ?do i @+ .cell +loop ;
 : .}   cr ." } };" cr ;
 : .word   dup .{  dup .name  dup .link  dup .does  dup .code  .body  .} ;
-: >prevxt   >r latestxt begin dup >nextxt r@ <> while >nextxt repeat r> drop ;
 : disassemble-target-dictionary
    0 begin >prevxt dup .word dup latestxt = until drop ;
 
