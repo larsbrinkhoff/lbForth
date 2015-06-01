@@ -1,4 +1,4 @@
-\ Nucleus for x86.  Copyright 2014 Lars Brinkhoff.
+\ Nucleus for x86.  Copyright 2014-2015 Lars Brinkhoff.
 
 \	Legacy	ITC	DTC	STC
 \ IP	eax	eax		pc
@@ -226,5 +226,157 @@ end-code
 \ code close-file ( fileid -- ior )
 \ code open-file ( addr u mode -- fileid ior )
 \ code read-file ( addr u1 fileid -- u2 ior )
+
+code branch
+   IP ) IP mov,
+   next,
+end-code
+
+code execute
+   SP ecx mov,
+   ecx ) W mov,
+   4 # ecx add,
+   ecx SP mov,
+   FF c, 62 c, 18 c,  \ 18 W )# jmp,
+end-code
+
+code r@
+   RP edx mov,
+   edx ) ecx mov,
+   SP edx mov,
+   4 # edx sub,
+   ecx edx ) mov,
+   edx SP mov,
+   next,
+end-code
+
+code 0=
+   SP W mov,		\ 8B 15 74 B9 04 08
+   W ) ecx mov,		\ 8B 0A
+   1 # ecx sub,		\ 83 E9 01	ecx neg, cmc, \ F7 D9 F5
+   ecx ecx sbb,		\ 1B C9
+   ecx W ) mov,		\ 89 0A
+   next,		\ C3
+end-code
+
+code 0<>
+   SP W mov,		\ 8B 15 74 B9 04 08
+   W ) ecx mov,		\ 8B 0A
+   ecx neg,		\ F7 D9
+   ecx ecx sbb,		\ 1B C9
+   ecx W ) mov,		\ 89 0A
+   next,		\ C3
+end-code
+
+code drop
+   SP W mov,
+   4 # W add,
+   W SP mov,
+   next,
+end-code
+
+code dup
+   SP W mov,
+   W ) ecx mov,
+   4 # W sub,
+   ecx W ) mov,
+   W SP mov,
+   next,
+end-code
+
+code nip
+   SP W mov,
+   W ) ecx mov,
+   4 # W add,
+   ecx W ) mov,
+   W SP mov,
+   next,
+end-code
+
+code swap
+   SP W mov,
+   W ) ecx mov,
+   ecx 4 W )# xchg,
+   ecx W ) mov,
+   next,
+end-code
+
+code over
+   SP W mov,
+   4 W )# ecx mov,
+   4 # W sub,
+   ecx W ) mov,
+   W SP mov,
+   next,
+end-code
+
+\ code tuck ( x1 x2 -- x2 x1 x2 )
+\ code rot
+\ code -rot
+\ code 2drop
+\ code 2dup
+\ code 2nip
+\ code 2swap
+\ code 2over
+\ code 2tuck
+\ code 2rot
+
+code negate
+   SP W mov,
+   W ) ecx mov,
+   ecx neg,
+   ecx W ) mov,
+   next,
+end-code
+
+code -
+   SP W mov,
+   4 W )# ecx mov,
+   W ) ecx sub,
+   W 4 # add,
+   ecx W ) mov,
+   W SP mov,
+   next,
+end-code
+
+code =
+   SP W mov,
+   W ) ecx mov,
+   W 4 # add,
+   W ) ecx sub,
+   1 # ecx sub,
+   ecx ecx sbb,
+   ecx W ) mov,
+   W SP mov,
+   next,
+end-code
+
+code <>
+   SP W mov,
+   W ) ecx mov,
+   W 4 # add,
+   W ) ecx sub,
+   ecx neg,
+   ecx ecx sbb,
+   ecx W ) mov,
+   W SP mov,
+   next,
+end-code
+
+\ code 1+
+\ code 1-
+\ code >
+\ code <
+\ code <=
+\ code >=
+\ code max
+\ code min
+\ code *
+\ code /
+\ code mod
+\ code invert
+\ code or
+\ code xor
+\ code and
 
 decimal
