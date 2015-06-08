@@ -159,6 +159,7 @@ format: 1imm8   !op8 op -mrrm ;
 00 2op add,  immediate: alu#
 08 2op or,   immediate: alu#
 0F44 2op-ds cmove,  \ Todo: other condition codes.
+0F45 2op-ds cmovne,
 0FB6 2op-ds movzx,
 0FBE 2op-ds movsx,
 10 2op adc,  immediate: alu#
@@ -182,6 +183,18 @@ format: 1imm8   !op8 op -mrrm ;
 8D 2op-ds lea,
 \ 8F/0 pop, rm
 90 0op nop,
+A4 0op movsb,
+\ A5 0op movsw,
+A5 0op movsd,
+A6 0op cmpsb,
+\ A7 0op cmpsw,
+A7 0op cmpsd,
+AA 0op stosb,
+\ AB 0op stosw,
+AB 0op stosd,
+AC 0op lodsb,
+\ AD 0op lodsw,
+AD 0op lodsd,
 C3 0op ret,
 \ C6/0 immediate mov to r/m
 \ C7/0 immediate mov to r/m
