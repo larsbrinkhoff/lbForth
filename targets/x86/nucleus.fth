@@ -1,20 +1,23 @@
 \ Nucleus for x86.  Copyright 2014-2015 Lars Brinkhoff.
 
 \	Legacy	ITC	DTC	STC
-\ IP	eax	eax		pc
+\ IP	eax			pc
 \ W	edx	edx
-\ SP	memory	esp	esp
-\ RP	memory			esp
-\ T
+\ SP	memory	esp	esp	esi?
+\ RP	memory	esi?		esp
+\ T		eax	eax	eax
+
+hex
 
 also assembler definitions
-: next,    ret, ;
 : SP   [ also forth ] sp [ previous ] ;
 : IP   eax ;
 : W   edx ;
+: next,   
+   IP ) W mov,
+   4 # IP add,
+   FF c, 62 c, 18 c, ;  \ 18 W )# jmp,
 previous definitions
-
-hex
 
 code cold
   \ Initialise dp, IP, SP, RP.
@@ -251,21 +254,20 @@ code r@
 end-code
 
 code 0=
-   SP W mov,		\ 8B 15 74 B9 04 08
-   W ) ecx mov,		\ 8B 0A
-   1 # ecx sub,		\ 83 E9 01	ecx neg, cmc, \ F7 D9 F5
-   ecx ecx sbb,		\ 1B C9
-   ecx W ) mov,		\ 89 0A
-   next,		\ C3
+   SP W mov,
+   1 # W ) cmp,
+   ecx ecx sbb,
+   ecx W ) mov,
+   next,
 end-code
 
 code 0<>
-   SP W mov,		\ 8B 15 74 B9 04 08
-   W ) ecx mov,		\ 8B 0A
-   ecx neg,		\ F7 D9
-   ecx ecx sbb,		\ 1B C9
-   ecx W ) mov,		\ 89 0A
-   next,		\ C3
+   SP W mov,
+   W ) ecx mov,
+   ecx neg,
+   ecx ecx sbb,
+   ecx W ) mov,
+   next,
 end-code
 
 code drop
