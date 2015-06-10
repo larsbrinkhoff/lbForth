@@ -174,20 +174,13 @@ code r>
 end-code
 
 code nand
-   8 # esp sub,
-   SP ecx mov,
-   ebx esp ) mov,
-   esi 4 esp )# mov,
-   ecx ) ebx mov,
-   4 ecx )# esi lea,
-   4 ecx )# edx mov,
-   esi SP mov,
-   4 esp )# esi mov,
-   ebx edx and,
-   esp ) ebx mov,
-   edx not,
-   edx 4 ecx )# mov,
-   8 # esp add,
+   SP W mov,
+   W ) ecx mov,
+   4 # W add,
+   W ) ecx and,
+   ecx not,
+   ecx W ) mov,
+   W SP mov,
    next,
 end-code
 
@@ -384,9 +377,43 @@ end-code
 \ code *
 \ code /
 \ code mod
-\ code invert
-\ code or
-\ code xor
-\ code and
+
+code invert
+   SP W mov,
+   W ) ecx mov,
+   ecx not,
+   ecx W ) mov,
+   next,
+end-code
+
+code or
+   SP W mov,
+   W ) ecx mov,
+   4 # W add,
+   W ) ecx or,
+   ecx W ) mov,
+   W SP mov,
+   next,
+end-code
+
+code xor
+   SP W mov,
+   W ) ecx mov,
+   4 # W add,
+   W ) ecx xor,
+   ecx W ) mov,
+   W SP mov,
+   next,
+end-code
+
+code and
+   SP W mov,
+   W ) ecx mov,
+   4 # W add,
+   W ) ecx and,
+   ecx W ) mov,
+   W SP mov,
+   next,
+end-code
 
 decimal
