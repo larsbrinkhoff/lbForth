@@ -66,6 +66,10 @@ code assembler-test
    10203040 # push,         68 40 30 20 10  check
    42 # edx ) test,         F7 02 42 00 00 00  check
 
+   1 # edx shr,             D1 EA  check
+   2 # eax sar,             C1 F8 02  check
+   ecx esi ) shl,           D3 26  check
+
    decimal
 end-code
 .( PASS ) cr

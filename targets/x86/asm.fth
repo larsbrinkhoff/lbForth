@@ -82,6 +82,13 @@ defer ?opsize
 : disp8,   disp @ c, ;
 : disp32,   disp @ , ;
 
+\ Set immediate operand.
+: -imm   ['] noop is ?imm, ;
+: !imm8   ['] imm8, is ?imm, ;
+: !imm16   ['] imm16, is ?imm, ;
+: !imm32   ['] imm32, is ?imm, ;
+: imm!   imm !  ['] imm, is ?imm, ;
+
 \ Set operand size.
 : -opsize   2drop r> drop ;
 : opsize!   is imm,  s !  ['] -opsize is ?opsize ;
@@ -102,9 +109,6 @@ defer ?opsize
 : -pc   here 5 + negate ;
 : relative   -pc disp +! ;
 
-\ Set immediate operand.
-: imm!   imm !  ['] imm, is ?imm, ;
-
 \ Implements addressing modes: register, indirect, indexed, and direct.
 : reg1   rm! !reg ;
 : reg2   3 lshift reg! ;
@@ -122,22 +126,28 @@ defer ?opsize
 : 0mrrm   c0 mrrm !  ['] mrrm, is ?mrrm, ;
 : 0sib   ['] noop is ?sib, ;
 : 0disp   ['] noop is ?disp, ;
-: 0imm   imm off  ['] noop is ?imm,  0 is imm, ;
+: 0imm   imm off  -imm  0 is imm, ;
 : 0asm   0imm 0disp 0reg 0ds 0mrrm 0sib 0opsize  dir? on ;
 
 \ Implements addressing mode: immediate.
 : imm8?   imm @ byte? ;
-: ?sign-extend   d off  imm8? if 2 d !  ['] imm8, is ?imm, then ;
+: ?sign-extend   d off  imm8? if 2 d !  !imm8 then ;
 : alu#   opcode @ reg! 80 opcode ! ?sign-extend ;
 : mov#   B0 s @ 3 lshift + rm@ + opcode ! 0ds -mrrm ;
-: push#   imm8? if ['] imm8, 6A else ['] imm32, 68 then dup opcode ! rm! is ?imm, ;
+: push#   imm8? if !imm8 6A else !imm32 68 then dup opcode ! rm! ;
 : test#   F6 opcode ! ;
+: shift#   -12 opcode +!  imm @ 1 = if 10 opcode +! -imm else !imm8 then ;
 : imm-op   imm! immediate-opcode ;
 
 \ Process one operand.  All operands except a direct address
 \ have the stack picture ( n*x xt -addr ).
 : addr?   dup -addr <> ;
 : op   addr? if addr else drop execute then ;
+
+\ Process the count operand to a shift instruction .
+: reg?   dup ['] reg = ;
+: reg-or-immediate   reg? if 2drop else execute then ;
+: shift-op   addr? abort" Syntax error" drop  reg-or-immediate ;
 
 \ Define instruction formats.
 : instruction,   opcode! opcode, ?mrrm, ?sib, ?disp, ?imm, 0asm ;
@@ -152,6 +162,7 @@ format: 1op   opcode>reg op d off ;
 format: 2op   op op ;
 format: 2op-d   op op d off ;
 format: 2op-ds   op op 0ds ;
+format: shift   opcode>reg op shift-op d off ;
 format: 1addr   op relative -mrrm ;
 format: 1imm8   !op8 op -mrrm ;
 
@@ -195,6 +206,14 @@ AB 0op stosd,
 AC 0op lodsb,
 \ AD 0op lodsw,
 AD 0op lodsd,
+D200 shift rol,   immediate: shift#
+D208 shift ror,   immediate: shift#
+D210 shift rcl,   immediate: shift#
+D218 shift rcr,   immediate: shift#
+D220 shift shl,   immediate: shift#
+D228 shift shr,   immediate: shift#
+\ D230 sal?
+D238 shift sar,   immediate: shift#
 C3 0op ret,
 \ C6/0 immediate mov to r/m
 \ C7/0 immediate mov to r/m

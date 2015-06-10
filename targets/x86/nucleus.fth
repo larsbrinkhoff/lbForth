@@ -270,6 +270,14 @@ code 0<>
    next,
 end-code
 
+code 0<
+   SP W mov,
+   W ) ecx mov,
+   1F # ecx sar,
+   ecx W ) mov,
+   next,
+end-code
+
 code drop
    SP W mov,
    4 # W add,
