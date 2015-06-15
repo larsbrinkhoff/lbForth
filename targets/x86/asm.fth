@@ -269,7 +269,7 @@ drop
 base !  only forth definitions  also assembler
 
 \ Standard assembler entry points.
-: code    parse-name header, ?code, start-code  ;
+: code    parse-name header, ?code, reveal start-code  ;
 : ;code   postpone (;code) reveal postpone [ ?csp start-code ; immediate
 
 0asm
