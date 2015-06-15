@@ -25,41 +25,14 @@ code cold
 end-code
 
 code exit
-(* RP W mov,
+   RP W mov,
    W ) IP mov,
    4 # W add,
-   W RP mov, *)
-
-   RP esp xchg,
-   IP pop,
-   RP esp xchg,
-
+   W RP mov,
    next,
 end-code
 
 code dodoes
-(* SP ecx mov,
-   ebx push,
-   -4 ecx )# ebx lea,
-   ebx SP mov,
-   1C W )# ebx lea,
-   ebx -4 ecx )# mov,
-   RP ecx mov,
-   -4 ecx )# ebx lea,
-   ebx RP mov,
-   IP -4 ecx )# mov,
-   14 W )# IP mov,
-   ebx pop, *)
-
-(* SP esp xchg,
-   1C W )# ecx lea,
-   ecx push,
-   SP esp xchg,
-   RP esp xchg,
-   IP push,
-   RP esp xchg,
-   14 W )# IP mov, *)
-
    RP ecx mov,
    4 # ecx sub,
    IP ecx ) mov,
@@ -70,22 +43,10 @@ code dodoes
    1C W )# W lea,
    W ecx ) mov,
    ecx SP mov,
-
    next,
 end-code
 
 code 0branch
-(* SP edx mov,
-   ebx push,
-   IP ) ecx mov,
-   4 # IP add,
-   edx ) ebx mov,
-   4 # edx add,
-   edx SP mov,
-   ebx ebx test,
-   ecx IP cmove,
-   ebx pop, *)
-
    IP ) W mov,
    4 # IP add,
    SP ecx mov,
@@ -94,7 +55,6 @@ code 0branch
    -4 ecx )# ecx mov,
    ecx ecx test,
    W IP cmove,
-
    next,
 end-code
 
@@ -109,14 +69,11 @@ code (literal)
 end-code
 
 code !
-   SP edx mov,
-   ebx push,
-   4 edx )# ebx mov,
-   edx ) ecx mov,
-   8 # edx add,
-   edx SP mov,
-   ebx ecx ) mov,
-   ebx pop,
+   SP esp xchg,
+   ecx pop,
+   edx pop,
+   edx ecx ) mov,
+   SP esp xchg,
    next,
 end-code
 
@@ -129,33 +86,24 @@ code @
 end-code
 
 code +
-   8 # esp sub,
-   SP edx mov,
-   ebx esp ) mov,
-   esi 4 esp )# mov,
-   4 edx )# ebx mov,
-   4 edx )# esi lea,
-   edx ) ecx mov,
-   esi SP mov,
-   4 esp )# esi mov,
-   ebx ecx add,
-   esp ) ebx mov,
-   ecx 4 edx )# mov,
-   8 # esp add,
+   SP W mov,
+   W ) ecx mov,
+   4 # W add,
+   W ) ecx add,
+   ecx W ) mov,
+   W SP mov,
    next,
 end-code
 
 code >r
    SP edx mov,
-   ebx push,
    edx ) ecx mov,
    4 # edx add,
    edx SP mov,
    RP edx mov,
-   -4 edx )# ebx lea,
-   ebx RP mov,
-   ecx -4 edx )# mov,
-   ebx pop,
+   4 # edx sub,
+   edx RP mov,
+   ecx edx ) mov,
    next,
 end-code
 
@@ -166,9 +114,9 @@ code r>
    4 # edx add,
    edx RP mov,
    SP edx mov,
-   -4 edx )# ebx lea,
-   ebx SP mov,
-   ecx -4 edx )# mov,
+   4 # edx sub,
+   edx SP mov,
+   ecx edx ) mov,
    ebx pop,
    next,
 end-code
@@ -185,27 +133,11 @@ code nand
 end-code
 
 code c!
-(* SP edx mov,
-   ebx push,
-   4 edx )# ebx mov,
-   edx ) ecx mov,
-   8 # edx add,
-   edx SP mov,
-   bl ecx ) mov,
-   ebx pop, *)
-
    SP W mov,
    8 # SP add,
    4 W )# ecx mov,
    W ) W mov,
    cl W ) mov,
-
-(* SP esp xchg,
-   W pop,
-   ecx pop,
-   cl W ) mov,
-   SP esp xchg, *)
-
    next,
 end-code
 
@@ -372,6 +304,7 @@ end-code
 \ code <
 \ code <=
 \ code >=
+\ code abs
 \ code max
 \ code min
 \ code *
