@@ -1,4 +1,3 @@
-os: unstable
 environment:
   global:
     CLISP: http://sourceforge.net/projects/clisp/files/clisp/2.49/clisp-2.49-win32-mingw-big.exe
