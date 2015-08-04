@@ -1,0 +1,11 @@
+general:
+  artifacts:
+    - forth
+
+dependencies:
+  override:
+    - sh install-deps.sh install_linux
+
+test:
+  override:
+    - make check M32=
