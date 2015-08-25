@@ -1,19 +1,41 @@
-![Travis](https://travis-ci.org/larsbrinkhoff/lbForth.svg?branch=master)
+Travis CI:
+[![Travis](https://travis-ci.org/larsbrinkhoff/lbForth.svg?branch=master)]
+(https://travis-ci.org/larsbrinkhoff/lbForth)
 
-![Shippable](https://api.shippable.com/projects/5444c5ecb904a4b21567b0ff/badge?branchName=master)
+Shippable:
+[![Shippable](https://api.shippable.com/projects/5444c5ecb904a4b21567b0ff/badge?branchName=master)]
+(https://app.shippable.com/projects/5444c5ecb904a4b21567b0ff)
 
-![Snap](https://snap-ci.com/larsbrinkhoff/lbForth/branch/master/build_image)
+Snap CI:
+[![Snap CI](https://snap-ci.com/larsbrinkhoff/lbForth/branch/master/build_image)]
+(https://snap-ci.com/larsbrinkhoff/lbForth/branch/master)
 
-![Codeship](https://www.codeship.io/projects/625b1e20-3cdd-0132-2ca6-12c33aebd1cb/status?branch=master)
+Codeship:
+[![Codeship](https://www.codeship.io/projects/625b1e20-3cdd-0132-2ca6-12c33aebd1cb/status?branch=master)]
+(https://codeship.com/projects/43094)
 
-![Magnum](https://magnum-ci.com/status/96ffb83fa700f069024921b0702e76ff.png)
+Magnum CI:
+[![Magnum](https://magnum-ci.com/status/96ffb83fa700f069024921b0702e76ff.png)]
+(https://magnum-ci.com/projects/1810/history)
 
-![Drone.io](https://drone.io/github.com/larsbrinkhoff/lbForth/status.png)
+Drone.io:
+[![Drone.io](https://drone.io/github.com/larsbrinkhoff/lbForth/status.png)]
+(https://drone.io/github.com/larsbrinkhoff/lbForth)
 
-![AppVeyor](https://ci.appveyor.com/api/projects/status/r8wuvf0n0obp3n14)
+AppVeyor:
+[![AppVeyor](https://ci.appveyor.com/api/projects/status/r8wuvf0n0obp3n14)]
+(https://ci.appveyor.com/project/larsbrinkhoff/lbforth/history)
 
-![wercker](https://app.wercker.com/status/aedf010f682b5b530075e24d9446da26)
+Wercker:
+[![wercker](https://app.wercker.com/status/aedf010f682b5b530075e24d9446da26)]
+(https://app.wercker.com/#applications/544dfb8aea87f6374f000ad9)
 
-![Ship.io](https://app.ship.io/jobs/7oIHDz28rgdvceSO/build_status.png)
+Ship.io:
+[![Ship.io](https://app.ship.io/jobs/7oIHDz28rgdvceSO/build_status.png)]
+(https://app.ship.io/dashboard#/jobs/2822/history)
 
-![CircleCI](https://circleci.com/gh/larsbrinkhoff/lbForth.svg?style=svg)
+Circle CI:
+[![CircleCI](https://circleci.com/gh/larsbrinkhoff/lbForth.svg?style=svg)]
+(https://circleci.com/gh/larsbrinkhoff/lbForth)
+
+[AppHarbor](https://appharbor.com/applications/lbforth)
