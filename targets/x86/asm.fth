@@ -20,19 +20,6 @@ require search.fth
 vocabulary assembler
 also assembler definitions
 
-\ Access to the target image.
-' header,   defer header,  is header,
-' cell   defer cell   is cell
-' dp   defer dp   is dp
-0 value delta
-
-: aligned   cell + 1 - cell negate nand invert ;
-: align   dp @ aligned dp ! ;
-: allot   dp +! ;
-: here   dp @ ;
-: cells   cell * ;
-: c!   delta + c! ;
-: c,   here c!  1 allot ;
 : h,   dup c,  8 rshift c, ;
 : ,   dup h,  16 rshift h, ;
 

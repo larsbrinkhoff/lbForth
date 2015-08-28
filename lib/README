@@ -3,6 +3,7 @@ bitmap.fth	An array of bits.
 common.fth	Common words.
 elf.fth		Write an ELF executable.
 forward.fth	Declare forward references to be resolved at a later time.
+image.fth	Compilation to a target image.
 macros.fth	Use ]] [[ to simplify postponing words.
 mem.fth		Read and write 16/32/64-bit words.
 pe.fth		Write a PE executable.
