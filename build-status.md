@@ -41,4 +41,7 @@ Circle CI:
 Semaphore CI:
 [![Semaphore CI](https://semaphoreci.com/api/v1/projects/726d1f9e-ae3a-4ef6-b109-39b2eeef14b1/531496/badge.svg)](https://semaphoreci.com/larsbrinkhoff/lbforth)
 
+Visual Studio Online:
+[![Visual Studio Online](https://larsbrinkhoff.visualstudio.com/DefaultCollection/_apis/public/build/definitions/953a34b9-5966-4923-a48a-c41874cfb5f5/1/badge)](https://larsbrinkhoff.visualstudio.com/DefaultCollection/lbForth/_build)
+
 [AppHarbor](https://appharbor.com/applications/lbforth)
