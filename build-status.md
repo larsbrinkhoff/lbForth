@@ -38,4 +38,7 @@ Circle CI:
 [![CircleCI](https://circleci.com/gh/larsbrinkhoff/lbForth.svg?style=svg)]
 (https://circleci.com/gh/larsbrinkhoff/lbForth)
 
+Semaphore CI:
+[![Semaphore CI](https://semaphoreci.com/api/v1/projects/726d1f9e-ae3a-4ef6-b109-39b2eeef14b1/531496/badge.svg)](https://semaphoreci.com/larsbrinkhoff/lbforth)
+
 [AppHarbor](https://appharbor.com/applications/lbforth)
