@@ -44,4 +44,8 @@ Semaphore CI:
 Visual Studio Online:
 [![Visual Studio Online](https://larsbrinkhoff.visualstudio.com/DefaultCollection/_apis/public/build/definitions/953a34b9-5966-4923-a48a-c41874cfb5f5/1/badge)](https://larsbrinkhoff.visualstudio.com/DefaultCollection/lbForth/_build)
 
+Bitrise:
+[![Bitrise](https://www.bitrise.io/app/663938c8cb3bee14.svg?token=34FFBj3CLaI1yWXqou5JEg&branch=master)]
+(https://www.bitrise.io/app/663938c8cb3bee14)
+
 [AppHarbor](https://appharbor.com/applications/lbforth)
