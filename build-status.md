@@ -8,6 +8,10 @@
 [![Bitrise](https://www.bitrise.io/app/663938c8cb3bee14.svg?token=34FFBj3CLaI1yWXqou5JEg&branch=master)]
 (https://www.bitrise.io/app/663938c8cb3bee14)
 
+[BuildHive](http://buildhive.cloudbees.com/):
+[![BuildHive](https://buildhive.cloudbees.com/job/larsbrinkhoff/job/lbForth/badge/icon)]
+(https://buildhive.cloudbees.com/job/larsbrinkhoff/job/lbForth/)
+
 [CircleCI](http://circleci.com/):
 [![CircleCI](https://circleci.com/gh/larsbrinkhoff/lbForth.svg?style=svg)]
 (https://circleci.com/gh/larsbrinkhoff/lbForth)

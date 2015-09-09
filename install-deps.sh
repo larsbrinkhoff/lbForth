@@ -11,6 +11,7 @@ install_yum() {
 }
 
 download_sbcl() {
+  test -d sbcl && return
   sbcl=sbcl-1.2.4-x86-64-linux
   wget http://prdownloads.sourceforge.net/sbcl/$sbcl-binary.tar.bz2
   tar xjf $sbcl-binary.tar.bz2
