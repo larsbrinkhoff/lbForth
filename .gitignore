@@ -10,5 +10,6 @@ test-output
 test-errors
 test-assembler
 smoke-test
+packages
 *~
 TMP

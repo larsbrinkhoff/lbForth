@@ -1,14 +1,7 @@
-environment:
-  global:
-    CLISP: http://sourceforge.net/projects/clisp/files/clisp/2.49/clisp-2.49-win32-mingw-big.exe
 cache:
-  - C:\tools\clisp
-  - C:\ProgramData\chocolatey
+  - packages
 install:
-  - set PATH=C:\cygwin\bin;%PATH%;C:\tools\clisp
-  - appveyor DownloadFile %CLISP% -FileName setup.exe
-  - setup.exe /S /D=C:\tools\clisp
-build_script: make all M32= < NUL
-test_script: make check
+  - nuget restore
+build_script: MSBuild build.vcxproj
 artifacts:
   - path: forth.exe

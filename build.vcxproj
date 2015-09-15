@@ -4,20 +4,14 @@
     <CallTarget Targets="Install;Make" />
   </Target>
   <PropertyGroup>
-    <Curl>packages\curl.7.30.0.2\tools\native\v110\Win32\Release\static\curl -s</Curl>
-    <Bunzip2>packages\PortableGit.2.5.1.01\tools\usr\bin\bunzip2</Bunzip2>
-    <Untar>packages\PortableGit.2.5.1.01\tools\usr\bin\tar xf</Untar>
-    <Git>packages\PortableGit.2.5.1.01\tools\bin\git</Git>
-    <Tools>$(MSBuildProjectDirectory)\tools</Tools>
-    <CygwinPath>$(Tools)\cygwin\bin</CygwinPath>
-    <LispPath>$(Tools)\ccl</LispPath>
+    <Packages>$(MSBuildProjectDirectory)\packages</Packages>
+    <Git>$(Packages)\PortableGit.2.5.1.01\tools\bin\git</Git>
+    <CygwinPath>$(Packages)\Cygwin.1.7.32\tools\bin</CygwinPath>
+    <LispPath>$(Packages)\ClozureCL.1.10.1\tools</LispPath>
     <ToolsPath>$(CygwinPath);$(LispPath);$(Path)</ToolsPath>
     <MetaCompiler>https://github.com/larsbrinkhoff/forth-metacompiler</MetaCompiler>
   </PropertyGroup>
   <Target Name="Install">
-    <Exec Command="$(Curl) http://lars.nocrew.org/nuget/tools.tar.bz2 -o tools.tar.bz2" />
-    <Exec Command="$(Bunzip2) tools.tar.bz2" />
-    <Exec Command="$(Untar) tools.tar" />
     <Exec Command="$(Git) clone $(MetaCompiler) lisp" />
   </Target>
   <Target Name="Make">
