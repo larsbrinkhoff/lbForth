@@ -95,8 +95,10 @@ check-;code
 \ Redefine CODE and END-CODE to overwrite the code field of the
 \ previously defined code word with the same name.
 : code   source type  >in @ ' >code swap >in !  code  here ;
+: set-code   latestxt >code @ swap ! ;
+
 also assembler definitions
-: end-code   here over - hex cr cdump  end-code  latestxt >code @ swap ! ;
+: end-code   here over - hex cr cdump  end-code  set-code ;
 
 only forth definitions
 vocabulary newcleus

@@ -19,9 +19,10 @@ require search.fth
 
 vocabulary assembler
 also assembler definitions
-
+include lib/image.fth
 : h,   dup c,  8 rshift c, ;
 : ,   dup h,  16 rshift h, ;
+only forth definitions
 
 base @  hex
 
@@ -57,17 +58,26 @@ defer ?opsize
 : reg>opcode   rm@ opcode 07 !bits ;
 : opcode>reg   opcode @ dup 3 rshift rm!  8 rshift opcode ! ;
 
-\ Write parts of instruction to memory.
+\ Access instruction fields.
 : ds   d @ s @ + ;
+: opcode@   opcode @ ;
+: mrrm@   mrrm @ ;
+: sib@   sib @ ;
+: imm@   imm @ ;
+: disp@   disp @ ;
+
+\ Write instruction fields to memory.
+also assembler
 : ?twobyte   dup FF > if dup 8 rshift c, then ;
-: opcode,   opcode @ ?twobyte ds + c, ;
-: mrrm,   mrrm @ c, ;
-: sib,   sib @ c, ;
-: imm8,   imm @ c, ;
-: imm16,   imm @ h, ;
-: imm32,   imm @ , ;
-: disp8,   disp @ c, ;
-: disp32,   disp @ , ;
+: opcode,   opcode@ ?twobyte ds + c, ;
+: mrrm,   mrrm@ c, ;
+: sib,   sib@ c, ;
+: imm8,   imm@ c, ;
+: imm16,   imm@ h, ;
+: imm32,   imm@ , ;
+: disp8,   disp@ c, ;
+: disp32,   disp@ , ;
+previous
 
 \ Set immediate operand.
 : -imm   ['] noop is ?imm, ;
@@ -81,7 +91,9 @@ defer ?opsize
 : opsize!   is imm,  s !  ['] -opsize is ?opsize ;
 : !op8    0 ['] imm8, ?opsize ;
 : !op32   1 ['] imm32, ?opsize ;
+also assembler
 : !op16   1 ['] imm16, ?opsize 66 c, ;
+previous
 
 \ Set SIB byte.
 : !sib   ['] sib, is ?sib, ;
@@ -153,7 +165,14 @@ format: shift   opcode>reg op shift-op d off ;
 format: 1addr   op relative -mrrm ;
 format: 1imm8   !op8 op -mrrm ;
 
+\ Define registers.
+: reg8    create ,  does> @ ['] reg -addr !op8 ;
+: reg16   create ,  does> @ ['] reg -addr !op16 ;
+: reg32   create ,  does> @ ['] reg -addr !op32 ;
+: reg:    dup reg8 dup reg16 dup reg32 1+ ;
+
 \ Instruction mnemonics.
+also assembler definitions
 00 2op add,  immediate: alu#
 08 2op or,   immediate: alu#
 0F44 2op-ds cmove,  \ Todo: other condition codes.
@@ -233,12 +252,6 @@ FD 0op std,
 : #   ['] imm-op -addr ;
 : )   2drop  sp? if 4 ['] idx else ['] ind then -addr  0reg 0opsize ;
 : )#   2drop  sp? if 4 ['] idx# else ['] ind# then -addr  0reg 0opsize ;
-
-\ Define registers.
-: reg8    create ,  does> @ ['] reg -addr !op8 ;
-: reg16   create ,  does> @ ['] reg -addr !op16 ;
-: reg32   create ,  does> @ ['] reg -addr !op32 ;
-: reg:    dup reg8 dup reg16 dup reg32 1+ ;
 
 \ Register names.
 0
