@@ -71,9 +71,7 @@ base @ hex
 
 ( Lay down a PE header in the dictionary. )
 
-variable entry-offset
-0 entry-offset !
-: >entry   swap entry-offset @ + swap ;
+: >entry   swap swap ;
 : opthdrsize! ( a -- a )   here over - 58 - over 54 + >entry h! ;
 : entry!   2dup >entry 068 + w! ;
 : img-size!   2dup 090 + w! ;

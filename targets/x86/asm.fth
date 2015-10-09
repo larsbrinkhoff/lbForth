@@ -77,6 +77,8 @@ also assembler
 : imm32,   imm@ , ;
 : disp8,   disp@ c, ;
 : disp32,   disp@ , ;
+: opsize-prefix,   66 c, ;
+: -pc   here 5 + negate ;
 previous
 
 \ Set immediate operand.
@@ -91,9 +93,7 @@ previous
 : opsize!   is imm,  s !  ['] -opsize is ?opsize ;
 : !op8    0 ['] imm8, ?opsize ;
 : !op32   1 ['] imm32, ?opsize ;
-also assembler
-: !op16   1 ['] imm16, ?opsize 66 c, ;
-previous
+: !op16   1 ['] imm16, ?opsize opsize-prefix, ;
 
 \ Set SIB byte.
 : !sib   ['] sib, is ?sib, ;
@@ -105,7 +105,6 @@ previous
 : !disp8   ['] disp8, disp! ;
 : !disp32   ['] disp32, disp! ;
 : !disp ( a -- u ) dup byte? if !disp8 40 else !disp32 80 then ;
-: -pc   here 5 + negate ;
 : relative   -pc disp +! ;
 
 \ Implements addressing modes: register, indirect, indexed, and direct.
@@ -258,6 +257,14 @@ FD 0op std,
 reg: al ax eax   reg: cl cx ecx   reg: dl dx edx   reg: bl bx ebx
 reg: ah sp esp   reg: ch bp ebp   reg: dh si esi   reg: bh di edi
 drop
+
+\ Control flow.
+: label   here constant ;
+: begin,   here ;
+: again,   jmp, ;
+: ahead,   here 1+ 0 jmp, ;
+: then,   here over 4 + - swap ! ;
+: else,   ahead, then, ;
 
 \ Runtime for ;CODE.  CODE! is defined elsewhere.
 : (;code)   r> code! ;

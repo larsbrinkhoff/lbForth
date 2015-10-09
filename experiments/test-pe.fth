@@ -4,10 +4,13 @@ require lib/pe.fth
 hex
 
 here
-0 >body entry-offset +!
 pe,
 
+also assembler
+ahead,
+
 code main
+   then,
    2A # eax mov,
    ret,
 end-code

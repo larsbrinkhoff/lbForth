@@ -30,12 +30,11 @@ B7 constant arm64
 
 ( ELF header )
 
-variable entry-offset
-54 entry-offset !
+54 constant entry-offset
 
 : ident, ( -- )   7F c, ," ELF" 00010101 w, 8 zeros, ;
 : type, ( u -- )   executable h, h, 1 w, ;
-: entry, ( a -- a )   dup entry-offset @ + a, ;
+: entry, ( a -- a )   dup entry-offset + a, ;
 : tables, ( -- )   34 h, 20 h, 1 h, 6 zeros, ;
 : ehdr, ( a u -- a )   ident, type, entry, 34 a, 0 a, 0 w, tables, ;
 
