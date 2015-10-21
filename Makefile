@@ -18,7 +18,7 @@ forth: .bootstrap $(DEPS)
 	touch .bootstrap
 
 
-check: test-errors test-assembler test-lib
+check: test-errors test-assembler test-image test-lib
 	test `cat $<` -eq $(EXPECTED_ERRORS)
 
 test-errors: test-output
@@ -35,6 +35,10 @@ test-assembler: test/test-asm.fth targets/x86/asm.fth forth
 smoke-test: forth
 	echo 'words cr .( Smoke-OK )' | ./forth > $@
 	$(GREP) Smoke-OK $@
+
+test-image: test/test-image.fth lib/image.fth
+	echo 'include $< .( Image-OK )' | ./forth > $@
+	$(GREP) Image-OK $@
 
 test-lib: test/test-lib.sh
 	sh test/test-lib.sh

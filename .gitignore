@@ -9,6 +9,7 @@ threading.fth
 test-output
 test-errors
 test-assembler
+test-image
 smoke-test
 packages
 *~

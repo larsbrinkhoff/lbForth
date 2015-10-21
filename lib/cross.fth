@@ -40,8 +40,9 @@ drop
 : allot   dp +! ;
 : align   here aligned dp ! ;
 
-: rrotate ( u1 u2 -- u3 ) 2dup rshift -rot cell 8 * - negate lshift + ;
-: @   0 swap cell bounds do i c@ + 8 rrotate loop ;
+: mask   0 8 cells 0 do 1 lshift 1 + loop and ;
+: rrotate ( u1 u2 -- u3 ) 2dup rshift -rot 8 cells - negate lshift + ;
+: @   0 swap cell bounds do i c@ + 8 rrotate loop mask ;
 : !   cell bounds do dup i c! 8 rshift loop drop ;
 
 : c+!   dup >r c@ + r> c! ;
