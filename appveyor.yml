@@ -1,7 +1,11 @@
 cache:
   - packages
+platform:
+  - x86
+  - x64
 install:
   - nuget restore
-build_script: MSBuild build.vcxproj
+build:
+  project: build.vcxproj
 artifacts:
   - path: forth.exe
