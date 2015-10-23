@@ -55,5 +55,12 @@ drop
 : @+   dup cell+ swap @ ;
 : ,   here !  cell allot ;
 
+: 2@      dup cell+ @ swap @ ;
+: 2!      swap over ! cell+ ! ;
+
 : fill   -rot bounds ?do dup i c! loop drop ;
 : erase   0 fill ;
+
+: cmove   bounds do count i c! loop drop ;
+: move,   here swap dup allot cmove ;
+: ,"   postpone s" postpone move, ; compile-only

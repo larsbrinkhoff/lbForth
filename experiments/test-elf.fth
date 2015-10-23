@@ -1,20 +1,25 @@
 require targets/x86/asm.fth
+
+also assembler
 require lib/elf.fth
+previous
 
 hex
 
-here
-08048000 x86 elf32,
+08048000 constant entry-point
 
 also assembler
+target-image
+0 org
 
-ahead,
-code main
-   then,
+entry-point x86 elf32,
+
+entry-point org
+
    1 # eax mov,
    2A # ebx mov,
    80 # int,
-end-code
 
-elf!
-here over - type bye
+;elf
+
+target-region type bye

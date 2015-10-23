@@ -21,6 +21,8 @@ base @ hex
 41 constant pdp11
 B7 constant arm64
 
+[undefined] >host [if] : >host ; [then]
+
 ( Data types )
 
 : h, ( x -- )   dup c,  8 rshift c, ;
@@ -49,7 +51,7 @@ B7 constant arm64
 
 ( Lay down an ELF header in the dictionary. )
 
-: elf32, ( a1 u -- a2 a3 )   here -rot ehdr, phdr32, ;
-: elf! ( a1 a2 -- )   align here rot - dup rot 2! ;
+: elf32, ( a1 u -- a2 a3 ) here >host -rot ehdr, phdr32, ;
+: ;elf ( a1 a2 -- ) align here >host rot - dup rot 2! ;
 
 base !
