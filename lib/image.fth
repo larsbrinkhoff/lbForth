@@ -40,7 +40,8 @@ variable stop  0 stop !
 : section?   2dup range@ within ;
 : ?section   section? if delta@ + stop then ;
 : search   prev begin @ ?dup while ?section repeat ;
-: current?   start @ t-dp @ t-cell + within ;
+: t-end   t-image t-size + t-delta @ - ;
+: current?   start @ t-end within ;
 : >host   dup current? if t-delta @ + else search then ;
 
 \ Read and write a target character.
