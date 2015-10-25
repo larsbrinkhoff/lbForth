@@ -86,6 +86,7 @@ forward: <
 variable state
 
 : 0<   [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
+: or   invert swap invert nand ;
 : xor   2dup nand 1+ dup + + + ;
 : <   2dup xor 0< if drop 0< else - 0< then ;
 
@@ -173,8 +174,6 @@ create context  9 cells allot
    (find) ?dup until else drop 0 then r> drop ;
 : find-name ( a u -- a u 0 | xt ? )   swap over #name min context
    search-context ?dup if rot drop else swap 0 then ;
-
-: or   invert swap invert nand ;
 
 : source   'source @  #source @ ;
 : source? ( -- flag )   >in @ source nip < ;
