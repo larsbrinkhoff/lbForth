@@ -18,7 +18,7 @@ forth: .bootstrap $(DEPS)
 	touch .bootstrap
 
 
-check: test-errors test-assembler test-image test-lib
+check: test-errors test-assembler test-image test-exe test-lib
 	test `cat $<` -eq $(EXPECTED_ERRORS)
 
 test-errors: test-output
@@ -40,9 +40,13 @@ test-image: test/test-image.fth lib/image.fth
 	echo 'include $< .( Image-OK )' | ./forth > $@
 	$(GREP) Image-OK $@
 
+test-exe: test/test-exe.sh test/test-elf.fth test/test-pe.fth
+	./test/test-exe.sh > $@
+	$(GREP) 42 $@
+
 test-lib: test/test-lib.sh
 	sh test/test-lib.sh
 
 clean:
 	$(TMAKE) clean
-	rm -f .bootstrap test-output test-errors
+	rm -f .bootstrap smoke-test test-*

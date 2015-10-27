@@ -6,13 +6,14 @@ previous
 
 hex
 
-08048000 constant entry-point
+08048000 constant load-address
+load-address 54 + constant entry-point
 
 also assembler
 target-image
 0 org
 
-entry-point x86 elf32,
+load-address x86 elf32,
 
 entry-point org
 

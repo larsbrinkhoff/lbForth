@@ -6,10 +6,7 @@ kernel.c
 jump.fth
 threading.fth
 .bootstrap
-test-output
-test-errors
-test-assembler
-test-image
+test-*
 smoke-test
 packages
 *~
