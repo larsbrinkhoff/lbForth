@@ -194,8 +194,8 @@ also assembler definitions
 65 0op gs,
 
 \ Work in progress!
-: je,   74 c, c, ;
-: jne,   75 c, c, ;
+: je,   74 c, here 1+ - c, ;
+: jne,   75 c, here 1+ - c, ;
 
 84 2op-d test,   immediate: test#
 86 2op-d xchg,
@@ -273,12 +273,16 @@ drop
 : again,   jmp, ;
 : ahead,   0 jmp, >mark4 ;
 : then,   >resolve ;
-: else,   ahead, then, ;
 
 \ Conditional jumps.
 : 0=,   ['] jne, ;
 : 0<>,   ['] je, ;
 : if,   0 swap execute >mark1 ;
+: until,   execute ;
+
+\ else,   ahead, 3swap then, ;
+: while,   >r if, r> ;
+: repeat,   again, then, ;
 
 \ Runtime for ;CODE.  CODE! is defined elsewhere.
 : (;code)   r> code! ;

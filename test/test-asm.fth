@@ -70,6 +70,11 @@ code assembler-test
    2 # eax sar,             C1 F8 02  check
    ecx esi ) shl,           D3 26  check
 
+   ahead, then,             E9 00 00 00 00  check
+   0=, if, then,            75 00  check
+   begin, again,            E9 FB FF FF FF  check
+   begin, 0<>, until,       74 FE  check
+
    decimal
 end-code
 .( PASS ) cr
