@@ -223,10 +223,11 @@ code ?dup
    SP W mov,
    W ) ecx mov,
    ecx ecx test,
-   74 c, 0B c,  \ je
+   0<>, if,
      4 # W sub,
      ecx W ) mov,
      W SP mov,
+   then,
    next,
 end-code
 

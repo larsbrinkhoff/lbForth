@@ -192,7 +192,11 @@ also assembler definitions
 58 1reg pop,
 64 0op fs,
 65 0op gs,
-\ 70 jcc
+
+\ Work in progress!
+: je,   74 c, c, ;
+: jne,   75 c, c, ;
+
 84 2op-d test,   immediate: test#
 86 2op-d xchg,
 88 2op mov,  immediate: mov#
@@ -258,13 +262,23 @@ reg: al ax eax   reg: cl cx ecx   reg: dl dx edx   reg: bl bx ebx
 reg: ah sp esp   reg: ch bp ebp   reg: dh si esi   reg: bh di edi
 drop
 
-\ Control flow.
+\ Resolve jumps.
+: >mark1   here 1- ['] c! here ;
+: >mark4   here 4 - ['] ! here ;
+: >resolve   here - negate -rot execute ;
+
+\ Unconditional jumps.
 : label   here constant ;
 : begin,   here ;
 : again,   jmp, ;
-: ahead,   here 1+ 0 jmp, ;
-: then,   here over 4 + - swap ! ;
+: ahead,   0 jmp, >mark4 ;
+: then,   >resolve ;
 : else,   ahead, then, ;
+
+\ Conditional jumps.
+: 0=,   ['] jne, ;
+: 0<>,   ['] je, ;
+: if,   0 swap execute >mark1 ;
 
 \ Runtime for ;CODE.  CODE! is defined elsewhere.
 : (;code)   r> code! ;
