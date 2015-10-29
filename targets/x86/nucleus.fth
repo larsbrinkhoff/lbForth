@@ -219,6 +219,17 @@ code dup
    next,
 end-code
 
+code ?dup
+   SP W mov,
+   W ) ecx mov,
+   ecx ecx test,
+   74 c, 0B c,  \ je
+     4 # W sub,
+     ecx W ) mov,
+     W SP mov,
+   next,
+end-code
+
 code nip
    SP W mov,
    W ) ecx mov,
