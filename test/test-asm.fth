@@ -70,6 +70,16 @@ code assembler-test
    2 # eax sar,             C1 F8 02  check
    ecx esi ) shl,           D3 26  check
 
+   create l \ label
+   l jo,                    70 FE  check
+   l jc,                    72 FC  check
+   l je,                    74 FA  check
+   l ja,                    77 F8  check
+   l js,                    78 F6  check
+   l jp,                    7A F4  check
+   l jl,                    7C F2  check
+   l jg,                    7F F0  check
+
    ahead, then,             E9 00 00 00 00  check
    0=, if, then,            75 00  check
    begin, again,            E9 FB FF FF FF  check

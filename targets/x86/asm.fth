@@ -78,7 +78,7 @@ also assembler
 : disp8,   disp@ c, ;
 : disp32,   disp@ , ;
 : opsize-prefix,   66 c, ;
-: -pc   here 5 + negate ;
+: -pc   here negate ;
 previous
 
 \ Set immediate operand.
@@ -105,7 +105,8 @@ previous
 : !disp8   ['] disp8, disp! ;
 : !disp32   ['] disp32, disp! ;
 : !disp ( a -- u ) dup byte? if !disp8 40 else !disp32 80 then ;
-: relative   -pc disp +! ;
+: short-addr   -pc 2 - disp +!  ['] disp8, is ?disp, ;
+: near-addr   -pc 5 - disp +! ;
 
 \ Implements addressing modes: register, indirect, indexed, and direct.
 : reg1   rm! !reg ;
@@ -161,7 +162,8 @@ format: 2op   op op ;
 format: 2op-d   op op d off ;
 format: 2op-ds   op op 0ds ;
 format: shift   opcode>reg op shift-op d off ;
-format: 1addr   op relative -mrrm ;
+format: short   op short-addr -mrrm ;
+format: near   op near-addr -mrrm ;
 format: 1imm8   !op8 op -mrrm ;
 
 \ Define registers.
@@ -192,11 +194,22 @@ also assembler definitions
 58 1reg pop,
 64 0op fs,
 65 0op gs,
-
-\ Work in progress!
-: je,   74 c, here 1+ - c, ;
-: jne,   75 c, here 1+ - c, ;
-
+70 short jo,
+71 short jno,
+72 short jc,
+73 short jnc,
+74 short je,
+75 short jne,
+76 short jna,
+77 short ja,
+78 short js,
+79 short jns,
+7A short jp,
+7B short jnp,
+7C short jl,
+7D short jnl,
+7E short jng,
+7F short jg,
 84 2op-d test,   immediate: test#
 86 2op-d xchg,
 88 2op mov,  immediate: mov#
@@ -227,9 +240,13 @@ C3 0op ret,
 \ C6/0 immediate mov to r/m
 \ C7/0 immediate mov to r/m
 CD 1imm8 int,
-E8 1addr call,
-E9 1addr jmp,
-\ EB jmp rel8
+E0 short loopne,
+E1 short loope,
+E2 short loop,
+E3 short jecxz,
+E8 near call,
+E9 near jmp,
+\ EB short jmp,
 F0 0op lock,
 F2 0op rep,
 F3 0op repz,
