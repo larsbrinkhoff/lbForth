@@ -158,6 +158,7 @@ previous
 format: 0op   -mrrm ;
 format: 1reg   op reg>opcode 0ds -mrrm ;
 format: 1op   opcode>reg op d off ;
+format: 1op-s   opcode>reg op 0ds ;
 format: 2op   op op ;
 format: 2op-d   op op d off ;
 format: 2op-ds   op op 0ds ;
@@ -263,7 +264,7 @@ FD 0op std,
 \ FE 0 inc rm
 \ FF 1 dec rm
 \ FF 2 call rm
-\ FF 4 jmp rm
+FF20 1op-s indirect-jmp,
 \ FF 6 push rm
 
 : sp?   dup 4 = ;

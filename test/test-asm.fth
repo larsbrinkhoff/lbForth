@@ -85,6 +85,9 @@ code assembler-test
    begin, again,            E9 FB FF FF FF  check
    begin, 0<>, until,       74 FE  check
 
+   eax indirect-jmp,        FF E0  check
+   18 edx )# indirect-jmp,  FF 62 18  check
+
    decimal
 end-code
 .( PASS ) cr
@@ -108,7 +111,7 @@ check-;code
 .( PASS ) cr
 
 \ Redefine CODE and END-CODE to overwrite the code field of the
-\ previously defined code word with the same name.
+\ previously defined word with the same name.
 : code   source type  >in @ ' >code swap >in !  code  here ;
 : set-code   latestxt >code @ swap ! ;
 

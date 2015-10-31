@@ -16,7 +16,7 @@ also assembler definitions
 : next,   
    IP ) W mov,
    4 # IP add,
-   FF c, 62 c, 18 c, ;  \ 18 W )# jmp,
+   18 W )# indirect-jmp, ;
 previous definitions
 
 code cold
@@ -165,7 +165,7 @@ code execute
    ecx ) W mov,
    4 # ecx add,
    ecx SP mov,
-   FF c, 62 c, 18 c,  \ 18 W )# jmp,
+   18 W )# indirect-jmp,
 end-code
 
 code r@
@@ -312,6 +312,8 @@ end-code
 
 \ code 1+
 \ code 1-
+\ code cell+
+\ code cells
 \ code >
 \ code <
 \ code <=
