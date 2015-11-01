@@ -9,7 +9,7 @@
 
 hex
 
-also assembler definitions
+host also assembler definitions
 : SP   [ also forth ] sp [ previous ] ;
 : IP   eax ;
 : W   edx ;
@@ -17,7 +17,13 @@ also assembler definitions
    IP ) W mov,
    4 # IP add,
    18 W )# indirect-jmp, ;
-previous definitions
+
+target
+
+\ Jump straight to BYE.
+also assembler
+ahead,
+previous
 
 code cold
   \ Initialise dp, IP, SP, RP.
@@ -150,7 +156,14 @@ code c@
 end-code
 
 \ code emit ( c -- )
-\ code bye ( ... -- <no return> )
+
+code bye ( ... -- <no return> )
+   then,
+   1 # eax mov,
+   2A # ebx mov,
+   80 # int,
+end-code
+
 \ code close-file ( fileid -- ior )
 \ code open-file ( addr u mode -- fileid ior )
 \ code read-file ( addr u1 fileid -- u2 ior )

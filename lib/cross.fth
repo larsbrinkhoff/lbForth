@@ -64,3 +64,4 @@ drop
 : cmove   bounds do count i c! loop drop ;
 : move,   here swap dup allot cmove ;
 : ,"   postpone s" postpone move, ; compile-only
+: ",   move, align ;
