@@ -310,10 +310,42 @@ code <>
    next,
 end-code
 
-\ code 1+
-\ code 1-
-\ code cell+
-\ code cells
+code 1+
+   SP W mov,
+   W ) ecx mov,
+   1 # ecx add,
+   ecx W ) mov,
+   W SP mov,
+   next,
+end-code
+
+code 1-
+   SP W mov,
+   W ) ecx mov,
+   -1 # ecx add,
+   ecx W ) mov,
+   W SP mov,
+   next,
+end-code
+
+code cell+
+   SP W mov,
+   W ) ecx mov,
+   4 # ecx add,
+   ecx W ) mov,
+   W SP mov,
+   next,
+end-code
+
+code cells
+   SP W mov,
+   W ) ecx mov,
+   2 # ecx shl,
+   ecx W ) mov,
+   W SP mov,
+   next,
+end-code
+
 \ code >
 \ code <
 \ code <=
