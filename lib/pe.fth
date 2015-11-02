@@ -79,7 +79,7 @@ base @ hex
 : hdrsize! ( a -- a u )   here over - 2dup swap  entry!
    img-size! hdr-size! ( 2dup 0C4 + 80 + w!  0CC + 80 + w! ) 2drop ;
 
-: pe, ( -- a u )   here  mzhdr, pehdr, opthdr, ( dd, ) opthdrsize!
+: pe, ( -- a u )   here  mzhdr, pehdr, opthdr, dd, opthdrsize!
    ( s" .text" shdr, ) hdrsize! ;
 : padding ( a u -- a u )   over here swap - 148 swap - dup 0> and zeros, ;
 : codesize! ( a u -- )   swap  2dup 090 + w+!  ( 2dup 0C0 + 80 + w! )

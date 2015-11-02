@@ -2,7 +2,7 @@
 
 case `uname` in
 Linux)    FMT=elf;;
-#CYGWIN*)  FMT=pe;;
+CYGWIN*)  FMT=pe;;
 *)        echo 42; exit 0;;
 esac
 
