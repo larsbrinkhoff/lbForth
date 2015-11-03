@@ -84,13 +84,6 @@ Build:
     install-deps.sh install_linux
     make check M32=
 
-## [Ship.io](http://ship.io/)
-[![Ship.io](https://app.ship.io/jobs/7oIHDz28rgdvceSO/build_status.png)]
-(https://app.ship.io/dashboard#/jobs/2822/history)  
-OS: MacOS X  
-File: [`gradlew`]
-(https://github.com/larsbrinkhoff/lbForth/blob/master/gradlew)
-
 ## [Shippable](http://shippable.com/)
 [![Shippable](https://api.shippable.com/projects/5444c5ecb904a4b21567b0ff/badge?branchName=master)]
 (https://app.shippable.com/projects/5444c5ecb904a4b21567b0ff)  

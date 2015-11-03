@@ -1,12 +1,7 @@
 #!/usr/bin/env bash
 
 # This is, obviously, not the real Gradle wrapper.  It's only used as
-# the build entry point by Ship.io and BuildHive.
-
-build_shipio() {
-    sh install-deps.sh install_osx
-    gnumake check M32=
-}
+# the build entry point by BuildHive.
 
 build_buildhive() {
     sh install-deps.sh download_sbcl
@@ -16,7 +11,6 @@ build_buildhive() {
     make check
 }
 
-test "$SHIPIO" = "1" && build_shipio
 test "$JENKINS_URL" = "https://buildhive.cloudbees.com/" && build_buildhive
 
 exit 0
