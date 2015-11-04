@@ -7,9 +7,10 @@ GREP = grep -a
 
 TDIR = targets/c
 META = $(TDIR)/meta.fth
+RUN = $(TDIR)/run.sh
 PARAMS = params.fth jump.fth threading.fth
 
-METACOMPILE = echo 'include $(META)  bye' | ./forth | tail -n+3 > $@ ; \
+METACOMPILE = echo 'include $(META)  bye' | $(RUN) ./forth | tail -n+3 > $@ ; \
 	$(GREP) Meta-OK $@
 
 all: forth
@@ -23,7 +24,7 @@ kernel.c: $(DEPS) $(PARAMS) $(META)
 	$(METACOMPILE)
 
 params.fth: params
-	./$< -forth > $@
+	$(RUN) ./$< -forth > $@
 
 params: $(TDIR)/params.c $(TDIR)/forth.h $(TDIR)/forth.mk
 	$(CC) $(CFLAGS) $(CPPFLAGS) $< -o $@

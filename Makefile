@@ -1,6 +1,7 @@
 TARGET = c
 TDIR = targets/$(TARGET)
 TMAKE = $(MAKE) -f$(TDIR)/forth.mk
+FORTH = $(TDIR)/run.sh ./forth
 DEPS = kernel.fth dictionary.fth $(TDIR)/nucleus.fth
 
 GREP = grep -a
@@ -25,23 +26,23 @@ test-errors: test-output
 	$(GREP) $(ERROR_PATTERNS) $< | wc -l > $@
 
 test-output: test/test-input smoke-test
-	./forth < $< > $@
+	$(FORTH) < $< > $@
 	$(GREP) Test-OK $@
 
 test-assembler: test/test-asm.fth targets/x86/asm.fth forth
-	echo 'include $< .( Asm-OK )' | ./forth > $@
+	echo 'include $< .( Asm-OK )' | $(FORTH) > $@
 	$(GREP) Asm-OK $@
 
 smoke-test: forth
-	echo 'words cr .( Smoke-OK )' | ./forth > $@
+	echo 'words cr .( Smoke-OK )' | $(FORTH) > $@
 	$(GREP) Smoke-OK $@
 
 test-image: test/test-image.fth lib/image.fth
-	echo 'include $< .( Image-OK )' | ./forth > $@
+	echo 'include $< .( Image-OK )' | $(FORTH) > $@
 	$(GREP) Image-OK $@
 
 test-exe: test/test-exe.sh test/test-elf.fth test/test-pe.fth
-	./test/test-exe.sh > $@
+	TDIR=$(TDIR) ./test/test-exe.sh > $@
 	$(GREP) 42 $@
 
 test-lib: test/test-lib.sh

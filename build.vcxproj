@@ -11,10 +11,16 @@
     <ToolsPath>$(CygwinPath);$(LispPath);$(Path)</ToolsPath>
     <MetaCompiler>https://github.com/larsbrinkhoff/forth-metacompiler</MetaCompiler>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x86'">
+    <Cc>i686-pc-cygwin-gcc</Cc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Platform)'=='x64'">
+    <Cc>gcc</Cc>
+  </PropertyGroup>
   <Target Name="Install">
     <Exec Command="$(Git) clone $(MetaCompiler) lisp" />
   </Target>
   <Target Name="Make">
-    <Exec Command="set PATH=$(ToolsPath) &amp; make check M32=" />
+    <Exec Command="set PATH=$(ToolsPath) &amp; make check M32= CC=$(Cc)" />
   </Target>
 </Project>

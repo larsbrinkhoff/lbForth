@@ -1,4 +1,5 @@
 TDIR = targets/c
+RUN = $(TDIR)/run.sh
 TMAKE = $(MAKE) -f$(TDIR)/forth.mk
 LISP = ./lisp/lisp.sh
 META = lisp/meta.lisp
@@ -17,7 +18,7 @@ $(META):
 	git submodule update --init
 
 params.lisp: params
-	./$< -lisp > $@
+	$(RUN) ./$< -lisp > $@
 
 params:
 	$(TMAKE) $@
