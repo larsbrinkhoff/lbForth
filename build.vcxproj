@@ -6,7 +6,7 @@
   <PropertyGroup>
     <Packages>$(MSBuildProjectDirectory)\packages</Packages>
     <Git>$(Packages)\PortableGit.2.5.1.01\tools\bin\git</Git>
-    <CygwinPath>$(Packages)\Cygwin.1.7.32\tools\bin</CygwinPath>
+    <CygwinPath>$(Packages)\Cygwin.2.2.1.1\tools\bin</CygwinPath>
     <LispPath>$(Packages)\ClozureCL.1.10.1\tools</LispPath>
     <ToolsPath>$(CygwinPath);$(LispPath);$(Path)</ToolsPath>
     <MetaCompiler>https://github.com/larsbrinkhoff/forth-metacompiler</MetaCompiler>
