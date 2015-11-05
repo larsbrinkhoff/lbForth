@@ -5,6 +5,9 @@
 \ Adds to FORTH vocabulary: ASSEMBLER CODE ;CODE.
 \ Creates ASSEMBLER vocabulary with: END-CODE and x86 opcodes.
 
+\ This will become a cross assembler if loaded with a cross-compiling
+\ vocabulary at the top of the search order.
+
 \ Conventional prefix syntax: "<source> <destination> <opcode>,".
 \ Addressing modes:
 \ - immediate: "n #"
@@ -14,15 +17,11 @@
 \ - indirect with displacement: "n <reg> )#"
 \ - indexed: not supported yet
 
-require lib/common.fth
 require search.fth
+also forth definitions
+require lib/common.fth
 
 vocabulary assembler
-also assembler definitions
-include lib/image.fth
-: h,   dup c,  8 rshift c, ;
-: ,   dup h,  16 rshift h, ;
-only forth definitions
 
 base @  hex
 
@@ -66,20 +65,25 @@ defer ?opsize
 : imm@   imm @ ;
 : disp@   disp @ ;
 
+\ Possibly use a cross-compiling vocabulary to access a target image.
+previous
+
 \ Write instruction fields to memory.
-also assembler
+: h,   dup c,  8 rshift c, ;
+: w,   dup h,  10 rshift h, ;
 : ?twobyte   dup FF > if dup 8 rshift c, then ;
 : opcode,   opcode@ ?twobyte ds + c, ;
 : mrrm,   mrrm@ c, ;
 : sib,   sib@ c, ;
 : imm8,   imm@ c, ;
 : imm16,   imm@ h, ;
-: imm32,   imm@ , ;
+: imm32,   imm@ w, ;
 : disp8,   disp@ c, ;
-: disp32,   disp@ , ;
+: disp32,   disp@ w, ;
 : opsize-prefix,   66 c, ;
 : -pc   here negate ;
-previous
+
+also forth
 
 \ Set immediate operand.
 : -imm   ['] noop is ?imm, ;
@@ -174,7 +178,7 @@ format: 1imm8   !op8 op -mrrm ;
 : reg:    dup reg8 dup reg16 dup reg32 1+ ;
 
 \ Instruction mnemonics.
-also assembler definitions
+previous also assembler definitions
 00 2op add,  immediate: alu#
 08 2op or,   immediate: alu#
 0F44 2op-ds cmove,  \ Todo: other condition codes.
@@ -309,7 +313,9 @@ drop
 : start-code   also assembler 0asm ;
 : end-code     align previous ;
 
-base !  only forth definitions  also assembler
+base !
+
+previous definitions also assembler
 
 \ Standard assembler entry points.
 : code    parse-name header, ?code, reveal start-code  ;

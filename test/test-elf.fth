@@ -1,10 +1,13 @@
-require targets/x86/asm.fth
+require search.fth
 
-also assembler
-require lib/elf.fth
-previous
+vocabulary cross
+only forth also cross definitions
+include lib/image.fth
+include targets/x86/asm.fth
+include lib/elf.fth
 
-hex
+
+hex only forth definitions also cross
 
 08048000 constant load-address
 load-address 54 + constant entry-point
