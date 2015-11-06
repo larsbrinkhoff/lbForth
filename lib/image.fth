@@ -7,7 +7,8 @@
 
 
 4 constant t-cell
-4000 t-cell * constant t-size
+\ 4000 t-cell * constant t-size
+1000 t-cell * constant t-size
 
 create t-image  t-size allot  t-image t-size erase
 
