@@ -46,11 +46,18 @@ include targets/x86/nucleus.fth
 host
 
 only forth also meta definitions
+
+: >mark   here 0 , ;
+: >resolve   here swap ! ;
+
 : h: : ;
 
 h: ]   only t-words also compiler ;
 h: :   parse-name header, 0 , ] ;
 h: create   parse-name header, 0 , ;
+h: variable   create cell allot ;
+
+0 constant jmp_buf
 
 only forth also meta also compiler definitions
 
@@ -58,11 +65,15 @@ h: h; postpone ; ; immediate
 
 h: [   target h;
 h: ;   t-compile exit [ h;
+h: if   t-compile 0branch >mark h;
+h: then   >resolve h;
+h: else   t-compile branch >mark swap >resolve h;
+h: literal   t-compile (literal) , h;
 
 target
 
-: noop ;
-create data_stack     110 cells allot
+:noname 2dup type space (parsed) ; is parsed
+include kernel.fth
 
 ;elf
 
