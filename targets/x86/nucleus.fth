@@ -155,7 +155,27 @@ code c@
    next,
 end-code
 
-\ code emit ( c -- )
+code emit
+   eax push,
+   ebx push,
+   ecx push,
+   edx push,
+
+   SP W mov,
+   4 # SP add,
+
+   4 # eax mov,   
+   1 # ebx mov,
+   W ecx mov,
+   1 # edx mov,
+   80 # int,
+
+   edx pop,
+   ecx pop,
+   ebx pop,
+   eax pop,
+   next,
+end-code
 
 code bye ( ... -- <no return> )
    then,

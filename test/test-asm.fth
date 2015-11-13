@@ -110,26 +110,28 @@ end-code
 check-;code
 .( PASS ) cr
 
-\ Redefine CODE and END-CODE to overwrite the code field of the
-\ previously defined word with the same name.
-create code-start 2 cells allot
-: code   source type  >in @ ' >code swap >in !  code  here  code-start 2! ;
-: set-code   latestxt >code @ swap ! ;
+0 [if]
+  \ Redefine CODE and END-CODE to overwrite the code field of the
+  \ previously defined word with the same name.
+  create code-start 2 cells allot
+  : code   source type  >in @ ' >code swap >in !  code  here  code-start 2! ;
+  : set-code   latestxt >code @ swap ! ;
 
-\ Except BYE.  The C targets needs the original to flush output buffers.
-' bye >code @
+  \ Except BYE.  The C targets needs the original to flush output buffers.
+  ' bye >code @
 
-also assembler definitions
-: end-code   code-start 2@  here over - hex cr cdump  end-code  set-code ;
+  also assembler definitions
+  : end-code   code-start 2@  here over - hex cr cdump  end-code  set-code ;
 
-only forth definitions
-: host ; : target ; \ No metacompilation.
-vocabulary newcleus
-also newcleus definitions
+  only forth definitions
+  : host ; : target ; \ No metacompilation.
+  vocabulary newcleus
+  also newcleus definitions
 
-include targets/x86/nucleus.fth
-only forth definitions
+  include targets/x86/nucleus.fth
+  only forth definitions
 
-' bye >code !
+  ' bye >code !
+[then]
 
 [then]
