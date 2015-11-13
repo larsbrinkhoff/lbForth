@@ -49,13 +49,19 @@ only forth also meta definitions
 
 : >mark   here 0 , ;
 : >resolve   here swap ! ;
+: t-literal   t-compile (literal) , ;
+
+action-of number constant h-number
+: ?number,   if 2drop undef else drop t-literal 2drop then ;
+: t-number ( a u -- ) 0 0 2over >number nip ?number, ;
 
 : h: : ;
 
-h: ]   only t-words also compiler ;
+h: ]   only t-words also compiler  ['] t-number is number ;
 h: :   parse-name header, 0 , ] ;
 h: create   parse-name header, 0 , ;
 h: variable   create cell allot ;
+h: forward:   parse-name 0 t-word ; \ TODO: dummy
 
 0 constant jmp_buf
 
@@ -63,12 +69,12 @@ only forth also meta also compiler definitions
 
 h: h; postpone ; ; immediate
 
-h: [   target h;
+h: [   target  h-number is number h;
 h: ;   t-compile exit [ h;
 h: if   t-compile 0branch >mark h;
 h: then   >resolve h;
 h: else   t-compile branch >mark swap >resolve h;
-h: literal   t-compile (literal) , h;
+h: literal   t-literal h;
 
 target
 
