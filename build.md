@@ -33,13 +33,6 @@ Install: `install-deps.sh install_osx`
 Build: `gnumake M32=`  
 Test: `gnumake check M32=`
 
-## [BuildHive](http://buildhive.cloudbees.com/)
-[![BuildHive](https://buildhive.cloudbees.com/job/larsbrinkhoff/job/lbForth/badge/icon)]
-(https://buildhive.cloudbees.com/job/larsbrinkhoff/job/lbForth/)  
-OS: Linux: Fedora 17  
-File: [`gradlew`]
-(https://github.com/larsbrinkhoff/lbForth/blob/master/gradlew)
-
 ## [CircleCI](http://circleci.com/)
 [![CircleCI](https://circleci.com/gh/larsbrinkhoff/lbForth.svg?style=svg)]
 (https://circleci.com/gh/larsbrinkhoff/lbForth)  
