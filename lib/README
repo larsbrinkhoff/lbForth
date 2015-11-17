@@ -11,3 +11,4 @@ pe.fth          Write a PE executable.
 quotations.fth  Quotations using [: ;] notation.
 trace.fth       Debug facility.
 where.fth       Where is a word used?
+xforward.fth	Forward declarations for cross compilation.

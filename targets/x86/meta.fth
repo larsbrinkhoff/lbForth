@@ -30,6 +30,7 @@ include lib/image.fth
 
 include targets/x86/asm.fth
 include lib/elf.fth
+include lib/xforward.fth
 
 only forth definitions also meta
 : target   only forth also meta also t-words definitions previous target-image ;
@@ -57,11 +58,10 @@ action-of number constant h-number
 
 : h: : ;
 
-h: ]   only t-words also compiler  ['] t-number is number ;
+h: ]   only t-words also compiler also forward-refs  ['] t-number is number ;
 h: :   parse-name header, 0 , ] ;
 h: create   parse-name header, 0 , ;
 h: variable   create cell allot ;
-h: forward:   parse-name 0 t-word ; \ TODO: dummy
 
 0 constant jmp_buf
 
@@ -80,11 +80,14 @@ target
 
 :noname 2dup type space (parsed) ; is parsed
 include kernel.fth
+also t-words resolve-all-forward-refs previous
 
 ;elf
 
 target-region type bye
 
-also t-words definitions words
+cr .( Target words: ) also t-words definitions words
+cr .( Forward refs: ) also forward-refs words
+cr
 
 target-region hex dump bye
