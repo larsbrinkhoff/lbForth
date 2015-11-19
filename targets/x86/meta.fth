@@ -3,6 +3,7 @@ require search.fth
 hex
 08048000 constant load-address
 load-address 54 + constant entry-point
+decimal
 
 vocabulary compiler
 
@@ -11,6 +12,7 @@ defer t,
 : t-word ( a u xt -- ) -rot "create , does> @ t, ;
 : t' ( a u -- xt ) also t-words find-name previous drop >body @ ;
 : t-compile ( "name" -- ) parse-name t' postpone literal postpone t, ; immediate
+: t-[compile] ( "name" -- ) also compiler ' previous compile, ; immediate
 
 vocabulary meta
 only forth also meta definitions
@@ -65,16 +67,14 @@ h: variable   create cell allot ;
 
 0 constant jmp_buf
 
-only forth also meta also compiler definitions
+only forth also meta also compiler definitions previous
 
-h: h; postpone ; ; immediate
-
-h: [   target  h-number is number h;
-h: ;   t-compile exit [ h;
-h: if   t-compile 0branch >mark h;
-h: then   >resolve h;
-h: else   t-compile branch >mark swap >resolve h;
-h: literal   t-literal h;
+h: [   target  h-number is number ;
+h: ;   t-compile exit t-[compile] [ ;
+h: if   t-compile 0branch >mark ;
+h: else   t-compile branch >mark swap >resolve ;
+h: then   >resolve ;
+h: literal   t-literal ;
 
 target
 
