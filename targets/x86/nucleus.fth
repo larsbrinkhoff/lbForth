@@ -1,168 +1,128 @@
 \ Nucleus for x86.  Copyright 2014-2015 Lars Brinkhoff.
 
-\	Legacy	ITC	DTC	STC
-\ IP	eax			pc
-\ W	edx	edx
-\ SP	memory	esp	esp	esi?
-\ RP	memory	esi?		esp
-\ T		eax	eax	eax
-
 hex
 
-host also assembler definitions
-: SP   [ also forth ] sp [ previous ] ;
-: IP   eax ;
+\ Jump to COLD.
+also assembler
+ahead,
+
+host also assembler
+
+\ Register allocation.
+: I   eax ;
+: S   esp ;
+: R   esi ;
 : W   edx ;
-: next,   
-   IP ) W mov,
-   4 # IP add,
-   18 W )# indirect-jmp, ;
+
+\ Next.
+: fetch,   >r 2>r I ) 2r> r> mov,  4 # I add, ;
+: next,   W fetch,  18 W )# indirect-jmp, ;
 
 target
 
-\ Jump straight to BYE.
-also assembler
-ahead,
-previous
-
-code cold
-  \ Initialise dp, IP, SP, RP.
-  \ Jump to WARM.
+code exit
+   R ) I mov,
+   4 # R add,
+   next,
 end-code
 
-code exit
-   RP W mov,
-   W ) IP mov,
-   4 # W add,
-   W RP mov,
+code docol
+   4 # R sub,
+   I R ) mov,
+   1C W )# I lea,
+   next,
+end-code
+
+code dovar
+   1C W )# W lea,
+   W push,
    next,
 end-code
 
 code dodoes
-   RP ecx mov,
-   4 # ecx sub,
-   IP ecx ) mov,
-   ecx RP mov,
-   14 W )# IP mov,
-   SP ecx mov,
-   4 # ecx sub,
+   4 # R sub,
+   I R ) mov,
+   14 W )# I mov,
    1C W )# W lea,
-   W ecx ) mov,
-   ecx SP mov,
+   W push,
    next,
 end-code
 
 code 0branch
-   IP ) W mov,
-   4 # IP add,
-   SP ecx mov,
-   4 # ecx add,
-   ecx SP mov,
-   -4 ecx )# ecx mov,
+   W fetch,
+   ecx pop,
    ecx ecx test,
-   W IP cmove,
+   W I cmove,
    next,
 end-code
 
 code (literal)
-   SP edx mov,
-   -4 edx )# ecx lea,
-   ecx SP mov,
-   IP ) ecx mov,
-   4 # IP add,
-   ecx -4 edx )# mov,
+   W fetch,
+   W push,
    next,
 end-code
 
 code !
-   SP esp xchg,
    ecx pop,
-   edx pop,
-   edx ecx ) mov,
-   SP esp xchg,
+   W pop,
+   W ecx ) mov,
    next,
 end-code
 
 code @
-   SP edx mov,
-   edx ) ecx mov,
-   ecx ) ecx mov,
-   ecx edx ) mov,
+   S ) W mov,
+   W ) W mov,
+   W S ) mov,
    next,
 end-code
 
 code +
-   SP W mov,
-   W ) ecx mov,
-   4 # W add,
-   W ) ecx add,
-   ecx W ) mov,
-   W SP mov,
+   W pop,
+   W S ) add,
    next,
 end-code
 
 code >r
-   SP edx mov,
-   edx ) ecx mov,
-   4 # edx add,
-   edx SP mov,
-   RP edx mov,
-   4 # edx sub,
-   edx RP mov,
-   ecx edx ) mov,
+   W pop,
+   4 # R sub,
+   W R ) mov,
    next,
 end-code
 
 code r>
-   RP edx mov,
-   ebx push,
-   edx ) ecx mov,
-   4 # edx add,
-   edx RP mov,
-   SP edx mov,
-   4 # edx sub,
-   edx SP mov,
-   ecx edx ) mov,
-   ebx pop,
+   R ) W mov,
+   4 # R add,
+   W push,
    next,
 end-code
 
 code nand
-   SP W mov,
-   W ) ecx mov,
-   4 # W add,
-   W ) ecx and,
-   ecx not,
-   ecx W ) mov,
-   W SP mov,
+   W pop,
+   S ) W and,
+   W not,
+   W S ) mov,
    next,
 end-code
 
 code c!
-   SP W mov,
-   8 # SP add,
-   4 W )# ecx mov,
-   W ) W mov,
+   W pop,
+   ecx pop,
    cl W ) mov,
    next,
 end-code
 
 code c@
-   SP W mov,
-   W ) ecx mov,
-   ecx ) ecx movzx,
-   ecx W ) mov,
+   S ) W mov,
+   W ) W movzx,
+   W S ) mov,
    next,
 end-code
 
 code emit
+   S W mov,
    eax push,
    ebx push,
    ecx push,
-   edx push,
-
-   SP W mov,
-   4 # SP add,
 
    4 # eax mov,
    1 # ebx mov,
@@ -170,15 +130,14 @@ code emit
    1 # edx mov,
    80 # int,
 
-   edx pop,
    ecx pop,
    ebx pop,
    eax pop,
+   4 # S add,
    next,
 end-code
 
 code bye ( ... -- <no return> )
-   then,
    1 # eax mov,
    2A # ebx mov,
    80 # int,
@@ -189,10 +148,9 @@ code close-file ( fileid -- ior )
    ebx push,
 
    6 # eax mov,
-   SP W mov,
-   W ) ebx mov,
+   S ) ebx mov,
    80 # int,
-   eax W ) mov,
+   eax S ) mov,
 
    ebx pop,
    eax pop,
@@ -204,12 +162,9 @@ code open-file ( addr u mode -- fileid ior )
    ebx push,
    ecx push,
 
-   SP W mov,
-   4 # SP add,
-
    5 # eax mov,
-   8 W )# ebx mov,
-   W ) ecx mov,
+   8 S )# ebx mov,
+   ecx pop,
    80 # int,
 
    ebx ebx xor,
@@ -217,8 +172,8 @@ code open-file ( addr u mode -- fileid ior )
    0<, if,
      eax ebx xchg,
    then,
-   ebx 4 W )# mov,
-   eax 8 W )# mov,
+   ebx S ) mov,
+   eax 4 S )# mov,
 
    ecx pop,
    ebx pop,
@@ -230,16 +185,14 @@ code read-file ( addr u1 fileid -- u2 ior )
    eax push,
    ebx push,
    ecx push,
-   edx push,
-   esi push,
 
-   SP esi mov,
+   SP W mov,
    4 # SP add,
 
    3 # eax mov,
-   esi ) ebx mov,
-   8 esi )# ecx mov,
-   4 esi )# edx mov,
+   ebx pop,
+   4 S )# ecx mov,
+   S ) edx mov,
    80 # int,
 
    ebx ebx xor,
@@ -247,11 +200,9 @@ code read-file ( addr u1 fileid -- u2 ior )
    0<, if,
      eax ebx xchg,
    then,
-   ebx 4 esi )# mov,
-   eax 8 esi )# mov,
+   ebx S ) mov,
+   eax 4 W )# mov,
 
-   esi pop,
-   edx pop,
    ecx pop,
    ebx pop,
    eax pop,
@@ -259,104 +210,80 @@ code read-file ( addr u1 fileid -- u2 ior )
 end-code
 
 code branch
-   IP ) IP mov,
+   I ) I mov,
    next,
 end-code
 
 code execute
-   SP ecx mov,
-   ecx ) W mov,
-   4 # ecx add,
-   ecx SP mov,
+   W pop,
    18 W )# indirect-jmp,
 end-code
 
 code r@
-   RP edx mov,
-   edx ) ecx mov,
-   SP edx mov,
-   4 # edx sub,
-   ecx edx ) mov,
-   edx SP mov,
+   R ) W mov,
+   W push,
    next,
 end-code
 
 code 0=
-   SP W mov,
-   1 # W ) cmp,
-   ecx ecx sbb,
-   ecx W ) mov,
+   1 # S ) cmp,
+   W W sbb,
+   W S ) mov,
    next,
 end-code
 
 code 0<>
-   SP W mov,
-   W ) ecx mov,
-   ecx neg,
-   ecx ecx sbb,
-   ecx W ) mov,
+   S ) W mov,
+   W neg,
+   W W sbb,
+   W S ) mov,
    next,
 end-code
 
 code 0<
-   SP W mov,
-   W ) ecx mov,
-   1F # ecx sar,
-   ecx W ) mov,
+   S ) W mov,
+   1F # W sar,
+   W S ) mov,
    next,
 end-code
 
 code drop
-   SP W mov,
-   4 # W add,
-   W SP mov,
+   W pop,
    next,
 end-code
 
 code dup
-   SP W mov,
-   W ) ecx mov,
-   4 # W sub,
-   ecx W ) mov,
-   W SP mov,
+   S ) W mov,
+   W push,
    next,
 end-code
 
 code ?dup
-   SP W mov,
-   W ) ecx mov,
-   ecx ecx test,
+   S ) W mov,
+   W W test,
    0<>, if,
-     4 # W sub,
-     ecx W ) mov,
-     W SP mov,
+     W push,
    then,
    next,
 end-code
 
 code nip
-   SP W mov,
-   W ) ecx mov,
-   4 # W add,
-   ecx W ) mov,
-   W SP mov,
+   W pop,
+   W S ) mov,
    next,
 end-code
 
 code swap
-   SP W mov,
-   W ) ecx mov,
-   ecx 4 W )# xchg,
-   ecx W ) mov,
+   S ) W mov,
+   4 S )# ecx mov,
+   ecx S ) mov,
+   W 4 S )# mov,
    next,
 end-code
 
 code over
-   SP W mov,
-   4 W )# ecx mov,
-   4 # W sub,
-   ecx W ) mov,
-   W SP mov,
+   4 S )# W mov,
+   W push,
    next,
 end-code
 
@@ -372,80 +299,54 @@ end-code
 \ code 2rot
 
 code negate
-   SP W mov,
-   W ) ecx mov,
-   ecx neg,
-   ecx W ) mov,
+   S ) neg,
    next,
 end-code
 
 code -
-   SP W mov,
-   4 W )# ecx mov,
-   W ) ecx sub,
-   W 4 # add,
-   ecx W ) mov,
-   W SP mov,
+   W pop,
+   W S ) sub,
    next,
 end-code
 
 code =
-   SP W mov,
-   W ) ecx mov,
-   W 4 # add,
-   W ) ecx sub,
-   1 # ecx sub,
-   ecx ecx sbb,
-   ecx W ) mov,
-   W SP mov,
+   W pop,
+   S ) W sub,
+   1 # W sub,
+   W W sbb,
+   W S ) mov,
    next,
 end-code
 
 code <>
-   SP W mov,
-   W ) ecx mov,
-   W 4 # add,
-   W ) ecx sub,
-   ecx neg,
-   ecx ecx sbb,
-   ecx W ) mov,
-   W SP mov,
+   S ) W mov,
+   S 4 # add,
+   S ) W sub,
+   W neg,
+   W W sbb,
+   W S ) mov,
    next,
 end-code
 
 code 1+
-   SP W mov,
-   W ) ecx mov,
-   1 # ecx add,
-   ecx W ) mov,
-   W SP mov,
+   1 # S ) add,
    next,
 end-code
 
 code 1-
-   SP W mov,
-   W ) ecx mov,
-   -1 # ecx add,
-   ecx W ) mov,
-   W SP mov,
+   -1 # S ) add,
    next,
 end-code
 
 code cell+
-   SP W mov,
-   W ) ecx mov,
-   4 # ecx add,
-   ecx W ) mov,
-   W SP mov,
+   4 # S ) add,
    next,
 end-code
 
 code cells
-   SP W mov,
-   W ) ecx mov,
-   2 # ecx shl,
-   ecx W ) mov,
-   W SP mov,
+   S ) W mov,
+   2 # W shl,
+   W S ) mov,
    next,
 end-code
 
@@ -461,40 +362,25 @@ end-code
 \ code mod
 
 code invert
-   SP W mov,
-   W ) ecx mov,
-   ecx not,
-   ecx W ) mov,
+   S ) not,
    next,
 end-code
 
 code or
-   SP W mov,
-   W ) ecx mov,
-   4 # W add,
-   W ) ecx or,
-   ecx W ) mov,
-   W SP mov,
+   W pop,
+   W S ) or,
    next,
 end-code
 
 code xor
-   SP W mov,
-   W ) ecx mov,
-   4 # W add,
-   W ) ecx xor,
-   ecx W ) mov,
-   W SP mov,
+   W pop,
+   W S ) xor,
    next,
 end-code
 
 code and
-   SP W mov,
-   W ) ecx mov,
-   4 # W add,
-   W ) ecx and,
-   ecx W ) mov,
-   W SP mov,
+   W pop,
+   W S ) and,
    next,
 end-code
 
