@@ -42,7 +42,7 @@ B7 constant arm64
 
 ( Program header )
 
-: phdr32, ( a1 -- a2 )   1 w, 0 a, dup a, a, here 0 a, 0 a, 5 w, 1000 w, ;
+: phdr32, ( a1 -- a2 )   1 w, 0 a, dup a, a, here 0 a, 0 a, 7 w, 1000 w, ;
 : phdr64, ( a1 -- a2 )   1 w, 5 w, 0 a, dup a, a, here 0 a, 0 a, 1000 w, ;
 
 ( Section header )
