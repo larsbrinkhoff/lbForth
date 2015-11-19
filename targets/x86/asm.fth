@@ -298,6 +298,7 @@ drop
 
 \ Conditional jumps.
 : 0=,   ['] jne, ;
+: 0<,   ['] jns, ;
 : 0<>,   ['] je, ;
 : if,   0 swap execute >mark1 ;
 : until,   execute ;

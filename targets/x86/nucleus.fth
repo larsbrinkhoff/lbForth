@@ -164,7 +164,7 @@ code emit
    SP W mov,
    4 # SP add,
 
-   4 # eax mov,   
+   4 # eax mov,
    1 # ebx mov,
    W ecx mov,
    1 # edx mov,
@@ -184,9 +184,79 @@ code bye ( ... -- <no return> )
    80 # int,
 end-code
 
-\ code close-file ( fileid -- ior )
-\ code open-file ( addr u mode -- fileid ior )
-\ code read-file ( addr u1 fileid -- u2 ior )
+code close-file ( fileid -- ior )
+   eax push,
+   ebx push,
+
+   6 # eax mov,
+   SP W mov,
+   W ) ebx mov,
+   80 # int,
+   eax W ) mov,
+
+   ebx pop,
+   eax pop,
+   next,
+end-code
+
+code open-file ( addr u mode -- fileid ior )
+   eax push,
+   ebx push,
+   ecx push,
+
+   SP W mov,
+   4 # SP add,
+
+   5 # eax mov,
+   8 W )# ebx mov,
+   W ) ecx mov,
+   80 # int,
+
+   ebx ebx xor,
+   eax eax test,
+   0<, if,
+     eax ebx xchg,
+   then,
+   ebx 4 W )# mov,
+   eax 8 W )# mov,
+
+   ecx pop,
+   ebx pop,
+   eax pop,
+   next,
+end-code
+
+code read-file ( addr u1 fileid -- u2 ior )
+   eax push,
+   ebx push,
+   ecx push,
+   edx push,
+   esi push,
+
+   SP esi mov,
+   4 # SP add,
+
+   3 # eax mov,
+   esi ) ebx mov,
+   8 esi )# ecx mov,
+   4 esi )# edx mov,
+   80 # int,
+
+   ebx ebx xor,
+   eax eax test,
+   0<, if,
+     eax ebx xchg,
+   then,
+   ebx 4 esi )# mov,
+   eax 8 esi )# mov,
+
+   esi pop,
+   edx pop,
+   ecx pop,
+   ebx pop,
+   eax pop,
+   next,
+end-code
 
 code branch
    IP ) IP mov,
