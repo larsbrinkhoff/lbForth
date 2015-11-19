@@ -139,7 +139,7 @@ end-code
 
 code bye ( ... -- <no return> )
    1 # eax mov,
-   2A # ebx mov,
+   0 # ebx mov,
    80 # int,
 end-code
 

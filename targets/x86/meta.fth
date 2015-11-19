@@ -58,11 +58,15 @@ action-of number constant h-number
 : ?number,   if 2drop undef else drop t-literal 2drop then ;
 : t-number ( a u -- ) 0 0 2over >number nip ?number, ;
 
+s" docol" t' 28 + constant 'docol
+s" dovar" t' 28 + constant 'dovar
+
 : h: : ;
 
+h: '   parse-name t' ;
 h: ]   only t-words also compiler also forward-refs  ['] t-number is number ;
-h: :   parse-name header, 0 , ] ;
-h: create   parse-name header, 0 , ;
+h: :   parse-name header, 'docol , ] ;
+h: create   parse-name header, 'dovar , ;
 h: variable   create cell allot ;
 
 0 constant jmp_buf
@@ -78,8 +82,9 @@ h: literal   t-literal ;
 
 target
 
-:noname 2dup type space (parsed) ; is parsed
-include kernel.fth
+\ :noname 2dup type space (parsed) ; is parsed
+\ include kernel.fth
+include test/test-meta.fth
 also t-words resolve-all-forward-refs previous
 
 ;elf
