@@ -19,7 +19,7 @@ also forth
 \ Resolve forward references.
 : ?found   0= if cr ." Unresolved forward reference: " type cr abort then ;
 : xresolving ( xt -- x ) >name find-name ?found >body @ ;
-: traverse-chain ( xt a -- ) begin dup while chain! repeat 2drop ;
-: resolve ( xt -- f ) dup xresolving  swap >body @  traverse-chain  -1 ;
+: chains! ( x a -- ) begin dup while chain! repeat 2drop ;
+: resolve ( xt -- f ) dup xresolving  swap >body @  chains!  -1 ;
 : resolve-all-forward-refs   ['] forward-refs ['] resolve traverse-wordlist ;
 previous
