@@ -59,7 +59,9 @@ host
 only forth also meta definitions
 
 : >mark   here 0 , ;
+: <mark   here ;
 : >resolve   here swap ! ;
+: <resolve   , ;
 : t-literal   t-compile (literal) , ;
 
 action-of number constant h-number
@@ -98,9 +100,17 @@ h: TO_BODY   body-offset t-literal ;
 h: NAME_LENGTH   name-size t-literal ;
 
 h: if   t-compile 0branch >mark ;
-h: else   t-compile branch >mark swap >resolve ;
+h: ahead   t-compile branch >mark ;
 h: then   >resolve ;
 h: literal   t-literal ;
+
+h: begin   <mark ;
+h: again   t-compile branch <resolve ;
+h: until   t-compile 0branch <resolve ;
+
+h: else   t-[compile] ahead swap t-[compile] then ;
+h: while    t-[compile] if swap ;
+h: repeat   t-[compile] again t-[compile]  then ;
 
 target
 
