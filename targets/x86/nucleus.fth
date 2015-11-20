@@ -319,10 +319,9 @@ code =
 end-code
 
 code <>
-   S ) W mov,
-   S 4 # add,
+   W pop,
    S ) W sub,
-   W neg,
+   W not,
    W W sbb,
    W S ) mov,
    next,
