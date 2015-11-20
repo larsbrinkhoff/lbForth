@@ -1,0 +1,3 @@
+An x86 target with 16-bit cell size.
+
+Set "sysctl -w vm.mmap_min_addr=0" to be able to run in the low 64K.
