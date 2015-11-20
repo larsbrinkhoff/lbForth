@@ -6,7 +6,7 @@ hex
 also assembler
 ahead,
 
-host also assembler
+host also meta also assembler
 
 \ Register allocation.
 : I   eax ;
@@ -16,7 +16,7 @@ host also assembler
 
 \ Next.
 : fetch,   >r 2>r I ) 2r> r> mov,  4 # I add, ;
-: next,   W fetch,  18 W )# indirect-jmp, ;
+: next,   W fetch,  code-offset W )# indirect-jmp, ;
 
 target
 
@@ -26,24 +26,24 @@ code exit
    next,
 end-code
 
-code docol
+code docol  also meta
    4 # R sub,
    I R ) mov,
-   1C W )# I lea,
+   body-offset W )# I lea,
    next,
 end-code
 
-code dovar
-   1C W )# W lea,
+code dovar  also meta
+   body-offset W )# W lea,
    W push,
    next,
 end-code
 
-code dodoes
+code dodoes  also meta
    4 # R sub,
    I R ) mov,
-   14 W )# I mov,
-   1C W )# W lea,
+   does-offset W )# I mov,
+   body-offset W )# W lea,
    W push,
    next,
 end-code
@@ -214,9 +214,9 @@ code branch
    next,
 end-code
 
-code execute
+code execute  also meta
    W pop,
-   18 W )# indirect-jmp,
+   code-offset W )# indirect-jmp,
 end-code
 
 code r@

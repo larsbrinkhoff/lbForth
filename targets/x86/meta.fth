@@ -24,6 +24,12 @@ include lib/image.fth
 
 ' , is t,
 
+include targets/x86/params.fth
+: >link   next-offset + ;
+: >does   does-offset + ;
+: >code   code-offset + ;
+: >body   body-offset + ;
+
 : link, ( nt -- ) latest ,  to latest ;
 : reveal ;
 : name, ( a u -- ) #name min c,  #name ", ;
@@ -60,8 +66,8 @@ action-of number constant h-number
 : ?number,   if 2drop undef else drop t-literal 2drop then ;
 : t-number ( a u -- ) 0 0 2over >number nip ?number, ;
 
-s" docol" t' 28 + constant 'docol
-s" dovar" t' 28 + constant 'dovar
+s" docol" t' >body constant 'docol
+s" dovar" t' >body constant 'dovar
 
 : h: : ;
 
@@ -83,6 +89,14 @@ h: [then]   postpone [then] ;
 
 h: [   target  h-number is number ;
 h: ;   t-compile exit t-[compile] [ ;
+
+h: cell   cell t-literal ;
+h: TO_NEXT   next-offset t-literal ;
+h: TO_DOES   does-offset t-literal ;
+h: TO_CODE   code-offset t-literal ;
+h: TO_BODY   body-offset t-literal ;
+h: NAME_LENGTH   name-size t-literal ;
+
 h: if   t-compile 0branch >mark ;
 h: else   t-compile branch >mark swap >resolve ;
 h: then   >resolve ;
