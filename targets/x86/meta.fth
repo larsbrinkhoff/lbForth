@@ -12,8 +12,8 @@ vocabulary compiler
 vocabulary t-words
 defer t,
 : t-word ( a u xt -- ) -rot "create , does> @ t, ;
-: t' ( a u -- xt ) also t-words find-name previous drop >body @ ;
-: t-compile ( "name" -- ) parse-name t' postpone literal postpone t, ; immediate
+: t' ( "name" -- xt ) also t-words parse-name find-name previous drop >body @ ;
+: t-compile ( "name" -- ) t' postpone literal postpone t, ; immediate
 : t-[compile] ( "name" -- ) also compiler ' previous compile, ; immediate
 
 vocabulary meta
@@ -66,12 +66,12 @@ action-of number constant h-number
 : ?number,   if 2drop undef else drop t-literal 2drop then ;
 : t-number ( a u -- ) 0 0 2over >number nip ?number, ;
 
-s" docol" t' >body constant 'docol
-s" dovar" t' >body constant 'dovar
+t' docol >body constant 'docol
+t' dovar >body constant 'dovar
 
 : h: : ;
 
-h: '   parse-name t' ;
+h: '   t' ;
 h: ]   only t-words also compiler also forward-refs  ['] t-number is number ;
 h: :   parse-name header, 'docol , ] ;
 h: create   parse-name header, 'dovar , ;
