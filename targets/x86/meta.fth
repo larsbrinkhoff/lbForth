@@ -1,3 +1,5 @@
+\ Metacompiler for x86.  Copyright Lars Brinkhoff 2015.
+
 require search.fth
 
 hex
@@ -73,6 +75,12 @@ h: variable   create cell allot ;
 
 only forth also meta also compiler definitions previous
 
+h: \   postpone \ ;
+h: (   postpone ( ;
+h: [if]   postpone [if] ;
+h: [else]   postpone [else] ;
+h: [then]   postpone [then] ;
+
 h: [   target  h-number is number ;
 h: ;   t-compile exit t-[compile] [ ;
 h: if   t-compile 0branch >mark ;
@@ -91,8 +99,13 @@ also t-words resolve-all-forward-refs previous
 
 target-region type bye
 
-cr .( Target words: ) also t-words definitions words
-cr .( Forward refs: ) also forward-refs words
+host also meta
+
+cr .( Target size: ) t-size .
+cr .( Target used: ) target here host also meta >host t-image host - .
+cr .( Host unused: ) unused .
+cr .( Target words: ) also t-words words only forth
+cr .( Forward refs: ) also meta also forward-refs words
 cr
 
 target-region hex dump bye
