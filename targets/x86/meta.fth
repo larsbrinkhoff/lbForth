@@ -93,6 +93,13 @@ h: [then]   postpone [then] ;
 h: [   target  h-number is number ;
 h: ;   t-compile exit t-[compile] [ ;
 
+h: [']   ' t-literal ;
+h: [char]   char t-literal ;
+h: literal   t-literal ;
+h: compile   ' t-literal t-compile , ;
+h: [compile]   ' , ;
+h: does>   t-compile (does>) ;
+
 h: cell   cell t-literal ;
 h: TO_NEXT   next-offset t-literal ;
 h: TO_DOES   does-offset t-literal ;
@@ -101,11 +108,11 @@ h: TO_BODY   body-offset t-literal ;
 h: NAME_LENGTH   name-size t-literal ;
 
 h: s"   t-compile (sliteral) parse" dup , ", ;
+h: ."   t-[compile] s" t-compile type ;
 
 h: if   t-compile 0branch >mark ;
 h: ahead   t-compile branch >mark ;
 h: then   >resolve ;
-h: literal   t-literal ;
 
 h: begin   <mark ;
 h: again   t-compile branch <resolve ;
