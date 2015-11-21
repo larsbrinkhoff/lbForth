@@ -99,6 +99,8 @@ h: TO_CODE   code-offset t-literal ;
 h: TO_BODY   body-offset t-literal ;
 h: NAME_LENGTH   name-size t-literal ;
 
+h: s"   t-compile (sliteral) parse" dup , ", ;
+
 h: if   t-compile 0branch >mark ;
 h: ahead   t-compile branch >mark ;
 h: then   >resolve ;

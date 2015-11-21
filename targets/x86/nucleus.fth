@@ -89,6 +89,16 @@ code >r
    next,
 end-code
 
+code (sliteral)
+   W fetch,
+   I push,
+   W push,
+   W I add,
+   4 # I add,
+   -4 # I and,
+   next,
+end-code
+
 code r>
    R ) W mov,
    4 # R add,

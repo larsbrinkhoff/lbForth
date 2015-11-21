@@ -7,7 +7,7 @@ variable x
 : foo   70 x !  x @ emit ;
 
 forward: bar
-: warm   foo foo bar bye ;
+: warm   foo s" tjo" + 1- c@ emit foo bar bye ;
 : bar   16 cells 1+ 2 or 1 xor emit 10 emit ;
 
 code cold  also meta
