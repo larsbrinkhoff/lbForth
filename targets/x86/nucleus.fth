@@ -158,9 +158,9 @@ code close-file ( fileid -- ior )
    ebx push,
 
    6 # eax mov,
-   S ) ebx mov,
+   8 S )# ebx mov,
    80 # int,
-   eax S ) mov,
+   eax 8 S )# mov,
 
    ebx pop,
    eax pop,
@@ -173,8 +173,8 @@ code open-file ( addr u mode -- fileid ior )
    ecx push,
 
    5 # eax mov,
-   8 S )# ebx mov,
-   ecx pop,
+   14 S )# ebx mov,
+   0C S )# ecx mov,
    80 # int,
 
    ebx ebx xor,
@@ -182,12 +182,13 @@ code open-file ( addr u mode -- fileid ior )
    0<, if,
      eax ebx xchg,
    then,
-   ebx S ) mov,
-   eax 4 S )# mov,
+   ebx 10 S )# mov,
+   eax 14 S )# mov,
 
    ecx pop,
    ebx pop,
    eax pop,
+   W pop,
    next,
 end-code
 
@@ -196,13 +197,10 @@ code read-file ( addr u1 fileid -- u2 ior )
    ebx push,
    ecx push,
 
-   SP W mov,
-   4 # SP add,
-
    3 # eax mov,
-   ebx pop,
-   4 S )# ecx mov,
-   S ) edx mov,
+   0C S )# ebx mov,
+   14 S )# ecx mov,
+   10 S )# edx mov,
    80 # int,
 
    ebx ebx xor,
@@ -210,12 +208,13 @@ code read-file ( addr u1 fileid -- u2 ior )
    0<, if,
      eax ebx xchg,
    then,
-   ebx S ) mov,
-   eax 4 W )# mov,
+   ebx 10 S )# mov,
+   eax 14 S )# mov,
 
    ecx pop,
    ebx pop,
    eax pop,
+   W pop,
    next,
 end-code
 
