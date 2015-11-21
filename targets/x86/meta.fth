@@ -12,9 +12,10 @@ vocabulary compiler
 vocabulary t-words
 defer t,
 : t-word ( a u xt -- ) -rot "create , does> @ t, ;
-: t' ( "name" -- xt ) also t-words parse-name find-name previous drop >body @ ;
-: t-compile ( "name" -- ) t' postpone literal postpone t, ; immediate
-: t-[compile] ( "name" -- ) also compiler ' previous compile, ; immediate
+: "' ( u a -- xt ) also t-words find-name previous drop >body @ ;
+: t'   parse-name "' ;
+: t-compile   parse-name postpone sliteral postpone "' postpone t, ; immediate
+: t-[compile]   also compiler ' previous compile, ; immediate
 
 vocabulary meta
 only forth also meta definitions
