@@ -59,28 +59,37 @@ host
 
 only forth also meta definitions
 
+0 constant jmp_buf
+
 : >mark   here 0 , ;
 : <mark   here ;
 : >resolve   here swap ! ;
 : <resolve   , ;
 : t-literal   t-compile (literal) , ;
 
-action-of number constant h-number
+: h-number   [ action-of number ] literal is number ;
 : ?number,   if 2drop undef else drop t-literal 2drop then ;
-: t-number ( a u -- ) 0 0 2over >number nip ?number, ;
+: number, ( a u -- ) 0 0 2over >number nip ?number, ;
+: t-number   ['] number, is number ;
 
 t' docol >body constant 'docol
 t' dovar >body constant 'dovar
+t' docon >body constant 'docon
+t' dodef >body constant 'dodef
 
 : h: : ;
 
 h: '   t' ;
-h: ]   only t-words also compiler also forward-refs  ['] t-number is number ;
+h: ]   only t-words also compiler also forward-refs  t-number ;
 h: :   parse-name header, 'docol , ] ;
 h: create   parse-name header, 'dovar , ;
 h: variable   create cell allot ;
-
-0 constant jmp_buf
+h: defer   parse-name header, 'dodef , t-compile abort ;
+h: constant   parse-name header, 'docon , , ;
+h: value   constant ;
+h: immediate   latest dup c@ negate swap c! ;
+h: to   ' >body ! ;
+h: is   ' >body ! ;
 
 only forth also meta also compiler definitions previous
 
@@ -90,7 +99,7 @@ h: [if]   postpone [if] ;
 h: [else]   postpone [else] ;
 h: [then]   postpone [then] ;
 
-h: [   target  h-number is number ;
+h: [   target h-number ;
 h: ;   t-compile exit t-[compile] [ ;
 
 h: [']   ' t-literal ;
@@ -122,9 +131,12 @@ h: else   t-[compile] ahead swap t-[compile] then ;
 h: while    t-[compile] if swap ;
 h: repeat   t-[compile] again t-[compile]  then ;
 
+h: to   ' >body t-literal t-compile ! ;
+h: is   t-[compile] to ;
+
 target
 
-\ :noname 2dup type space (parsed) ; is parsed
+\ only forth :noname 2dup type space (parsed) ; is parsed
 \ include kernel.fth
 include test/test-meta.fth
 also t-words resolve-all-forward-refs previous

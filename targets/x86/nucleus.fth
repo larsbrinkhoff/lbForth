@@ -31,13 +31,25 @@ code docol  also meta
    I R ) mov,
    body-offset W )# I lea,
    next,
-end-code
+previous end-code
 
 code dovar  also meta
    body-offset W )# W lea,
    W push,
    next,
-end-code
+previous end-code
+
+code docon  also meta
+   body-offset W )# W mov,
+   W push,
+   next,
+previous end-code
+
+code dodef  also meta
+   body-offset W )# W mov,
+   code-offset W )# indirect-jmp,
+   next,
+previous end-code
 
 code dodoes  also meta
    4 # R sub,
@@ -46,7 +58,7 @@ code dodoes  also meta
    body-offset W )# W lea,
    W push,
    next,
-end-code
+previous end-code
 
 code 0branch
    W fetch,
@@ -59,6 +71,16 @@ end-code
 code (literal)
    W fetch,
    W push,
+   next,
+end-code
+
+code (sliteral)
+   W fetch,
+   I push,
+   W push,
+   W I add,
+   4 # I add,
+   -4 # I and,
    next,
 end-code
 
@@ -86,16 +108,6 @@ code >r
    W pop,
    4 # R sub,
    W R ) mov,
-   next,
-end-code
-
-code (sliteral)
-   W fetch,
-   I push,
-   W push,
-   W I add,
-   4 # I add,
-   -4 # I and,
    next,
 end-code
 
@@ -226,7 +238,7 @@ end-code
 code execute  also meta
    W pop,
    code-offset W )# indirect-jmp,
-end-code
+previous end-code
 
 code r@
    R ) W mov,
