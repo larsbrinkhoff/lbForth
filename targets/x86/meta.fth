@@ -134,9 +134,12 @@ h: repeat   t-[compile] again t-[compile]  then ;
 h: to   ' >body t-literal t-compile ! ;
 h: is   t-[compile] to ;
 
-target
+h: abort"   t-[compile] if t-[compile] s" t-compile cr t-compile type
+   t-compile cr t-compile abort t-[compile] then ;
 
 \ only forth :noname 2dup type space (parsed) ; is parsed
+target
+
 \ include kernel.fth
 include test/test-meta.fth
 also t-words resolve-all-forward-refs previous
