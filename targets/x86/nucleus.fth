@@ -165,27 +165,26 @@ code bye ( ... -- <no return> )
    80 # int,
 end-code
 
-code close-file ( fileid -- ior )
-   eax push,
-   ebx push,
-
-   6 # eax mov,
-   8 S )# ebx mov,
-   80 # int,
-   eax 8 S )# mov,
-
-   ebx pop,
-   eax pop,
-   next,
-end-code
+also assembler
+   label tmp
+   100 allot
+previous
 
 code open-file ( addr u mode -- fileid ior )
    eax push,
    ebx push,
    ecx push,
 
+   esi push,
+   18 S )# esi mov,
+   tmp edi lea,
+   14 S )# ecx mov,
+   rep, movsb,
+   cl esi ) mov,
+   esi pop,
+
    5 # eax mov,
-   14 S )# ebx mov,
+   tmp ebx lea,
    0C S )# ecx mov,
    80 # int,
 
@@ -200,7 +199,7 @@ code open-file ( addr u mode -- fileid ior )
    ecx pop,
    ebx pop,
    eax pop,
-   W pop,
+   4 # esp add,
    next,
 end-code
 
@@ -227,6 +226,20 @@ code read-file ( addr u1 fileid -- u2 ior )
    ebx pop,
    eax pop,
    W pop,
+   next,
+end-code
+
+code close-file ( fileid -- ior )
+   eax push,
+   ebx push,
+
+   6 # eax mov,
+   8 S )# ebx mov,
+   80 # int,
+   eax 8 S )# mov,
+
+   ebx pop,
+   eax pop,
    next,
 end-code
 

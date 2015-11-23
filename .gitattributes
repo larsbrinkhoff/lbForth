@@ -5,4 +5,3 @@ targets/c/*.fth   text eol=lf
 *.sln             text eol=crlf
 *.vcxproj         text eol=crlf
 packages.config   text eol=crlf
-test/test-meta.fth diff merge

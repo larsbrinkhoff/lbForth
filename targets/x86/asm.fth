@@ -290,7 +290,7 @@ drop
 : >resolve   here - negate -rot execute ;
 
 \ Unconditional jumps.
-: label   here constant ;
+: label   here >r get-current ['] assembler set-current r> constant set-current ;
 : begin,   here ;
 : again,   jmp, ;
 : ahead,   0 jmp, >mark4 ;
