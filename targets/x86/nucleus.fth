@@ -118,6 +118,31 @@ code r>
    next,
 end-code
 
+code 2>r
+   W pop,
+   8 # R sub,
+   W R ) mov,
+   W pop,
+   W 4 R )# mov,
+   next,
+end-code
+
+code (loop)
+   1 # W mov,
+   R ) W add,
+   4 R )# W cmp,
+   ecx ecx sbb,
+   ecx not,
+   ecx push,
+   W R ) mov,
+   next,
+end-code
+
+code 2rdrop
+   8 # R add,
+   next,
+end-code
+
 code nand
    W pop,
    S ) W and,
