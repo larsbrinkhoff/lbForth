@@ -14,8 +14,9 @@ defer t,
 : t-word ( a u xt -- ) -rot "create , does> @ t, ;
 : fatal   cr source type cr bye ;
 : ?undef   0= if ." Undefined!" fatal then ;
-: t-search   ['] t-words search-wordlist ?undef ;
-: "' ( u a -- xt ) t-search >body @ ;
+: t-search   ['] t-words search-wordlist ;
+: defined?   t-search if drop -1 else 0 then ;
+: "' ( u a -- xt ) t-search ?undef >body @ ;
 : t'   parse-name "' ;
 : t-compile   parse-name postpone sliteral postpone "' postpone t, ; immediate
 : t-[compile]   also compiler ' previous compile, ; immediate
@@ -93,6 +94,8 @@ h: value   constant ;
 h: immediate   latest dup c@ negate swap c! ;
 h: to   ' >body ! ;
 h: is   ' >body ! ;
+h: [defined]   parse-name defined? ;
+h: [undefined]   [defined] 0= ;
 
 only forth also meta also compiler definitions previous
 

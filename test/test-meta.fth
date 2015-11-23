@@ -5,8 +5,13 @@ create return_stack   256 cells allot
 
 create str  char w c, char o c, char r c, char l c, char d c, 10 c,
 
-\ : type   dup if swap dup c@ emit 1+ swap 1- type then drop drop ;
-: type   begin dup while swap dup c@ emit 1+ swap 1- repeat drop drop ;
+\ : type   dup if swap dup c@ emit 1+ swap 1- type then 2drop ;
+: type   begin dup while swap dup c@ emit 1+ swap 1- repeat 2drop ;
+
+[undefined] 2dup [if]
+.( We should not get here. )
+: 2dup   over over ;
+[then]
 
 : abort   ." ABORT!" bye ;
 : cr   10 emit ;

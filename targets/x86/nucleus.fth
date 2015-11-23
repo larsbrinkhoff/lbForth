@@ -282,7 +282,7 @@ code 0<
 end-code
 
 code drop
-   W pop,
+   4 # S add,
    next,
 end-code
 
@@ -324,8 +324,19 @@ end-code
 \ code tuck ( x1 x2 -- x2 x1 x2 )
 \ code rot
 \ code -rot
-\ code 2drop
-\ code 2dup
+
+code 2drop
+   8 # S add,
+   next,
+end-code
+
+code 2dup
+   4 S )# W mov,
+   W push,
+   4 S )# W mov,
+   W push,
+end-code
+
 \ code 2nip
 \ code 2swap
 \ code 2over
