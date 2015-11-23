@@ -26,39 +26,39 @@ code exit
    next,
 end-code
 
-code docol  also meta
+code docol
    4 # R sub,
    I R ) mov,
    body-offset W )# I lea,
    next,
-previous end-code
+end-code
 
-code dovar  also meta
+code dovar
    body-offset W )# W lea,
    W push,
    next,
-previous end-code
+end-code
 
-code docon  also meta
+code docon
    body-offset W )# W mov,
    W push,
    next,
-previous end-code
+end-code
 
-code dodef  also meta
+code dodef
    body-offset W )# W mov,
    code-offset W )# indirect-jmp,
    next,
-previous end-code
+end-code
 
-code dodoes  also meta
+code dodoes
    4 # R sub,
    I R ) mov,
    does-offset W )# I mov,
    body-offset W )# W lea,
    W push,
    next,
-previous end-code
+end-code
 
 code 0branch
    W fetch,
@@ -248,10 +248,10 @@ code branch
    next,
 end-code
 
-code execute  also meta
+code execute
    W pop,
    code-offset W )# indirect-jmp,
-previous end-code
+end-code
 
 code r@
    R ) W mov,
