@@ -12,7 +12,10 @@ vocabulary compiler
 vocabulary t-words
 defer t,
 : t-word ( a u xt -- ) -rot "create , does> @ t, ;
-: "' ( u a -- xt ) also t-words find-name previous drop >body @ ;
+: fatal   cr source type cr bye ;
+: ?undef   0= if ." Undefined!" fatal then ;
+: t-search   ['] t-words search-wordlist ?undef ;
+: "' ( u a -- xt ) t-search >body @ ;
 : t'   parse-name "' ;
 : t-compile   parse-name postpone sliteral postpone "' postpone t, ; immediate
 : t-[compile]   also compiler ' previous compile, ; immediate
@@ -68,7 +71,7 @@ only forth also meta definitions
 : t-literal   t-compile (literal) , ;
 
 : h-number   [ action-of number ] literal is number ;
-: ?number,   if 2drop undef else drop t-literal 2drop then ;
+: ?number,   if 2drop undef fatal else drop t-literal 2drop then ;
 : number, ( a u -- ) 0 0 2over >number nip ?number, ;
 : t-number   ['] number, is number ;
 
