@@ -143,8 +143,7 @@ only forth definitions
 
 : us,    here over allot  swap cmove ;
 : save-function-name ( a1 u -- a2 )   here -rot  dup c, us, ;
-: append, ( c-addr a u )   dup >r us,  dup c@ r> + swap c! ;
-: save-code-name ( a1 u -- a2 )   save-function-name dup s" _code" append, ;
+: dodoes_code   s" dodoes_code" save-function-name ;
 
 
 
@@ -331,9 +330,7 @@ only forth also meta-interpreter also meta-compiler definitions also host-interp
 : if           unresolved 0branch ; immediate
 : then         >resolve ; immediate
 
-\ : postpone   parse-name find-name meta-postpone ; immediate
-: postcode   t-postpone (literal) parse-name save-code-name a,
-   t-postpone , ; immediate
+: 'dodoes   t-postpone (literal) dodoes_code a, ; immediate
 : compile   t-postpone (literal)  parse-name target,
    t-postpone compile, ; immediate
 : [compile]   parse-name target, ; immediate

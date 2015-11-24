@@ -212,7 +212,7 @@ variable csp
 
 \ If you change the definition of :, you also need to update the
 \ offset to the runtime code in the metacompiler(s).
-: :   parse-name header, postcode dodoes  ] !csp  does> >r ;
+: :   parse-name header, 'dodoes , ] !csp  does> >r ;
 : ;   reveal compile exit [compile] [ ?csp ; immediate
 
 \ ----------------------------------------------------------------------
