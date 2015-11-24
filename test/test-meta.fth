@@ -25,7 +25,7 @@ variable x
 0 value fd
 create buf 22 allot
 
-: readme   s" README" 0 open-file abort" Error opening file" to fd
+: readme   s" README.md" 0 open-file abort" Error opening file" to fd
            buf 22 fd read-file abort" Error reading file"
            buf 22 type
            fd close-file abort" Error closing file" ;
