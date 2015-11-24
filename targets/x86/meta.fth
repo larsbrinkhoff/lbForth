@@ -82,6 +82,7 @@ t' docol >body constant 'docol
 t' dovar >body constant 'dovar
 t' docon >body constant 'docon
 t' dodef >body constant 'dodef
+t' dodoes >body constant 'dodoes
 
 : h: : ;
 
@@ -123,6 +124,7 @@ h: TO_DOES   does-offset t-literal ;
 h: TO_CODE   code-offset t-literal ;
 h: TO_BODY   body-offset t-literal ;
 h: NAME_LENGTH   name-size t-literal ;
+h: 'dodoes   'dodoes t-literal ;
 
 h: s"   t-compile (sliteral) parse" dup , ", ;
 h: ."   t-[compile] s" t-compile type ;

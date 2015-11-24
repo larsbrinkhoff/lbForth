@@ -35,14 +35,37 @@ defer baz
 
 16 constant sixteen
 
+create data_space   100 cells allot
+variable dp
+' data_space >body ' dp >body !
+: here   dp @ ;
+: ,   here !  dp @ 4 + dp ! ;
+: c,   here c!  dp @ 1+ dp ! ;
+
+' noop >code @ constant 'docol
+
+0 value latestxt
+: >does    TO_DOES + ;
+: does!   latestxt >does ! ;
+: (does>)   r> does! ;
+
+: name,   16 0 do 0 c, loop ;
+: link,   0 , ;
+: header,   here to latestxt  name, link, 0 , ;
+\ : :   header, 'docol , ;
+: :   header, 'dodoes , does> [char] ! emit >r ;
+: ;   compile exit ; immediate
+: colon   : compile foo compile foo compile cr  [compile] ; ;
+: test-colon   colon  latestxt execute ;
+
 forward: bar
 : ok   ." ok" cr ;
 : hello   s" hello " type str 6 type ;
 : 3x   3 0 do [char] x emit loop ;
-: warm   3x hello foo baz bar cr readme ['] hello execute ok bye ;
+: warm   test-colon 3x hello foo baz bar cr readme ['] hello execute ok bye ;
 : bar   sixteen cells 1+ 2 or 1 xor emit ;
 
-code cold  also meta
+code cold
    then,
 
    ' warm >body # I mov,
