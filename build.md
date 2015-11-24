@@ -72,10 +72,18 @@ Build: `make check M32=`
 [![Semaphore](https://semaphoreci.com/api/v1/projects/726d1f9e-ae3a-4ef6-b109-39b2eeef14b1/531496/badge.svg)]
 (https://semaphoreci.com/larsbrinkhoff/lbforth)  
 OS: Linux: Ubuntu 14  
+Setup:
+
+    git submodule update --init
+    install-deps.sh install_linux
+
 Build:
 
-    install-deps.sh install_linux
     make check M32=
+
+Post thread:
+
+    git submodule deinit --force .
 
 ## [Shippable](http://shippable.com/)
 [![Shippable](https://api.shippable.com/projects/5444c5ecb904a4b21567b0ff/badge?branchName=master)]
