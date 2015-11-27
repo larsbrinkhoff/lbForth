@@ -20,6 +20,26 @@ host also meta also assembler
 
 target
 
+code sp@
+  S push,
+  next,
+end-code
+
+code sp!
+  S pop,
+  next,
+end-code
+
+code rp@
+  R push,
+  next,
+end-code
+
+code rp!
+  R pop,
+  next,
+end-code
+
 code exit
    R ) I mov,
    4 # R add,
@@ -101,6 +121,13 @@ end-code
 code +
    W pop,
    W S ) add,
+   next,
+end-code
+
+code +!
+   W pop,
+   ecx pop,
+   ecx W ) add,
    next,
 end-code
 
@@ -360,6 +387,7 @@ code 2dup
    W push,
    4 S )# W mov,
    W push,
+   next,
 end-code
 
 \ code 2nip
