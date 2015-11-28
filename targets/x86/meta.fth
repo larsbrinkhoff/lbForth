@@ -87,7 +87,7 @@ t' dodoes >body constant 'dodoes
 : h: : ;
 
 h: '   t' ;
-h: ]   only t-words also compiler also forward-refs  t-number ;
+h: ]   only forward-refs also t-words also compiler  t-number ;
 h: :   parse-name header, 'docol , ] ;
 h: create   parse-name header, 'dovar , ;
 h: variable   create cell allot ;
