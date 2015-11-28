@@ -99,7 +99,7 @@ code (sliteral)
    I push,
    W push,
    W I add,
-   4 # I add,
+   3 # I add,
    -4 # I and,
    next,
 end-code

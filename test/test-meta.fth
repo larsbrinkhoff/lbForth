@@ -127,9 +127,10 @@ variable counter  char A ' counter >body !
 
 forward: bar
 : hello   s" hello " type ;
-: test=  s" foo" name= if ." :) " else ." :( " then ;
+: test=  2dup type space s" foo" name= if ." :) " else ." :( " then ;
 : warm   s" foo" test=
-         s" bar" test=
+         s" fo" test=
+         s" fooo" test=
          s" Foo" test=
          s" FOO" test= cr
          test-colon foo baz bar cr readme ['] hello execute bye ;
