@@ -156,11 +156,11 @@ target
 
 \ include kernel.fth
 include test/test-meta.fth
-also t-words resolve-all-forward-refs previous
+only forth also meta also t-words resolve-all-forward-refs previous
 
 ;elf
 
-target-region type bye
+target-region only forth type bye
 
 host also meta
 
