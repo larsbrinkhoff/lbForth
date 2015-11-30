@@ -419,8 +419,9 @@ end-code
 code <>
    W pop,
    S ) W sub,
-   W not,
+   1 # W sub,
    W W sbb,
+   W not,
    W S ) mov,
    next,
 end-code

@@ -137,7 +137,7 @@ variable csp
 
 \ If you change the definition of :, you also need to update the
 \ offset to the runtime code in the metacompiler(s).
-: :   parse-name 2dup type cr header, 'dodoes , ] !csp  does> >r ;
+: :   parse-name header, 'dodoes , ] !csp  does> >r ;
 : ;   reveal compile exit [compile] [ ?csp ; immediate
 
 : refill   0 >in !  0 #source !  'refill perform ;
@@ -179,7 +179,18 @@ defer parsed
 : source, ( 'source sourceid refill prompt -- )
    input @ >r  here input !  /input-source allot  0source  r> input ! ;
 
-
+create tib   256 allot
+: key   here dup 1 0 read-file abort" Read error"  0= if bye then  c@ ;
+: terminal-refill   tib 256 bounds do
+      key dup 10 = if drop leave then
+      i c!  1 #source +!
+   loop -1 ;
+: ok   state @ 0= if ."  ok" cr then ;
+create terminal-source   6 cells allot
+: terminal-input   terminal-source input !
+   tib 0 ['] terminal-refill ['] ok 0source ;
+   
+: quit   0 csp !  [compile] [  terminal-input interpreting ;
 
 host also meta
 \ cr .( Target size: ) t-size .
@@ -190,7 +201,11 @@ target
 
 
 ' noop is also
-' noop is previous
+' (previous) is previous
+' (parsed) is parsed
+' (number) is number
+: dummy-catch   execute 0 ;
+' dummy-catch is catch
 
 : string-refill   0 ;
 
@@ -240,25 +255,35 @@ create data_space   100 cells allot
 variable counter  char A ' counter >body !
 : exclam   ." We're here: " counter @ emit 1 counter +! ." !" cr ;
 
-' exclam ' forth >body !
 ' forth ' context >body !
-0 ' context >body 4 + !
+' forth ' context >body 4 + !
+0 ' context >body 8 + !
 ' forth ' current >body !
+0 ' compiler-words >body !
+' forth ' compiler-words >body cell+ !
+
+: face   if ." :) " else ." :( " then ;
+
+: .word   >name type space ;
+: (words)   begin ?dup while dup .word >nextxt repeat ;
+: words   current @ >body @ (words) ;
+
+' words ' forth >body !
 
 forward: bar
 : hello   s" hello " type ;
-: face   if ." :) " else ." :( " then ;
 : test=  2dup type space s" foo" name= face ;
-: warm   s" foo" test=
-         s" fo" test=
-         s" fooo" test=
-         s" Foo" test=
-         s" FOO" test= cr
-	 s" foo" find-name face execute
-	 s" readme" ['] forth (find) face execute
-	 s" exclam" ['] forth search-wordlist face execute
+: warm   s" bye" s" 2r>" name= face
+         s" bye" s" 2r>" name= face cr
+         s" 0" find-name face drop
+         s" bye" find-name face drop
+         s" FOO" find-name face execute
+	 s" Readme" ['] forth (find) face execute
+	 s" EXCLAM" ['] forth search-wordlist face execute
 	 test-colon
-         foo baz bar cr readme ['] hello execute bye ;
+	 words cr
+	 s" Blah" find-name face execute
+         foo baz bar cr readme ['] hello execute quit bye ;
 : bar   sixteen cells 1+ 2 or 1 xor emit ;
 
 code cold
