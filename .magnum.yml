@@ -1,0 +1,3 @@
+env: LISP=gcl
+install: sh -e install-deps.sh install_linux
+script: make check  M32=$M32

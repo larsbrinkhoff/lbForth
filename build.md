@@ -65,8 +65,8 @@ Build:
 [![Magnum CI](https://magnum-ci.com/status/96ffb83fa700f069024921b0702e76ff.png)]
 (https://magnum-ci.com/projects/1810/history)  
 OS: Linux: Ubuntu 12  
-Install: `install-deps.sh install_linux`  
-Build: `make check M32=`
+File: [`.magnum.yml`]
+(https://github.com/larsbrinkhoff/lbForth/blob/master/.magnum.yml)
 
 ## [Semaphore](http://semaphoreci.com/)
 [![Semaphore](https://semaphoreci.com/api/v1/projects/726d1f9e-ae3a-4ef6-b109-39b2eeef14b1/531496/badge.svg)]
