@@ -56,10 +56,8 @@ Build:
 [![Drone.io](https://drone.io/github.com/larsbrinkhoff/lbForth/status.png)]
 (https://drone.io/github.com/larsbrinkhoff/lbForth)  
 OS: Linux: Ubuntu 12  
-Build:
-
-    install-deps.sh install_linux
-    make check M32=$M32
+File: [`.drone.yml`]
+(https://github.com/larsbrinkhoff/lbForth/blob/master/.drone.yml)
 
 ## [Magnum CI](http://magnum-ci.com/)
 [![Magnum CI](https://magnum-ci.com/status/96ffb83fa700f069024921b0702e76ff.png)]

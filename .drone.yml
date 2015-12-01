@@ -1,0 +1,5 @@
+env:
+  - LISP=ecl
+script:
+  - sh install-deps.sh install_linux
+  - make check M32=
