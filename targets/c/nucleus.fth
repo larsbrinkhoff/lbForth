@@ -1,19 +1,23 @@
 \ -*- forth -*- Copyright 2013, 2015 Lars Brinkhoff
 
 code cold \ int main (void)
-  extern struct word warm_word, dp_word, SP_word, RP_word,
-    data_stack_word, return_stack_word, dictionary_end_word,
-    jmpbuf_word, sigint_word;
+  extern struct word warm_word, dp0_word, sp0_word, rp0_word, SP_word, RP_word,
+    dictionary_end_word, jmpbuf_word, sigint_word;
+  static cell data_stack[110];
+  static cell return_stack[256];
   static cell dictionary[17000];
   size_t start = (size_t)&dictionary, end;
   void signal_handler (int);
   xt_t *IP = (xt_t *)warm_word.param;
   long page_size;
 
-  dp_word.param[0] = (cell)dictionary;
-  SP_word.param[0] = (cell)(&data_stack_word.param[100]);
-  RP_word.param[0] = (cell)(&return_stack_word.param[256]);
+  sp0_word.param[0] = (cell)(&data_stack[100]);
+  rp0_word.param[0] = (cell)(&return_stack[256]);
+  dp0_word.param[0] = (cell)dictionary;
   dictionary_end_word.param[0] = (cell)dictionary + sizeof dictionary;
+
+  SP_word.param[0] = sp0_word.param[0];
+  RP_word.param[0] = rp0_word.param[0];
 
   siginterrupt (SIGINT, 1);
   signal (SIGINT, signal_handler);

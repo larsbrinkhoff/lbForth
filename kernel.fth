@@ -17,8 +17,6 @@
 
 : noop ;
 
-create data_stack     110 cells allot
-create return_stack   256 cells allot
 create jmpbuf         jmp_buf allot
 
 variable dictionary_end
@@ -248,9 +246,14 @@ defer backtrace
 : n>r   r> over >r swap begin ?dup while rot r> 2>r 1 - repeat >r ;
 : nr>   r> r@ begin ?dup while 2r> >r rot rot 1 - repeat r> swap >r ;
 
+\ These will be set in COLD, or by the metacompiler.
+0 constant sp0
+0 constant rp0
+0 constant dp0
+
 defer parsed
 : (parsed) ( a u -- )   find-name interpret-xt ;
-: ?stack   data_stack 99 cells + sp@ < abort" Stack underflow" ;
+: ?stack   sp0 sp@ cell+ < abort" Stack underflow" ;
 : interpret   begin parse-name dup while parsed ?stack repeat 2drop ;
 : interpreting   begin refill while interpret ?prompt repeat ;
 
@@ -279,6 +282,9 @@ defer quit
 \ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
 : warm
    ." lbForth" cr
+
+   dp0 dp !
+
    ['] noop dup is backtrace is also
    ['] dummy-catch is catch
    ['] (number) is number

@@ -10,7 +10,6 @@ variable dictionary_end
 : cell+   cell + ;
 
 : 3drop   2drop drop ;
-: r@   rp@ cell+ @ ;
 : rot    >r swap r> swap ;
 : 2r>   r> r> r> rot >r swap ;
 : 3dup   >r >r r@ over 2r> over >r rot swap r> ;
@@ -169,9 +168,13 @@ defer backtrace
 : n>r   r> over >r swap begin ?dup while rot r> 2>r 1 - repeat >r ;
 : nr>   r> r@ begin ?dup while 2r> >r rot rot 1 - repeat r> swap >r ;
 
+0 constant sp0
+0 constant rp0
+0 constant dp0
+
 defer parsed
 : (parsed) ( a u -- )   find-name interpret-xt ;
-: ?stack   data_stack 99 cells + sp@ < abort" Stack underflow" ;
+: ?stack   sp0 sp@ cell+ < abort" Stack underflow" ;
 : interpret   begin parse-name dup while parsed ?stack repeat 2drop ;
 : interpreting   begin refill while interpret ?prompt repeat ;
 
@@ -273,7 +276,8 @@ variable counter  char A ' counter >body !
 forward: bar
 : hello   s" hello " type ;
 : test=  2dup type space s" foo" name= face ;
-: warm   s" bye" s" 2r>" name= face
+: warm   ." lbForth" cr
+         s" bye" s" 2r>" name= face
          s" bye" s" 2r>" name= face cr
          s" 0" find-name face drop
          s" bye" find-name face drop
@@ -292,6 +296,9 @@ code cold
    ' warm >body # I mov,
    ' data_stack >body 100 cells + # S mov,
    ' return_stack >body 256 cells + # R mov,
+
+   S ' sp0 >body mov,
+   R ' rp0 >body mov,
 
    next,
 end-code

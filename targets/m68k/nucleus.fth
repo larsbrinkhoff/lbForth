@@ -19,9 +19,9 @@
 : next,   IP )+ jmp, ;
 
 code cold
-   data_stack SP movei,
-   return_stack RP movei,
-   dictionary dp movei,
+   sp0 SP movei,
+   rp0 RP movei,
+   dp0 dp movei,
    2 +. IP movei,
    next,
    warm ,

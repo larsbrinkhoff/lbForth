@@ -74,9 +74,9 @@ create squote   128 allot
 : ,"   parse" move, ;
 : ,"   postpone s" postpone move, ; compile-only
 
-: (abort)   data_stack 100 cells + sp!  quit ;
+: (abort)   sp0 sp!  quit ;
 ' (abort) ' abort >body !
-: (abort")    cr type cr abort ;
+: (abort")   cr type cr abort ;
 : abort"   postpone if postpone s" postpone (abort") postpone then ;
    compile-only
 
@@ -155,7 +155,7 @@ create base  10 ,
 
 : decimal   10 base ! ;
 
-: depth   data_stack 100 cells +  sp@  - cell /  1- ;
+: depth   sp0 sp@ - cell / 1- ;
 
 : variable   create cell allot ;
 
@@ -243,8 +243,7 @@ create terminal-source   tib 0 ' terminal-refill ' ok source,
 
 : rp!   postpone (literal) RP , postpone ! ; immediate
 
-: (quit)   return_stack 256 cells + rp!  0 csp !  postpone [
-   terminal-input interpreting  bye ;
+: (quit)   rp0 rp!  0 csp !  postpone [  terminal-input interpreting  bye ;
 
 ' (quit) ' quit >body !
 

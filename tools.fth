@@ -40,7 +40,6 @@
 : ?.offset   2dup body? if .offset 0 else drop -1 then ;
 : .'         context @ ['] ?.offset traverse-wordlist drop ;
 : .bt        ."  > " dup ? @ .' cr ;
-return_stack 256 cells + constant rp0
 :noname      rp0 rp@ do i .bt cell +loop ;
 is backtrace
 
