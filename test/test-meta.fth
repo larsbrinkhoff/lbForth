@@ -244,9 +244,6 @@ defer baz
 
 16 constant sixteen
 
-create data_space   100 cells allot
-' data_space >body ' dp >body !
-
 ' noop >code @ constant 'docol
 
 : it-works  ." It works!" cr ;
@@ -277,6 +274,7 @@ forward: bar
 : hello   s" hello " type ;
 : test=  2dup type space s" foo" name= face ;
 : warm   ." lbForth" cr
+         dp0 dp !
          s" bye" s" 2r>" name= face
          s" bye" s" 2r>" name= face cr
          s" 0" find-name face drop
@@ -302,3 +300,6 @@ code cold
 
    next,
 end-code
+
+here ' dp0 >body !
+10000 elf-extra-bytes!

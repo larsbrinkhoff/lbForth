@@ -34,6 +34,8 @@ B7 constant arm64
 
 54 constant entry-offset
 
+variable extra  0 extra !
+
 : ident, ( -- )   7F c, ," ELF" 00010101 w, 8 zeros, ;
 : type, ( u -- )   executable h, h, 1 w, ;
 : entry, ( a -- a )   dup entry-offset + a, ;
@@ -52,6 +54,7 @@ B7 constant arm64
 ( Lay down an ELF header in the dictionary. )
 
 : elf32, ( a1 u -- a2 a3 ) here >host -rot ehdr, phdr32, ;
-: ;elf ( a1 a2 -- ) align here >host rot - dup rot 2! ;
+: elf-extra-bytes!   extra ! ;
+: ;elf ( a1 a2 -- ) align here >host rot - dup swap extra @ + swap rot 2! ;
 
 base !
