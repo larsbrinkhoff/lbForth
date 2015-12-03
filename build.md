@@ -66,6 +66,13 @@ OS: Linux: Ubuntu 12
 File: [`.magnum.yml`]
 (https://github.com/larsbrinkhoff/lbForth/blob/master/.magnum.yml)
 
+## [Scrutinizer](http://scrutinizer-ci.com/)
+[![Scrutinizer](https://scrutinizer-ci.com/g/larsbrinkhoff/lbForth/badges/build.png)]
+(https://scrutinizer-ci.com/g/larsbrinkhoff/lbForth/)  
+OS: Linux: Ubuntu 14  
+File: [`.scrutinizer.yml`]
+(https://github.com/larsbrinkhoff/lbForth/blob/master/.scrutinizer.yml)
+
 ## [Semaphore](http://semaphoreci.com/)
 [![Semaphore](https://semaphoreci.com/api/v1/projects/726d1f9e-ae3a-4ef6-b109-39b2eeef14b1/531496/badge.svg)]
 (https://semaphoreci.com/larsbrinkhoff/lbforth)  
