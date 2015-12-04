@@ -232,7 +232,7 @@ code open-file ( addr u mode -- fileid ior )
    tmp edi lea,
    14 S )# ecx mov,
    rep, movsb,
-   cl esi ) mov,
+   cl edi ) mov,
    esi pop,
 
    5 # eax mov,
