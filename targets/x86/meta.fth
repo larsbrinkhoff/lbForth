@@ -156,6 +156,26 @@ target
 
 \ include kernel.fth
 include test/test-meta.fth
+
+create data_stack  110 cells allot
+create return_stack  256 cells allot
+
+' data_stack >body 100 cells + ' sp0 >body !
+' return_stack >body 256 cells + ' rp0 >body !
+
+code cold
+   then,
+
+   ' warm >body # I mov,
+   ' sp0 >body @ # S mov,
+   ' rp0 >body @ # R mov,
+
+   next,
+end-code
+
+here ' dp0 >body !
+10000 cells elf-extra-bytes!
+
 only forth also meta also t-words resolve-all-forward-refs previous
 
 ;elf

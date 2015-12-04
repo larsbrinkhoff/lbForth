@@ -1,32 +1,147 @@
+\ -*- forth -*- Copyright 2004, 2013-2015 Lars Brinkhoff
+
+\ This kernel, together with a target-specific nucleus, provides
+\ everything needed to load and compile the rest of the system from
+\ source code.  And not much else.  The kernel itself is compiled by
+\ the metacompiler.
+
+\ At a minimum, these 16 primitives must be provided by the nucleus:
+\
+\ Definitions:		dodoes exit
+\ Control flow:		0branch
+\ Literals:		(literal)
+\ Memory access:	! @ c! c@
+\ Aritmetic/logic:	+ nand
+\ Return stack:		>r r>
+\ I/O:			emit open-file read-file close-file
+
 : noop ;
 
-create data_stack   110 cells allot
-create return_stack   256 cells allot
 create jmpbuf         jmp_buf allot
 
 variable dictionary_end
 
+variable SP
+variable RP
+
 : cell    cell ; \ Metacompiler knows what to do.
 : cell+   cell + ;
 
+[undefined] sp@ [if]
+: sp@   SP @ cell + ;
+: sp!   SP ! ;
+: rp@   RP @ cell + ;
+\ rp! in core.fth
+[then]
+
+variable  temp
+[undefined] drop [if]
+: drop    temp ! ;
+[then]
+[undefined] 2drop [if]
+: 2drop   drop drop ;
+[then]
 : 3drop   2drop drop ;
+
+[undefined] r@ [if]
+: r@   rp@ cell+ @ ;
+[then]
+
+[undefined] swap [if]
+: swap   >r temp ! r> temp @ ;
+[then]
+[undefined] over [if]
+: over   >r >r r@ r> temp ! r> temp @ ;
+[then]
 : rot    >r swap r> swap ;
+
+[undefined] 2>r [if]
+: 2>r   r> swap rot >r >r >r ;
+[then]
 : 2r>   r> r> r> rot >r swap ;
+
+
+[undefined] dup [if]
+: dup    sp@ @ ;
+[then]
+[undefined] 2dup [if]
+: 2dup   over over ;
+[then]
 : 3dup   >r >r r@ over 2r> over >r rot swap r> ;
-: unloop    r> 2r> 2drop >r ;
+[undefined] ?dup [if]
+: ?dup   dup if dup then ;
+[then]
+
+[undefined] nip [if]
+: nip    swap drop ;
+[then]
+
+[undefined] invert [if]
+: invert   -1 nand ;
+[then]
+[undefined] negate [if]
+: negate   invert 1 + ;
+[then]
+[undefined] - [if]
+: -        negate + ;
+[then]
+
+[undefined] branch [if]
+: branch    r> @ >r ;
+[then]
 forward: <
+: (+loop)   r> swap r> + r@ over >r < invert swap >r ;
+: unloop    r> 2r> 2drop >r ;
+
+[undefined] 1+ [if]
+: 1+   1 + ;
+[then]
+[undefined] +! [if]
+: +!   swap over @ + swap ! ;
+[then]
+[undefined] 0= [if]
+: 0=   if 0 else -1 then ;
+[then]
+[undefined] = [if]
+: =    - 0= ;
+[then]
+[undefined] <> [if]
+: <>   = 0= ;
+[then]
+
 : min   2dup < if drop else nip then ;
+
 : bounds   over + swap ;
 : count    dup 1+ swap c@ ;
+
 : i    r> r@ swap >r ;
 : cr   10 emit ;
-: type   bounds do i c@ emit loop ;
+: type   ?dup if bounds do i c@ emit loop else drop then ;
+
+\ Put the xt inside the definition of EXECUTE, overwriting the last noop.
+[undefined] execute [if]
+: execute   [ here cell + ] ['] noop ! then noop ;
+[then]
 : perform   @ execute ;
+
 variable state
+
+[undefined] 0< [if]
+: 0<   [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
+[then]
+[undefined] or [if]
+: or   invert swap invert nand ;
+[then]
+[undefined] xor [if]
+: xor   2dup nand 1+ dup + + + ;
+[then]
 : <   2dup xor 0< if drop 0< else - 0< then ;
+
 : cmove ( addr1 addr2 n -- )   ?dup if bounds do count i c! loop drop
    else 2drop then ;
+
 : cabs   127 over < if 256 swap - then ;
+
 0 value latestxt
 
 include dictionary.fth
@@ -45,6 +160,9 @@ include dictionary.fth
 
 : immediate?   c@ 127 swap < if 1 else -1 then ;
 
+\ TODO: nt>string nt>interpret nt>compile
+\ Forth83: >name >link body> name> link> n>link l>name
+
 : traverse-wordlist ( wid xt -- ) ( xt: nt -- continue? )
    >r >body @ begin dup while
       r@ over >r execute r> swap
@@ -59,6 +177,10 @@ include dictionary.fth
 : search-wordlist ( ca u wl -- 0 | xt 1 | xt -1 )
    (find) ?dup 0= if 2drop 0 then ;
 
+[undefined] (sliteral) [if]
+: (sliteral)   r> dup @ swap cell+ 2dup + aligned >r swap ;
+[then]
+
 defer abort
 : undef ( a u -- )   ." Undefined: " type cr abort ;
 : ?undef ( a u x -- a u )   if undef then ;
@@ -68,6 +190,8 @@ defer abort
 
 defer number
 
+\ Sorry about the long definition, but I didn't want to leave many
+\ useless factors lying around.
 : (number) ( a u -- )
    over c@ [char] - = dup >r if swap 1+ swap 1 - then
    0 rot rot
@@ -92,6 +216,7 @@ create forth  2 cells allot
 create compiler-words  2 cells allot
 create included-files  2 cells allot
 create context  9 cells allot
+
 
 : r@+   r> r> dup cell+ >r @ swap >r ;
 : search-context ( a u context -- a 0 | xt ? )   >r begin r@+ ?dup while
@@ -139,6 +264,10 @@ variable csp
 : :   parse-name header, 'dodoes , ] !csp  does> >r ;
 : ;   reveal compile exit [compile] [ ?csp ; immediate
 
+\ ----------------------------------------------------------------------
+
+( Core extension words. )
+
 : refill   0 >in !  0 #source !  'refill perform ;
 : ?prompt    'prompt perform ;
 : source-id   source# @ ;
@@ -168,138 +297,61 @@ defer backtrace
 : n>r   r> over >r swap begin ?dup while rot r> 2>r 1 - repeat >r ;
 : nr>   r> r@ begin ?dup while 2r> >r rot rot 1 - repeat r> swap >r ;
 
+\ These will be set in COLD, or by the metacompiler.
 0 constant sp0
 0 constant rp0
 0 constant dp0
 
 defer parsed
 : (parsed) ( a u -- )   find-name interpret-xt ;
-: ?stack   sp0 sp@ cell+ < abort" Stack underflow" ;
+: ?stack   ; \ sp0 sp@ cell+ < abort" Stack underflow" ;
 : interpret   begin parse-name dup while parsed ?stack repeat 2drop ;
 : interpreting   begin refill while interpret ?prompt repeat ;
 
 : 0source   'prompt !  'refill !  source# !  'source !  0 source> ! ;
 : source, ( 'source sourceid refill prompt -- )
    input @ >r  here input !  /input-source allot  0source  r> input ! ;
+: file,   0 0 ['] file-refill ['] noop source,  /file allot ;
+: +file   here source> !  file, ;
+: file>   source> @  ?dup if input ! else +file then ;
+: alloc-file   file-source input ! begin 'source @ while file> repeat ;
+: file-input ( fileid -- )   alloc-file  source# !  6 input@ 'source ! ;
 
-create tib   256 allot
-: key   here dup 1 0 read-file abort" Read error"  0= if bye then  c@ ;
-: terminal-refill   tib 256 bounds do
-      key dup 10 = if drop leave then
-      i c!  1 #source +!
-   loop -1 ;
-: ok   state @ 0= if ."  ok" cr then ;
-create terminal-source   6 cells allot
-: terminal-input   terminal-source input !
-   tib 0 ['] terminal-refill ['] ok 0source ;
-   
-: quit   0 csp !  [compile] [  terminal-input interpreting ;
+: include-file ( fileid -- )   save-input n>r
+   file-input interpreting  source-id close-file drop  0 'source !
+   nr> restore-input abort" Bad restore-input" ;
 
-host also meta
-\ cr .( Target size: ) t-size .
-\ cr .( Target used: ) target here host also meta >host t-image host - .
-\ cr .( Host unused: ) unused .
-target
+\ : r/o   s" r" drop ;
+: r/o   0 ;
 
+: included   2dup align here >r  name,  r> included-files chain, 0 , 0 ,
+   r/o open-file abort" Read error." include-file ;
 
-
-' noop is also
-' (previous) is previous
-' (parsed) is parsed
-' (number) is number
 : dummy-catch   execute 0 ;
-' dummy-catch is catch
 
-: string-refill   0 ;
+defer quit
 
-create string-source  6 cells allot
+\ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
+: warm
+   ." lbForth" cr
 
-: string-source-init   string-source input !
-   0 -1 ['] string-refill ['] noop 0source ;
+   dp0 dp !
 
-: string-input ( a u -- )   string-source input !  0 >in !
-   #source !  'source ! ;
+   ['] noop dup is backtrace is also
+   ['] dummy-catch is catch
+   ['] (number) is number
+   ['] (parsed) is parsed
+   ['] (previous) is previous
+   ['] warm dup to latestxt forth !
+   ['] forth current !
+   here to file-source  file,
 
-[undefined] 2dup [if]
-.( We should not get here. )
-: 2dup   over over ;
-[then]
+   0 forth cell+ !
+   0 compiler-words !  ['] forth compiler-words cell+ !
+   0 included-files !  ['] compiler-words included-files cell+ !
+   ['] forth dup context ! context cell+ ! 0 context 2 cells + !
 
-: (abort)   ." ABORT!" bye ;
-' (abort) is abort
-
-variable x
-: foo   70 x !  x @ emit  1 x +!  x @ emit ;
-
-0 value fd
-create buf 22 allot
-
-: readme   s" README.md" 0 open-file abort" Error opening file" to fd
-           buf 22 fd read-file abort" Error reading file"
-           buf 22 type
-           fd close-file abort" Error closing file" ;
-
-defer baz
-' foo is baz
-
-16 constant sixteen
-
-' noop >code @ constant 'docol
-
-: it-works  ." It works!" cr ;
-: colon   : compile it-works [compile] ; ;
-: test-colon   s" blah" string-input  colon  latestxt execute ;
-
-: space   ."  " ;
-
-variable counter  char A ' counter >body !
-: exclam   ." We're here: " counter @ emit 1 counter +! ." !" cr ;
-
-' forth ' context >body !
-' forth ' context >body 4 + !
-0 ' context >body 8 + !
-' forth ' current >body !
-0 ' compiler-words >body !
-' forth ' compiler-words >body cell+ !
-
-: face   if ." :) " else ." :( " then ;
-
-: .word   >name type space ;
-: (words)   begin ?dup while dup .word >nextxt repeat ;
-: words   current @ >body @ (words) ;
-
-' words ' forth >body !
-
-forward: bar
-: hello   s" hello " type ;
-: test=  2dup type space s" foo" name= face ;
-: warm   ." lbForth" cr
-         dp0 dp !
-         s" bye" s" 2r>" name= face
-         s" bye" s" 2r>" name= face cr
-         s" 0" find-name face drop
-         s" bye" find-name face drop
-         s" FOO" find-name face execute
-	 s" Readme" ['] forth (find) face execute
-	 s" EXCLAM" ['] forth search-wordlist face execute
-	 test-colon
-	 words cr
-	 s" Blah" find-name face execute
-         foo baz bar cr readme ['] hello execute quit bye ;
-: bar   sixteen cells 1+ 2 or 1 xor emit ;
-
-code cold
-   then,
-
-   ' warm >body # I mov,
-   ' data_stack >body 100 cells + # S mov,
-   ' return_stack >body 256 cells + # R mov,
-
-   S ' sp0 >body mov,
-   R ' rp0 >body mov,
-
-   next,
-end-code
-
-here ' dp0 >body !
-10000 elf-extra-bytes!
+   [compile] [
+   s" load.fth" included
+   ." ok" cr
+   quit ;
