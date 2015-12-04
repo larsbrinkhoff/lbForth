@@ -81,10 +81,11 @@ create squote   128 allot
    compile-only
 
 : ?:   >in @ >r  parse-name find-name
-   if r> 2drop  begin source 1- + c@ [char] ; = refill abort" ?" until
+   if r> 2drop  begin source 1- + c@ [char] ; = refill drop until
    else 2drop r> >in ! : then ;
 
 ?: and   nand invert ;
+
 ?: 2*    dup + ;
 
 ?: *   1 2>r 0 swap begin r@ while
