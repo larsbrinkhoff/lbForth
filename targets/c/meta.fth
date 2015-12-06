@@ -50,9 +50,10 @@ vocabulary host-compiler
 vocabulary host-interpreter
 vocabulary meta-compiler
 vocabulary meta-interpreter
+vocabulary forward-declarations
 
 : interpreter-context   only forth also meta-interpreter ;
-: compiler-context   only target also meta-compiler ;
+: compiler-context   only forward-declarations also target also meta-compiler ;
 : meta-context   compiler-context also meta-interpreter ;
 
 \ Offset, within the definition of :, to the runtime action of :.
@@ -114,7 +115,7 @@ t-space bitmap t-map
 : .quoted   [char] " emit  bounds ?do i c@ .qc loop  [char] " emit ;
 
 create forward-references 0 ,
-: create-forward   also target definitions
+: create-forward   also forward-declarations definitions
    create previous 0 ,  latestxt forward-references chain, ;
 : .extern   ." extern struct word " .mangled ." _word;" cr ;
 : .forward   >in @  parse-name .extern  >in ! ;
