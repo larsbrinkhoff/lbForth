@@ -141,6 +141,10 @@ only forth definitions
 : target-xt   t-find 0= ?undef  >body @ ;
 : t-defined?   t-find if drop -1 else 2drop 0 then ;
 
+: already-defined?   >in @ >r parse-name t-defined? r> >in ! ;
+: trailing-semicolon?   source 1- + c@ [char] ; = ;
+: ignore-definition   begin trailing-semicolon? postpone \ until ;
+
 : us,    here over allot  swap cmove ;
 : save-function-name ( a1 u -- a2 )   here -rot  dup c, us, ;
 : dodoes_code   s" dodoes_code" save-function-name ;
@@ -271,6 +275,7 @@ interpreter-context definitions also host-interpreter
 : constant   create , does> @ ;
 : variable   create cell allot ;
 : :   parse-name header, postcode dodoes  ] ( !csp )  does> >r ;
+: ?:   already-defined? if ignore-definition else : then ;
 : defer   create s" abort" target,  does> @ execute ;
 : value   create ,  does> @ ;
 

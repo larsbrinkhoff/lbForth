@@ -21,6 +21,10 @@ defer t,
 : t-compile   parse-name postpone sliteral postpone "' postpone t, ; immediate
 : t-[compile]   also compiler ' previous compile, ; immediate
 
+: already-defined?   >in @ >r parse-name defined? r> >in ! ;
+: trailing-semicolon?   source 1- + c@ [char] ; = ;
+: ignore-definition   begin trailing-semicolon? postpone \ until ;
+
 vocabulary meta
 only forth also meta definitions
 include lib/image.fth
@@ -100,6 +104,8 @@ h: is   ' >body ! ;
 h: [defined]   parse-name defined? ;
 h: [undefined]   [defined] 0= ;
 
+h: ?:   already-defined? if ignore-definition else : then ;
+
 only forth also meta also compiler definitions previous
 
 h: \   postpone \ ;
@@ -174,7 +180,7 @@ code cold
 end-code
 
 here ' dp0 >body !
-10000 cells elf-extra-bytes!
+17000 cells elf-extra-bytes!
 
 only forth also meta also t-words resolve-all-forward-refs previous
 
