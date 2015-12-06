@@ -1,6 +1,7 @@
 Done.
 
 C		Bootstrap.
+x86		Faster.
 
 In the works.
 
@@ -8,7 +9,6 @@ PDP-1		Maybe also PDP-3/4/5/6/7/8/9/10/11/12.
 Emacs		Bytecodes.
 Shell script	For bootstapping without C and Lisp?
 Batch file	For bootstapping without C and Lisp?
-x86		The Devil.
 
 Future?
 

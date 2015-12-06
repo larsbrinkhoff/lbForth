@@ -160,8 +160,7 @@ h: abort"   t-[compile] if t-[compile] s" t-compile cr t-compile type
 \ only forth :noname 2dup type space (parsed) ; is parsed
 target
 
-\ include kernel.fth
-include test/test-meta.fth
+include kernel.fth
 
 create data_stack  110 cells allot
 create return_stack  256 cells allot

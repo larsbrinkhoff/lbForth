@@ -21,52 +21,56 @@ create jmpbuf         jmp_buf allot
 
 variable dictionary_end
 
+[undefined] sp@ [if]
 variable SP
+[then]
+[undefined] rp@ [if]
 variable RP
+[then]
 
 : cell    cell ; \ Metacompiler knows what to do.
 : cell+   cell + ;
 
-: sp@   SP @ cell + ;
-: sp!   SP ! ;
-: rp@   RP @ cell + ;
+?: sp@   SP @ cell + ;
+?: sp!   SP ! ;
+?: rp@   RP @ cell + ;
 \ rp! in core.fth
 
 variable  temp
-: drop    temp ! ;
-: 2drop   drop drop ;
+?: drop    temp ! ;
+?: 2drop   drop drop ;
 : 3drop   2drop drop ;
 
-: r@   rp@ cell+ @ ;
+?: r@   rp@ cell+ @ ;
 
-: swap   >r temp ! r> temp @ ;
-: over   >r >r r@ r> temp ! r> temp @ ;
-: rot    >r swap r> swap ;
+?: swap   >r temp ! r> temp @ ;
+?: over   >r >r r@ r> temp ! r> temp @ ;
+?: rot    >r swap r> swap ;
 
-: 2>r   r> swap rot >r >r >r ;
-: 2r>   r> r> r> rot >r swap ;
+?: 2>r   r> swap rot >r >r >r ;
+?: 2r>   r> r> r> rot >r swap ;
 
-: dup    sp@ @ ;
-: 2dup   over over ;
+?: dup    sp@ @ ;
+?: 2dup   over over ;
 : 3dup   >r >r r@ over 2r> over >r rot swap r> ;
-: ?dup   dup if dup then ;
+?: ?dup   dup if dup then ;
 
-: nip    swap drop ;
+?: nip    swap drop ;
 
-: invert   -1 nand ;
-: negate   invert 1 + ;
-: -        negate + ;
+?: invert   -1 nand ;
+?: negate   invert 1 + ;
+?: -        negate + ;
 
-: branch    r> @ >r ;
+?: branch    r> @ >r ;
 forward: <
 : (+loop)   r> swap r> + r@ over >r < invert swap >r ;
 : unloop    r> 2r> 2drop >r ;
 
-: 1+   1 + ;
-: +!   swap over @ + swap ! ;
-: 0=   if 0 else -1 then ;
-: =    - 0= ;
-: <>   = 0= ;
+?: 1+   1 + ;
+?: +!   swap over @ + swap ! ;
+?: 0=   if 0 else -1 then ;
+?: =    - 0= ;
+?: <>   = 0= ;
 
 : min   2dup < if drop else nip then ;
 
@@ -78,15 +82,15 @@ forward: <
 : type   ?dup if bounds do i c@ emit loop else drop then ;
 
 \ Put the xt inside the definition of EXECUTE, overwriting the last noop.
-: execute   [ here cell + ] ['] noop ! then noop ;
-: perform   @ execute ;
+?: execute   [ here cell + ] ['] noop ! then noop ;
+?: perform   @ execute ;
 
 variable state
 
-: 0<   [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
-: or   invert swap invert nand ;
-: xor   2dup nand 1+ dup + + + ;
-: <   2dup xor 0< if drop 0< else - 0< then ;
+?: 0<   [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
+?: or   invert swap invert nand ;
+?: xor   2dup nand 1+ dup + + + ;
+?: <   2dup xor 0< if drop 0< else - 0< then ;
 
 : cmove ( addr1 addr2 n -- )   ?dup if bounds do count i c! loop drop
    else 2drop then ;
@@ -128,7 +132,7 @@ include dictionary.fth
 : search-wordlist ( ca u wl -- 0 | xt 1 | xt -1 )
    (find) ?dup 0= if 2drop 0 then ;
 
-: (sliteral)   r> dup @ swap cell+ 2dup + aligned >r swap ;
+?: (sliteral)   r> dup @ swap cell+ 2dup + aligned >r swap ;
 
 defer abort
 : undef ( a u -- )   ." Undefined: " type cr abort ;
@@ -270,7 +274,11 @@ defer parsed
    file-input interpreting  source-id close-file drop  0 'source !
    nr> restore-input abort" Bad restore-input" ;
 
-: r/o   s" r" drop ;
+[defined] rp! [if]
+  : r/o   0 ;
+[else]
+  : r/o   s" r" drop ;
+[then]
 
 : included   2dup align here >r  name,  r> included-files chain, 0 , 0 ,
    r/o open-file abort" Read error." include-file ;

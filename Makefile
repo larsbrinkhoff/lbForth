@@ -48,10 +48,9 @@ test-exe: test/test-exe.sh test/test-elf.fth test/test-pe.fth targets/x86/asm.ft
 test-lib: test/test-lib.sh
 	sh test/test-lib.sh
 
-test-meta: targets/x86/meta.fth targets/x86/nucleus.fth test/test-meta.fth
+test-meta: targets/x86/meta.fth targets/x86/nucleus.fth kernel.fth
 	echo 'include $<' | $(FORTH) | tail -n+3 > $@
 	chmod a+x $@
-	./$@
 
 clean:
 	$(TMAKE) clean

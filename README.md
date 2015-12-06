@@ -4,10 +4,9 @@ This is a self-hosted implementation of Forth, which can regenerate
 itself from Forth source code.  The bootstrapping process uses a
 [metacompiler written in
 Lisp](https://github.com/larsbrinkhoff/forth-metacompiler) to target a
-small inner interpreter and a handful of code words written in C.
-There is also a new metacompiler written in Forth which is intended to
-replace the Lisp version in the future.  Work is under way to add a
-[real target](targets/x86) using assembly language code words.
+small inner interpreter and a handful of code words written in C.  A
+new metacompiler written in Forth generates an [x86](targets/x86)
+executable using using assembly language code words.
 
 ( Continuous integration )
 
