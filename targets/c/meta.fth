@@ -282,8 +282,8 @@ interpreter-context definitions also host-interpreter
 : '   parse-name target-xt ; \ find-name 0= ?undef ;
 : immediate   latestxt dup c@ negate swap c! ;
 
-: [undefined]   parse-name t-defined? ; immediate
-: [defined]     postpone [undefined] 0= ; immediate
+: [defined]     parse-name t-defined? ; immediate
+: [undefined]   postpone [undefined] 0= ; immediate
 
 : check-colon-runtime   s" :" target-xt >body colon-runtime-offset + @
    s" >r" target-xt <> if ." Bad offset into colon definition." cr bye then ;
