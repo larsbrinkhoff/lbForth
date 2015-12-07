@@ -160,25 +160,23 @@ target
 
 include kernel.fth
 
-create data_stack  110 cells allot
-create return_stack  256 cells allot
-
-' data_stack >body 100 cells + ' sp0 >body !
-' return_stack >body 256 cells + ' rp0 >body !
-
 code cold
    then,
 
    ' warm >body # I mov,
-   ' sp0 >body @ # S mov,
-   ' rp0 >body @ # R mov,
+   ' sp0 >body S mov,
+   ' rp0 >body R mov,
 
    next,
 end-code
 
 here ' dp0 >body !
-here 17000 cells + ' limit >body !
-17000 cells elf-extra-bytes!
+17000 cells allot  here ' limit >body !
+100 cells allot  here ' sp0 >body !
+256 cells allot  here ' rp0 >body !
+
+here ' dp0 >body @ - elf-extra-bytes!
+17000 256 + 100 + cells negate allot
 
 only forth also meta also t-words resolve-all-forward-refs previous
 
