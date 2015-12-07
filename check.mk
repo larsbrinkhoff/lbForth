@@ -1,4 +1,4 @@
-check: test-errors test-assembler test-image test-exe test-lib
+check: test-errors test-assembler test-image test-exe test-lib test-copyright
 	test `cat $<` -eq $(EXPECTED_ERRORS)
 
 test-errors: test-output
@@ -30,3 +30,6 @@ test-lib: test/test-lib.sh
 test-meta: targets/x86/meta.fth targets/x86/nucleus.fth kernel.fth
 	echo 'include $<' | $(FORTH) | tail -n+3 > $@
 	chmod a+x $@
+
+test-copyright:
+	sh test/test-copyright.sh

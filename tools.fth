@@ -1,4 +1,4 @@
-\ -*- forth -*- Copyright 2004, 2013 Lars Brinkhoff
+\ -*- forth -*- Copyright 2004, 2013-2015 Lars Brinkhoff
 
 ( Tools words. )
 
