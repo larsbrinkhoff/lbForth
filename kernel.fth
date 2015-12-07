@@ -241,13 +241,6 @@ defer backtrace
 
 : sigint   cr backtrace abort ;
 
-\ ----------------------------------------------------------------------
-
-( File Access words. )
-
-: n>r   r> over >r swap begin ?dup while rot r> 2>r 1 - repeat >r ;
-: nr>   r> r@ begin ?dup while 2r> >r rot rot 1 - repeat r> swap >r ;
-
 \ These will be set in COLD, or by the metacompiler.
 0 constant sp0
 0 constant rp0
@@ -269,9 +262,9 @@ defer parsed
 : alloc-file   file-source input ! begin 'source @ while file> repeat ;
 : file-input ( fileid -- )   alloc-file  source# !  6 input@ 'source ! ;
 
-: include-file ( fileid -- )   save-input n>r
+: include-file ( fileid -- )   save-input drop 2>r
    file-input interpreting  source-id close-file drop  0 'source !
-   nr> restore-input abort" Bad restore-input" ;
+   2r> 2 restore-input abort" Bad restore-input" ;
 
 [defined] rp! [if]
   : r/o   0 ;

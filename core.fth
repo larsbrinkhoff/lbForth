@@ -224,6 +224,9 @@ create string-source   0 -1 ' string-refill ' noop source,
 : string-input ( a u -- )   string-source input !  0 >in !
    #source !  'source ! ;
 
+: n>r   r> over >r swap begin ?dup while rot r> 2>r 1 - repeat >r ;
+: nr>   r> r@ begin ?dup while 2r> >r rot rot 1 - repeat r> swap >r ;
+
 : evaluate   save-input n>r  string-input interpret
    nr> restore-input abort" Bad restore-input" ;
 
