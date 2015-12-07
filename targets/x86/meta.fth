@@ -69,8 +69,6 @@ only forth also meta definitions
 
 variable leaves
 
-0 constant jmp_buf
-
 : >mark   here 0 , ;
 : <mark   here ;
 : >resolve   here swap ! ;
