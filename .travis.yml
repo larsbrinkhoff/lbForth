@@ -3,10 +3,17 @@ os:
   - osx
 language: c
 env:
-  matrix:
-    - M32=
-    - M32=-m32
+  - TARGET=c M32=
+  - TARGET=c M32=-m32
+  - TARGET=x86 M32=
+  - TARGET=x86 M32=-m32
+matrix:
+  exclude:
+    - os: osx
+      env: TARGET=x86 M32=
+    - os: osx
+      env: TARGET=x86 M32=-m32
 install: sh -e install-deps.sh install_${TRAVIS_OS_NAME:-linux}
-script: make check  M32=$M32
+script: make check  M32=$M32 TARGET=$TARGET
 notifications:
   email: lars@nocrew.org

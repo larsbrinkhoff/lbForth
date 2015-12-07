@@ -1,18 +1,23 @@
+TARGET = c
+TFORTH = b-forth
 TDIR = targets/c
+NUCLEUS = $(TDIR)/nucleus.fth
+FORTH = $(TDIR)/run.sh ./forth
+DEPS = kernel.fth dictionary.fth $(TDIR)/nucleus.fth
+PARAMS = params.lisp jump.fth threading.fth
+
+GREP = grep -a
+
 RUN = $(TDIR)/run.sh
-TMAKE = $(MAKE) -f$(TDIR)/forth.mk
 LISP = ./lisp/lisp.sh
 META = lisp/meta.lisp
-NUCLEUS = $(TDIR)/nucleus.fth
+
 
 # Bootstrap metacompiler, written in Lisp.
-METACOMPILE = $(LISP) '(load \"$(META)\") (compile-forth \"$(NUCLEUS)\" \"$<\")'
+METACOMPILE = $(LISP) '(load "$(META)") (compile-forth "$(NUCLEUS)" "$<")'
 
-all: forth
-
-forth: kernel.fth params.lisp $(META)
-	$(TMAKE) METACOMPILE="$(METACOMPILE)" $@
-	rm kernel.c
+all: b-forth
+	rm -f $(PARAMS)
 
 $(META):
 	git submodule update --init
@@ -20,5 +25,4 @@ $(META):
 params.lisp: params
 	$(RUN) ./$< -lisp > $@
 
-params:
-	$(TMAKE) $@
+include targets/c/forth.mk

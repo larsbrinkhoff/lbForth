@@ -4,4 +4,4 @@ build:
       - 'sh -e install-deps.sh install_linux'
   tests:
     before:
-      - 'make check M32='
+      - 'make check M32= TARGET=x86'

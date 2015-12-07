@@ -1,11 +1,11 @@
 *.o
+*.exe
 forth
-forth.exe
+*-forth
 kernel.c
 /params*
 jump.fth
 threading.fth
-.bootstrap
 /test-*
 smoke-test
 packages

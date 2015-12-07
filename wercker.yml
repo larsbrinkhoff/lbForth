@@ -6,7 +6,7 @@ build:
             code: sh install-deps.sh install_linux
         - script:
             name: build
-            code: make all M32=$M32
+            code: make all M32=$M32 TARGET=x86
         - script:
             name: test
-            code: make check
+            code: make check TARGET=x86

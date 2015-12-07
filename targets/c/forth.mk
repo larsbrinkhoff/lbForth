@@ -3,20 +3,15 @@ M32 = -m32
 CFLAGS = $(M32) -O2 -fomit-frame-pointer -fno-unit-at-a-time
 CPPFLAGS = -I$(TDIR)
 LDFLAGS = $(M32)
-GREP = grep -a
 
-TDIR = targets/c
-META = $(TDIR)/meta.fth
 RUN = $(TDIR)/run.sh
-PARAMS = params.fth jump.fth threading.fth
 
-METACOMPILE = echo 'include $(META)  bye' | $(RUN) ./forth | tail -n+3 > $@ ; \
+METACOMPILE ?= echo 'include $(META)  bye' | $(RUN) ./forth | tail -n+3 > $@ ; \
 	$(GREP) Meta-OK $@
 
-all: forth
-
-forth: kernel.o
+$(TFORTH): kernel.o
 	$(CC) $(LDFLAGS) $^ -o $@
+	cp $@ forth
 
 kernel.o: kernel.c $(TDIR)/forth.h
 
@@ -35,5 +30,5 @@ jump.fth: $(TDIR)/jump.fth
 threading.fth: targets/ctc.fth
 	cp $^ $@
 
-clean:
-	rm -f forth *.o kernel.c params* $(PARAMS)
+t-clean:
+	rm -f *.o kernel.c params* $(PARAMS)

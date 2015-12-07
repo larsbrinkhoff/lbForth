@@ -107,7 +107,7 @@ end-code
 
 42 test-;code test
 : check-;code   test 42 <> abort" FAIL" ;
-check-;code
+\ check-;code
 .( PASS ) cr
 
 0 [if]
