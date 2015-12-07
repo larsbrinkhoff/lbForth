@@ -78,7 +78,7 @@ create voc-link  ' included-files ,
 
 : u>   swap u< ;
 
-: unused   dictionary_end @ here - ;
+: unused   limit @ here - ;
 
 : within   over - under - u< ;
 

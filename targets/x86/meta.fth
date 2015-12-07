@@ -179,6 +179,7 @@ code cold
 end-code
 
 here ' dp0 >body !
+here 17000 cells + ' limit >body !
 17000 cells elf-extra-bytes!
 
 only forth also meta also t-words resolve-all-forward-refs previous

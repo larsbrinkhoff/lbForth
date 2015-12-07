@@ -19,8 +19,6 @@
 
 create jmpbuf         jmp_buf allot
 
-variable dictionary_end
-
 [undefined] sp@ [if]
 variable SP
 [then]
@@ -254,6 +252,7 @@ defer backtrace
 0 constant sp0
 0 constant rp0
 0 constant dp0
+variable limit
 
 defer parsed
 : (parsed) ( a u -- )   find-name interpret-xt ;
