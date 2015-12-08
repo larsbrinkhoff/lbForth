@@ -1,4 +1,7 @@
-check: test-errors test-assembler test-image test-exe test-lib test-copyright
+CHECKS = test-errors test-assembler test-image test-exe test-lib \
+         test-copyright test-meta
+
+check: $(CHECKS)
 	test `cat $<` -eq $(EXPECTED_ERRORS)
 
 test-errors: test-output
@@ -27,9 +30,9 @@ test-exe: test/test-exe.sh test/test-elf.fth test/test-pe.fth targets/x86/asm.ft
 test-lib: test/test-lib.sh
 	sh test/test-lib.sh
 
-test-meta: targets/x86/meta.fth targets/x86/nucleus.fth kernel.fth
-	echo 'include $<' | $(FORTH) | tail -n+3 > $@
-	chmod a+x $@
+test-meta: $(META) $(DEPS)
+	echo 'include $< bye' | $(FORTH) | tail -n+3 > $@
+	cmp $@ $(META-OUTPUT)
 
 test-copyright:
 	sh test/test-copyright.sh

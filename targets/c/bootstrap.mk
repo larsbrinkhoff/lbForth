@@ -17,7 +17,7 @@ META = lisp/meta.lisp
 METACOMPILE = $(LISP) '(load "$(META)") (compile-forth "$(NUCLEUS)" "$<")'
 
 all: b-forth
-	rm -f $(PARAMS)
+	rm -f kernel.c kernel.o $(PARAMS)
 
 $(META):
 	git submodule update --init

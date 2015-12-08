@@ -1,3 +1,5 @@
+META-OUTPUT = $(TFORTH)
+
 $(TFORTH): b-forth $(DEPS) $(PARAMS) $(META)
 	echo include $(META) | ./forth | tail -n+3 > $@
 	chmod a+x $@

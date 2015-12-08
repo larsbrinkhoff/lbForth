@@ -4,6 +4,7 @@ CFLAGS = $(M32) -O2 -fomit-frame-pointer -fno-unit-at-a-time
 CPPFLAGS = -I$(TDIR)
 LDFLAGS = $(M32)
 
+META-OUTPUT = kernel.c
 RUN = $(TDIR)/run.sh
 
 METACOMPILE ?= echo 'include $(META)  bye' | $(RUN) ./forth | tail -n+3 > $@ ; \
