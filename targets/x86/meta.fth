@@ -57,7 +57,7 @@ only forth definitions also meta
 target
 0 org
 
-load-address x86 elf32,
+load-address x86 elf32-header,
 
 entry-point org
 
@@ -175,12 +175,12 @@ here ' dp0 >body !
 100 cells allot  here ' sp0 >body !
 256 cells allot  here ' rp0 >body !
 
-here ' dp0 >body @ - elf-extra-bytes!
+here ' dp0 >body @ - elf-extra-bytes
 17000 256 + 100 + cells negate allot
 
 only forth also meta also t-words resolve-all-forward-refs previous
 
-;elf
+elf-end
 
 target-region only forth type bye
 

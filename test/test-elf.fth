@@ -16,7 +16,7 @@ also assembler
 target-image
 0 org
 
-load-address x86 elf32,
+load-address x86 elf32-header,
 
 entry-point org
 
@@ -24,6 +24,6 @@ entry-point org
    2A # ebx mov,
    80 # int,
 
-;elf
+elf-end
 
 target-region type bye

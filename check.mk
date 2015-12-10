@@ -23,7 +23,7 @@ test-image: test/test-image.fth lib/image.fth
 	echo 'include $< .( Image-OK )' | $(FORTH) > $@
 	$(GREP) Image-OK $@
 
-test-exe: test/test-exe.sh test/test-elf.fth test/test-pe.fth targets/x86/asm.fth
+test-exe: test/test-exe.sh test/test-elf.fth test/test-pe.fth targets/x86/asm.fth lib/elf.fth lib/pe.fth
 	TDIR=$(TDIR) ./test/test-exe.sh > $@
 	$(GREP) 42 $@
 

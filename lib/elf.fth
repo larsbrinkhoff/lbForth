@@ -30,11 +30,21 @@ B7 constant arm64
 : a, ( x -- )   , ; \ 32 or 64 bits
 : zeros, ( u -- )   here swap dup allot erase ;
 
+( Data structures )
+
+variable start
+variable fsize
+variable extra  0 extra !
+
+: start- ( a -- u ) >host start @ >host - ;
+: elf-extra-bytes   extra ! ;
+
+: !file-size   fsize @ ! ;
+: !mem-size   fsize @ 4 + ! ;
+
 ( ELF header )
 
 54 constant entry-offset
-
-variable extra  0 extra !
 
 : ident, ( -- )   7F c, ," ELF" 00010101 w, 8 zeros, ;
 : type, ( u -- )   executable h, h, 1 w, ;
@@ -44,8 +54,8 @@ variable extra  0 extra !
 
 ( Program header )
 
-: phdr32, ( a1 -- a2 )   1 w, 0 a, dup a, a, here 0 a, 0 a, 7 w, 1000 w, ;
-: phdr64, ( a1 -- a2 )   1 w, 5 w, 0 a, dup a, a, here 0 a, 0 a, 1000 w, ;
+: phdr32, ( a -- )   1 w, 0 a, dup a, a, here fsize ! 0 a, 0 a, 7 w, 1000 w, ;
+: phdr64, ( a -- )   1 w, 5 w, 0 a, dup a, a, here fsize ! 0 a, 0 a, 1000 w, ;
 
 ( Section header )
 
@@ -53,8 +63,7 @@ variable extra  0 extra !
 
 ( Lay down an ELF header in the dictionary. )
 
-: elf32, ( a1 u -- a2 a3 ) here >host -rot ehdr, phdr32, ;
-: elf-extra-bytes!   extra ! ;
-: ;elf ( a1 a2 -- ) align here >host rot - dup swap extra @ + swap rot 2! ;
+: elf32-header, ( a u -- ) here start !  ehdr, phdr32, ;
+: elf-end   align here start- dup !file-size  extra @ + !mem-size ;
 
 base !
