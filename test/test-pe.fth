@@ -4,7 +4,9 @@ require lib/pe.fth
 hex
 
 here
-pe,
+pe-header,
+
+pe-code
 
 also assembler
 ahead,
@@ -15,5 +17,6 @@ code main
    ret,
 end-code
 
-pe!
+pe-end
+
 here over - type

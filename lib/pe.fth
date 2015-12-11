@@ -1,3 +1,13 @@
+\ Create a Portable Executable (PE) image file in memory.
+
+\ Usage:
+\
+\   pe-header, \ Create the header data structure
+\   ...
+\   pe-code \ Start code and data
+\   ...
+\   pe-end \ End PE image, update header
+
 require lib/mem.fth
 
 base @ hex
@@ -40,9 +50,20 @@ base @ hex
 : h+! ( u a -- )   dup h@ rot + swap h! ;
 : w+! ( u a -- )   dup w@ rot + swap w! ;
 
+( Data structures )
+
+variable 'mzhdr
+: mzhdr+ ( u -- a ) 'mzhdr @ + ;
+: current-size   here 'mzhdr @ - ;
+
+: opthdrsize! ( a -- ) 54 mzhdr+ h! ;
+: pe-entry ( u -- ) 68 mzhdr+ w! ;
+: img-size! ( u -- ) 90 mzhdr+ w! ;
+: hdr-size! ( u -- ) 94 mzhdr+ w! ;
+
 ( MZ header )
 
-: mzhdr, ( -- )   ," MZ" 3A zeros, 40 w, ;
+: mzhdr,   here 'mzhdr !  ," MZ" 3A zeros, 40 w, ;
 
 ( PE header )
 
@@ -56,34 +77,23 @@ base @ hex
 : align,   1 w, 1 w, 8 zeros, ;
 : major,   4 h, 12 zeros, ;
 : subsys,   3 h, 01A zeros, ;
-: opthdr,   sig,  400000 base,  align,  major,  subsys, ;
-
-( Data directories. )
-
-: dd, ( -- )   80 zeros, ;
+: dd,   80 zeros, ;
+: opthdr,   sig,  400000 base,  align,  major,  subsys,  dd, ;
 
 ( Section header )
 
-: #s+ ( a -- a )   1 over 46 + h+! ;
-: sname, ( a u -- )   here 8 erase here swap cmove 8 allot ;
-: shdr, ( a1 a2 u -- a1 )   #s+  sname, ( size ) 0 w, FF w, ( codesize ) 0 w,
+: #s+   1 46 mzhdr+ h+! ;
+: sname, ( a u -- ) here 8 erase here swap cmove 8 allot ;
+: shdr, ( a u -- ) #s+  sname, ( size ) 0 w, FF w, ( codesize ) 0 w,
    ( code ) 0 w, 0C zeros, 60000020 w, ;
 
-( Lay down a PE header in the dictionary. )
+( Lay down a PE header in the dictionary )
 
-: >entry   swap swap ;
-: opthdrsize! ( a -- a )   here over - 58 - over 54 + >entry h! ;
-: entry!   2dup >entry 068 + w! ;
-: img-size!   2dup 090 + w! ;
-: hdr-size!   2dup >entry 094 + w! ;
-: hdrsize! ( a -- a u )   here over - 2dup swap  entry!
-   img-size! hdr-size! ( 2dup 0C4 + 80 + w!  0CC + 80 + w! ) 2drop ;
+: pe-header,   mzhdr, pehdr, here opthdr, here swap - opthdrsize! ;
 
-: pe, ( -- a u )   here  mzhdr, pehdr, opthdr, dd, opthdrsize!
-   ( s" .text" shdr, ) hdrsize! ;
-: padding ( a u -- a u )   over here swap - 148 swap - dup 0> and zeros, ;
-: codesize! ( a u -- )   swap  2dup 090 + w+!  ( 2dup 0C0 + 80 + w! )
-   ( 0C8 + 80 + w! ) 2drop ;
-: pe! ( a u -- )   padding  over + here swap - codesize! ;
+: pe-code   current-size dup hdr-size! pe-entry ;
+
+: padding   148 current-size - dup 0> and zeros, ;
+: pe-end   padding  current-size img-size! ;
 
 base !
