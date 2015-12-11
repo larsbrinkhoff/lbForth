@@ -269,7 +269,8 @@ defer parsed
    2r> 2 restore-input abort" Bad restore-input" ;
 
 [defined] rp! [if]
-  : r/o   0 ;
+  0 constant r/o
+  577 constant r/w
 [else]
   : r/o   s" r" drop ;
 [then]

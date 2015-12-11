@@ -281,6 +281,32 @@ code read-file ( addr u1 fileid -- u2 ior )
    next,
 end-code
 
+code write-file ( addr u1 fileid -- u2 ior )
+   eax push,
+   ebx push,
+   ecx push,
+
+   4 # eax mov,
+   0C S )# ebx mov,
+   14 S )# ecx mov,
+   10 S )# edx mov,
+   80 # int,
+
+   ebx ebx xor,
+   eax eax test,
+   0<, if,
+     eax ebx xchg,
+   then,
+   ebx 10 S )# mov,
+   eax 14 S )# mov,
+
+   ecx pop,
+   ebx pop,
+   eax pop,
+   W pop,
+   next,
+end-code
+
 code close-file ( fileid -- ior )
    eax push,
    ebx push,
