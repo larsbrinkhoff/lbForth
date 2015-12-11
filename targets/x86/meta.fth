@@ -170,13 +170,15 @@ code cold
    next,
 end-code
 
+\ Start of free dictionary.
 here ' dp0 >body !
-17000 cells allot  here ' limit >body !
-100 cells allot  here ' sp0 >body !
-256 cells allot  here ' rp0 >body !
 
-here ' dp0 >body @ - elf-extra-bytes
-17000 256 + 100 + cells negate allot
+\ Allocate space for dictionary and stacks.
+here
+   17000 cells allot  here ' limit >body !
+   100 cells allot  here ' sp0 >body !
+   256 cells allot  here ' rp0 >body !
+here - dup allot negate elf-extra-bytes
 
 only forth also meta also t-words resolve-all-forward-refs previous
 
