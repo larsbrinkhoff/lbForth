@@ -14,9 +14,26 @@ host also meta also assembler
 : R   esi ;
 : W   edx ;
 
+\ Macros.
+: op>r     postpone >r postpone 2>r ; compile-only
+: opr>     postpone 2r> postpone r> ; compile-only
+: fetch,   op>r I ) opr> mov,  4 # I add, ;
+: rpop,    op>r R ) opr> mov,  4 # R add, ;
+: rpush,   4 # R sub,  R ) mov, ;
+
 \ Next.
-: fetch,   >r 2>r I ) 2r> r> mov,  4 # I add, ;
 : next,   W fetch,  code-offset W )# indirect-jmp, ;
+
+\ Check eax for error.  Store ( result error ) at stack offset u.
+: error-check, ( u -- )
+   >r
+   ebx ebx xor,
+   eax eax test,
+   0<, if,
+     eax ebx xchg,
+   then,
+   ebx r@ S )# mov,
+   eax r> 4 + S )# mov, ;
 
 target
 
@@ -41,14 +58,12 @@ code rp!
 end-code
 
 code exit
-   R ) I mov,
-   4 # R add,
+   I rpop,
    next,
 end-code
 
 code docol
-   4 # R sub,
-   I R ) mov,
+   I rpush,
    body-offset W )# I lea,
    next,
 end-code
@@ -72,8 +87,7 @@ code dodef
 end-code
 
 code dodoes
-   4 # R sub,
-   I R ) mov,
+   I rpush,
    does-offset W )# I mov,
    body-offset W )# W lea,
    W push,
@@ -133,14 +147,12 @@ end-code
 
 code >r
    W pop,
-   4 # R sub,
-   W R ) mov,
+   W rpush,
    next,
 end-code
 
 code r>
-   R ) W mov,
-   4 # R add,
+   W rpop,
    W push,
    next,
 end-code
@@ -239,14 +251,7 @@ code open-file ( addr u mode -- fileid ior )
    tmp ebx lea,
    0C S )# ecx mov,
    80 # int,
-
-   ebx ebx xor,
-   eax eax test,
-   0<, if,
-     eax ebx xchg,
-   then,
-   ebx 10 S )# mov,
-   eax 14 S )# mov,
+   10 error-check,
 
    ecx pop,
    ebx pop,
@@ -265,14 +270,7 @@ code read-file ( addr u1 fileid -- u2 ior )
    14 S )# ecx mov,
    10 S )# edx mov,
    80 # int,
-
-   ebx ebx xor,
-   eax eax test,
-   0<, if,
-     eax ebx xchg,
-   then,
-   ebx 10 S )# mov,
-   eax 14 S )# mov,
+   10 error-check,
 
    ecx pop,
    ebx pop,
@@ -291,14 +289,7 @@ code write-file ( addr u1 fileid -- u2 ior )
    14 S )# ecx mov,
    10 S )# edx mov,
    80 # int,
-
-   ebx ebx xor,
-   eax eax test,
-   0<, if,
-     eax ebx xchg,
-   then,
-   ebx 10 S )# mov,
-   eax 14 S )# mov,
+   10 error-check,
 
    ecx pop,
    ebx pop,
