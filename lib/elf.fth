@@ -1,3 +1,13 @@
+\ Create a Executale and Linkable Format (ELF) image file in memory.
+
+\ Documentation:
+\ elf-header, ( a u -- ) \ Create header loding at a with machine type u.
+\ elf-start ( a -- ) \ Specify the start header in memory.
+\ elf-extra-bytes ( u -- ) \ Add uninitialized bytes to the end of the image.
+\ elf-end ( -- ) \ End image, update header.
+\ elf-file-size ( u -- ) \ Set program file size.
+\ elf-memory-size ( u -- ) \ Set program memory size.
+
 base @ hex
 
 ( Object types )
@@ -36,11 +46,12 @@ variable start
 variable fsize
 variable extra  0 extra !
 
+: elf-start ( a -- ) dup start !  44 + fsize ! ;
 : start- ( a -- u ) >host start @ >host - ;
 : elf-extra-bytes   extra ! ;
 
-: !file-size   fsize @ ! ;
-: !mem-size   fsize @ 4 + ! ;
+: elf-file-size   fsize @ ! ;
+: elf-mem-size   fsize @ 4 + ! ;
 
 ( ELF header )
 
@@ -63,7 +74,7 @@ variable extra  0 extra !
 
 ( Lay down an ELF header in the dictionary. )
 
-: elf32-header, ( a u -- ) here start !  ehdr, phdr32, ;
-: elf-end   align here start- dup !file-size  extra @ + !mem-size ;
+: elf32-header, ( a u -- ) here elf-start  ehdr, phdr32, ;
+: elf-end   align here start- dup elf-file-size  extra @ + elf-mem-size ;
 
 base !
