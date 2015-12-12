@@ -167,6 +167,9 @@ code cold
    next,
 end-code
 
+\ Start of image.
+load-address ' image0 >body !
+
 \ Start of free dictionary.
 here ' dp0 >body !
 

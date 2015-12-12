@@ -248,6 +248,7 @@ defer backtrace
 0 constant rp0
 0 constant dp0
 variable limit
+0 constant image0
 
 defer parsed
 : (parsed) ( a u -- )   find-name interpret-xt ;
