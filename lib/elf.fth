@@ -3,6 +3,7 @@
 \ Documentation:
 \ elf-header, ( a u -- ) \ Create header loding at a with machine type u.
 \ elf-start ( a -- ) \ Specify the start header in memory.
+\ elf-entry-point ( a -- ) \ Set the entry point.
 \ elf-extra-bytes ( u -- ) \ Add uninitialized bytes to the end of the image.
 \ elf-end ( -- ) \ End image, update header.
 \ elf-file-size ( u -- ) \ Set program file size.
@@ -50,18 +51,17 @@ variable extra  0 extra !
 : start- ( a -- u ) >host start @ >host - ;
 : elf-extra-bytes   extra ! ;
 
+: elf-entry-point   start @ 18 + ! ;
 : elf-file-size   fsize @ ! ;
 : elf-mem-size   fsize @ 4 + ! ;
 
 ( ELF header )
 
-54 constant entry-offset
-
-: ident, ( -- )   7F c, ," ELF" 00010101 w, 8 zeros, ;
-: type, ( u -- )   executable h, h, 1 w, ;
-: entry, ( a -- a )   dup entry-offset + a, ;
-: tables, ( -- )   34 h, 20 h, 1 h, 6 zeros, ;
-: ehdr, ( a u -- a )   ident, type, entry, 34 a, 0 a, 0 w, tables, ;
+: ident,   7F c, ," ELF" 00010101 w, 8 zeros, ;
+: type, ( u -- ) executable h, h, 1 w, ;
+: entry,   0 a, ;
+: tables,   34 h, 20 h, 1 h, 6 zeros, ;
+: ehdr, ( a u -- a ) ident, type, entry, 34 a, 0 a, 0 w, tables, ;
 
 ( Program header )
 

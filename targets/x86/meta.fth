@@ -4,7 +4,6 @@ require search.fth
 
 hex
 08048000 constant load-address
-load-address 54 + constant entry-point
 decimal
 
 vocabulary compiler
@@ -55,11 +54,9 @@ only forth definitions also meta
 : target   only forth also meta also t-words definitions previous target-image ;
 
 target
-0 org
-
+load-address org
 load-address x86 elf32-header,
-
-entry-point org
+here elf-entry-point
 
 include targets/x86/nucleus.fth
 
