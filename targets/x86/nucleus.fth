@@ -251,6 +251,7 @@ code open-file ( addr u mode -- fileid ior )
    5 # eax mov,
    tmp ebx lea,
    0C S )# ecx mov,
+   octal 644 hex # edx mov,
    80 # int,
    10 error-check,
 
