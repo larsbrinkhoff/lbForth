@@ -167,6 +167,8 @@ code cold
    next,
 end-code
 
+latest ' latest0 >body !
+
 \ Start of image.
 load-address ' image0 >body !
 

@@ -249,6 +249,7 @@ defer backtrace
 0 constant dp0
 variable limit
 0 constant image0
+0 constant latest0
 
 defer parsed
 : (parsed) ( a u -- )   find-name interpret-xt ;
@@ -294,7 +295,7 @@ defer quit
    ['] (number) is number
    ['] (parsed) is parsed
    ['] (previous) is previous
-   ['] warm dup to latestxt forth !
+   latest0 dup to latestxt forth !
    ['] forth current !
    here to file-source  file,
 

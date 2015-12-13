@@ -2,7 +2,7 @@
 
 code cold \ int main (void)
   extern struct word warm_word, dp0_word, sp0_word, rp0_word, SP_word, RP_word,
-    limit_word, jmpbuf_word, sigint_word;
+    limit_word, jmpbuf_word, sigint_word, latest0_word;
   static cell data_stack[110];
   static cell return_stack[256];
   static cell dictionary[17000];
@@ -15,6 +15,7 @@ code cold \ int main (void)
   rp0_word.param[0] = (cell)(&return_stack[256]);
   dp0_word.param[0] = (cell)dictionary;
   limit_word.param[0] = (cell)dictionary + sizeof dictionary;
+  latest0_word.param[0] = (cell)(&warm_word);
 
   SP_word.param[0] = sp0_word.param[0];
   RP_word.param[0] = rp0_word.param[0];
