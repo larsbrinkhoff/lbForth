@@ -279,6 +279,7 @@ interpreter-context definitions also host-interpreter
 : ?:   already-defined? if ignore-definition else : then ;
 : defer   create s" abort" target,  does> @ execute ;
 : value   create ,  does> @ ;
+: is   parse-name target-xt >body ! ;
 
 : '   parse-name target-xt ; \ find-name 0= ?undef ;
 : immediate   latestxt dup c@ negate swap c! ;
