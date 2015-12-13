@@ -9,6 +9,7 @@ macros.fth      Use ]] [[ to simplify postponing words.
 mem.fth         Read and write 16/32/64-bit words.
 pe.fth          Write a PE executable.
 quotations.fth  Quotations using [: ;] notation.
+save-image.fth  Save live image to a file.
 trace.fth       Debug facility.
 where.fth       Where is a word used?
-xforward.fth	Forward declarations for cross compilation.
+xforward.fth    Forward declarations for cross compilation.
