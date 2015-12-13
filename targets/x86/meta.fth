@@ -160,11 +160,11 @@ include kernel.fth
 code cold
    then,
 
-   ' warm >body # I mov,
    ' sp0 >body S mov,
    ' rp0 >body R mov,
 
-   next,
+   ' turnkey # W mov,
+   execute,
 end-code
 
 latest ' latest0 >body !

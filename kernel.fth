@@ -284,7 +284,6 @@ defer parsed
 
 defer quit
 
-\ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
 : warm
    ." lbForth" cr
 
@@ -308,3 +307,6 @@ defer quit
    s" load.fth" included
    ." ok" cr
    quit ;
+
+\ NOTE: THIS HAS TO BE THE LAST WORD IN THE FILE!
+defer turnkey  ' warm is turnkey
