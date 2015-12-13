@@ -20,9 +20,10 @@ host also meta also assembler
 : fetch,   op>r I ) opr> mov,  4 # I add, ;
 : rpop,    op>r R ) opr> mov,  4 # R add, ;
 : rpush,   4 # R sub,  R ) mov, ;
+: execute, code-offset W )# indirect-jmp, ;
 
 \ Next.
-: next,   W fetch,  code-offset W )# indirect-jmp, ;
+: next,   W fetch,  execute, ;
 
 \ Check eax for error.  Store ( result error ) at stack offset u.
 : error-check, ( u -- )
@@ -82,7 +83,7 @@ end-code
 
 code dodef
    body-offset W )# W mov,
-   code-offset W )# indirect-jmp,
+   execute,
    next,
 end-code
 
@@ -319,7 +320,7 @@ end-code
 
 code execute
    W pop,
-   code-offset W )# indirect-jmp,
+   execute,
 end-code
 
 code r@
