@@ -16,7 +16,20 @@
 
 require lib/mem.fth
 
+also forth
 base @ hex
+hex
+
+( Host data structures )
+
+variable 'mzhdr
+: mzhdr! ( a -- ) 'mzhdr ! ;
+: mzhdr+ ( u -- a ) 'mzhdr @ + ;
+: rva ( a -- u ) 'mzhdr @ - ;
+: get-name   >in @ parse-name rot >in ! ;
+: (constant) ( x -- ) >in @ swap constant >in ! ;
+
+previous
 
 ( File types )
 
@@ -56,23 +69,19 @@ base @ hex
 : h+! ( u a -- )   dup h@ rot + swap h! ;
 : w+! ( u a -- )   dup w@ rot + swap w! ;
 
-( Data structures )
+( PE data structures )
 
-variable 'mzhdr
-: mzhdr+ ( u -- a ) 'mzhdr @ + ;
-: rva ( a -- u ) 'mzhdr @ - ;
 : current-size   here rva ;
-
 : opthdrsize! ( a -- ) 54 mzhdr+ h! ;
 : pe-entry ( a -- ) rva 68 mzhdr+ w! ;
-: img-size! ( u -- ) 90 mzhdr+ w! ;
+: img-size! ( u -- ) rva 90 mzhdr+ w! ;
 : hdr-size! ( u -- ) rva 94 mzhdr+ w! ;
 : #rva-and-sizes! ( u -- ) B4 mzhdr+ w! ;
-: imports! ( u -- ) C0 mzhdr+ w! ;
+: imports! ( u -- ) rva C0 mzhdr+ w! ;
 
 ( MZ header )
 
-: mzhdr,   here 'mzhdr !  ," MZ" 3A zeros, 40 w, ;
+: mzhdr,   here mzhdr!  ," MZ" 3A zeros, 40 w, ;
 
 ( PE header )
 
@@ -102,24 +111,24 @@ variable 'mzhdr
 
 ( Imports )
 
-: func, ( "name" -- a ) here 0 h, >in @ parse-name move, 0 c, align >in ! ;
+: z", ( a u -- ) move, 0 c, align ;
+: func, ( "name" -- a ) here 0 h, get-name z", ;
 : pe-extern ( "name" -- ) func,  here constant  rva w, 0 w, ;
 
+: end,   5 cells zeros, ;
 : pe-import ( "name" -- )
    2 #rva-and-sizes!
-   >in @ current-size constant >in !
-   parse-name move, 0 c, align
-   current-size imports! 5 cells zeros, ;
+   current-size (constant)
+   parse-name z",
+   here imports! end, ;
 
-: pe-symbol ( a u -- )
-   -5 cells allot
-   0 w, 0 w, 0 w,  w,  rva w,
-   5 cells zeros, ;
+: symbol, ( a u -- ) 0 w, 0 w, 0 w,  w,  rva w, ;
+: pe-symbol ( a u -- ) -5 cells allot symbol, end, ;
 
 ( Start and end code )
 
 : pe-code   here hdr-size!  here pe-entry ;
 : padding   148 current-size - dup 0> and zeros, ;
-: pe-end   padding  current-size img-size! ;
+: pe-end   padding  here img-size! ;
 
-base !
+also forth base ! previous
