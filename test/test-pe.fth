@@ -6,16 +6,43 @@ include lib/image.fth
 require targets/x86/asm.fth
 require lib/pe.fth
 
+-11 constant std-out-handle
+
 target-image hex 400000 org
 
 pe-header,
 
+decimal
+284 pe-extern ExitProcess
+614 pe-extern GetStdHandle
+1323 pe-extern WriteFile
+
+pe-import kernel32.dll
+GetStdHandle kernel32.dll pe-symbol
+ExitProcess kernel32.dll pe-symbol
+WriteFile kernel32.dll pe-symbol
+
 pe-code
+
+also assembler
+label hello  s" hello world " ",
+label written  0 ,
 
 code main
    here pe-entry
-   2A # eax mov,
-   ret,
+
+   std-out-handle # push,
+   GetStdHandle indirect-call,
+
+   0 # push,
+   written # push,
+   12 # push,
+   hello # push,
+   eax push,
+   WriteFile indirect-call,
+
+   42 # push,
+   ExitProcess indirect-call,
 end-code
 
 pe-end

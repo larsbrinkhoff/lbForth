@@ -4,6 +4,12 @@
 \
 \   pe-header, \ Create the header data structure
 \   ...
+\   X pe-extern, name \ Declare an external symbol
+\   ...
+\   pe-import, dll \ Import a dll
+\   ...
+\   name dll pe-symbol, \ Import an external symbol from a dll
+\   ...
 \   pe-code \ Start code and data
 \   ...
 \   pe-end \ End PE image, update header
@@ -61,6 +67,8 @@ variable 'mzhdr
 : pe-entry ( a -- ) rva 68 mzhdr+ w! ;
 : img-size! ( u -- ) 90 mzhdr+ w! ;
 : hdr-size! ( u -- ) rva 94 mzhdr+ w! ;
+: #rva-and-sizes! ( u -- ) B4 mzhdr+ w! ;
+: imports! ( u -- ) C0 mzhdr+ w! ;
 
 ( MZ header )
 
@@ -92,8 +100,24 @@ variable 'mzhdr
 
 : pe-header,   mzhdr, pehdr, here opthdr, here swap - opthdrsize! ;
 
-: pe-code   here hdr-size!  here pe-entry ;
+( Imports )
 
+: pe-extern ( u "name" -- ) here constant  80000000 + w, 0 w, ;
+
+: pe-import ( "name" -- )
+   2 #rva-and-sizes!
+   >in @ current-size constant >in !
+   parse-name move, 0 c, align
+   current-size imports! 5 cells zeros, ;
+
+: pe-symbol ( a u -- )
+   -5 cells allot
+   0 w, 0 w, 0 w,  w,  rva w,
+   5 cells zeros, ;
+
+( Start and end code )
+
+: pe-code   here hdr-size!  here pe-entry ;
 : padding   148 current-size - dup 0> and zeros, ;
 : pe-end   padding  current-size img-size! ;
 
