@@ -267,7 +267,7 @@ FC 0op cld,
 FD 0op std,
 \ FE 0 inc rm
 \ FF 1 dec rm
-\ FF 2 call rm
+FF10 1op-s indirect-call,
 FF20 1op-s indirect-jmp,
 \ FF 6 push rm
 
