@@ -1,22 +1,23 @@
+require search.fth
+
+vocabulary cross
+only forth also cross definitions
+include lib/image.fth
 require targets/x86/asm.fth
 require lib/pe.fth
 
-hex
+target-image hex 400000 org
 
-here
 pe-header,
 
 pe-code
 
-also assembler
-ahead,
-
 code main
-   then,
+   here pe-entry
    2A # eax mov,
    ret,
 end-code
 
 pe-end
 
-here over - type
+target-region type

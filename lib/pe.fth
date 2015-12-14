@@ -54,12 +54,13 @@ base @ hex
 
 variable 'mzhdr
 : mzhdr+ ( u -- a ) 'mzhdr @ + ;
-: current-size   here 'mzhdr @ - ;
+: rva ( a -- u ) 'mzhdr @ - ;
+: current-size   here rva ;
 
 : opthdrsize! ( a -- ) 54 mzhdr+ h! ;
-: pe-entry ( u -- ) 68 mzhdr+ w! ;
+: pe-entry ( a -- ) rva 68 mzhdr+ w! ;
 : img-size! ( u -- ) 90 mzhdr+ w! ;
-: hdr-size! ( u -- ) 94 mzhdr+ w! ;
+: hdr-size! ( u -- ) rva 94 mzhdr+ w! ;
 
 ( MZ header )
 
@@ -91,7 +92,7 @@ variable 'mzhdr
 
 : pe-header,   mzhdr, pehdr, here opthdr, here swap - opthdrsize! ;
 
-: pe-code   current-size dup hdr-size! pe-entry ;
+: pe-code   here hdr-size!  here pe-entry ;
 
 : padding   148 current-size - dup 0> and zeros, ;
 : pe-end   padding  current-size img-size! ;
