@@ -4,7 +4,7 @@
 \
 \   pe-header, \ Create the header data structure
 \   ...
-\   X pe-extern, name \ Declare an external symbol
+\   pe-extern, name \ Declare an external symbol
 \   ...
 \   pe-import, dll \ Import a dll
 \   ...
@@ -102,7 +102,8 @@ variable 'mzhdr
 
 ( Imports )
 
-: pe-extern ( u "name" -- ) here constant  80000000 + w, 0 w, ;
+: func, ( "name" -- a ) here 0 h, >in @ parse-name move, 0 c, align >in ! ;
+: pe-extern ( "name" -- ) func,  here constant  rva w, 0 w, ;
 
 : pe-import ( "name" -- )
    2 #rva-and-sizes!
