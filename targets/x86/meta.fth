@@ -158,7 +158,7 @@ target
 include kernel.fth
 
 code cold
-   then,
+   here elf-entry-point
 
    ' sp0 >body S mov,
    ' rp0 >body R mov,

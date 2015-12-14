@@ -2,10 +2,6 @@
 
 hex
 
-\ Jump to COLD.
-also assembler
-ahead,
-
 host also meta also assembler
 
 \ Register allocation.
