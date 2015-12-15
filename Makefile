@@ -21,4 +21,4 @@ include $(TDIR)/forth.mk
 include check.mk
 
 clean: t-clean
-	rm -f forth *-forth smoke-test test-*
+	rm -f forth *-forth smoke-test test-* *.exe
