@@ -5,12 +5,9 @@
 \ delete-file
 \ file-position
 \ file-size
-\ r/w
 \ read-line
 \ reposition-file
 \ resize-file
-\ w/o
-\ write-file
 \ write-line
 
 \ ----------------------------------------------------------------------

@@ -11,7 +11,7 @@ require lib/elf.fth
 : ?size   fsize <> abort" size" ;
 
 variable f
-: open-image ( a u -- ) r/w open-file abort" open" f ! ;
+: open-image ( a u -- ) w/o open-file abort" open" f ! ;
 : write-image   image0 fsize f @ write-file ?error ?size ;
 : patch-image   fsize! msize! dp0! ;
 : save-image ( a u -- ) open-image patch-image write-image f @ close-file ;
