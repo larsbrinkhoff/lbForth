@@ -176,7 +176,17 @@ variable leaves
 
 : j   rp@ 3 cells + @ ;
 
-: environment?   2drop 0 ;
+create env-words  0 , ' included-files ,
+: env-query   dup if drop execute -1 then ;
+: environment?   #name min [ ' env-words ] literal search-wordlist env-query ;
+: environment   hide  current @  [ ' env-words ] literal current !
+   link  reveal  current ! ;
+
+: core ; environment
+: address-unit-bits 8 ; environment
+: /counted-string 255 ; environment
+: max-char 255 ; environment
+: lbforth ; environment
 
 : fill   rot rot ?dup if bounds do dup i c! loop drop else 2drop then ;
 

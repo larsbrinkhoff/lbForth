@@ -50,7 +50,7 @@ variable span
 
 : @+ ( addr -- a' x )   dup cell+ swap @ ;
 
-create voc-link  ' included-files ,
+create voc-link  ' env-words ,
 
 : current,   current @ , ;
 : context,   context 9 cells move, ;
