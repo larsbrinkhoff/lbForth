@@ -55,11 +55,11 @@ variable stop  0 stop !
 : start!   dup t-dp ! start ! ;
 : t-org   section, delta! start! ;
 
+\ Returns the host address and size of the target image.
+
+: target-region ( -- a u ) t-image t-dp @ >host over - ;
+
 \ Define a word to cross compile to the target image.
 
 require lib/cross.fth
 image: target-image  t-cell t-c@ t-c! t-dp t-org
-
-\ Returns the host address and size of the target image.
-
-: target-region ( -- a u ) t-image t-dp @ >host over - ;

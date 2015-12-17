@@ -24,6 +24,10 @@ defer t,
 : trailing-semicolon?   source 1- + c@ [char] ; = ;
 : ignore-definition   begin trailing-semicolon? postpone \ until ;
 
+variable leaves
+: 0leaves   0 leaves ! ;
+: leaves@   leaves @ ;
+
 vocabulary meta
 only forth also meta definitions
 include lib/image.fth
@@ -60,11 +64,7 @@ here elf-entry-point
 
 include targets/x86/nucleus.fth
 
-host
-
-only forth also meta definitions
-
-variable leaves
+host also meta definitions
 
 : >mark   here 0 , ;
 : <mark   here ;
@@ -145,8 +145,8 @@ h: repeat   t-[compile] again t-[compile]  then ;
 h: to   ' >body t-literal t-compile ! ;
 h: is   t-[compile] to ;
 
-h: do   0 leaves !  t-compile 2>r  t-[compile] begin ;
-h: loop   t-compile (loop) t-[compile] until  here leaves @ chains!  t-compile 2rdrop ;
+h: do   0leaves  t-compile 2>r  t-[compile] begin ;
+h: loop   t-compile (loop) t-[compile] until  here leaves@ chains!  t-compile 2rdrop ;
 h: leave   t-compile branch  leaves chain, ;
 
 h: abort"   t-[compile] if t-[compile] s" t-compile cr t-compile type
