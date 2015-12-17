@@ -10,9 +10,10 @@
 
 : ?   @ . ;
 
+8 cells 2 + 3 / constant #digits
 : ?dot         dup 32 127 within 0= if drop [char] . then ;
 : dump-chars   dup 16 + swap do i c@ ?dot emit loop ;
-: dump-cells   dup 16 + swap do i @ 11 u.r space cell +loop ;
+: dump-cells   dup 16 + swap do i @ #digits u.r space cell +loop ;
 : dump-line    dup u. space  dup dump-cells  space dump-chars cr ;
 : dump         bounds do i dump-line 16 +loop ;
 
