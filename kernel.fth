@@ -80,6 +80,8 @@ forward: <
 : aligned   cell + 1 - cell negate nand invert ;
 ?: (sliteral)   r> dup @ swap cell+ 2dup + aligned >r swap ;
 
+0 value stdin
+
 include t-kern.fth
 
 : i    r> r@ swap >r ;
@@ -281,6 +283,8 @@ defer parsed
 defer quit
 
 : warm
+   io-init
+
    ." lbForth" cr
 
    dp0 dp !
