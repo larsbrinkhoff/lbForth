@@ -172,7 +172,7 @@ here ' dp0 >body !
 \ Allocate space for dictionary and stacks.
 here
    18000 cells allot  here ' limit >body !
-   100 cells allot  here ' sp0 >body !
+   2000 cells allot  here ' sp0 >body !
    256 cells allot  here ' rp0 >body !
 here - dup allot negate extra-bytes
 
