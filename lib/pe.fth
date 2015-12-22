@@ -63,6 +63,10 @@ previous
 40000000 constant pe-readable
 80000000 constant pe-writable
 
+: file-aligned   1ff + -200 and ;
+: file-align   here file-aligned here - allot ;
+: section-aligned   fff + -1000 and ;
+
 ( Data types )
 
 : zeros, ( u -- )   here swap dup allot erase ;
@@ -77,7 +81,10 @@ previous
 : img-size! ( u -- ) rva 90 mzhdr+ w! ;
 : hdr-size! ( u -- ) rva 94 mzhdr+ w! ;
 : #rva-and-sizes! ( u -- ) B4 mzhdr+ w! ;
-: imports! ( u -- ) rva C0 mzhdr+ w! ;
+: imports! ( a -- ) rva C0 mzhdr+ w! ;
+: code-start! ( a -- ) rva 14C mzhdr+ w! ;
+: code-end! ( a -- ) dup >host t-image -  14C mzhdr+ w@ -  148 mzhdr+ w!
+   section-aligned rva  144 mzhdr+ w@ -  140 mzhdr+ w! ;
 
 ( MZ header )
 
@@ -92,7 +99,7 @@ previous
 
 : sig,   010B h, 01A zeros, ;
 : base,   w, ;
-: align,   1 w, 1 w, 8 zeros, ;
+: align,   1000 w, 200 w, 8 zeros, ;
 : major,   4 h, 12 zeros, ;
 : subsys,   3 h, 01A zeros, ;
 : dd,   80 zeros, ;
@@ -102,12 +109,12 @@ previous
 
 : #s+   1 46 mzhdr+ h+! ;
 : sname, ( a u -- ) here 8 erase here swap cmove 8 allot ;
-: shdr, ( a u -- ) #s+  sname, ( size ) 0 w, FF w, ( codesize ) 0 w,
-   ( code ) 0 w, 0C zeros, 60000020 w, ;
+: shdr, ( a u -- ) #s+  sname, 0 w, 1000 w, 14 zeros, E0000020 w, ;
+: .code,   s" .code" shdr, ;
 
 ( Lay down a PE header in the dictionary )
 
-: pe-header,   mzhdr, pehdr, here opthdr, here swap - opthdrsize! ;
+: pe-header,   mzhdr, pehdr, here opthdr, here swap - opthdrsize! .code, ;
 
 ( Imports )
 
@@ -127,8 +134,7 @@ previous
 
 ( Start and end code )
 
-: pe-code   here hdr-size!  here pe-entry ;
-: padding   148 current-size - dup 0> and zeros, ;
-: pe-end   padding  here img-size! ;
+: pe-code   file-align  here hdr-size!  here code-start!  here pe-entry ;
+: pe-end   here img-size!  here code-end! ;
 
 also forth base ! previous

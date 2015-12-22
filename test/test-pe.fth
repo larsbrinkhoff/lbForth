@@ -12,6 +12,9 @@ target-image hex 400000 org
 
 pe-header,
 
+pe-code
+401000 org
+
 pe-extern ExitProcess
 pe-extern GetStdHandle
 pe-extern WriteFile
@@ -20,8 +23,6 @@ pe-import kernel32.dll
 GetStdHandle kernel32.dll pe-symbol
 ExitProcess kernel32.dll pe-symbol
 WriteFile kernel32.dll pe-symbol
-
-pe-code
 
 also assembler
 label hello  s" hello world " ",
@@ -49,3 +50,4 @@ end-code
 pe-end
 
 target-region type
+bye
