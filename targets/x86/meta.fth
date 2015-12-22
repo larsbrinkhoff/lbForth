@@ -182,11 +182,12 @@ here
    256 cells allot  here ' rp0 >body !
 here - dup allot negate elf-extra-bytes
 
-only forth also meta also t-words resolve-all-forward-refs previous
+only forth also meta also t-words resolve-all-forward-refs
 
+only forth also meta
 elf-end
 
-target-region only forth type bye
+target-region type bye
 
 host also meta
 
