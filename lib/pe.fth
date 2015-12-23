@@ -25,7 +25,13 @@ hex
 variable 'mzhdr
 : mzhdr! ( a -- ) 'mzhdr ! ;
 : mzhdr+ ( u -- a ) 'mzhdr @ + ;
+
+variable extra  0 extra !
+: pe-extra-bytes ( u -- ) extra ! ;
+
+: file-offset ( a -- u ) >host t-image - ;
 : rva ( a -- u ) 'mzhdr @ - ;
+
 : get-name   >in @ parse-name rot >in ! ;
 : (constant) ( x -- ) >in @ swap constant >in ! ;
 
@@ -78,13 +84,20 @@ previous
 : current-size   here rva ;
 : opthdrsize! ( a -- ) 54 mzhdr+ h! ;
 : pe-entry ( a -- ) rva 68 mzhdr+ w! ;
-: img-size! ( u -- ) rva 90 mzhdr+ w! ;
+: img-size! ( u -- ) rva extra @ + 90 mzhdr+ w! ;
 : hdr-size! ( u -- ) rva 94 mzhdr+ w! ;
 : #rva-and-sizes! ( u -- ) B4 mzhdr+ w! ;
 : imports! ( a -- ) rva C0 mzhdr+ w! ;
-: code-start! ( a -- ) rva 14C mzhdr+ w! ;
-: code-end! ( a -- ) dup >host t-image -  14C mzhdr+ w@ -  148 mzhdr+ w!
-   section-aligned rva  144 mzhdr+ w@ -  140 mzhdr+ w! ;
+: virt-size! ( a -- ) 140 mzhdr+ w! ;
+: virt-start@ ( a -- ) 144 mzhdr+ w@ ;
+: raw-size! ( a -- ) 148 mzhdr+ w! ;
+: 'raw-start ( a -- ) 14C mzhdr+ ;
+: code-start! ( a -- ) rva 'raw-start w! ;
+: raw-start@ ( -- u ) 'raw-start w@ ;
+
+: raw-end! ( a -- ) file-offset raw-start@ - raw-size! ;
+: virt-end! ( a -- ) rva virt-start@ - virt-size! ;
+: code-end! ( a -- ) dup raw-end! virt-end! ;
 
 ( MZ header )
 
@@ -109,8 +122,8 @@ previous
 
 : #s+   1 46 mzhdr+ h+! ;
 : sname, ( a u -- ) here 8 erase here swap cmove 8 allot ;
-: shdr, ( a u -- ) #s+  sname, 0 w, 1000 w, 14 zeros, E0000020 w, ;
-: .code,   s" .code" shdr, ;
+: shdr, ( u1 a u2 -- ) #s+  sname, 0 w, 1000 w, 14 zeros,  w, ;
+: .code,   E0000020 s" .code" shdr, ;
 
 ( Lay down a PE header in the dictionary )
 
