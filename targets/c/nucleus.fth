@@ -5,7 +5,7 @@ code cold \ int main (void)
     limit_word, jmpbuf_word, sigint_word, latest0_word, turnkey_word;
   static cell data_stack[110];
   static cell return_stack[256];
-  static cell dictionary[17000];
+  static cell dictionary[18000];
   size_t start = (size_t)&dictionary, end;
   void signal_handler (int);
   xt_t *IP;
