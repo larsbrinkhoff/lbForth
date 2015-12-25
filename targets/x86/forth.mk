@@ -15,5 +15,8 @@ jump.fth: targets/c/jump.fth
 threading.fth: targets/ctc.fth
 	cp $^ $@
 
+t-kern.fth: $(TDIR)/t-kern.fth
+	cp $^ $@
+
 t-clean:
 	rm -f $(PARAMS)

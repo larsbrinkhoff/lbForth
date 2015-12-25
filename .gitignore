@@ -4,8 +4,9 @@ forth
 *-forth
 kernel.c
 /params*
-jump.fth
-threading.fth
+/jump.fth
+/threading.fth
+/t-kern.fth
 /test-*
 smoke-test
 packages

@@ -77,6 +77,11 @@ forward: <
 : bounds   over + swap ;
 : count    dup 1+ swap c@ ;
 
+: aligned   cell + 1 - cell negate nand invert ;
+?: (sliteral)   r> dup @ swap cell+ 2dup + aligned >r swap ;
+
+include t-kern.fth
+
 : i    r> r@ swap >r ;
 : cr   10 emit ;
 : type   ?dup if bounds do i c@ emit loop else drop then ;
@@ -131,8 +136,6 @@ include dictionary.fth
    2>r -1 swap 2r> ['] ?nt>xt traverse-wordlist rot if 0 then ;
 : search-wordlist ( ca u wl -- 0 | xt 1 | xt -1 )
    (find) ?dup 0= if 2drop 0 then ;
-
-?: (sliteral)   r> dup @ swap cell+ 2dup + aligned >r swap ;
 
 defer abort
 : undef ( a u -- )   ." Undefined: " type cr abort ;
@@ -269,14 +272,6 @@ defer parsed
 : include-file ( fileid -- )   save-input drop 2>r
    file-input interpreting  source-id close-file drop  0 'source !
    2r> 2 restore-input abort" Bad restore-input" ;
-
-[defined] rp! [if]
-  0 constant r/o
-  577 constant w/o
-  578 constant r/w
-[else]
-  : r/o   s" r" drop ;
-[then]
 
 : included   2dup align here >r  name,  r> included-files chain, 0 , 0 ,
    r/o open-file abort" Read error." include-file ;

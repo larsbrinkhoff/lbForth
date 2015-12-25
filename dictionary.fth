@@ -6,7 +6,6 @@
 variable dp
 : here      dp @ ;
 : allot     dp +! ;
-: aligned   cell + 1 - cell negate nand invert ;
 : align     dp @ aligned dp ! ;
 
 : ,       here !  cell allot ;

@@ -31,5 +31,8 @@ jump.fth: $(TDIR)/jump.fth
 threading.fth: targets/ctc.fth
 	cp $^ $@
 
+t-kern.fth: $(TDIR)/t-kern.fth
+	cp $^ $@
+
 t-clean:
 	rm -f *.o kernel.c params* $(PARAMS)

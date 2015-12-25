@@ -4,7 +4,7 @@ TDIR = targets/$(TARGET)
 META = $(TDIR)/meta.fth
 FORTH = $(TDIR)/run.sh ./forth
 DEPS = kernel.fth dictionary.fth $(TDIR)/nucleus.fth
-PARAMS = params.fth jump.fth threading.fth
+PARAMS = params.fth jump.fth threading.fth t-kern.fth
 
 GREP = grep -a
 ERROR_PATTERNS = -e 'INCORRECT RESULT' -e 'WRONG NUMBER'
