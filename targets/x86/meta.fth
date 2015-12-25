@@ -60,7 +60,6 @@ only forth definitions also meta
 target
 load-address org
 load-address x86 elf32-header,
-here elf-entry-point
 
 include targets/x86/nucleus.fth
 
