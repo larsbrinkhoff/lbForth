@@ -1,6 +1,7 @@
 TARGET = c
 TFORTH = $(TARGET)-forth
 TDIR = targets/$(TARGET)
+OS = .
 META = $(TDIR)/meta.fth
 FORTH = $(TDIR)/run.sh ./forth
 DEPS = kernel.fth dictionary.fth $(TDIR)/nucleus.fth

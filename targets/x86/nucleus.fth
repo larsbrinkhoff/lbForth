@@ -33,8 +33,7 @@ host also meta also assembler
    eax r> 4 + S )# mov, ;
 
 target
-
-include targets/x86/linux.fth
+exe-code
 
 code sp@
   S push,

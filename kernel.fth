@@ -83,7 +83,7 @@ forward: <
 include t-kern.fth
 
 : i    r> r@ swap >r ;
-: cr   10 emit ;
+?: cr   10 emit ;
 : type   ?dup if bounds do i c@ emit loop else drop then ;
 
 \ Put the xt inside the definition of EXECUTE, overwriting the last noop.

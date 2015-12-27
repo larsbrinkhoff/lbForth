@@ -2,10 +2,6 @@
 
 require search.fth
 
-hex
-08048000 constant load-address
-decimal
-
 vocabulary compiler
 
 vocabulary t-words
@@ -36,7 +32,7 @@ include lib/image.fth
 
 ' , is t,
 
-include targets/x86/params.fth
+include params.fth
 : >link   next-offset + ;
 : >does   does-offset + ;
 : >code   code-offset + ;
@@ -51,7 +47,6 @@ include targets/x86/params.fth
 : host   only forth definitions host-image ;
 
 include targets/x86/asm.fth
-include lib/elf.fth
 include lib/xforward.fth
 
 only forth definitions also meta
@@ -59,7 +54,7 @@ only forth definitions also meta
 
 target
 load-address org
-load-address x86 elf32-header,
+exe-header
 
 include targets/x86/nucleus.fth
 
@@ -157,7 +152,7 @@ target
 include kernel.fth
 
 code cold
-   here elf-entry-point
+   here entry-point
 
    ' sp0 >body S mov,
    ' rp0 >body R mov,
@@ -179,12 +174,12 @@ here
    18000 cells allot  here ' limit >body !
    100 cells allot  here ' sp0 >body !
    256 cells allot  here ' rp0 >body !
-here - dup allot negate elf-extra-bytes
+here - dup allot negate extra-bytes
 
 only forth also meta also t-words resolve-all-forward-refs
 
 only forth also meta
-elf-end
+exe-end
 
 target-region type bye
 

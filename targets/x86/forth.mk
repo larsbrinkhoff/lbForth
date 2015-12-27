@@ -5,9 +5,6 @@ $(TFORTH): b-forth $(DEPS) $(PARAMS) $(META)
 	chmod a+x $@
 	cp $@ forth
 
-params.fth: $(TDIR)/params.fth
-	cp $^ $@
-
 # For now, use the same jumps and threading as the C target.
 jump.fth: targets/c/jump.fth
 	cp $^ $@
@@ -15,8 +12,12 @@ jump.fth: targets/c/jump.fth
 threading.fth: targets/ctc.fth
 	cp $^ $@
 
-t-kern.fth: $(TDIR)/t-kern.fth
-	cp $^ $@
+params.fth:
+	cp $(TDIR)/params.fth $@
+	cat $(TDIR)/$(OS)/params.fth >> $@
+
+t-kern.fth:
+	cp $(TDIR)/$(OS)/t-kern.fth t-kern.fth
 
 t-clean:
 	rm -f $(PARAMS)
