@@ -21,6 +21,6 @@
     <Exec Command="$(Git) clone $(MetaCompiler) lisp" />
   </Target>
   <Target Name="Make">
-    <Exec Command="set PATH=$(ToolsPath) &amp; make check M32= CC=$(Cc)" />
+    <Exec Command="set PATH=$(ToolsPath) &amp; make check TARGET=x86 OS=windows M32= CC=$(Cc)" />
   </Target>
 </Project>
