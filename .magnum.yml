@@ -1,3 +1,3 @@
 env: LISP=gcl
 install: sh -e install-deps.sh install_linux
-script: make check  M32=$M32 TARGET=x86
+script: make check  M32=$M32 TARGET=x86 OS=linux

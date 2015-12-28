@@ -2,4 +2,4 @@ env:
   - LISP=ecl
 script:
   - sh install-deps.sh install_linux
-  - make check M32= TARGET=x86
+  - make check M32= TARGET=x86 OS=linux

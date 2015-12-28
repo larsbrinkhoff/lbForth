@@ -8,4 +8,4 @@ dependencies:
 
 test:
   override:
-    - make check M32= TARGET=x86
+    - make check M32= TARGET=x86 OS=linux
