@@ -2,6 +2,7 @@ TARGET = c
 TFORTH = $(TARGET)-forth
 TDIR = targets/$(TARGET)
 OS = .
+TSTAMP = $(TARGET)-$(OS)-stamp
 META = $(TDIR)/meta.fth
 FORTH = $(TDIR)/run.sh ./forth
 DEPS = kernel.fth dictionary.fth $(TDIR)/nucleus.fth
@@ -17,9 +18,13 @@ all: b-forth $(TFORTH)
 b-forth:
 	$(MAKE) -ftargets/c/bootstrap.mk
 
+$(TSTAMP):
+	rm -f *-stamp
+	touch $@
+
 include $(TDIR)/forth.mk
 
 include check.mk
 
 clean: t-clean
-	rm -f forth *-forth smoke-test test-* *.exe
+	rm -f forth *-forth smoke-test test-* *-stamp *.exe

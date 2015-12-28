@@ -8,6 +8,7 @@ kernel.c
 /threading.fth
 /t-kern.fth
 /test-*
+*-stamp
 smoke-test
 packages
 *~

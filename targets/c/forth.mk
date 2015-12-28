@@ -19,7 +19,7 @@ kernel.o: kernel.c $(TDIR)/forth.h
 kernel.c: $(DEPS) $(PARAMS) $(META)
 	$(METACOMPILE)
 
-params.fth: params
+params.fth: params $(TSTAMP)
 	$(RUN) ./$< -forth > $@
 
 params: $(TDIR)/params.c $(TDIR)/forth.h $(TDIR)/forth.mk
@@ -31,8 +31,8 @@ jump.fth: $(TDIR)/jump.fth
 threading.fth: targets/ctc.fth
 	cp $^ $@
 
-t-kern.fth: $(TDIR)/t-kern.fth
-	cp $^ $@
+t-kern.fth: $(TDIR)/t-kern.fth $(TSTAMP)
+	cp $< $@
 
 t-clean:
 	rm -f *.o kernel.c params* $(PARAMS)
