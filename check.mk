@@ -15,7 +15,7 @@ test-assembler: test/test-asm.fth targets/x86/asm.fth
 	echo 'include $< .( Asm-OK )' | $(FORTH) > $@
 	$(GREP) Asm-OK $@
 
-smoke-test: all
+smoke-test: $(TFORTH)
 	echo 'words cr .( Smoke-OK )' | $(FORTH) > $@
 	$(GREP) Smoke-OK $@
 

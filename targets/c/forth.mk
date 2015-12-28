@@ -16,7 +16,7 @@ $(TFORTH): kernel.o
 
 kernel.o: kernel.c $(TDIR)/forth.h
 
-kernel.c: $(DEPS) $(PARAMS) $(META)
+kernel.c: b-forth $(DEPS) $(PARAMS) $(META)
 	$(METACOMPILE)
 
 params.fth: params $(TSTAMP)
