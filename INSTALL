@@ -7,5 +7,13 @@ automatically detect an implementation, but if that fails you will
 have to provide some assistance.  Currently, CLISP, Clozure CL, ECL,
 and SBCL are supported.
 
-After the bootstrap Forth has been built, it will rebuild itself using
-the Forth metacompiler.  Subsequent builds will skip the bootstrap stage.
+After the bootstrap Forth has been built, it will build the target
+Forth using the Forth metacompiler.  Subsequent builds will skip the
+bootstrap stage.
+
+By default, the C target will be built.  To build another target,
+define TARGET on the make command line.  Some targets also support
+different operating system hosts, which is specified with the OS make
+variable.  For example:
+
+    make TARGET=x86 OS=linux
