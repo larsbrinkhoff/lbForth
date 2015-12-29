@@ -97,7 +97,7 @@ previous
 
 : raw-end! ( a -- ) file-offset raw-start@ - raw-size! ;
 : virt-end! ( a -- ) rva virt-start@ - virt-size! ;
-: code-end! ( a -- ) dup raw-end! virt-end! ;
+: code-end! ( a -- ) dup raw-end!  extra @ + virt-end! ;
 
 ( MZ header )
 
