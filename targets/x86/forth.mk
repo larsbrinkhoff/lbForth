@@ -3,6 +3,7 @@ META-OUTPUT = $(TFORTH)
 $(TFORTH): b-forth $(DEPS) $(PARAMS) $(META)
 	echo include $(META) | ./forth | tail -n+3 > $@
 	chmod a+x $@
+	rm -f forth.exe
 	cp $@ forth
 
 # For now, use the same jumps and threading as the C target.
