@@ -1,7 +1,7 @@
 META-OUTPUT = $(TFORTH)
 
 $(TFORTH): b-forth $(DEPS) $(PARAMS) $(META)
-	echo include $(META) | ./forth | tail -n+3 > $@
+	echo include $(META) | targets/c/run.sh ./forth | tail -n+3 > $@
 	chmod a+x $@
 	rm -f forth.exe
 	cp $@ forth
