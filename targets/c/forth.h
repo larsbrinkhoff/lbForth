@@ -1,4 +1,4 @@
-/* Copyright 2004, 2013 Lars Brinkhoff */
+/* Copyright 2004, 2013, 2015 Lars Brinkhoff */
 
 #include <stdio.h>
 #include <errno.h>
@@ -8,7 +8,6 @@
 #include <string.h>
 #include <setjmp.h>
 #include <signal.h>
-#include <sys/mman.h>
 
 #if defined(__GNUC__) && defined (__i386__)
 #define REGPARM __attribute__((regparm(2)))

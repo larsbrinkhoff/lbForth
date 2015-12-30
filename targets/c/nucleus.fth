@@ -6,11 +6,9 @@ code cold \ int main (void)
   static cell data_stack[110];
   static cell return_stack[256];
   static cell dictionary[18000];
-  size_t start = (size_t)&dictionary, end;
   void signal_handler (int);
   xt_t *IP;
   xt_t xt = &turnkey_word;
-  long page_size;
 
   sp0_word.param[0] = (cell)(&data_stack[100]);
   rp0_word.param[0] = (cell)(&return_stack[256]);
@@ -25,16 +23,6 @@ code cold \ int main (void)
   signal (SIGINT, signal_handler);
   siginterrupt (SIGSEGV, 1);
   signal (SIGSEGV, signal_handler);
-
-  end = start + sizeof dictionary;
-  page_size = sysconf (_SC_PAGESIZE);
-  start &= -page_size;
-  end = (end + page_size - 1) & -page_size;
-  if (mprotect ((void *)start, end - start, PROT_READ | PROT_WRITE | PROT_EXEC))
-    {
-      perror ("mprotect");
-      return 1;
-    }
 
   for (;;)
     {
