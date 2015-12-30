@@ -60,7 +60,7 @@ variable extra  0 extra !
 : ident,   7F c, ," ELF" 00010101 w, 8 zeros, ;
 : type, ( u -- ) executable h, h, 1 w, ;
 : entry,   0 a, ;
-: tables,   34 h, 20 h, 1 h, 6 zeros, ;
+: tables,   34 h, 20 h, 1 h, 28 h, 4 zeros, ; \ 6 zeros, ;
 : ehdr, ( a u -- a ) ident, type, entry, 34 a, 0 a, 0 w, tables, ;
 
 ( Program header )
