@@ -220,7 +220,7 @@ t-dictionary dp !
              
 \ Redefine HEADER, to create a word in the host dictionary.
 ' compile, is t-compile,
-: header,   2dup here -rot host-word  header, ;
+: header,   2dup align here -rot host-word  header, ;
 
 : >mark   here 0 , ;
 : >resolve   here swap ! ;
