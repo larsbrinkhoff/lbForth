@@ -256,7 +256,7 @@ interpreter-context definitions also host-interpreter
 : create    parse-name header, postcode dodoes reveal does> ;
 
 : .code1   ." xt_t * REGPARM " latestxt >name .mangled
-   ." _code (xt_t *IP, struct word *word)" cr s"     return IP;" latestxt ;
+   ." _code (xt_t *IP, xt_t word)" cr s"     return IP;" latestxt ;
 
 : .code2   source >in @ /string type cr s" "
    parse-name 2drop parse-name save-function-name ;
