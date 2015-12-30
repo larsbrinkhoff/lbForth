@@ -137,7 +137,7 @@ previous
 
 : end,   5 cells zeros, ;
 : pe-import ( "name" -- )
-   2 #rva-and-sizes!
+   10 #rva-and-sizes!
    current-size (constant)
    parse-name z",
    here imports! end, ;
