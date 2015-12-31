@@ -12,7 +12,6 @@ METACOMPILE ?= echo 'include $(META)  bye' | $(RUN) ./forth | tail -n+3 > $@ ; \
 
 $(TFORTH): kernel.o
 	$(CC) $(LDFLAGS) $^ -o $@
-	cp $@ forth
 
 kernel.o: kernel.c $(TDIR)/forth.h
 
