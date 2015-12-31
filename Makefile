@@ -32,4 +32,4 @@ include $(TDIR)/forth.mk
 include check.mk
 
 clean: t-clean
-	rm -f forth *-forth smoke-test test-* *-stamp *.exe
+	rm -f forth *-forth test-* *-stamp *.exe

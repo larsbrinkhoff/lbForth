@@ -9,7 +9,6 @@ kernel.c
 /t-kern.fth
 /test-*
 *-stamp
-smoke-test
 packages
 *~
 TMP
