@@ -17,10 +17,6 @@
 
 : noop ;
 
-[undefined] rp! [if]
-create jmpbuf  jmp_buf allot
-[then]
-
 [undefined] sp@ [if]
 variable SP
 [then]

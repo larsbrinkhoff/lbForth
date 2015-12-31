@@ -2,13 +2,11 @@
 
 code cold \ int main (void)
   extern struct word dp0_word, sp0_word, rp0_word, SP_word, RP_word,
-    limit_word, jmpbuf_word, sigint_word, latest0_word, turnkey_word;
+    limit_word, latest0_word, turnkey_word;
   static cell data_stack[110];
   static cell return_stack[256];
   static cell dictionary[18000];
-  void signal_handler (int);
-  xt_t *IP;
-  xt_t xt = &turnkey_word;
+  xt_t *IP, xt = &turnkey_word;
 
   sp0_word.param[0] = (cell)(&data_stack[100]);
   rp0_word.param[0] = (cell)(&return_stack[256]);
@@ -19,34 +17,13 @@ code cold \ int main (void)
   SP_word.param[0] = sp0_word.param[0];
   RP_word.param[0] = rp0_word.param[0];
 
-  siginterrupt (SIGINT, 1);
-  signal (SIGINT, signal_handler);
-  siginterrupt (SIGSEGV, 1);
-  signal (SIGSEGV, signal_handler);
-
   for (;;)
     {
-      if (setjmp ((void *)jmpbuf_word.param))
-        EXECUTE (&sigint_word);
-
-      for (;;)
-        {
-          EXECUTE (xt);
-          xt = NEXT_XT;
-        }
+      EXECUTE (xt);
+      xt = NEXT_XT;
     }
 
   return 0;
-end-code
-
-code signal_handler \ void signal_handler (int i)
-  extern struct word jmpbuf_word;
-  sigset_t set;
-  sigemptyset (&set);
-  sigaddset (&set, i);
-  sigprocmask (SIG_UNBLOCK, &set, 0);
-  signal (i, signal_handler);
-  longjmp ((void *)jmpbuf_word.param, i);
 end-code
 
 code exit ( R: ret -- )
