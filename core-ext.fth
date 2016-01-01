@@ -41,7 +41,7 @@ variable span
 
 : query   terminal-input  refill drop ;
 
-: value   parse-name header, docon, , reveal ;
+: value   header docon, , ;
 : to      ' >body ! ;
 : to      ' >body postpone literal postpone ! ; compile-only
 : +to     ' >body +! ;
@@ -89,7 +89,7 @@ create voc-link  ' env-words ,
 
 : buffer:   create allot ;
 
-: alias ( xt "name" -- ) parse-name header, dodef, , reveal ;
+: alias ( xt "name" -- ) header dodef, , ;
 
 : defer   ['] abort alias ;
 : defer!   >body ! ;

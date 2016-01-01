@@ -151,7 +151,9 @@ create base  10 ,
 : chars   ;
 : char+   1 chars + ;
 
-: constant   parse-name header, docon, , reveal ;
+: header   parse-name header, reveal ;
+
+: constant   header docon, , ;
 
 : decimal   10 base ! ;
 
