@@ -58,8 +58,8 @@ vocabulary forward-declarations
 
 \ Offset, within the definition of :, to the runtime action of :.
 \ Obviously, the constant should match the string.
-8 cells constant colon-runtime-offset
-: colon-runtime   c" &colon_word.param[8]" ;
+4 cells constant colon-runtime-offset
+: colon-runtime   c" &docolcomma_word.param[4]" ;
 
 : [M]  also meta-compiler ' compile, previous ; immediate
 
@@ -287,7 +287,7 @@ interpreter-context definitions also host-interpreter
 : [defined]     parse-name t-defined? ; immediate
 : [undefined]   postpone [undefined] 0= ; immediate
 
-: check-colon-runtime   s" :" target-xt >body colon-runtime-offset + @
+: check-colon-runtime   s" docol," target-xt >body colon-runtime-offset + @
    s" >r" target-xt <> if ." Bad offset into colon definition." cr bye then ;
 
 : s,   dup , ", ;   \ Redefined to use target dictionary.
@@ -438,7 +438,7 @@ only forth definitions also meta-interpreter also host-interpreter
 
 interpreter-context
 .( #include "forth.h" ) cr
-s" :" .extern
+s" docol," .extern
 include targets/c/nucleus.fth
 include kernel.fth
 resolve-all-forward-references

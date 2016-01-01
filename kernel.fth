@@ -76,10 +76,6 @@ forward: <
 : aligned   cell + 1 - cell negate nand invert ;
 ?: (sliteral)   r> dup @ swap cell+ 2dup + aligned >r swap ;
 
-0 value stdin
-
-include t-kern.fth
-
 : i    r> r@ swap >r ;
 ?: cr   10 emit ;
 : type   ?dup if bounds do i c@ emit loop else drop then ;
@@ -103,6 +99,12 @@ variable state
 0 value latestxt
 
 include dictionary.fth
+
+: (does>)   r> does! ;
+
+0 value stdin
+
+include t-kern.fth
 
 : lowercase? ( c -- flag )   dup [char] a < if drop 0 exit then [ char z 1+ ] literal < ;
 : upcase ( c1 -- c2 )   dup lowercase? if [ char A char a - ] literal + then ;
@@ -211,11 +213,7 @@ variable csp
 : !csp   csp @ s" Nested" ?bad  sp@ csp ! ;
 : ?csp   sp@ csp @ <> s" Unbalanced" ?bad  0 csp ! ;
 
-: (does>)   r> does! ;
-
-\ If you change the definition of :, you also need to update the
-\ offset to the runtime code in the metacompiler(s).
-: :   parse-name header, 'dodoes , ] !csp  does> >r ;
+: :   parse-name header, docol, ] !csp ;
 : ;   reveal compile exit [compile] [ ?csp ; immediate
 
 \ ----------------------------------------------------------------------

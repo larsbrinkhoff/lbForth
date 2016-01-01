@@ -119,6 +119,8 @@ h: TO_DOES   does-offset t-literal ;
 h: TO_CODE   code-offset t-literal ;
 h: TO_BODY   body-offset t-literal ;
 h: NAME_LENGTH   name-size t-literal ;
+
+h: 'docol   'docol t-literal ;
 h: 'dodoes   'dodoes t-literal ;
 
 h: s"   t-compile (sliteral) parse" dup , ", ;

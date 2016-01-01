@@ -12,11 +12,10 @@ threading.fth: targets/ctc.fth
 	cp $^ $@
 
 params.fth:$ $(TDIR)/params.fth $(TDIR)/$(OS)/params.fth $(TSTAMP)
-	cp $(TDIR)/params.fth $@
-	cat $(TDIR)/$(OS)/params.fth >> $@
+	cat $(TDIR)/params.fth $(TDIR)/$(OS)/params.fth > $@
 
-t-kern.fth: $(TDIR)/$(OS)/t-kern.fth $(TSTAMP)
-	cp $(TDIR)/$(OS)/t-kern.fth t-kern.fth
+t-kern.fth: $(TDIR)/t-kern.fth $(TDIR)/$(OS)/t-kern.fth $(TSTAMP)
+	cat $(TDIR)/t-kern.fth $(TDIR)/$(OS)/t-kern.fth > $@
 
 t-clean:
 	rm -f $(PARAMS)
