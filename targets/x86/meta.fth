@@ -1,4 +1,4 @@
-\ Metacompiler for x86.  Copyright Lars Brinkhoff 2015.
+\ Metacompiler for x86.  Copyright Lars Brinkhoff 2015-2016.
 
 require search.fth
 
@@ -121,6 +121,9 @@ h: TO_BODY   body-offset t-literal ;
 h: NAME_LENGTH   name-size t-literal ;
 
 h: 'docol   'docol t-literal ;
+h: 'dovar   'dovar t-literal ;
+h: 'docon   'docon t-literal ;
+h: 'dodef   'dodef t-literal ;
 h: 'dodoes   'dodoes t-literal ;
 
 h: s"   t-compile (sliteral) parse" dup , ", ;

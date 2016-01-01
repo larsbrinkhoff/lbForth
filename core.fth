@@ -1,4 +1,4 @@
-refill   Copyright 2004, 2013-2015 Lars Brinkhoff
+refill   Copyright 2004, 2013-2016 Lars Brinkhoff
 drop
 
 : immediate   latestxt dup c@ negate swap c! ;
@@ -23,8 +23,7 @@ drop
 
 : dodoes_code   [ ' dodoes >code @ ] literal ;
 : does>     [ ' (does>) ] literal compile,  dodoes_code does, ; compile-only
-: code,   code! cell allot ;
-: "create   header, dodoes_code code,  reveal does> ;
+: "create   header, dovar, reveal ;
 : create    parse-name "create ;
 
 : postpone,   [ ' literal compile, ' compile, ] literal compile, ;
@@ -152,7 +151,7 @@ create base  10 ,
 : chars   ;
 : char+   1 chars + ;
 
-: constant   create , does> @ ;
+: constant   parse-name header, docon, , reveal ;
 
 : decimal   10 base ! ;
 

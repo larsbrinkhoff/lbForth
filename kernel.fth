@@ -1,4 +1,4 @@
-\ -*- forth -*- Copyright 2004, 2013-2015 Lars Brinkhoff
+\ -*- forth -*- Copyright 2004, 2013-2016 Lars Brinkhoff
 
 \ This kernel, together with a target-specific nucleus, provides
 \ everything needed to load and compile the rest of the system from
@@ -100,6 +100,7 @@ variable state
 
 include dictionary.fth
 
+: code,   code! cell allot ;
 : (does>)   r> does! ;
 
 0 value stdin

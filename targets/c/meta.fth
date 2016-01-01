@@ -211,6 +211,7 @@ code-offset constant to_code
 does-offset constant to_does
 body-offset constant to_body
 body-offset 2 cells + constant /wordlist
+dodoes_code constant 'dodoes
 
 ( *** Target compiler included here. *** )
 include dictionary.fth

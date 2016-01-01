@@ -1,4 +1,4 @@
-\ -*- forth -*- Copyright 2004, 2013-2015 Lars Brinkhoff
+\ -*- forth -*- Copyright 2004, 2013-2016 Lars Brinkhoff
 
 : .(   [char] ) parse type ; immediate
 
@@ -41,7 +41,7 @@ variable span
 
 : query   terminal-input  refill drop ;
 
-: value   create ,  does> @ ;
+: value   parse-name header, docon, , reveal ;
 : to      ' >body ! ;
 : to      ' >body postpone literal postpone ! ; compile-only
 : +to     ' >body +! ;
@@ -89,7 +89,7 @@ create voc-link  ' env-words ,
 
 : buffer:   create allot ;
 
-: alias ( xt "name" -- )   create ,  does> perform ;
+: alias ( xt "name" -- ) parse-name header, dodef, , reveal ;
 
 : defer   ['] abort alias ;
 : defer!   >body ! ;
