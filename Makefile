@@ -5,7 +5,7 @@ OS = .
 TSTAMP = $(TARGET)-$(OS)-stamp
 META = $(TDIR)/meta.fth
 FORTH = $(TDIR)/run.sh ./forth
-DEPS = kernel.fth dictionary.fth $(TDIR)/nucleus.fth
+DEPS = src/kernel.fth src/dictionary.fth $(TDIR)/nucleus.fth
 PARAMS = params.fth jump.fth threading.fth t-kern.fth
 
 GREP = grep -a
