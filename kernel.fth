@@ -171,6 +171,7 @@ variable input
 
 create forth  2 cells allot
 create compiler-words  2 cells allot
+create search-paths 2 cells allot
 create included-files  2 cells allot
 create context  9 cells allot
 
@@ -270,8 +271,16 @@ defer parsed
    file-input interpreting  source-id close-file drop  0 'source !
    2r> 2 restore-input abort" Bad restore-input" ;
 
-: included   2dup align here >r  name,  r> included-files chain, 0 , 0 ,
-   r/o open-file abort" Read error." include-file ;
+: +string   2dup 2>r + over >r swap cmove r> 2r> rot + ;
+: pathname   >r 2dup r> >name here 0 +string +string ;
+: ?include   if drop 1 else >r 2drop r> include-file 0 0 then ;
+: ?open ( a u nt -- a u 1 | 0 0 ) pathname r/o open-file ?include ;
+: ?error   abort" File not found" ;
+: search-file   ['] search-paths ['] ?open traverse-wordlist ?error ;
+: +name ( a u wl -- ) align here 2>r name, r> r> chain, 0 , 0 , ;
+: remember-file   included-files +name ;
+: included   2dup remember-file search-file ;
+: searched ( a u -- ) search-paths +name ;
 
 : dummy-catch   execute 0 ;
 
@@ -295,8 +304,11 @@ defer quit
 
    0 forth cell+ !
    0 compiler-words !  ['] forth compiler-words cell+ !
-   0 included-files !  ['] compiler-words included-files cell+ !
+   0 search-paths !    ['] compiler-words included-files cell+ !
+   0 included-files !  ['] search-paths included-files cell+ !
    ['] forth dup context ! context cell+ ! 0 context 2 cells + !
+
+   s" " searched
 
    [compile] [
    s" load.fth" included
