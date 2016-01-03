@@ -139,6 +139,7 @@ include t-kern.fth
    (find) ?dup 0= if 2drop 0 then ;
 
 defer abort
+defer (abort")
 : undef ( a u -- )   ." Undefined: " type cr abort ;
 : ?undef ( a u x -- a u )   if undef then ;
 

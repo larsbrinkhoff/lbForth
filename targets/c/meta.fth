@@ -17,7 +17,7 @@ require lib/common.fth
 
 : reset   only forth definitions  decimal ;
 reset
-re: abort   reset clear bye ;
+:noname reset clear bye ; is abort
 
 (* A note about the vocabularies.
 

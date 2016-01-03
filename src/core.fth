@@ -75,7 +75,9 @@ create squote   128 allot
 
 : (abort)   sp0 sp!  quit ;
 ' (abort) ' abort >body !
-: (abort")   cr type cr abort ;
+
+: ((abort"))   cr type cr abort ;
+' ((abort")) ' (abort") >body !
 : abort"   postpone if postpone s" postpone (abort") postpone then ;
    compile-only
 

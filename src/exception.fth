@@ -1,4 +1,4 @@
-\ -*- forth -*- Copyright 2004, 2013 Lars Brinkhoff
+\ -*- forth -*- Copyright 2004, 2013, 2016 Lars Brinkhoff
 
 ( Exception words. )
 
@@ -17,8 +17,11 @@ is catch
 
 ( Exception extension words. )
 
-re: abort      -1 throw ;
-re: (abort")   cr type cr -2 throw ;
+: (abort)   -1 throw ;
+' (abort) is abort
+
+: ((abort"))   cr type cr -2 throw ;
+' ((abort")) is (abort") !
 
 ( -1   ABORT
   -2   ABORT"

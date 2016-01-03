@@ -1,4 +1,4 @@
-\ -*- forth -*- Copyright 2004, 2013-2015 Lars Brinkhoff
+\ -*- forth -*- Copyright 2004, 2013-2016 Lars Brinkhoff
 
 ( Tools words. )
 
@@ -126,10 +126,3 @@ finders [alias  def com imm
    2r> s" *)" compare 0= +  dup 0= until drop ; immediate
 
 : !+ ( x addr -- a' )   tuck ! cell+ ;
-
-: (redefine-does>)   [ ' dodoes >code @ ] literal over >code !
-                     r> swap >does ! ;
-: redefine   tuck >body !  (redefine-does>) @ execute ;
-: (redefi)   immediate redefine ;
-finders redefine-xt   redefine redefine (redefi)
-: re:        : latestxt dup count find-name redefine-xt ;
