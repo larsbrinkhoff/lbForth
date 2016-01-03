@@ -8,3 +8,7 @@
 : dovar,   'dodoes ,  does> ;
 : docon,   'dodoes ,  does> @ ;
 : dodef,   'dodoes ,  does> perform ;
+
+: #name ( -- u )       NAME_LENGTH 1 - ;
+: name, ( a u -- )     #name min c,  #name ", ;
+: header, ( a u -- )   align here >r name, r> link, 0 , ;

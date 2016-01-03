@@ -38,10 +38,21 @@ include params.fth
 : >code   code-offset + ;
 : >body   body-offset + ;
 
+0 value 'docol
+0 value 'dovar
+0 value 'docon
+0 value 'dodef
+0 value 'dodoes
+
+: code,   , ;
+
 : link, ( nt -- ) latest ,  to latest ;
 : reveal ;
-: name, ( a u -- ) #name min c,  #name ", ;
-: header, ( a u -- ) align here 3dup t-word >r name, r> link, 0 , ;
+
+name-size constant NAME_LENGTH
+include t-kern.fth
+
+: header, ( a u -- ) 2dup align here t-word header, ;
 : ?code, ( -- ) here cell+ , ;
 
 : host   only forth definitions host-image ;
@@ -71,21 +82,21 @@ host also meta definitions
 : number, ( a u -- ) 0 0 2over >number nip ?number, ;
 : t-number   ['] number, is number ;
 
-t' docol >body constant 'docol
-t' dovar >body constant 'dovar
-t' docon >body constant 'docon
-t' dodef >body constant 'dodef
-t' dodoes >body constant 'dodoes
+t' docol >body to 'docol
+t' dovar >body to 'dovar
+t' docon >body to 'docon
+t' dodef >body to 'dodef
+t' dodoes >body to 'dodoes
 
 : h: : ;
 
 h: '   t' ;
 h: ]   only forward-refs also t-words also compiler  t-number ;
-h: :   parse-name header, 'docol , ] ;
-h: create   parse-name header, 'dovar , ;
+h: :   parse-name header, docol, ] ;
+h: create   parse-name header, dovar, ;
 h: variable   create cell allot ;
-h: defer   parse-name header, 'dodef , t-compile abort ;
-h: constant   parse-name header, 'docon , , ;
+h: defer   parse-name header, dodef, t-compile abort ;
+h: constant   parse-name header, docon, , ;
 h: value   constant ;
 h: immediate   latest dup c@ negate swap c! ;
 h: to   ' >body ! ;

@@ -30,9 +30,6 @@ variable current
 
 : link, ( nt -- )      to latestxt  current @ >body @ , ;
 : reveal               latestxt  current @ >body ! ;
-: #name ( -- u )       NAME_LENGTH 1 - ;
-: name, ( a u -- )     #name min c,  #name ", ;
-: header, ( a u -- )   align here >r name, r> link, 0 , ;
 
 : cells   [ cell 1 > ] [if] dup + [then]
    [ cell 2 > ] [if] dup + [then]

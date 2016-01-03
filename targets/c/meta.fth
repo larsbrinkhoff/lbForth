@@ -215,6 +215,7 @@ dodoes_code constant 'dodoes
 
 ( *** Target compiler included here. *** )
 include dictionary.fth
+include t-kern.fth
 create t-wordlist  /wordlist allot  t-wordlist /wordlist erase
 t-wordlist current !
 t-dictionary dp !
