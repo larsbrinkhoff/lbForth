@@ -1,4 +1,4 @@
-\ Nucleus for x86.  Copyright 2014-2015 Lars Brinkhoff.
+\ Nucleus for x86.  Copyright 2014-2016 Lars Brinkhoff.
 
 hex
 
@@ -280,7 +280,15 @@ code over
    next,
 end-code
 
-\ code tuck ( x1 x2 -- x2 x1 x2 )
+code tuck
+   S ) W mov,
+   4 S )# ecx mov,
+   ecx S ) mov,
+   W 4 S )# mov,
+   W push,
+   next,
+end-code
+
 \ code rot
 \ code -rot
 

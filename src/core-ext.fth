@@ -69,7 +69,7 @@ create voc-link  ' env-words ,
 
 : marker   here marker, create ,  does> @ marker! ;
 
-: tuck    swap over ;
+?: tuck    swap over ;
 
 : (.r) ( n f u -- )   0 <# #s rot sign #> rot over - spaces type ;
 : u.r   0 rot (.r) ;
