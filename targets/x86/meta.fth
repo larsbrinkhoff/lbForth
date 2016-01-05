@@ -34,7 +34,6 @@ include lib/image.fth
 
 include params.fth
 : >link   next-offset + ;
-: >does   does-offset + ;
 : >code   code-offset + ;
 : >body   body-offset + ;
 
@@ -126,7 +125,6 @@ h: does>   t-compile (does>) ;
 
 h: cell   cell t-literal ;
 h: TO_NEXT   next-offset t-literal ;
-h: TO_DOES   does-offset t-literal ;
 h: TO_CODE   code-offset t-literal ;
 h: TO_BODY   body-offset t-literal ;
 h: NAME_LENGTH   name-size t-literal ;

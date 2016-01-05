@@ -2,7 +2,7 @@
 
 : code! ( a -- ) latestxt >code ! ;
 : does! ( a -- ) code! ;
-: does, ( a -- ) call, ;
+: does, ( a -- ) call, align ;
 : ?code, ( -- ) here cell+ , ;
 : compile, ( xt -- ) , ;
 

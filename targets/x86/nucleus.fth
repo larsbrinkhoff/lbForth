@@ -85,10 +85,11 @@ code dodef
 end-code
 
 code dodoes
-   I rpush,
-   does-offset W )# I mov,
    body-offset W )# W lea,
-   W push,
+   I rpush,
+   S ) I mov,
+   W S ) mov,
+   3 # I add,
    next,
 end-code
 

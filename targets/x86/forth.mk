@@ -4,12 +4,11 @@ $(TFORTH): b-forth $(DEPS) $(PARAMS) $(META)
 	echo include $(META) | targets/c/run.sh ./forth | tail -n+3 > $@
 	chmod a+x $@
 
-# For now, use the same jumps and threading as the C target.
-jump.fth: targets/c/jump.fth
-	cp $^ $@
+jump.fth: targets/x86/jump.fth $(TSTAMP)
+	cp $< $@
 
-threading.fth: targets/ctc.fth
-	cp $^ $@
+threading.fth: targets/itc.fth $(TSTAMP)
+	cp $< $@
 
 params.fth:$ $(TDIR)/params.fth $(TDIR)/$(OS)/params.fth $(TSTAMP)
 	cat $(TDIR)/params.fth $(TDIR)/$(OS)/params.fth > $@
