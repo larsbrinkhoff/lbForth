@@ -278,7 +278,9 @@ defer parsed
 : ?open ( a u nt -- a u 1 | 0 0 ) pathname r/o open-file ?include ;
 : ?error   abort" File not found" ;
 : search-file   ['] search-paths ['] ?open traverse-wordlist ?error ;
-: +name ( a u wl -- ) current @ >r current ! header, 0 , reveal r> current ! ;
+: >current ( wl1 -- ) ( R: -- wl2 ) current @ r> 2>r  current ! ;
+: current>   r> r> current ! >r ;
+: +name ( a u wl -- ) >current header, 0 , reveal current> ;
 : remember-file   ['] included-files +name ;
 : included   2dup remember-file search-file ;
 : searched ( a u -- ) ['] search-paths +name ;

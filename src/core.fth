@@ -18,8 +18,8 @@ drop
 
 : hide   latestxt >nextxt  current @ >body ! ;
 : link   current @ >body @  latestxt >lfa ! ;
-: compile-only   hide  current @  [ ' compiler-words ] literal current !
-   link  reveal  current !  immediate ;
+: relink   hide >current link reveal current> ;
+: compile-only   [ ' compiler-words ] literal relink  immediate ;
 
 : dodoes_code   [ ' dodoes >code @ ] literal ;
 : does>     [ ' (does>) ] literal compile,  dodoes_code does, ; compile-only
@@ -182,8 +182,7 @@ variable leaves
 create env-words  0 , ' included-files ,
 : env-query   dup if drop execute -1 then ;
 : environment?   #name min [ ' env-words ] literal search-wordlist env-query ;
-: environment   hide  current @  [ ' env-words ] literal current !
-   link  reveal  current ! ;
+: environment   [ ' env-words ] literal relink ;
 
 : core ; environment
 : address-unit-bits 8 ; environment
