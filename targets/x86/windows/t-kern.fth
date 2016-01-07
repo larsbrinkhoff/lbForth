@@ -1,4 +1,6 @@
+[defined] get-std-handle [if]
 : io-init   -10 get-std-handle to stdin ;
+[then]
 
 : cr   13 emit 10 emit ;
 
