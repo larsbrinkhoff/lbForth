@@ -119,7 +119,7 @@ include t-kern.fth
   loop drop -1 ;
 : nt= ( ca u nt -- flag )   >name name= ;
 
-: immediate?   c@ 127 swap < if 1 else -1 then ;
+: immediate?   >nfa c@ 127 swap < if 1 else -1 then ;
 
 \ TODO: nt>string nt>interpret nt>compile
 \ Forth83: >name >link body> name> link> n>link l>name

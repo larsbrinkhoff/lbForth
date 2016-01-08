@@ -283,7 +283,7 @@ interpreter-context definitions also host-interpreter
 : is   parse-name target-xt >body ! ;
 
 : '   parse-name target-xt ; \ find-name 0= ?undef ;
-: immediate   latestxt dup c@ negate swap c! ;
+: immediate   latestxt >nfa dup c@ negate swap c! ;
 
 : [defined]     parse-name t-defined? ; immediate
 : [undefined]   postpone [undefined] 0= ; immediate

@@ -97,7 +97,7 @@ h: variable   create cell allot ;
 h: defer   parse-name header, dodef, t-compile abort ;
 h: constant   parse-name header, docon, , ;
 h: value   constant ;
-h: immediate   latest dup c@ negate swap c! ;
+h: immediate   latest >nfa dup c@ negate swap c! ;
 h: to   ' >body ! ;
 h: is   ' >body ! ;
 h: [defined]   parse-name defined? ;

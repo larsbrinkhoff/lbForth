@@ -15,7 +15,6 @@ variable dp
 
 include jump.fth
 
-: >name    count cabs ;
 : >lfa     TO_NEXT + ;
 : >code    TO_CODE + ;
 : >body    TO_BODY + ;

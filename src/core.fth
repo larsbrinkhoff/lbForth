@@ -1,7 +1,7 @@
 refill   Copyright 2004, 2013-2016 Lars Brinkhoff
 drop
 
-: immediate   latestxt dup c@ negate swap c! ;
+: immediate   latestxt >nfa dup c@ negate swap c! ;
 : \   refill drop ; immediate
 
 \ This is the first file to be loaded and compiled by the kernel.
