@@ -48,10 +48,9 @@ include params.fth
 : link, ( nt -- ) latest ,  to latest ;
 : reveal ;
 
-name-size constant NAME_LENGTH
 include t-kern.fth
 
-: header, ( a u -- ) 2dup align here t-word header, ;
+: header, ( a u -- ) 2dup align here over >xt + t-word header, ;
 : ?code, ( -- ) here cell+ , ;
 
 : host   only forth definitions host-image ;
@@ -127,7 +126,6 @@ h: cell   cell t-literal ;
 h: TO_NEXT   next-offset t-literal ;
 h: TO_CODE   code-offset t-literal ;
 h: TO_BODY   body-offset t-literal ;
-h: NAME_LENGTH   name-size t-literal ;
 
 h: 'docol   'docol t-literal ;
 h: 'dovar   'dovar t-literal ;

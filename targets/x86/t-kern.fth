@@ -3,9 +3,11 @@
 : docon,   'docon code, ;
 : dodef,   'dodef code, ;
 
-: #name ( -- u )       NAME_LENGTH 1 - ;
-: name, ( a u -- )     #name min c,  #name ", ;
-: header, ( a u -- )   align here >r name, r> link, ;
+31 constant #name
+: >xt   6 + aligned ;
+: offset,   1 allot align  -1 allot >xt c, ;
+: name, ( a u -- )     #name min  dup c,  tuck move,  offset, ;
+: header, ( a u -- )   align name, here cell+ link, ;
 
-: >nfa ;
+: >nfa   dup 5 - c@ - ;
 : >name    >nfa count cabs ;
