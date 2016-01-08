@@ -8,7 +8,7 @@
  * VARIABLE VALUE CREATE ALLOT , ' CELLS INVERT RSHIFT = CHAR -
  * [CHAR] ['] [ ] LITERAL POSTPONE IS TO  ." S"
  * IF ELSE THEN DO LEAVE LOOP +LOOP BEGIN AGAIN WHILE REPEAT UNTIL
- * CELL JMP_BUF NAME_LENGTH TO_NEXT TO_CODE TO_DOES TO_BODY
+ * CELL NAME_LENGTH TO_NEXT TO_CODE TO_DOES TO_BODY
  *)
 
 require search.fth
@@ -194,7 +194,7 @@ immediate: loop    immediate: ."       immediate: s"     immediate: does>
 (* [DEFINED] [UNDEFINED] INCLUDE
  * : IMMEDIATE DOES> DEFER CODE END-CODE
  * VARIABLE VALUE CONSTANT CREATE ALLOT , ' CELLS
- * CELL JMP_BUF NAME_LENGTH
+ * CELL NAME_LENGTH
  *
  * From host:
  * ( \ [IF] [ELSE] [THEN]  INVERT RSHIFT CHAR @ = -
@@ -204,7 +204,6 @@ interpreter-context definitions also host-interpreter
 
 include params.fth
 cell-size constant cell
-jmp_buf-size constant jmp_buf
 name-size constant name_length
 next-offset constant to_next
 code-offset constant to_code

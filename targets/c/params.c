@@ -46,7 +46,6 @@ int main (int argc, const char **argv)
 
   output ("cell-size", sizeof (cell));
   output ("name-size", NAME_LENGTH);
-  output ("jmp_buf-size", sizeof (jmp_buf));
   output ("next-offset", offsetof (struct word, next));
   output ("code-offset", offsetof (struct word, code));
   output ("does-offset", offsetof (struct word, does));

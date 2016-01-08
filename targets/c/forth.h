@@ -1,13 +1,10 @@
-/* Copyright 2004, 2013, 2015 Lars Brinkhoff */
+/* Copyright 2004, 2013, 2015-2016 Lars Brinkhoff */
 
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <unistd.h>
-#include <string.h>
-#include <setjmp.h>
-#include <signal.h>
 
 #if defined(__GNUC__) && defined (__i386__)
 #define REGPARM __attribute__((regparm(2)))
