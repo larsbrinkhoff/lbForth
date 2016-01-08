@@ -32,7 +32,7 @@ kernel.fth](kernel.fth).  These two are compiled by the metacompiler.
 
 The [C target nucleus](targets/c/nucleus.fth) used for bootstrapping
 has only twelve proper primitives.  There is also the COLD word which
-compiles to main(), a signal handler, and four I/O words.
+compiles to main(), and four I/O words.
 
 When the kernel starts, it jumps to the word called WARM.  This is
 responsible for loading the rest of the system and entering the text

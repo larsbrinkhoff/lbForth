@@ -24,11 +24,11 @@ params.fth: params $(TSTAMP)
 params: $(TDIR)/params.c $(TDIR)/forth.h $(TDIR)/forth.mk
 	$(CC) $(CFLAGS) $(CPPFLAGS) $< -o $@
 
-jump.fth: $(TDIR)/jump.fth
-	cp $^ $@
+jump.fth: $(TDIR)/jump.fth $(TSTAMP)
+	cp $< $@
 
-threading.fth: targets/ctc.fth
-	cp $^ $@
+threading.fth: targets/ctc.fth $(TSTAMP)
+	cp $< $@
 
 t-kern.fth: $(TDIR)/t-kern.fth $(TSTAMP)
 	cp $< $@
