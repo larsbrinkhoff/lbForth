@@ -16,7 +16,7 @@ host also meta also assembler
 : fetch,   op>r I ) opr> mov,  4 # I add, ;
 : rpop,    op>r R ) opr> mov,  4 # R add, ;
 : rpush,   4 # R sub,  R ) mov, ;
-: execute, code-offset W )# indirect-jmp, ;
+: execute, code-offset ?dup if W )# else W ) then indirect-jmp, ;
 
 \ Next.
 : next,   W fetch,  execute, ;
