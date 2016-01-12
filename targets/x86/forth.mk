@@ -1,3 +1,4 @@
+DEPS += $(TDIR)/cold.fth
 META-OUTPUT = $(TFORTH)
 
 $(TFORTH): b-forth $(DEPS) $(PARAMS) $(META)
