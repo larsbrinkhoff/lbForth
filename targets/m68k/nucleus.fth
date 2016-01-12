@@ -1,4 +1,4 @@
-\ -*- forth -*- Copyright 2013, 2015 Lars Brinkhoff
+\ -*- forth -*- Copyright 2013, 2015-2016 Lars Brinkhoff
 
 (*
    Nucleus for the M68000.
@@ -6,25 +6,35 @@
    Direct threaded.
 *)
 
-16 base !
+hex
 
 \ Registers
 %a0 constant T  \ Haven't checked whether data or address
 %a1 constant W  \ register would be appropriate.
-%a4 constant DP
 %a5 constant IP
 %a6 constant SP
 %a7 constant RP
 
+: execute,   W ) jmp, ;
 : next,   IP )+ jmp, ;
 
+ahead,
+
 code cold
-   sp0 SP movei,
-   rp0 RP movei,
-   dp0 dp movei,
-   2 +. IP movei,
-   next,
-   warm ,
+   then,
+
+   4 %a7 ) %d0 move,
+   limit @ image0 - # %a7 )- move,
+   %d0 %a7 )- move,
+   %a7 )- clr, .w
+   4A # %a7 )- move, .w
+   1 # trap, \ Mshrink
+
+   sp0 SP move,
+   rp0 RP move,
+
+   ' turnkey # W move,
+   execute,
 end-code
 
 \ Code field for : is "enter jsr,"
@@ -42,7 +52,7 @@ end-code
 
 \ Code field for CREATE/VARIABLE is "dovar jsr,"
 code dovar
-   T SP -) move,
+   T SP )- move,
    RP )+ T move,
    next,
 end-code
@@ -76,7 +86,7 @@ end-code
 
 \ Code field for CONSTANT is "docon jsr,"
 code docon
-   T SP -) move,
+   T SP )- move,
    RP )+ T move,
    T ) T move,
    next,
@@ -86,7 +96,7 @@ end-code
 
 code execute
    T W move,
-   SP -) T move,
+   SP )- T move,
    W ) jmp,
 end-code
 
@@ -106,7 +116,7 @@ code branch
 end-code
 
 code (literal)
-   T SP -) move,
+   T SP )- move,
    IP ) T move,
    4 # IP addq,
    next,
@@ -130,13 +140,13 @@ code +
 end-code
 
 code >r
-   T RP -) move,
+   T RP )- move,
    SP )+ T move,
    next,
 end-code
 
 code r>
-   T SP -) move,
+   T SP )- move,
    RP )+ T move,
    next,
 end-code
@@ -159,19 +169,36 @@ code c@
 end-code
 
 code bye
-   . jmp,
+   %a7 )- clr, .w
+   1 # trap,
 end-code
 
 code emit
-end-code
-
-code close-file
+   T %a7 )- move, .w
+   2 # %a7 )- move, .w
+   1 # trap, \ Cconout
+   4 # %a7 addq,
+   SP )+ T move,
 end-code
 
 code open-file
+   \ Fopen ( mode/w name 3D -- )
 end-code
 
 code read-file
+   \ Fread ( handle/w u addr 3F -- )
+end-code
+
+code write-file
+   \ Fwrite ( handle/w u addr 40 -- )
+end-code
+
+code close-file
+   T %a7 )- move, .w
+   3E # %a7 )- move, .w
+   1 # trap,
+   4 # %a7 addq,
+   SP )+ T move,
 end-code
 
 code drop
@@ -180,7 +207,7 @@ code drop
 end-code
 
 code 2drop
-   SP )1 T move,
+   SP )4 T move,
    SP 8 # addq,
    next,
 end-code
@@ -191,21 +218,21 @@ code nip
 end-code
 
 code dup
-   T SP -) move,
+   T SP )- move,
    next,
 end-code
 
 code ?dup
    T tst,
    2 +. beq,
-   T SP -) move,
+   T SP )- move,
    next,
 end-code
 
 code 2dup
-   T SP -) move,
+   T SP )- move,
    SP )4 W move,
-   W SP -) move,
+   W SP )- move,
    next,
 end-code
 
@@ -217,13 +244,13 @@ code swap
 end-code
 
 code over
-   T SP -) move,
+   T SP )- move,
    SP )4 T move,
    next,
 end-code
 
 code tuck
-   SP ) SP -) move,
+   SP ) SP )- move,
    T SP )4 move,
    next,
 end-code
