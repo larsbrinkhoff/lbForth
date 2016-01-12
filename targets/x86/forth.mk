@@ -14,8 +14,8 @@ threading.fth: targets/itc.fth $(TSTAMP)
 params.fth:$ $(TDIR)/params.fth $(TDIR)/$(OS)/params.fth $(TSTAMP)
 	cat $(TDIR)/params.fth $(TDIR)/$(OS)/params.fth > $@
 
-t-kern.fth: $(TDIR)/t-kern.fth $(TDIR)/$(OS)/t-kern.fth $(TSTAMP)
-	cat $(TDIR)/t-kern.fth $(TDIR)/$(OS)/t-kern.fth > $@
+target.fth: $(TDIR)/target.fth $(TDIR)/$(OS)/target.fth $(TSTAMP)
+	cat $(TDIR)/target.fth $(TDIR)/$(OS)/target.fth > $@
 
 t-clean:
 	rm -f $(PARAMS)

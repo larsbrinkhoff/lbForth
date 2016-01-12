@@ -105,7 +105,7 @@ include dictionary.fth
 
 0 value stdin
 
-include t-kern.fth
+include target.fth
 
 : lowercase? ( c -- flag )   dup [char] a < if drop 0 exit then [ char z 1+ ] literal < ;
 : upcase ( c1 -- c2 )   dup lowercase? if [ char A char a - ] literal + then ;

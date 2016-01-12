@@ -6,7 +6,7 @@ kernel.c
 /params*
 /jump.fth
 /threading.fth
-/t-kern.fth
+/target.fth
 /test-*
 *-stamp
 packages

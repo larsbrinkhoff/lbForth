@@ -30,7 +30,7 @@ jump.fth: $(TDIR)/jump.fth $(TSTAMP)
 threading.fth: targets/ctc.fth $(TSTAMP)
 	cp $< $@
 
-t-kern.fth: $(TDIR)/t-kern.fth $(TSTAMP)
+target.fth: $(TDIR)/target.fth $(TSTAMP)
 	cp $< $@
 
 t-clean:

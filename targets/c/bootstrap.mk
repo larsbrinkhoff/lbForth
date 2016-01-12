@@ -4,7 +4,7 @@ TDIR = targets/c
 NUCLEUS = $(TDIR)/nucleus.fth
 FORTH = $(TDIR)/run.sh ./forth
 DEPS = src/kernel.fth src/dictionary.fth $(TDIR)/nucleus.fth
-PARAMS = params.lisp jump.fth threading.fth t-kern.fth
+PARAMS = params.lisp jump.fth threading.fth target.fth
 
 GREP = grep -a
 

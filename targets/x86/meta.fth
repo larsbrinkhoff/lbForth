@@ -50,7 +50,7 @@ include params.fth
 : link, ( nt -- ) latest ,  to latest ;
 : reveal ;
 
-include t-kern.fth
+include target.fth
 
 : header, ( a u -- ) 2dup align here over >xt + t-word header, ;
 : ?code, ( -- ) here cell+ , ;
