@@ -96,6 +96,7 @@ variable state
 
 : cabs   127 over < if 256 swap - then ;
 
+0 value latest
 0 value latestxt
 
 include dictionary.fth

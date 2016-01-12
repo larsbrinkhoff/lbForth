@@ -27,8 +27,9 @@ variable current
 \ Compile the contents of a, then store x in a.
 : chain, ( x a -- )   dup @ , ! ; 
 
-: link, ( nt -- )      to latestxt  current @ >body @ , ;
-: reveal               latestxt  current @ >body ! ;
+: latest! ( a1 a2 -- ) to latest to latestxt ;
+: link,   dup latest!  current @ >body @ , ;
+: reveal   latest ?dup if current @ >body ! then ;
 
 : cells   [ cell 1 > ] [if] dup + [then]
    [ cell 2 > ] [if] dup + [then]
