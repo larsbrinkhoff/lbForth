@@ -4,6 +4,7 @@ common.fth      Common words.
 cross.fth       Cross compilation.
 elf.fth         Write an ELF executable.
 forward.fth     Declare forward references to be resolved at a later time.
+gemdos.fth      Write a GEMDOS executable.
 image.fth       Compilation to a target image.
 macros.fth      Use ]] [[ to simplify postponing words.
 mem.fth         Read and write 16/32/64-bit words.
