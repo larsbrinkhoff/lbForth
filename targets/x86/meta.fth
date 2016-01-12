@@ -15,6 +15,8 @@ defer t,
 : t'   parse-name "' ;
 : t-compile   parse-name postpone sliteral postpone "' postpone t, ; immediate
 : t-[compile]   also compiler ' previous compile, ; immediate
+: t-literal   t-compile (literal) t, ;
+: t-constant   create , does> @ t-literal ;
 
 : already-defined?   >in @ >r parse-name defined? r> >in ! ;
 : trailing-semicolon?   source 1- + c@ [char] ; = ;
@@ -73,7 +75,6 @@ host also meta definitions
 : <mark   here ;
 : >resolve   here swap ! ;
 : <resolve   , ;
-: t-literal   t-compile (literal) , ;
 
 : h-number   [ action-of number ] literal is number ;
 : ?number,   if 2drop undef fatal else drop t-literal 2drop then ;
@@ -122,16 +123,16 @@ h: compile   ' t-literal t-compile , ;
 h: [compile]   ' , ;
 h: does>   t-compile (does>) ;
 
-h: cell   cell t-literal ;
-h: TO_NEXT   next-offset t-literal ;
-h: TO_CODE   code-offset t-literal ;
-h: TO_BODY   body-offset t-literal ;
+cell-size t-constant cell
+next-offset t-constant TO_NEXT   
+code-offset t-constant TO_CODE   
+body-offset t-constant TO_BODY   
 
-h: 'docol   'docol t-literal ;
-h: 'dovar   'dovar t-literal ;
-h: 'docon   'docon t-literal ;
-h: 'dodef   'dodef t-literal ;
-h: 'dodoes   'dodoes t-literal ;
+'docol t-constant 'docol   
+'dovar t-constant 'dovar   
+'docon t-constant 'docon   
+'dodef t-constant 'dodef   
+'dodoes t-constant 'dodoes   
 
 h: s"   t-compile (sliteral) parse" dup , ", ;
 h: ."   t-[compile] s" t-compile type ;
