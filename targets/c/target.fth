@@ -15,3 +15,5 @@
 
 : >nfa ;
 : >name    >nfa count cabs ;
+
+: noheader,   s" " header, ;

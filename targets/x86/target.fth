@@ -11,3 +11,5 @@
 
 : >nfa   dup 5 - c@ - ;
 : >name    >nfa count cabs ;
+
+: noheader,   s" " header, ;
