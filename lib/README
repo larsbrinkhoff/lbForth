@@ -2,6 +2,7 @@ base.fth        Numbers in various bases.
 bitmap.fth      An array of bits.
 common.fth      Common words.
 cross.fth       Cross compilation.
+elapsed.fth     Elapsed time.
 elf.fth         Write an ELF executable.
 forward.fth     Declare forward references to be resolved at a later time.
 gemdos.fth      Write a GEMDOS executable.
