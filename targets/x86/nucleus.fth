@@ -1,25 +1,8 @@
 \ Nucleus for x86.  Copyright 2014-2016 Lars Brinkhoff.
 
-hex
+include targets/x86/next.fth
 
 host also meta also assembler
-
-\ Register allocation.
-: I   eax ;
-: S   esp ;
-: R   esi ;
-: W   edx ;
-
-\ Macros.
-: op>r     postpone >r postpone 2>r ; compile-only
-: opr>     postpone 2r> postpone r> ; compile-only
-: fetch,   op>r I ) opr> mov,  4 # I add, ;
-: rpop,    op>r R ) opr> mov,  4 # R add, ;
-: rpush,   4 # R sub,  R ) mov, ;
-: execute, code-offset ?dup if W )# else W ) then indirect-jmp, ;
-
-\ Next.
-: next,   W fetch,  execute, ;
 
 \ Check eax for error.  Store ( result error ) at stack offset u.
 : error-check, ( u -- )
@@ -32,6 +15,7 @@ host also meta also assembler
    ebx r@ S )# mov,
    eax r> 4 + S )# mov, ;
 
+hex
 target
 exe-code
 
