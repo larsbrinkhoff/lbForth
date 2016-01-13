@@ -55,9 +55,20 @@ variable stop  0 stop !
 : start!   dup t-dp ! start ! ;
 : t-org   section, delta! start! ;
 
-\ Returns the host address and size of the target image.
+\ Save target image.
 
 : target-region ( -- a u ) t-image t-dp @ >host over - ;
+
+[defined] write-file [if]
+variable f
+: ?error   abort" write" ;
+: ?size   target-region nip <> abort" size" ;
+: open-image   s" image" w/o open-file abort" open" f ! ;
+: write-image   target-region f @ write-file ?error ?size ;
+: save-target   open-image write-image f @ close-file ;
+[else]
+: save-target   target-region type ;
+[then]
 
 \ Define a word to cross compile to the target image.
 

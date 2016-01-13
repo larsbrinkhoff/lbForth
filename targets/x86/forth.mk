@@ -3,6 +3,7 @@ META-OUTPUT = $(TFORTH)
 
 $(TFORTH): b-forth $(DEPS) $(PARAMS) $(META)
 	echo include $(META) | targets/c/run.sh ./forth | tail -n+3 > $@
+	-mv image $@
 	chmod a+x $@
 
 jump.fth: targets/x86/jump.fth $(TSTAMP)

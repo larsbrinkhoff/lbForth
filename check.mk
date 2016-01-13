@@ -36,6 +36,7 @@ test-lib: lib/README test/test-lib.sh
 
 test-meta: $(META) $(DEPS) test-smoke
 	echo 'include $< bye' | $(RUNTFORTH) | tail -n+3 > $@
+	-mv image $@
 	-cmp $@ $(META-OUTPUT)
 
 test-copyright:
