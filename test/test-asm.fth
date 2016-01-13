@@ -88,6 +88,9 @@ code assembler-test
    eax indirect-jmp,        FF E0  check
    18 edx )# indirect-jmp,  FF 62 18  check
 
+   esi div,                 F7 F6  check
+   eax idiv,                F7 F8  check
+
    decimal
 end-code
 .( PASS ) cr

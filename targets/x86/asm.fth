@@ -1,4 +1,4 @@
-\ Copyright 2013-2015 Lars Brinkhoff
+\ Copyright 2013-2016 Lars Brinkhoff
 
 \ Assembler for x86.
 
@@ -259,6 +259,8 @@ F4 0op hlt,
 F5 0op cmc,
 F610 1op not,
 F618 1op neg,
+F630 1op div,
+F638 1op idiv,
 F8 0op clc,
 F9 0op stc,
 FA 0op cli,
