@@ -5,8 +5,8 @@ RUNTFORTH = $(TDIR)/run.sh ./$(TFORTH)
 
 check: $(CHECKS)
 
-test-standard: test-errors
-	test `cat $<` -eq $(EXPECTED_ERRORS) && touch $@
+test-standard: test-errors $(TDIR)/expected-errors
+	test `cat $<` -eq `cat $(TDIR)/expected-errors` && touch $@
 
 test-errors: test-output
 	$(GREP) $(ERROR_PATTERNS) $< | wc -l > $@

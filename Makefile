@@ -10,7 +10,6 @@ PARAMS = params.fth jump.fth threading.fth target.fth
 
 GREP = grep -a
 ERROR_PATTERNS = -e 'INCORRECT RESULT' -e 'WRONG NUMBER'
-EXPECTED_ERRORS = 77
 
 
 all: b-forth forth
