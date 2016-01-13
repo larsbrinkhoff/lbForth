@@ -217,7 +217,7 @@ variable hld
         repeat 2drop 2r> 2drop ;
 : m*   2dup xor >r abs swap abs um* r> d+- ;
 
-: um/mod   nip u/mod ;
+?: um/mod   nip u/mod ;
 
 : dnegate   invert swap invert 1 u+d rot + ;
 : dabs      dup 0< if dnegate then ;

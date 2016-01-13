@@ -359,6 +359,18 @@ end-code
 \ code /
 \ code mod
 
+code um/mod
+   ebx pop,
+   eax push,
+   4 esp )# edx mov,
+   8 esp )# eax mov,
+   ebx div,
+   eax 4 esp )# mov,
+   edx 8 esp )# mov,
+   eax pop,
+   next,
+end-code
+
 code invert
    S ) not,
    next,
