@@ -217,10 +217,16 @@ variable hld
         repeat 2drop 2r> 2drop ;
 : m*   2dup xor >r abs swap abs um* r> d+- ;
 
-\ TODO: implement these stubs
 : um/mod   nip u/mod ;
-: sm/rem   2dup xor >r ( under dabs ) abs um/mod r> +- ;
+
+: dnegate   invert swap invert 1 u+d rot + ;
+: dabs      dup 0< if dnegate then ;
+
+: sm/rem   2dup xor >r under dabs abs um/mod r> +- ;
+
+\ TODO: implement this stub
 : fm/mod   drop ;
+
 : */mod    under m* sm/rem ;
 : */       */mod nip ;
 
