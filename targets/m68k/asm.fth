@@ -54,6 +54,12 @@
 \ 1110 = shift/rotate/bit
 \ 1111 = coprocessor/extensions
 
+\ R1 OP,
+\ N # R1 OP,
+\ R1 R2 OP,	R1 -> EA, R2 -> R
+\ MEM R1 OP,
+\ R1 MEM OP,
+
 
 \ Copyright 2016 Lars Brinkhoff
 
@@ -109,9 +115,10 @@ defer ?opsize
 : mod!   ;
 : reg@   opcode 0E00 @bits ;
 : reg!   opcode 0E00 !bits ;
-: ea@   opcode 7 @bits ;
-: ea!   ea@ 9 lshift reg!  opcode 7 !bits ;
-: reg>opcode   ea@ opcode 07 !bits ;
+: ea@   opcode 003F @bits ;
+: ea!   .s opcode 003F !bits  opcode ? cr ;
+
+0 value 'op
 
 \ Access instruction fields.
 : opmode   d @ s @ + ;
@@ -125,13 +132,18 @@ previous
 \ Write instruction fields to memory.
 : h,   dup 8 rshift c, c, ;
 : w,   dup 10 rshift h, h, ;
-: opcode,   opcode@ opmode + h, ;
+: opcode,   here 1+ to 'op  opcode@ opmode + h, ;
 : imm8,   imm@ c, ;
 : imm16,   imm@ h, ;
 : imm32,   imm@ w, ;
 : disp8,   disp@ c, ;
 : disp32,   disp@ w, ;
 : -pc   here negate ;
+
+\ Set operand size.
+: .b   'op c@ 003F and  0000 + 'op c! ;
+: .w   'op c@ 003F and  0040 + 'op c! ;
+: .l   'op c@ 003F and  0080 + 'op c! ;
 
 also forth
 
@@ -204,8 +216,7 @@ also forth
 
 \ Instruction formats.
 format: 0op ;
-format: 1reg   op reg>opcode 0opmode ;
-format: 1op   op ;
+format: 1op   op d off ;
 format: 2op   op op ;
 format: 2op-d   op op d off ;
 format: short   op short-addr ;
@@ -213,7 +224,7 @@ format: near   op near-addr ;
 format: 1imm8   !op8 op ;
 
 \ Define registers.
-: reg:   create dup 7 and , 1+  does> @ ['] reg -addr ;
+: reg:   create dup 000F and , 1+  does> @ ['] reg -addr ;
 
 \ Instruction mnemonics.
 previous also assembler definitions

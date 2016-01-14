@@ -17,6 +17,10 @@ code assembler-test
    nop,                     4E71  check
    rts,                     4E73  check
 
+   d0 clr, .b               4200  check
+   d1 clr, .w               4241  check
+   d7 clr, .l               4287  check
+
  \ d1 d2 add,               D283  check
 
    create l \ label
