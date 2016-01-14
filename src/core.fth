@@ -198,10 +198,14 @@ create env-words  0 , ' included-files ,
 
 : pad   here 1024 + ;
 
+?: um/mod   nip u/mod ;
+
+: base/mod ( ud1 -- ud2 u2 ) 0 base @ um/mod >r base @ um/mod r> rot ;
+
 variable hld
 : <#     pad hld ! ;
 : hold   -1 hld +!  hld @ c! ;
-: #      drop base @ u/mod swap digit hold 0 ;
+: #      base/mod digit hold ;
 : #s     begin # 2dup or 0= until ;
 : sign   0< if [char] - hold then ;
 : #>     2drop hld @  pad hld @ - ;
@@ -216,8 +220,6 @@ variable hld
            2r> 2dup 2* 2>r and if 2swap 2over d+ 2swap then 2dup d+
         repeat 2drop 2r> 2drop ;
 : m*   2dup xor >r abs swap abs um* r> d+- ;
-
-?: um/mod   nip u/mod ;
 
 : dnegate   invert swap invert 1 u+d rot + ;
 : dabs      dup 0< if dnegate then ;

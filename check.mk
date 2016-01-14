@@ -11,7 +11,7 @@ test-standard: test-errors $(TDIR)/expected-errors
 test-errors: test-output
 	$(GREP) $(ERROR_PATTERNS) $< | wc -l > $@
 
-test-output: test/test-input test-smoke
+test-output: test/test-input src/core.fth test-smoke
 	$(RUNTFORTH) < $< > $@
 	$(GREP) Test-OK $@
 
