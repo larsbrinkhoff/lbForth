@@ -1,5 +1,5 @@
-CHECKS = test-standard test-assembler test-image test-exe test-lib \
-         test-copyright test-meta
+CHECKS = test-standard test-assembler test-m68k-asm test-image test-exe \
+         test-lib test-copyright test-meta
 
 RUNTFORTH = $(TDIR)/run.sh ./$(TFORTH)
 
@@ -16,6 +16,10 @@ test-output: test/test-input src/core.fth test-smoke
 	$(GREP) Test-OK $@
 
 test-assembler: test/test-asm.fth targets/x86/asm.fth test-smoke
+	echo 'include $< .( Asm-OK )' | $(RUNTFORTH) > $@
+	$(GREP) Asm-OK $@
+
+test-m68k-asm: test/test-m68k-asm.fth targets/m68k/asm.fth test-smoke
 	echo 'include $< .( Asm-OK )' | $(RUNTFORTH) > $@
 	$(GREP) Asm-OK $@
 
