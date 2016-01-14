@@ -1,0 +1,26 @@
+require search.fth
+
+vocabulary cross
+only forth also cross definitions
+include lib/image.fth
+\ include targets/m68k/asm.fth
+include lib/gemdos.fth
+
+
+
+hex only forth definitions also cross
+
+0 constant load-address
+
+\ also assembler
+target-image
+load-address org
+
+gemdos-header,
+
+  4267 w, \ clr.w -(sp)
+  4E41 w, \ trap #1
+
+gemdos-end
+
+save-target bye

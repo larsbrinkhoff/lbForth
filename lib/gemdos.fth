@@ -8,7 +8,7 @@ hex
 
 601A constant magic
 
-1 constant pf-fastloat
+1 constant pf-fastload
 2 constant pf-ttramload
 4 constant pf-ttrammem
 00 constant pf-private
@@ -24,9 +24,10 @@ decimal
 
 ( Data types )
 
-: w, ( x -- )   dup c,  8 rshift c, ;
-: l, ( x -- )   dup w,  16 rshift w, ;
-: zeros, ( u -- )   here swap dup allot erase ;
+: w, ( x -- ) dup 8 rshift c, c, ;
+: l, ( x -- ) dup 16 rshift w, w, ;
+: l! ( x a -- ) here >r dp ! l, r> dp ! ;
+: zeros, ( u -- ) here swap dup allot erase ;
 
 ( Data structures )
 
@@ -36,8 +37,8 @@ variable extra  0 extra !
 : start- ( a -- u ) >host start @ >host - ;
 
 : gemdos-start   start ! ;
-: gemdos-text   start-  start @ 2 + ! ;
-: gemdos-bss   start @ 10 + ! ;
+: gemdos-text   start-  start @ 2 + l! ;
+: gemdos-bss   start @ 10 + l! ;
 : gemdos-extra-bytes   extra ! ;
 
 ( GEMDOS header )
