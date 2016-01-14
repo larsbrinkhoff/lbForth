@@ -104,19 +104,16 @@ variable imm    defer ?imm,
 defer imm,
 defer immediate-opcode
 defer reg
-defer ?opsize
 
 \ Set opcode.  And destination: register or memory.
 : opcode!   3@ is immediate-opcode >r opcode ! ;
 : !reg   dir? @ if 100 d ! then dir? off ;
 : !mem   dir? off ;
 
-\ Set bits in mod/reg/rm byte.
-: mod!   ;
 : reg@   opcode 0E00 @bits ;
 : reg!   opcode 0E00 !bits ;
 : ea@   opcode 003F @bits ;
-: ea!   .s opcode 003F !bits  opcode ? cr ;
+: ea!   opcode 003F !bits ;
 
 0 value 'op
 
@@ -136,7 +133,7 @@ previous
 : imm8,   imm@ c, ;
 : imm16,   imm@ h, ;
 : imm32,   imm@ w, ;
-: disp8,   disp@ c, ;
+: disp16,   disp@ h, ;
 : disp32,   disp@ w, ;
 : -pc   here negate ;
 
@@ -154,46 +151,33 @@ also forth
 : !imm32   ['] imm32, is ?imm, ;
 : imm!   imm !  ['] imm, is ?imm, ;
 
-\ Set operand size.
-: -opsize   2drop r> drop ;
-: opsize!   is imm,  s !  ['] -opsize is ?opsize ;
-: !op8    0 ['] imm8, ?opsize ;
-: !op32   80 ['] imm32, ?opsize ;
-: !op16   40 ['] imm16, ?opsize ;
-
 \ Set displacement.
-: byte?   -80 80 within ;
 : disp!   is ?disp, disp ! ;
-: !disp8   ['] disp8, disp! ;
+: !disp16   ['] disp16, disp! ;
 : !disp32   ['] disp32, disp! ;
-: !disp ( a -- u ) dup byte? if !disp8 40 else !disp32 80 then ;
-: short-addr   -pc 2 - disp +!  ['] disp8, is ?disp, ;
 : near-addr   -pc 5 - disp +! ;
 
-\ Implements addressing modes: register, indirect, indexed, and direct.
+\ Implements addressing modes: register, indirect, postincrement,
+\ predecrement, and absolute.
 : reg1   ea! !reg ;
 : reg2   9 lshift reg! ;
 : !reg2   ['] reg2 is reg ;
-: ind   dup mod! ea! !mem !reg2 ;
-: ind#   swap !disp + ind ;
-: idx   04 ind drop ;
-: idx#   rot !disp 04 + ind drop ;
-: addr   !disp32  05 ind ;
+: ind   0018 xor ea! !mem !reg2 ;
+: ind+   0008 xor ind ;
+: ind-   0030 + ind ;
+: ind#   swap !disp16  0038 xor ind ;
+: addr   !disp32  0039 ea! ;
 
 \ Reset assembler state.
-: 0opsize   ['] opsize! is ?opsize ;
 : 0opmode   d off  s off ;
 : 0reg   ['] reg1 is reg ;
 : 0disp   ['] noop is ?disp, ;
 : 0imm   imm off  -imm  0 is imm, ;
-: 0asm   0imm 0disp 0reg 0opmode 0opsize  dir? on ;
+: 0asm   0imm 0disp 0reg 0opmode  dir? on ;
 
 \ Implements addressing mode: immediate.
-: imm8?   imm @ byte? ;
-: ?sign-extend   d off  imm8? if 100 d !  !imm8 then ;
-: alu#   opcode @ reg! 80 opcode ! ?sign-extend ;
+: alu#   opcode @ reg! 80 opcode ! ;
 : mov#   B0 s @ 3 lshift + ea@ + opcode ! 0opmode ;
-: push#   imm8? if !imm8 6A else !imm32 68 then dup opcode ! ea! ;
 : test#   F6 opcode ! ;
 : shift#   -12 opcode +!  imm @ 1 = if 10 opcode +! -imm else !imm8 then ;
 : imm-op   imm! immediate-opcode ;
@@ -219,9 +203,7 @@ format: 0op ;
 format: 1op   op d off ;
 format: 2op   op op ;
 format: 2op-d   op op d off ;
-format: short   op short-addr ;
 format: near   op near-addr ;
-format: 1imm8   !op8 op ;
 
 \ Define registers.
 : reg:   create dup 000F and , 1+  does> @ ['] reg -addr ;
@@ -240,10 +222,10 @@ D000 2op add,
 
 \ Addressing mode syntax: immediate, indirect, and displaced indirect.
 : #   ['] imm-op -addr ;
-: )   2drop ['] ind -addr  0reg 0opsize ;
-: )#   2drop ['] ind# -addr  0reg 0opsize ;
-\ )+   2drop ['] postdec  0reg 0opsize ;
-\ -)   2drop ['] preinc  0reg 0opsize ;
+: )   2drop ['] ind -addr  0reg ;
+: )+   2drop ['] ind+ -addr  0reg ;
+: -)   2drop ['] ind- -addr  0reg ;
+: )#   2drop ['] ind# -addr  0reg ;
 
 \ Register names.
 0

@@ -21,6 +21,12 @@ code assembler-test
    d1 clr, .w               4241  check
    d7 clr, .l               4287  check
 
+   a0 ) clr, .b             4210  check
+   a0 )+ clr, .b            4218  check
+   a0 -) clr, .b            4220  check
+   1001 a0 )# clr, .b       4228 1001  check
+   12345678 clr, .b         4239 1234 5678  check
+
  \ d1 d2 add,               D283  check
 
    create l \ label
