@@ -3,23 +3,22 @@ require search.fth
 vocabulary cross
 only forth also cross definitions
 include lib/image.fth
-\ include targets/m68k/asm.fth
+include targets/m68k/asm.fth
 include lib/gemdos.fth
-
 
 
 hex only forth definitions also cross
 
 0 constant load-address
 
-\ also assembler
+also assembler
 target-image
 load-address org
 
 gemdos-header,
 
-  4267 w, \ clr.w -(sp)
-  4E41 w, \ trap #1
+  a7 -) clr, .w
+  1 # trap,
 
 gemdos-end
 
