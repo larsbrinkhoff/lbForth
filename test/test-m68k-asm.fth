@@ -14,8 +14,16 @@ require targets/m68k/asm.fth
 code assembler-test
    hex
 
+   illegal,                 4A7C  check
+   reset,                   4E70  check
    nop,                     4E71  check
-   rts,                     4E73  check
+   rte,                     4E73  check
+   rts,                     4E75  check
+   trapv,                   4E76  check
+   rtr,                     4E77  check
+
+   7 # bkpt,                484F  check
+   0F # trap,               4E4F  check
 
    d0 clr, .b               4200  check
    d1 clr, .w               4241  check
@@ -26,6 +34,15 @@ code assembler-test
    a0 -) clr, .b            4220  check
    1001 a0 )# clr, .b       4228 1001  check
    12345678 clr, .b         4239 1234 5678  check
+
+   d0 negx, .b              4000  check
+   d7 neg, .l               4487  check
+   d0 not, .w               4640  check
+ \ pea,
+   d5 swap,                 4845  check
+   d0 tst, .l               4A80  check
+   d7 tas,                  4AC7  check
+ \ a7 unlk,                 4E5F  check
 
  \ d1 d2 add,               D283  check
 

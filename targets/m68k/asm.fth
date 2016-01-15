@@ -39,8 +39,8 @@
 \ Opcodes:
 \ 0000 = bit/MOVEP/immediate
 \ 0001 = MOVE.B, 
-\ 0010 = MOVE.W, MOVEA.L
-\ 0011 = MOVE.L, MOVEA.W
+\ 0010 = MOVE.L, MOVEA.L
+\ 0011 = MOVE.W, MOVEA.W
 \ 0100 = misc
 \ 0101 = ADDQ/SUBQ/Scc/DBcc/TRAPcc
 \ 0110 = Bcc/BSR/BRA
@@ -204,18 +204,57 @@ format: 1op   op d off ;
 format: 2op   op op ;
 format: 2op-d   op op d off ;
 format: near   op near-addr ;
+format: imm   2drop opcode +! ;
 
 \ Define registers.
 : reg:   create dup 000F and , 1+  does> @ ['] reg -addr ;
 
 \ Instruction mnemonics.
 previous also assembler definitions
+
+\ 0000 move,
+\ 0000 ori,
+\ 0040 movea,
+\ 0200 andi,
+\ 0400 subi,
+\ 0600 addi,
+\ 0A00 eori,
+\ 0C00 eori,
+0100 2op btst,
+0140 2op bchg,
+0180 2op bclr,
+01C0 2op bset,
+\ 2000 movea,
+4000 1op negx,
+\ 41C0 2op-d lea,
 4200 1op clr,
+4400 1op neg,
+4600 1op not,
+\ 4800 ext,
+4840 1op pea,
+4840 1op swap,
+4848 imm bkpt,
+4A00 1op tst,
 4A7C 0op illegal,
+4AC0 1op tas,
+\ 4E58 unlk,
+4E70 0op reset,
 4E71 0op nop,
-4E73 0op rts,
-4E81 0op trap1,
+\ 4E72 stop,
+4E73 0op rte,
+4E75 0op rts,
+4E76 0op trapv,
+4E77 0op rtr,
+4E80 1op jsr,
+4E40 imm trap,
+4EC0 1op jmp,
+8000 2op or,
+9000 2op sub,
+B000 2op cmp,
+B000 2op eor,
 C000 2op and,
+C0C0 2op mulu,
+C0E0 2op muls,
 D000 2op add,
 \ D0C0 2op adda, .w
 \ D1C0 2op adda, .l
