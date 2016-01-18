@@ -44,7 +44,20 @@ code assembler-test
    d7 tas,                  4AC7  check
  \ a7 unlk,                 4E5F  check
 
- \ d1 d2 add,               D283  check
+   d0 d1 add,               D200  check
+   a0 ) d1 add,             D210  check
+   d1 a0 ) add,             D310  check
+   a1 ) a0 lea,             41D1  check
+
+   d1 d2 or,                8401  check
+   a1 ) d3 sub,             9611  check
+   d4 a2 ) cmp,             B912  check
+   d5 a3 )+ eor,            BB1B  check
+   a4 -) d6 eor,            BC24  check
+   d7 1234 a7 )# and,       CF2F 1234  check
+
+   d7 d7 mulu,              CEC7  check
+   d7 d7 muls,              CFC7  check
 
    create l \ label
  \ l jo,                    70 FE  check

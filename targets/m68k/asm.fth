@@ -98,6 +98,7 @@ deadbeef constant -addr
 variable opcode
 variable d
 variable s
+variable r2
 variable dir?
 variable disp   defer ?disp,
 variable imm    defer ?imm,
@@ -107,13 +108,13 @@ defer reg
 
 \ Set opcode.  And destination: register or memory.
 : opcode!   3@ is immediate-opcode >r opcode ! ;
-: !reg   dir? @ if 100 d ! then dir? off ;
-: !mem   dir? off ;
+: !mem   dir? @ if 100 d ! then dir? off ;
+: !reg   dir? off ;
 
 : reg@   opcode 0E00 @bits ;
 : reg!   opcode 0E00 !bits ;
 : ea@   opcode 003F @bits ;
-: ea!   opcode 003F !bits ;
+: ea!   r2 @ if ea@ 9 lshift reg! then  opcode 003F !bits ;
 
 0 value 'op
 
@@ -159,10 +160,12 @@ also forth
 
 \ Implements addressing modes: register, indirect, postincrement,
 \ predecrement, and absolute.
-: reg1   ea! !reg ;
-: reg2   9 lshift reg! ;
+: reg3   9 lshift reg! ;
+: reg2   ea! ;
 : !reg2   ['] reg2 is reg ;
-: ind   0018 xor ea! !mem !reg2 ;
+: !reg3   ['] reg3 is reg ;
+: reg1   ea! !reg !reg2 ;
+: ind   0018 xor ea! !mem !reg3 ;
 : ind+   0008 xor ind ;
 : ind-   0030 + ind ;
 : ind#   swap !disp16  0038 xor ind ;
@@ -200,8 +203,8 @@ also forth
 
 \ Instruction formats.
 format: 0op ;
-format: 1op   op d off ;
-format: 2op   op op ;
+format: 1op   r2 off op d off ;
+format: 2op   r2 on op op ;
 format: 2op-d   op op d off ;
 format: near   op near-addr ;
 format: imm   2drop opcode +! ;
@@ -226,7 +229,7 @@ previous also assembler definitions
 01C0 2op bset,
 \ 2000 movea,
 4000 1op negx,
-\ 41C0 2op-d lea,
+41C0 2op-d lea,
 4200 1op clr,
 4400 1op neg,
 4600 1op not,
@@ -254,7 +257,7 @@ B000 2op cmp,
 B000 2op eor,
 C000 2op and,
 C0C0 2op mulu,
-C0E0 2op muls,
+C1C0 2op muls,
 D000 2op add,
 \ D0C0 2op adda, .w
 \ D1C0 2op adda, .l
