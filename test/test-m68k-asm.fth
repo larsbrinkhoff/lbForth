@@ -72,10 +72,10 @@ code assembler-test
    l bhi,                   6200 FFF6  check
    l ble,                   6F00 FFF2  check
 
- \ ahead, then,             E9 00 00 00 00  check
- \ 0=, if, then,            75 00  check
- \ begin, again,            E9 FB FF FF FF  check
- \ begin, 0<>, until,       74 FE  check
+   ahead, then,             6000 0002  check
+   0=, if, then,            6600 0002  check
+   begin, again,            6000 FFFE  check
+   begin, 0<>, until,       6700 FFFE  check
 
    decimal
 end-code

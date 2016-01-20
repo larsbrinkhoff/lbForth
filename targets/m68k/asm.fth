@@ -64,6 +64,7 @@ previous
 
 \ Write instruction fields to memory.
 : h,   dup 8 rshift c, c, ;
+: h!   over 8 rshift over c!  1+ c! ;
 : w,   dup 10 rshift h, h, ;
 : opcode,   opcode@ opmode + h, ;
 : imm16,   imm@ h, ;
@@ -236,29 +237,26 @@ reg: a0  reg: a1  reg: a2  reg: a3  reg: a4  reg: a5  reg: a6  reg: a7
 drop
 
 \ Resolve jumps.
-: >mark1   here 1- ['] c! here ;
-: >mark4   here 4 - ['] ! here ;
+: >mark   here 2 - ['] h! here 2 - ;
 : >resolve   here - negate -rot execute ;
 
-(*
 \ Unconditional jumps.
 : label   here >r get-current ['] assembler set-current r> constant set-current ;
 : begin,   here ;
 : again,   bra, ;
-: ahead,   0 bra, >mark4 ;
+: ahead,   0 bra, >mark ;
 : then,   >resolve ;
 
 \ Conditional jumps.
 : 0=,   ['] bne, ;
 : 0<,   ['] bge, ;
 : 0<>,   ['] beq, ;
-: if,   0 swap execute >mark1 ;
+: if,   0 swap execute >mark ;
 : until,   execute ;
 
 \ else,   ahead, 3swap then, ;
 : while,   >r if, r> ;
 : repeat,   again, then, ;
-*)
 
 \ Runtime for ;CODE.  CODE! is defined elsewhere.
 : (;code)   r> code! ;
