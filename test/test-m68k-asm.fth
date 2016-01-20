@@ -67,7 +67,10 @@ code assembler-test
    7FFF # d0 .w cmpi,       0C40 7FFF  check
 
    create l \ label
- \ l jo,                    70 FE  check
+   l bra,                   6000 FFFE  check
+   l bsr,                   6100 FFFA  check
+   l bhi,                   6200 FFF6  check
+   l ble,                   6F00 FFF2  check
 
  \ ahead, then,             E9 00 00 00 00  check
  \ 0=, if, then,            75 00  check

@@ -93,7 +93,7 @@ also forth
 : disp!   is ?disp, disp ! ;
 : !disp16   ['] disp16, disp! ;
 : !disp32   ['] disp32, disp! ;
-: near-addr   -pc 5 - disp +! ;
+: relative    0 ea!  disp@ -pc + 2 - !disp16 ;
 
 \ Implements addressing modes: register, indirect, postincrement,
 \ predecrement, and absolute.
@@ -140,8 +140,8 @@ format: 0op ;
 format: 1op   r2 off op d off ;
 format: 2opi   r2 off op op d off ;
 format: 2op   r2 on op op ;
-format: 2op-d   op op d off ;
-format: near   op near-addr ;
+format: 2op-d   r2 on op op d off ;
+format: branch   op relative ;
 format: imm   2drop opcode +! ;
 
 \ Define registers.
@@ -186,6 +186,23 @@ previous also assembler definitions
 4E80 1op jsr,
 4E40 imm trap,
 4EC0 1op jmp,
+\ 50C8 dbcc
+6000 branch bra,
+6100 branch bsr,
+6200 branch bhi,
+6300 branch bls,
+6400 branch bcc,
+6500 branch bcs,
+6600 branch bne,
+6700 branch beq,
+6800 branch bvc,
+6900 branch bvs,
+6A00 branch bpl,
+6B00 branch bmi,
+6C00 branch bge,
+6D00 branch blt,
+6E00 branch bgt,
+6F00 branch ble,
 8000 2op or,
 9000 2op sub,
 B000 2op cmp,
@@ -196,6 +213,14 @@ C1C0 2op muls,
 D000 2op add,
 \ D0C0 2op adda, .w
 \ D1C0 2op adda, .l
+\ E000 asr
+\ E008 lsr
+\ E010 roxl
+\ E018 rol
+\ E100 asl
+\ E108 lsl
+\ E110 roxr
+\ E118 ror
 
 \ Addressing mode syntax: immediate, indirect, and displaced indirect.
 : #   ['] imm-op -addr ;
