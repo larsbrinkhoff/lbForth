@@ -25,22 +25,22 @@ code assembler-test
    7 # bkpt,                484F  check
    0F # trap,               4E4F  check
 
-   d0 clr, .b               4200  check
-   d1 clr, .w               4241  check
-   d7 clr, .l               4287  check
+   d0 .b clr,               4200  check
+   d1 .w clr,               4241  check
+   d7 .l clr,               4287  check
 
-   a0 ) clr, .b             4210  check
-   a0 )+ clr, .b            4218  check
-   a0 -) clr, .b            4220  check
-   1001 a0 )# clr, .b       4228 1001  check
-   12345678 clr, .b         4239 1234 5678  check
+   a0 ) .b clr,             4210  check
+   a0 )+ .b clr,            4218  check
+   a0 -) .b clr,            4220  check
+   1001 a0 )# .b clr,       4228 1001  check
+   12345678 .b clr,         4239 1234 5678  check
 
-   d0 negx, .b              4000  check
-   d7 neg, .l               4487  check
-   d0 not, .w               4640  check
+   d0 .b negx,              4000  check
+   d7 .l neg,               4487  check
+   d0 .w not,               4640  check
  \ pea,
    d5 swap,                 4845  check
-   d0 tst, .l               4A80  check
+   d0 .l tst,               4A80  check
    d7 tas,                  4AC7  check
  \ a7 unlk,                 4E5F  check
 
@@ -58,6 +58,13 @@ code assembler-test
 
    d7 d7 mulu,              CEC7  check
    d7 d7 muls,              CFC7  check
+
+   0 # d0 .b ori,           0000 0000  check
+   -1 # a7 ) .w andi,       0257 FFFF  check
+   -1 # 1234 a0 )# .l subi, 04A8 FFFF FFFF 1234  check
+   0 # 12345678 .w addi,    0679 0000 1234 5678  check
+   8000 # d0 .w eori,       0A40 8000  check
+   7FFF # d0 .w cmpi,       0C40 7FFF  check
 
    create l \ label
  \ l jo,                    70 FE  check

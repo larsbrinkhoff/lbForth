@@ -1,66 +1,3 @@
-\ Generic instruction format:
-\ oooo rrr d ss mmm rrr
-\ oooo = opcode
-\ d = direction: 0 = do reg, 1 = to mem
-\ ss = size: 00 = byte, 01 = word, 10 = long
-\ mmm = mode
-\ rrr = register
-\
-\ Immediate instructions:
-\ 0000 oooo ss mmm rrr
-\ oooo = opcode
-\        rrr1 BTST/BCHG/BCLR/BSET
-\        0000 ORI
-\        0010 ANDI
-\        0100 SUBI
-\        0110 ADDI
-\        100000 BTST
-\        100001 BCHG
-\        100010 BCLR
-\        100011 BTST
-\        1010 EORI
-\        1100 CMPI
-\        1010 EORI
-\        1110 MOVES
-
-\ Addressing modes:
-\ 000rrr = Dn
-\ 001rrr = An
-\ 010rrr = (An)
-\ 011rrr = (An)+
-\ 100rrr = -(An)
-\ 101rrr = (disp16,An)
-\ 110rrr = (disp8,An,Xn.Size*Scale)
-\ 111000 = absolute short
-\ 111001 = absolute long
-\ 111010 = (disp16,PC)
-\ 111100 = immediate
-
-\ Opcodes:
-\ 0000 = bit/MOVEP/immediate
-\ 0001 = MOVE.B, 
-\ 0010 = MOVE.L, MOVEA.L
-\ 0011 = MOVE.W, MOVEA.W
-\ 0100 = misc
-\ 0101 = ADDQ/SUBQ/Scc/DBcc/TRAPcc
-\ 0110 = Bcc/BSR/BRA
-\ 0111 = MOVEQ
-\ 1000 = OR/DIV/SBCD
-\ 1001 = SUB/SUBX
-\ 1010 = reserved
-\ 1011 = CMP/EOR
-\ 1100 = AND/MUL/ABCD/EXG
-\ 1101 = ADD/ADDX
-\ 1110 = shift/rotate/bit
-\ 1111 = coprocessor/extensions
-
-\ R1 OP,
-\ N # R1 OP,
-\ R1 R2 OP,	R1 -> EA, R2 -> R
-\ MEM R1 OP,
-\ R1 MEM OP,
-
-
 \ Copyright 2016 Lars Brinkhoff
 
 \ Assembler for Motorola 68000 and ColdFire.
@@ -97,17 +34,16 @@ deadbeef constant -addr
 \ Assembler state.
 variable opcode
 variable d
-variable s
 variable r2
 variable dir?
 variable disp   defer ?disp,
 variable imm    defer ?imm,
 defer imm,
-defer immediate-opcode
 defer reg
+defer !size
 
 \ Set opcode.  And destination: register or memory.
-: opcode!   3@ is immediate-opcode >r opcode ! ;
+: opcode!   3@ drop >r opcode ! ;
 : !mem   dir? @ if 100 d ! then dir? off ;
 : !reg   dir? off ;
 
@@ -115,11 +51,10 @@ defer reg
 : reg!   opcode 0E00 !bits ;
 : ea@   opcode 003F @bits ;
 : ea!   r2 @ if ea@ 9 lshift reg! then  opcode 003F !bits ;
-
-0 value 'op
+: size!   opcode 00C0 !bits ;
 
 \ Access instruction fields.
-: opmode   d @ s @ + ;
+: opmode   d @ ;
 : opcode@   opcode @ ;
 : imm@   imm @ ;
 : disp@   disp @ ;
@@ -130,27 +65,29 @@ previous
 \ Write instruction fields to memory.
 : h,   dup 8 rshift c, c, ;
 : w,   dup 10 rshift h, h, ;
-: opcode,   here 1+ to 'op  opcode@ opmode + h, ;
-: imm8,   imm@ c, ;
+: opcode,   opcode@ opmode + h, ;
 : imm16,   imm@ h, ;
 : imm32,   imm@ w, ;
 : disp16,   disp@ h, ;
 : disp32,   disp@ w, ;
 : -pc   here negate ;
 
-\ Set operand size.
-: .b   'op c@ 003F and  0000 + 'op c! ;
-: .w   'op c@ 003F and  0040 + 'op c! ;
-: .l   'op c@ 003F and  0080 + 'op c! ;
-
 also forth
 
 \ Set immediate operand.
 : -imm   ['] noop is ?imm, ;
-: !imm8   ['] imm8, is ?imm, ;
-: !imm16   ['] imm16, is ?imm, ;
-: !imm32   ['] imm32, is ?imm, ;
+: !imm16   ['] imm16, is imm, ;
+: !imm32   ['] imm32, is imm, ;
 : imm!   imm !  ['] imm, is ?imm, ;
+
+\ Set operand size.
+: !b   0000 size!  !imm16 ;
+: !w   0040 size!  !imm16 ;
+: !l   0080 size!  !imm32 ;
+: .b   ['] !b is !size ;
+: .w   ['] !w is !size ;
+: .l   ['] !l is !size ;
+: default-size .w ;
 
 \ Set displacement.
 : disp!   is ?disp, disp ! ;
@@ -172,18 +109,15 @@ also forth
 : addr   !disp32  0039 ea! ;
 
 \ Reset assembler state.
-: 0opmode   d off  s off ;
 : 0reg   ['] reg1 is reg ;
 : 0disp   ['] noop is ?disp, ;
 : 0imm   imm off  -imm  0 is imm, ;
+: 0size   ['] default-size is !size ;
+: 0opmode   d off 0size ;
 : 0asm   0imm 0disp 0reg 0opmode  dir? on ;
 
 \ Implements addressing mode: immediate.
-: alu#   opcode @ reg! 80 opcode ! ;
-: mov#   B0 s @ 3 lshift + ea@ + opcode ! 0opmode ;
-: test#   F6 opcode ! ;
-: shift#   -12 opcode +!  imm @ 1 = if 10 opcode +! -imm else !imm8 then ;
-: imm-op   imm! immediate-opcode ;
+: imm-op   imm! ;
 
 \ Process one operand.  All operands except a direct address
 \ have the stack picture ( n*x xt -addr ).
@@ -196,7 +130,7 @@ also forth
 : shift-op   addr? abort" Syntax error" drop  reg-or-immediate ;
 
 \ Define instruction formats.
-: instruction,   opcode! opcode, ?disp, ?imm, 0asm ;
+: instruction, ( a -- ) opcode! !size opcode, ?imm, ?disp, 0asm ;
 : mnemonic ( u a "name" -- ) create ['] noop 3,  does> instruction, ;
 : format:   create ] !csp  does> mnemonic ;
 : immediate:   ' latestxt >body ! ;
@@ -204,6 +138,7 @@ also forth
 \ Instruction formats.
 format: 0op ;
 format: 1op   r2 off op d off ;
+format: 2opi   r2 off op op d off ;
 format: 2op   r2 on op op ;
 format: 2op-d   op op d off ;
 format: near   op near-addr ;
@@ -216,13 +151,13 @@ format: imm   2drop opcode +! ;
 previous also assembler definitions
 
 \ 0000 move,
-\ 0000 ori,
 \ 0040 movea,
-\ 0200 andi,
-\ 0400 subi,
-\ 0600 addi,
-\ 0A00 eori,
-\ 0C00 eori,
+0000 2opi ori,
+0200 2opi andi,
+0400 2opi subi,
+0600 2opi addi,
+0A00 2opi eori,
+0C00 2opi cmpi,
 0100 2op btst,
 0140 2op bchg,
 0180 2op bclr,
