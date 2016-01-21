@@ -66,6 +66,19 @@ code assembler-test
    8000 # d0 .w eori,       0A40 8000  check
    7FFF # d0 .w cmpi,       0C40 7FFF  check
 
+   d1 d0 .b move,           1001  check
+   d1 d0 .l move,           2001  check
+   d1 d0 .w move,           3001  check
+   a1 d0 .l move,           2009  check
+   a1 ) d0 .b move,         1011  check
+   12345678 d0 .b move,     1039 1234 5678  check
+   1 # d0 .b move,          103C 0001  check
+   d0 d1 .b move,           1200  check
+   d0 a1 ) .b move,         1280  check
+   d0 12345678 .b move,     13C0 1234 5678  check
+   1 # 12345678 .b move,    13FC 0001 1234 5678  check
+ \ 12345678 87654321 .b move, 13F9 1234 5678 8765 4321  check
+
    create l \ label
    l bra,                   6000 FFFE  check
    l bsr,                   6100 FFFA  check

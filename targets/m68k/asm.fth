@@ -36,11 +36,12 @@ variable opcode
 variable d
 variable r2
 variable dir?
+variable size
 variable disp   defer ?disp,
 variable imm    defer ?imm,
 defer imm,
 defer reg
-defer !size
+defer ?ea!
 
 \ Set opcode.  And destination: register or memory.
 : opcode!   3@ drop >r opcode ! ;
@@ -51,7 +52,7 @@ defer !size
 : reg!   opcode 0E00 !bits ;
 : ea@   opcode 003F @bits ;
 : ea!   r2 @ if ea@ 9 lshift reg! then  opcode 003F !bits ;
-: size!   opcode 00C0 !bits ;
+: !size   size @ opcode +! ;
 
 \ Access instruction fields.
 : opmode   d @ ;
@@ -82,13 +83,9 @@ also forth
 : imm!   imm !  ['] imm, is ?imm, ;
 
 \ Set operand size.
-: !b   0000 size!  !imm16 ;
-: !w   0040 size!  !imm16 ;
-: !l   0080 size!  !imm32 ;
-: .b   ['] !b is !size ;
-: .w   ['] !w is !size ;
-: .l   ['] !l is !size ;
-: default-size .w ;
+: .b   0000 size !  !imm16 ;
+: .w   0040 size !  !imm16 ;
+: .l   0080 size !  !imm32 ;
 
 \ Set displacement.
 : disp!   is ?disp, disp ! ;
@@ -113,12 +110,13 @@ also forth
 : 0reg   ['] reg1 is reg ;
 : 0disp   ['] noop is ?disp, ;
 : 0imm   imm off  -imm  0 is imm, ;
-: 0size   ['] default-size is !size ;
+: 0size   0 size ! ;
 : 0opmode   d off 0size ;
-: 0asm   0imm 0disp 0reg 0opmode  dir? on ;
+: 0ea   ['] drop is ?ea! ;
+: 0asm   0imm 0disp 0reg 0opmode 0ea  dir? on ;
 
 \ Implements addressing mode: immediate.
-: imm-op   imm! ;
+: imm-op   imm!  003C ?ea! ;
 
 \ Process one operand.  All operands except a direct address
 \ have the stack picture ( n*x xt -addr ).
@@ -136,12 +134,17 @@ also forth
 : format:   create ] !csp  does> mnemonic ;
 : immediate:   ' latestxt >body ! ;
 
+\ The MOVE instruction fields are different.
+: >dest   ea@ 9 lshift reg!  ea@ 3 lshift opcode 001C0 !bits  0reg ;
+: >size   size @ 6 rshift 3 * 3 and dup 0= - 0C lshift size ! ;
+
 \ Instruction formats.
 format: 0op ;
 format: 1op   r2 off op d off ;
 format: 2opi   r2 off op op d off ;
 format: 2op   r2 on op op ;
 format: 2op-d   r2 on op op d off ;
+format: 2op-move   op >dest  ['] ea! is ?ea!  op d off >size ;
 format: branch   op relative ;
 format: imm   2drop opcode +! ;
 
@@ -151,7 +154,7 @@ format: imm   2drop opcode +! ;
 \ Instruction mnemonics.
 previous also assembler definitions
 
-\ 0000 move,
+0000 2op-move move,
 \ 0040 movea,
 0000 2opi ori,
 0200 2opi andi,
@@ -173,6 +176,7 @@ previous also assembler definitions
 4840 1op pea,
 4840 1op swap,
 4848 imm bkpt,
+\ 4880 movem
 4A00 1op tst,
 4A7C 0op illegal,
 4AC0 1op tas,
@@ -187,6 +191,9 @@ previous also assembler definitions
 4E80 1op jsr,
 4E40 imm trap,
 4EC0 1op jmp,
+\ 5000 addq
+\ 5010 subq
+\ 50C0 scc
 \ 50C8 dbcc
 6000 branch bra,
 6100 branch bsr,
@@ -204,9 +211,14 @@ previous also assembler definitions
 6D00 branch blt,
 6E00 branch bgt,
 6F00 branch ble,
+\ 7000 moveq
 8000 2op or,
+\ 80C0 2op divu,
+\ 81C0 2op divs,
 9000 2op sub,
+\ 9000 suba
 B000 2op cmp,
+\ B000 cmpa
 B000 2op eor,
 C000 2op and,
 C0C0 2op mulu,
