@@ -9,6 +9,8 @@ include lib/gemdos.fth
 
 hex only forth definitions also cross
 
+: z", ( a u -- ) move, 0 c, align ;
+
 0 constant load-address
 
 also assembler
@@ -17,7 +19,15 @@ load-address org
 
 gemdos-header,
 
-  a7 -) clr, .w
+  ahead,
+  label hello  s" hello world " z",
+  then,
+
+  hello pc) pea,
+  9 # a7 -) .w move,
+  1 # trap,
+
+  a7 -) .w clr,
   1 # trap,
 
 gemdos-end
