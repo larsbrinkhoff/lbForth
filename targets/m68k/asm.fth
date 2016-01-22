@@ -91,7 +91,8 @@ also forth
 : disp!   is ?disp, disp ! ;
 : !disp16   ['] disp16, disp! ;
 : !disp32   ['] disp32, disp! ;
-: relative    0 ea!  disp@ -pc + 2 - !disp16 ;
+: pc-relative   -pc + 2 - !disp16 ;
+: relative    0 ea!  disp@ pc-relative ;
 
 \ Implements addressing modes: register, indirect, postincrement,
 \ predecrement, and absolute.
@@ -104,6 +105,7 @@ also forth
 : ind+   0008 xor ind ;
 : ind-   0030 + ind ;
 : ind#   swap !disp16  0038 xor ind ;
+: pc-rel   pc-relative  0022 ind ;
 : addr   !disp32  0039 ea! ;
 
 \ Reset assembler state.
@@ -241,6 +243,7 @@ D000 2op add,
 : )+   2drop ['] ind+ -addr  0reg ;
 : -)   2drop ['] ind- -addr  0reg ;
 : )#   2drop ['] ind# -addr  0reg ;
+: pc)   ['] pc-rel -addr  0reg ;
 
 \ Register names.
 0

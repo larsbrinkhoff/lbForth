@@ -34,6 +34,7 @@ code assembler-test
    a0 -) .b clr,            4220  check
    1001 a0 )# .b clr,       4228 1001  check
    12345678 .b clr,         4239 1234 5678  check
+   here pc) pea,            487A FFFE  check
 
    d0 .b negx,              4000  check
    d7 .l neg,               4487  check
