@@ -1,264 +1,273 @@
 \ -*- forth -*- Copyright 2013, 2015-2016 Lars Brinkhoff
 
-(*
-   Nucleus for the M68000.
+\ Nucleus for Motorola 68000.
 
-   Direct threaded.
-*)
+include targets/m68k/next.fth
 
 hex
+target
+exe-code
 
-\ Registers
-%a0 constant T  \ Haven't checked whether data or address
-%a1 constant W  \ register would be appropriate.
-%a5 constant IP
-%a6 constant SP
-%a7 constant RP
-
-: execute,   W ) jmp, ;
-: next,   IP )+ jmp, ;
-
-ahead,
-
-code cold
-   then,
-
-   4 %a7 ) %d0 move,
-   limit @ image0 - # %a7 )- move,
-   %d0 %a7 )- move,
-   %a7 )- clr, .w
-   4A # %a7 )- move, .w
-   1 # trap, \ Mshrink
-
-   sp0 SP move,
-   rp0 RP move,
-
-   ' turnkey # W move,
-   execute,
+code sp@
+  S push,
+  next,
 end-code
 
-\ Code field for : is "enter jsr,"
-code enter
-   RP ) W move,
-   IP RP ) move,
-   W IP move,
-   next,
+code sp!
+  S pop,
+  next,
+end-code
+
+code rp@
+  R push,
+  next,
+end-code
+
+code rp!
+  R pop,
+  next,
 end-code
 
 code exit
-   RP )+ IP move,
+   I rpop,
    next,
 end-code
 
-\ Code field for CREATE/VARIABLE is "dovar jsr,"
+code docol
+   I rpush,
+   body-offset W )# I lea,
+   next,
+end-code
+
 code dovar
-   T SP )- move,
-   RP )+ T move,
+   body-offset # W .l addq,
+   W push,
    next,
 end-code
 
-\ Code field for DOES> child is "parent jsr," (data)
-\ Code after DOES> is "dodoes jsr," (code)
-code dodoes
-   RP )+ W move,
-   RP ) T move,
-   IP RP ) move,
-   W IP move,
-   next,
-end-code
-
-\ HEADER  "constant"
-\ CODE    enter jsr,
-\ XT      create
-\ XT      ,
-\ XT      (does>)
-\ CODE    dodoes jsr,  <- x
-\ XT      @
-\ XT      exit
-
-\ HEADER  "fourtytwo"
-\ CODE    x jsr,
-\ DATA    42
-
-: does,     dodoes jsr, ;
-: does!     jsr, ;
-: (does>)   latestxt >code >h  r> does!  h> ;
-
-\ Code field for CONSTANT is "docon jsr,"
 code docon
-   T SP )- move,
-   RP )+ T move,
-   T ) T move,
+   body-offset W )# W .l move,
+   W push,
    next,
 end-code
 
-\ Code field for DEFER is "0 jsr,"
+code dodef
+   body-offset W )# W .l move,
+   execute,
+   next,
+end-code
+
+code dodoes
+   body-offset # W .l addq,
+   I rpush,
+   S ) I .l move,
+   W S ) .l move,
+   next,
+end-code
 
 code execute
-   T W move,
-   SP )- T move,
-   W ) jmp,
+   W pop,
+   execute,
+end-code
+
+code r@
+   R ) W .l move,
+   W push,
+   next,
 end-code
 
 code 0branch
-   T tst,
-   6 +. beq.s,
-   IP 4 # addq,
-   2 +. bra.s,
-   IP ) IP move,
-   T SP )+ move,
+   W fetch,
+   S )+ .l tst,
+   0=, if,
+     W I .l move,
+   then,
    next,
 end-code
 
 code branch
-   IP ) IP move,
+   I ) I .l move,
    next,
 end-code
 
 code (literal)
-   T SP )- move,
-   IP ) T move,
-   4 # IP addq,
+   I )+ S -) .l move,
+   next,
+end-code
+
+code (sliteral)
+   d0 fetch,
+   I push,
+   d0 push,
+   I d0 .l add,
+   3 # d0 .l addq,
+   -4 # d0 .l andi,
+   d0 I .l move,
    next,
 end-code
 
 code !
-   W SP )+ move,
-   T ) W move,
-   T SP )+ move,
+   W pop,
+   S )+ W ) .l move,
    next,
 end-code
 
 code @
-   T ) T move,
+   S ) W .l move,
+   W ) S ) .l move,
    next,
 end-code
 
 code +
-   T SP )+ add,
+   d0 pop,
+   d0 S ) .l add,
+   next,
+end-code
+
+code +!
+   W pop,
+   d0 pop,
+   d0 W ) .l add,
    next,
 end-code
 
 code >r
-   T RP )- move,
-   SP )+ T move,
+   S )+ R -) .l move,
    next,
 end-code
 
 code r>
-   T SP )- move,
-   RP )+ T move,
+   R )+ S -) .l move,
+   next,
+end-code
+
+code 2>r
+   8 # R .l subq,
+   S )+ R ) .l move,
+   S )+ 4 R )# .l move,
+   next,
+end-code
+
+code (loop)
+   0 # d1 moveq,
+   R ) d0 .l move,
+   1 # d0 .l addq,
+   4 R )# d0 .l cmp,
+   0=, if,
+     -1 # d1 .l move,
+   then,
+   d1 S -) .l move,
+   d0 R ) .l move,
+   next,
+end-code
+
+code 2rdrop
+   8 # R .l addq,
    next,
 end-code
 
 code nand
-   SP )+ W move,
-   W T and,
-   T not,
+   d0 pop,
+   S ) d0 .l and,
+   d0 .l not,
+   d0 S ) .l move,
    next,
 end-code
 
 code c!
-   W SP )+ move,
-   T ) W move.b,
-   T SP )+ move,
+   W pop,
+   d0 pop,
+   d0 W ) .b move,
+   next,
 end-code
 
 code c@
-   T ) T move.b,
+   S ) W .l move,
+   0 # d0 moveq,
+   W ) d0 .b move,
+   d0 S ) .l move,
+   next,
 end-code
 
-code bye
-   %a7 )- clr, .w
-   1 # trap,
+code h!
+   W pop,
+   d0 pop,
+   d0 W ) .w move,
+   next,
 end-code
 
-code emit
-   T %a7 )- move, .w
-   2 # %a7 )- move, .w
-   1 # trap, \ Cconout
-   4 # %a7 addq,
-   SP )+ T move,
-end-code
-
-code open-file
-   \ Fopen ( mode/w name 3D -- )
-end-code
-
-code read-file
-   \ Fread ( handle/w u addr 3F -- )
-end-code
-
-code write-file
-   \ Fwrite ( handle/w u addr 40 -- )
-end-code
-
-code close-file
-   T %a7 )- move, .w
-   3E # %a7 )- move, .w
-   1 # trap,
-   4 # %a7 addq,
-   SP )+ T move,
+code r@
+   R ) S -) .l move,
+   next,
 end-code
 
 code drop
-   SP )+ T move,
+   4 # S .l addq,
    next,
 end-code
 
 code 2drop
-   SP )4 T move,
-   SP 8 # addq,
+   8 # S .l addq,
    next,
 end-code
 
 code nip
-   SP 4 # addq,
+   d0 pop,
+   d0 S ) .l move,
    next,
 end-code
 
 code dup
-   T SP )- move,
+   S ) d0 .l move,
+   d0 push,
    next,
 end-code
 
 code ?dup
-   T tst,
-   2 +. beq,
-   T SP )- move,
+   S ) d0 .l move,
+   d0 .l tst,
+   0<>, if,
+     d0 push,
+   then,
    next,
 end-code
 
 code 2dup
-   T SP )- move,
-   SP )4 W move,
-   W SP )- move,
+   4 S )# d0 .l move,
+   d0 push,
+   4 S )# d0 .l move,
+   d0 push,
    next,
 end-code
 
 code swap
-   SP ) W move,
-   T SP ) move,
-   W T move,
+   S ) d0 .l move,
+   4 S )# S ) .l move,
+   d0 4 S )# .l move,
    next,
 end-code
 
 code over
-   T SP )- move,
-   SP )4 T move,
+   4 S )# d0 .l move,
+   d0 push,
    next,
 end-code
 
 code tuck
-   SP ) SP )- move,
-   T SP )4 move,
+   S ) d0 .l move,
+   4 S )# d1 .l move,
+   d1 S ) .l move,
+   d0 4 S )# .l move,
+   d0 push,
    next,
 end-code
 
-code rot
-   SP ) W move,
-   SP )4 SP ) move,
-   T SP )4 move,
-   W T move,
+code rshift
+   S )+ d0 .l move,
+   S ) d1 .l move,
+   d0 d1 .l lsr,
+   d1 S ) .l move,
    next,
 end-code
+
+decimal
