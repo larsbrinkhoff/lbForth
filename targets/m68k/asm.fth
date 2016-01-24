@@ -51,7 +51,8 @@ defer ?ea!
 : reg@   opcode 0E00 @bits ;
 : reg!   opcode 0E00 !bits ;
 : ea@   opcode 003F @bits ;
-: ea!   r2 @ if ea@ 9 lshift reg! then  opcode 003F !bits ;
+: >reg   ea@ 9 lshift reg! ;
+: ea!   r2 @ if >reg then  opcode 003F !bits ;
 : !size   size @ opcode +! ;
 
 \ Access instruction fields.
@@ -139,6 +140,8 @@ also forth
 \ The MOVE instruction fields are different.
 : >dest   ea@ 9 lshift reg!  ea@ 3 lshift opcode 001C0 !bits  0reg ;
 : >size   size @ 6 rshift 3 * 3 and dup 0= - 0C lshift size ! ;
+\ ADDQ, SUBQ, and MOVEQ immediate field.
+: imm>   -imm imm @ swap lshift opcode rot !bits ;
 
 \ Instruction formats.
 format: 0op ;
@@ -147,6 +150,8 @@ format: 2opi   r2 off op op d off ;
 format: 2op   r2 on op op ;
 format: 2op-d   r2 on op op d off ;
 format: 2op-move   op >dest  ['] ea! is ?ea!  op d off >size ;
+format: addq/subq   r2 off op op d off  0E00 9 imm> ;
+format: moveq   r2 off op >reg op d off  00FF 0 imm> ;
 format: branch   op relative ;
 format: imm   2drop opcode +! ;
 
@@ -193,8 +198,8 @@ previous also assembler definitions
 4E80 1op jsr,
 4E40 imm trap,
 4EC0 1op jmp,
-\ 5000 addq
-\ 5010 subq
+5000 addq/subq addq,
+5100 addq/subq subq,
 \ 50C0 scc
 \ 50C8 dbcc
 6000 branch bra,
@@ -213,7 +218,7 @@ previous also assembler definitions
 6D00 branch blt,
 6E00 branch bgt,
 6F00 branch ble,
-\ 7000 moveq
+7000 moveq moveq,
 8000 2op or,
 \ 80C0 2op divu,
 \ 81C0 2op divs,

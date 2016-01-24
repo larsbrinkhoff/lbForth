@@ -80,6 +80,11 @@ code assembler-test
    1 # 12345678 .b move,    13FC 0001 1234 5678  check
  \ 12345678 87654321 .b move, 13F9 1234 5678 8765 4321  check
 
+   1 # d0 .b addq,           5200  check
+   3 # a0 .w subq,           5748  check
+   8 # a0 ) .l addq,         5090  check
+   7F # d7 moveq,            7E7F  check
+
    create l \ label
    l bra,                   6000 FFFE  check
    l bsr,                   6100 FFFA  check
