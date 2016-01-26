@@ -140,17 +140,21 @@ also forth
 \ The MOVE instruction fields are different.
 : >dest   ea@ 9 lshift reg!  ea@ 3 lshift opcode 001C0 !bits  0reg ;
 : >size   size @ 6 rshift 3 * 3 and dup 0= - 0C lshift size ! ;
-\ ADDQ, SUBQ, and MOVEQ immediate field.
+\ ADDQ, SUBQ, MOVEQ, and shift instructions immediate field.
+: imm?   action-of ?imm, ['] noop <> ;
 : imm>   -imm imm @ swap lshift opcode rot !bits ;
+: ?imm>   imm? if imm> else 2drop 0020 opcode +! then ;
 \ ADDA, SUBA, and CMPA size field.
 : a>size   size @ 1 lshift 0100 and size ! ;
 \ EXT, and EXTB, size field.
 : ext>size   size @ 1 rshift 0040 and size ! ;
+\ Register operand.
+: reg-op ( op mask -- ) >r opcode @ >r op r> opcode r> !bits ;
 
 \ Instruction formats.
 format: 0op ;
 format: 1op   op d off ;
-format: 1reg   opcode @ >r  op  r> opcode FFF0 !bits  d off ext>size ;
+format: 1reg   FFF0 reg-op  d off ext>size ;
 format: 2op   r2 on op op ;
 format: 2opa   r2 on op op d off a>size ;
 format: 2opi   op op d off ;
@@ -160,6 +164,7 @@ format: addq/subq   op op d off  0E00 9 imm> ;
 format: moveq   op >reg op d off  00FF 0 imm> ;
 format: branch   op relative ;
 format: imm   2drop opcode +! ;
+format: shift   FFF8 reg-op  d off  !reg3 op 0E00 9 ?imm> ;
 
 \ Define registers.
 : reg:   create dup 000F and , 1+  does> @ ['] reg -addr ;
@@ -246,14 +251,14 @@ C0C0 2op mulu,
 C1C0 2op muls,
 D000 2op add,
 D0C0 2opa adda,
-\ E000 asr
-\ E008 lsr
-\ E010 roxl
-\ E018 rol
-\ E100 asl
-\ E108 lsl
-\ E110 roxr
-\ E118 ror
+E000 shift asr,
+E008 shift lsr,
+E010 shift roxr,
+E018 shift ror,
+E100 shift asl,
+E108 shift lsl,
+E110 shift roxl,
+E118 shift rol,
 
 \ Addressing mode syntax: immediate, indirect, and displaced indirect.
 : #   ['] imm-op -addr ;

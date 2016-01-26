@@ -80,21 +80,30 @@ code assembler-test
    1 # 12345678 .b move,    13FC 0001 1234 5678  check
  \ 12345678 87654321 .b move, 13F9 1234 5678 8765 4321  check
 
-   1 # d0 .b addq,           5200  check
-   3 # a0 .w subq,           5748  check
-   8 # a0 ) .l addq,         5090  check
-   7F # d7 moveq,            7E7F  check
+   1 # d0 .b addq,          5200  check
+   3 # a0 .w subq,          5748  check
+   8 # a0 ) .l addq,        5090  check
+   7F # d7 moveq,           7E7F  check
 
-   d0 a0 .w adda,            D0C0  check
-   a0 a7 .l suba,            9FC8  check
-   a7 ) a0 .l cmpa,          B1D7  check
+   d0 a0 .w adda,           D0C0  check
+   a0 a7 .l suba,           9FC8  check
+   a7 ) a0 .l cmpa,         B1D7  check
 
-   d0 rtm,                   06C0  check
-   a7 rtm,                   06CF  check
-   d7 .w ext,                4887  check
-   d7 .l ext,                48C7  check
-   d7 .l extb,               49C7  check
-   a7 unlk,                  4E5F  check
+   d0 rtm,                  06C0  check
+   a7 rtm,                  06CF  check
+   d7 .w ext,               4887  check
+   d7 .l ext,               48C7  check
+   d7 .l extb,              49C7  check
+   a7 unlk,                 4E5F  check
+
+   d0 d7 .b asr,            E027  check
+   1 # d6 .w lsr,           E24E  check
+   d2 d5 .l roxr,           E4B5  check
+   3 # d4 .b ror,           E61C  check
+   d4 d3 .w asl,            E963  check
+   5 # d2 .l lsl,           EB8A  check
+   d6 d1 .b roxl,           ED31  check
+   8 # d0 .w rol,	    E158  check
 
    create l \ label
    l bra,                   6000 FFFE  check
@@ -110,5 +119,3 @@ code assembler-test
    decimal
 end-code
 .( PASS ) cr
-
-[then]
