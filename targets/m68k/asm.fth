@@ -62,7 +62,7 @@ defer ?ea!
 : disp@   disp @ ;
 
 \ Possibly use a cross-compiling vocabulary to access a target image.
-previous
+previous definitions
 
 \ Write instruction fields to memory.
 : h,   dup 8 rshift c, c, ;
@@ -75,7 +75,7 @@ previous
 : disp32,   disp@ w, ;
 : -pc   here negate ;
 
-also forth
+also forth definitions
 
 \ Set immediate operand.
 : -imm   ['] noop is ?imm, ;
