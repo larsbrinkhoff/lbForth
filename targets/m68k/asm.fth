@@ -144,10 +144,13 @@ also forth
 : imm>   -imm imm @ swap lshift opcode rot !bits ;
 \ ADDA, SUBA, and CMPA size field.
 : a>size   size @ 1 lshift 0100 and size ! ;
+\ EXT, and EXTB, size field.
+: ext>size   size @ 1 rshift 0040 and size ! ;
 
 \ Instruction formats.
 format: 0op ;
 format: 1op   op d off ;
+format: 1reg   opcode @ >r  op  r> opcode FFF0 !bits  d off ext>size ;
 format: 2op   r2 on op op ;
 format: 2opa   r2 on op op d off a>size ;
 format: 2opi   op op d off ;
@@ -170,6 +173,11 @@ previous also assembler definitions
 0200 2opi andi,
 0400 2opi subi,
 0600 2opi addi,
+06C0 1reg rtm,
+\ 0800 btst,
+\ 0840 bchg,
+\ 0880 bclr,
+\ 08C0 bset,
 0A00 2opi eori,
 0C00 2opi cmpi,
 0100 2op btst,
@@ -181,7 +189,9 @@ previous also assembler definitions
 4200 1op clr,
 4400 1op neg,
 4600 1op not,
-\ 4800 ext,
+4880 1reg ext,
+4980 1reg extb,
+\ 4808 link,
 4840 1op pea,
 4840 1op swap,
 4848 imm bkpt,
@@ -189,7 +199,7 @@ previous also assembler definitions
 4A00 1op tst,
 4A7C 0op illegal,
 4AC0 1op tas,
-\ 4E58 unlk,
+4E58 1reg unlk,
 4E70 0op reset,
 4E71 0op nop,
 \ 4E72 stop,
@@ -222,8 +232,8 @@ previous also assembler definitions
 6F00 branch ble,
 7000 moveq moveq,
 8000 2op or,
-\ 80C0 2op divu,
-\ 81C0 2op divs,
+80C0 2op divu,
+81C0 2op divs,
 9000 2op sub,
 90C0 2opa suba,
 B000 2op cmp,
@@ -232,6 +242,7 @@ B000 2op eor,
 \ B108 cmpm,
 C000 2op and,
 C0C0 2op mulu,
+\ C100 exg,
 C1C0 2op muls,
 D000 2op add,
 D0C0 2opa adda,

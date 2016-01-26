@@ -89,6 +89,13 @@ code assembler-test
    a0 a7 .l suba,            9FC8  check
    a7 ) a0 .l cmpa,          B1D7  check
 
+   d0 rtm,                   06C0  check
+   a7 rtm,                   06CF  check
+   d7 .w ext,                4887  check
+   d7 .l ext,                48C7  check
+   d7 .l extb,               49C7  check
+   a7 unlk,                  4E5F  check
+
    create l \ label
    l bra,                   6000 FFFE  check
    l bsr,                   6100 FFFA  check
