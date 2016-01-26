@@ -110,7 +110,7 @@ also forth
 : addr   !disp32  0039 ea! ;
 
 \ Reset assembler state.
-: 0reg   ['] reg1 is reg ;
+: 0reg   ['] reg1 is reg  r2 off ;
 : 0disp   ['] noop is ?disp, ;
 : 0imm   imm off  -imm  0 is imm, ;
 : 0size   0 size ! ;
@@ -142,16 +142,19 @@ also forth
 : >size   size @ 6 rshift 3 * 3 and dup 0= - 0C lshift size ! ;
 \ ADDQ, SUBQ, and MOVEQ immediate field.
 : imm>   -imm imm @ swap lshift opcode rot !bits ;
+\ ADDA, SUBA, and CMPA size field.
+: a>size   size @ 1 lshift 0100 and size ! ;
 
 \ Instruction formats.
 format: 0op ;
-format: 1op   r2 off op d off ;
-format: 2opi   r2 off op op d off ;
+format: 1op   op d off ;
 format: 2op   r2 on op op ;
+format: 2opa   r2 on op op d off a>size ;
+format: 2opi   op op d off ;
 format: 2op-d   r2 on op op d off ;
 format: 2op-move   op >dest  ['] ea! is ?ea!  op d off >size ;
-format: addq/subq   r2 off op op d off  0E00 9 imm> ;
-format: moveq   r2 off op >reg op d off  00FF 0 imm> ;
+format: addq/subq   op op d off  0E00 9 imm> ;
+format: moveq   op >reg op d off  00FF 0 imm> ;
 format: branch   op relative ;
 format: imm   2drop opcode +! ;
 
@@ -162,7 +165,7 @@ format: imm   2drop opcode +! ;
 previous also assembler definitions
 
 0000 2op-move move,
-\ 0040 movea,
+0000 2op-move movea,
 0000 2opi ori,
 0200 2opi andi,
 0400 2opi subi,
@@ -173,7 +176,6 @@ previous also assembler definitions
 0140 2op bchg,
 0180 2op bclr,
 01C0 2op bset,
-\ 2000 movea,
 4000 1op negx,
 41C0 2op-d lea,
 4200 1op clr,
@@ -183,7 +185,7 @@ previous also assembler definitions
 4840 1op pea,
 4840 1op swap,
 4848 imm bkpt,
-\ 4880 movem
+\ 4880 movem,
 4A00 1op tst,
 4A7C 0op illegal,
 4AC0 1op tas,
@@ -223,16 +225,16 @@ previous also assembler definitions
 \ 80C0 2op divu,
 \ 81C0 2op divs,
 9000 2op sub,
-\ 9000 suba
+90C0 2opa suba,
 B000 2op cmp,
-\ B000 cmpa
+B0C0 2opa cmpa,
 B000 2op eor,
+\ B108 cmpm,
 C000 2op and,
 C0C0 2op mulu,
 C1C0 2op muls,
 D000 2op add,
-\ D0C0 2op adda, .w
-\ D1C0 2op adda, .l
+D0C0 2opa adda,
 \ E000 asr
 \ E008 lsr
 \ E010 roxl

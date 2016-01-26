@@ -85,6 +85,10 @@ code assembler-test
    8 # a0 ) .l addq,         5090  check
    7F # d7 moveq,            7E7F  check
 
+   d0 a0 .w adda,            D0C0  check
+   a0 a7 .l suba,            9FC8  check
+   a7 ) a0 .l cmpa,          B1D7  check
+
    create l \ label
    l bra,                   6000 FFFE  check
    l bsr,                   6100 FFFA  check
