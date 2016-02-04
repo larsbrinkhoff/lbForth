@@ -1,7 +1,10 @@
 TARGET = c
+OS = .
+
+-include conf.mk
+
 TFORTH = $(TARGET)-forth
 TDIR = targets/$(TARGET)
-OS = .
 TSTAMP = $(TARGET)-$(OS)-stamp
 META = $(TDIR)/meta.fth
 FORTH = $(TDIR)/run.sh ./forth

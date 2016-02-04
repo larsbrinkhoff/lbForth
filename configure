@@ -1,0 +1,27 @@
+#!/bin/sh
+
+target()
+{
+   echo TARGET="$1" >> conf.mk
+   test -n "$2" && echo OS="$2" >> conf.mk
+}
+
+process()
+{
+  case "$1" in
+  --target)   target "$2";;
+  --target=c)   target c;;
+  --target=x86-*-linux*)   target x86 linux;;
+  --target=x86-*-windows)   target x86 windows;;
+  --target=m68k-*-tos)   target m68k tos;;
+  --prefix)   ;;
+  *)   echo Unknown argument: x${1}x; exit 1;;
+  esac
+}
+
+rm -f conf.mk
+
+while test -n "$1"; do
+  process "$1" "$2"
+  shift
+done
