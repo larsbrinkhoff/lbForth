@@ -3,20 +3,20 @@
 \ Assembler for Texas Instruments MSP430.
 
 \ Adds to FORTH vocabulary: ASSEMBLER CODE ;CODE.
-\ Creates ASSEMBLER vocabulary with: END-CODE and 68000 opcodes.
+\ Creates ASSEMBLER vocabulary with: END-CODE and MSP430 opcodes.
 
 \ This will become a cross assembler if loaded with a cross-compiling
 \ vocabulary at the top of the search order.
 
 \ Conventional prefix syntax: "<source> <destination> <opcode>,".
-\ Addressing modes:
-\ - immediate: "n #"
-\ - relative: n
-\ - absolute: n &
-\ - register: <reg>
-\ - indexed: "n <reg> )#"
-\ - indirect: "<reg> )"
-\ - postincrement: "<reg> )+"
+\ Addressing modes:		Traditional assembler:
+\ - immediate: "n #"		#n
+\ - relative: n			n
+\ - absolute: n &		&n
+\ - register: <reg>		Rx
+\ - indexed: "n <reg> )#"	n(Rx)
+\ - indirect: "<reg> )"		@Rx
+\ - postincrement: "<reg> )+"	@Rx+
 
 require search.fth
 also forth definitions
@@ -32,14 +32,14 @@ variable bw
 create ext  2 cells allot
 variable #ext
 
-\ Reset assembler state.
-: 0asm   0 #ext ! ;
-
 \ Instruction fields.
 : opcode!   3@ drop >r opcode ! ;
 : opcode@   opcode @ ;
 : .w   0000 bw ! ;
 : .b   0040 bw ! ;
+
+\ Reset assembler state.
+: 0asm   0 #ext !  .w ;
 
 \ Write instruction fields to memory.
 previous
@@ -66,13 +66,13 @@ also forth
 : )+   post-increment or ;	\ @Rn+
 : #   0 )+  swap !ext ;		\ #n
 
-\ Constants
-\ -1 #  ->  3 )+
-\ 0 #  ->  3
-\ 1 #  ->  3 )#
-\ 2 #  ->  3 )
-\ 4 #  ->  2 )
-\ 8 #  ->  2 )+
+\ Special constants.
+: -1#   3 )+ ;
+: 0#   3 ;
+: 1#   3 indexed or ;
+: 2#   3 ) ;
+: 4#   2 ) ;
+: 8#   2 )+ ;
 
 \ Define registers
 : reg:   dup register + constant 1+ ;
@@ -131,30 +131,30 @@ reg: r8  reg: r9  reg: r10  reg: r11  reg: r12  reg: r13  reg: r14  reg: r15
 drop
 
 \ Emulated instructions.
-: adc,   0 # swap add, ;
+: adc,   0# swap add, ;
 : br,   pc mov, ;
-: clr,   0 # swap mov, ;
-: clrc,   1 # sr bic, ;
-: clrn,   4 # sr bic, ;
-: clrz,   2 # sr bic, ;
-: dadc,   0 # swap dadd, ;
-: dec,   1 # swap sub, ;
-: decd,   2 # swap sub, ;
-: dint,   8 # sr bic, ;
-: eint,   8 # sr bis, ;
-: inc,   1 # swap add, ;
-: incd,   2 # swap add, ;
-: inv,   0FFFF # swap xor, ;
-: nop,   0 # r3 mov, ;
+: clr,   0# swap mov, ;
+: clrc,   1# sr bic, ;
+: clrn,   4# sr bic, ;
+: clrz,   2# sr bic, ;
+: dadc,   0# swap dadd, ;
+: dec,   1# swap sub, ;
+: decd,   2# swap sub, ;
+: dint,   8# sr bic, ;
+: eint,   8# sr bis, ;
+: inc,   1# swap add, ;
+: incd,   2# swap add, ;
+: inv,   -1# swap xor, ;
+: nop,   0# r3 mov, ;
 : pop,   sp @+ swap mov, ;
 : ret,   pc pop, ;
 : rla,   dup add, ;
 : rlc,   dup adc, ;
-: sbc,   0 # swap subc, ;
-: setc,   1 # sr bis, ;
-: setn,   4 # sr bis, ;
-: setz,   2 # sr bis, ;
-: tst,   0 # swap cmp, ;
+: sbc,   0# swap subc, ;
+: setc,   1# sr bis, ;
+: setn,   4# sr bis, ;
+: setz,   2# sr bis, ;
+: tst,   0# swap cmp, ;
 
 \ Runtime for ;CODE.  CODE! is defined elsewhere.
 : (;code)   r> code! ;
