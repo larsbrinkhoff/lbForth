@@ -44,9 +44,11 @@ variable #ext
 \ Write instruction fields to memory.
 previous
 : h,   dup c, 8 rshift c, ;
+: h@   dup c@ swap 1+ c@ 8 lshift + ;
 : h!   2dup c!  1+ swap 8 rshift swap c! ;
+: j+!   tuck h@ tuck + 03FF and swap FC00 and + swap h! ;
 : opcode,   opcode@ h, ;
-: -pc   here negate ;
+: pc-   here 2 + - ;
 also forth
 
 \ Extension words.
@@ -91,7 +93,7 @@ also forth
 format: 0op ;
 format: 1op   dup d-reg s-mode ;
 format: 2op   dup d-reg d-mode  dup s-reg s-mode ;
-format: jump   -pc + 1 rshift 03FF and opcode +! ;
+format: jump   pc- 1 rshift 03FF and opcode +! ;
 
 \ Instruction mnemonics.
 previous also assembler definitions
@@ -146,7 +148,7 @@ drop
 : incd,   2# swap add, ;
 : inv,   -1# swap xor, ;
 : nop,   0# r3 mov, ;
-: pop,   sp @+ swap mov, ;
+: pop,   sp )+ swap mov, ;
 : ret,   pc pop, ;
 : rla,   dup add, ;
 : rlc,   dup adc, ;
@@ -155,6 +157,28 @@ drop
 : setn,   4# sr bis, ;
 : setz,   2# sr bis, ;
 : tst,   0# swap cmp, ;
+
+\ Resolve jumps.
+: >mark   here 2 - ['] j+! here ;
+: >resolve   pc- negate 1 rshift -rot execute ;
+
+\ Unconditional jumps.
+: label   here >r get-current ['] assembler set-current r> constant set-current ;
+: begin,   here ;
+: again,   jmp, ;
+: ahead,   here jmp, >mark ;
+: then,   >resolve ;
+
+\ Conditional jumps.
+: 0=,   ['] jne, ;
+: 0<,   ['] jge, ;
+: 0<>,   ['] jeq, ;
+: if,   here swap execute >mark ;
+: until,   execute ;
+
+\ else,   ahead, 3swap then, ;
+: while,   >r if, r> ;
+: repeat,   again, then, ;
 
 \ Runtime for ;CODE.  CODE! is defined elsewhere.
 : (;code)   r> code! ;

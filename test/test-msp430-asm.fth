@@ -35,6 +35,19 @@ code assembler-test
    1234 r4 )# r5 mov,         4415 1234 check
    1234 & 5678 r5 )# mov,     4295 1234 5678  check
 
+   create l \ label
+   l jmp,                     3FFF  check
+   l jne,                     23FE  check
+   l jeq,                     27FD  check
+
+   r4 )+ call,                12B4  check
+   ret,                       4130  check
+
+   ahead, then,               3C00  check
+   0=, if, then,              2000  check
+   begin, again,              3FFF  check
+   begin, 0<>, until,         27FF  check
+
    decimal
 end-code
 .( PASS ) cr
