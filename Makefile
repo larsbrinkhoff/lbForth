@@ -25,7 +25,7 @@ forth: $(TFORTH)
 	rm -f forth.exe
 	cp $< $@
 
-$(TSTAMP):
+$(TSTAMP): $(wildcard conf.mk)
 	rm -f *-stamp
 	touch $@
 
@@ -34,4 +34,4 @@ include $(TDIR)/forth.mk
 include check.mk
 
 clean: t-clean
-	rm -f forth *-forth test-* *-stamp *.exe
+	rm -f forth *-forth test-* *-stamp *.exe conf.mk

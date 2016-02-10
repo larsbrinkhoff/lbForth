@@ -1,27 +1,54 @@
 #!/bin/sh
 
+TARGET=""
+OS=""
+IMG=""
+
 target()
 {
-   echo TARGET="$1" >> conf.mk
-   test -n "$2" && echo OS="$2" >> conf.mk
+   TARGET="$1"
+   test -n "$2" && OS="$2"
+   test -n "$3" && IMG="$3"
 }
 
 process()
 {
   case "$1" in
-  --target)   target "$2";;
   --target=c)   target c;;
-  --target=x86-*-linux*)   target x86 linux;;
-  --target=x86-*-windows)   target x86 windows;;
-  --target=m68k-*-tos)   target m68k tos;;
+  --target=x86-linux*)   target x86 linux elf;;
+  --target=x86-windows)   target x86 windows pe;;
+  --target=m68k-tos)   target m68k tos gemdos;;
   --prefix)   ;;
-  *)   echo Unknown argument: x${1}x; exit 1;;
+  *)   echo Unknown argument: $1; exit 1;;
   esac
 }
 
-rm -f conf.mk
+host_is_target()
+{
+  case `uname -m` in
+    c) TARGET=c ;;
+    i?86*|x86*) TARGET=x86 ;;
+    m68*) TARGET=m86k ;;
+    *) echo "Unsupported machine; using the C target"; TARGET=c ;;
+  esac
+
+  case `uname -s` in
+    Linux) OS=linux; IMG=elf ;;
+    CYGWIN*) OS=windows; IMG=pe ;;
+    *MiNT|*mint|*TOS) OS=tos; IMG=gemdos ;;
+    Darwin) OS=osx ;; #IMG=macho
+    *) echo "Unsupported operating system" ;;
+  esac
+}
 
 while test -n "$1"; do
-  process "$1" "$2"
+  process "$1"
   shift
 done
+
+test -z "$TARGET" && host_is_target
+
+rm -f conf.mk
+echo TARGET="$TARGET" >> conf.mk
+test -n "$OS" && echo OS="$OS" >> conf.mk
+test -n "$IMG" && echo IMG="$IMG" >> conf.mk
