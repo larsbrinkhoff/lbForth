@@ -5,6 +5,8 @@ x86		Faster.
 
 In the works.
 
+68000		<3
+MSP430		Assembler only.
 PDP-1		Maybe also PDP-3/4/5/6/7/8/9/10/11/12.
 Emacs		Bytecodes.
 Shell script	For bootstapping without C and Lisp?
@@ -14,7 +16,6 @@ Future?
 
 x64		Amd64.
 x16		An x86 target with 16-bit cell size.
-68000		<3
 JavaScript	Because, like, Web 2.0.  Similar to C?
 JVM/Dalvik	Android?
 ARM		Netwinder is cute.
