@@ -1,5 +1,7 @@
 \ Metacompiler for x86.  Copyright Lars Brinkhoff 2015-2016.
 
+1 constant t-little-endian
+
 require search.fth
 
 vocabulary compiler

@@ -42,8 +42,13 @@ drop
 
 : mask   0 8 cells 0 do 1 lshift 1 + loop and ;
 : rrotate ( u1 u2 -- u3 ) 2dup rshift -rot 8 cells - negate lshift + ;
-: @   0 swap cell bounds do i c@ + 8 rrotate loop mask ;
-: !   cell bounds do dup i c! 8 rshift loop drop ;
+t-little-endian [if]
+  : @   0 swap cell bounds do i c@ + 8 rrotate loop mask ;
+  : !   cell bounds do dup i c! 8 rshift loop drop ;
+[else]
+  : @   0 swap cell bounds do 8 lshift i c@ + loop ;
+  : !   cell bounds do 24 rrotate dup i c! loop drop ;
+[then]
 
 : c+!   dup >r c@ + r> c! ;
 : c!+   tuck c! 1+ ;

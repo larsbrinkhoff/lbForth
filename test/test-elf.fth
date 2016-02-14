@@ -1,5 +1,7 @@
 require search.fth
 
+1 constant t-little-endian
+
 vocabulary cross
 only forth also cross definitions
 include lib/image.fth

@@ -1,5 +1,6 @@
 \ Test cross compilation to a target image.
 
+1 constant t-little-endian
 require lib/image.fth
 
 : fail   ." FAIL: " source type cr abort ;
