@@ -1,10 +1,11 @@
 \ Create a GEMDOS executale file in memory.
 
+also forth
 base @
+hex
+previous
 
 ( Constants )
-
-hex
 
 601A constant magic
 
@@ -24,22 +25,28 @@ decimal
 
 ( Data types )
 
+: dp!   dp [ also forth ] ! [ previous ] ;
+
 : w, ( x -- ) dup 8 rshift c, c, ;
 : l, ( x -- ) dup 16 rshift w, w, ;
-: l! ( x a -- ) here >r dp ! l, r> dp ! ;
+: l! ( x a -- ) here >r dp! l, r> dp! ;
 : zeros, ( u -- ) here swap dup allot erase ;
 
 ( Data structures )
 
+also forth
 variable start
 variable extra  0 extra !
+
+: extra@   extra @ ;
+: gemdos-extra-bytes   extra ! ;
 
 : start- ( a -- u ) >host start @ >host - ;
 
 : gemdos-start   start ! ;
 : gemdos-text   start-  start @ 2 + l! ;
 : gemdos-bss   start @ 10 + l! ;
-: gemdos-extra-bytes   extra ! ;
+previous
 
 ( GEMDOS header )
 
@@ -49,6 +56,6 @@ variable extra  0 extra !
 : gemdos,   magic magic,  flags flags, ;
 
 : gemdos-header,   here gemdos-start  gemdos, ;
-: gemdos-end   align fixup,  here gemdos-text  extra @ gemdos-bss ;
+: gemdos-end   align fixup,  here gemdos-text  extra@ gemdos-bss ;
 
-base !
+also forth  base !  previous

@@ -303,7 +303,7 @@ drop
 : start-code   also assembler 0asm ;
 : end-code     align previous ;
 
-base !
+also forth base ! previous
 
 previous definitions also assembler
 
