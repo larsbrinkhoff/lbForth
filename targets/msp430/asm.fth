@@ -51,39 +51,49 @@ previous
 : pc-   here 2 + - ;
 also forth
 
+\ Operand addressing modes.
+-200000 constant register
+ 000000 constant indexed
+ 200000 constant indirect
+ 400000 constant post-increment
+: >mode   register - + ;
+
+\ Operand address.
+010000 constant offset
+: >ext   + offset invert and ;
+
+\ Operand register.
+: >reg   011 lshift register + offset + ;
+
 \ Extension words.
-\ : ext,   #ext @ begin ?dup while 1- dup cells ext + @ h, repeat ;
-: ext,   #ext @ 0 ?do i cells ext + @ h, loop ;
+: ext,   #ext @ begin ?dup while 1- dup cells ext + @ h, repeat ;
 : !ext   ext #ext @ cells + !  1 #ext +! ;
+: ext?   offset and 0= ;
+: ?ext   dup ext? if !ext else drop then ;
 
 \ Addressing modes.
-100000 constant register
-110000 constant indexed
-120000 constant indirect
-130000 constant post-increment
-
-: )#   indexed or  swap !ext ;	\ (Rn)
-: &   2 )# ;			\ &n
-: )   indirect or ;		\ @Rn
-: )+   post-increment or ;	\ @Rn+
-: #   0 )+  swap !ext ;		\ #n
+: )#   indexed >mode  >ext ;	\ (Rn)
+: &   2 >reg )# ;		\ &n
+: )   indirect >mode ;		\ @Rn
+: )+   post-increment >mode ;	\ @Rn+
+: #   0 >reg )+  >ext ;		\ #n
 
 \ Special constants.
-: -1#   3 )+ ;
-: 0#   3 ;
-: 1#   3 indexed or ;
-: 2#   3 ) ;
-: 4#   2 ) ;
-: 8#   2 )+ ;
+: -1#   3 >reg )+ ;
+: 0#   3 >reg ;
+: 1#   3 >reg indexed >mode ;
+: 2#   3 >reg ) ;
+: 4#   2 >reg ) ;
+: 8#   2 >reg )+ ;
 
 \ Define registers
-: reg:   dup register + constant 1+ ;
+: reg:   dup >reg constant 1+ ;
 
-\
-: s-reg   000F and 8 lshift opcode +! ;
-: d-reg   000F and opcode +! ;
-: s-mode   0C rshift 0030 and opcode +! ;
-: d-mode   9 rshift 0080 and opcode +! ;
+\ Convert operand to instruction fields.
+: s-reg   01E0000 and 9 rshift opcode +! ;
+: d-reg   01E0000 and 11 rshift opcode +! ;
+: s-mode   200000 + 11 rshift 0030 and opcode +! ;
+: d-mode   200000 + 0E rshift 0080 and opcode +! ;
 
 \ Instruction formats.
 : instruction, ( a -- ) opcode! bw @ opcode +! opcode, ext, 0asm ;
@@ -91,8 +101,8 @@ also forth
 : format:   create ] !csp  does> mnemonic ;
 
 format: 0op ;
-format: 1op   dup d-reg s-mode ;
-format: 2op   dup d-reg d-mode  dup s-reg s-mode ;
+format: 1op   dup d-reg dup s-mode ?ext ;
+format: 2op   dup d-reg dup d-mode ?ext  dup s-reg dup s-mode ?ext ;
 format: jump   pc- 1 rshift 03FF and opcode +! ;
 
 \ Instruction mnemonics.
