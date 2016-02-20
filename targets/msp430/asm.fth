@@ -48,7 +48,7 @@ previous
 : h!   2dup c!  1+ swap 8 rshift swap c! ;
 : j+!   tuck h@ tuck + 03FF and swap FC00 and + swap h! ;
 : opcode,   opcode@ h, ;
-: pc-   here 2 + - ;
+: pc-   here 2 + - 0FFFF and ;
 also forth
 
 \ Operand addressing modes.
@@ -86,6 +86,9 @@ also forth
 : 4#   2 >reg ) ;
 : 8#   2 >reg )+ ;
 
+: relative?   0FFFF invert and 0= ;
+: ?relative ( u1 -- u1|u2 ) dup relative? if pc- then ;
+
 \ Define registers
 : reg:   dup >reg constant 1+ ;
 
@@ -101,8 +104,9 @@ also forth
 : format:   create ] !csp  does> mnemonic ;
 
 format: 0op ;
-format: 1op   dup d-reg dup s-mode ?ext ;
-format: 2op   dup d-reg dup d-mode ?ext  dup s-reg dup s-mode ?ext ;
+format: 1op   ?relative dup d-reg dup s-mode ?ext ;
+format: 2op   ?relative dup d-reg dup d-mode ?ext
+              ?relative dup s-reg dup s-mode ?ext ;
 format: jump   pc- 1 rshift 03FF and opcode +! ;
 
 \ Instruction mnemonics.

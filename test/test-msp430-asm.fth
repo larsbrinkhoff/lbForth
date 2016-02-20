@@ -19,7 +19,7 @@ code assembler-test
    r4 ) push,                 1224  check
    r4 )+ push,                1234  check
    3 # push,                  1230  0003  check
- \ here push,                 1210  FFFE  check
+   here 0FFFF and push,       1210  FFFE  check
    1234 & push,               1212  1234  check
 
    -1# push,                  1233  check
