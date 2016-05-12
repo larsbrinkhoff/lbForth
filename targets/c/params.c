@@ -1,3 +1,4 @@
+#include <string.h>
 #include "forth.h"
 
 static void error (const char *message)
