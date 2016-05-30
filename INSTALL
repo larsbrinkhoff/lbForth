@@ -1,3 +1,8 @@
+Build dependencies: GCC, C library headers, GNU Make, and a Lisp compiler.
+E.g. on Ubuntu "apt-get install gcc-multilib libc-dev make sbcl".
+
+Optionally, run "./configure".
+
 To build, type "make".  This will first build the bootstrap Forth by
 metacompiling the kernel for the C target, and then call gcc to
 generate an executable which runs under Linux, MacOS X, or Cygwin.
