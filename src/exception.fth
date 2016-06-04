@@ -21,7 +21,7 @@ is catch
 ' (abort) is abort
 
 : ((abort"))   cr type cr -2 throw ;
-' ((abort")) is (abort") !
+' ((abort")) is (abort")
 
 ( -1   ABORT
   -2   ABORT"
