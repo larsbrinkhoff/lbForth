@@ -9,8 +9,7 @@ new [metacompiler written in Forth](targets/x86/meta.fth) generates an
 x86 executable using using [assembly language code words]
 (targets/x86/nucleus.fth).
 
-There's also an m68k target in the works, and a target assembler for
-MSP430.
+There's also a Motorola 68000 target, and a target assembler for MSP430.
 
 ( Continuous integration )
 
