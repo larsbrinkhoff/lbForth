@@ -1,6 +1,8 @@
 refill   Copyright 2004, 2013-2016 Lars Brinkhoff
 drop
 
+parse-name : header, docol, ]   parse-name header, docol, ] !csp exit [ reveal
+
 : immediate   latestxt >nfa dup c@ negate swap c! ;
 : \   refill drop ; immediate
 

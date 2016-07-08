@@ -217,7 +217,6 @@ variable csp
 : !csp   csp @ s" Nested" ?bad  sp@ csp ! ;
 : ?csp   sp@ csp @ <> s" Unbalanced" ?bad  0 csp ! ;
 
-: :   parse-name header, docol, ] !csp ;
 : ;   reveal compile exit [compile] [ ?csp ; immediate
 
 \ ----------------------------------------------------------------------
