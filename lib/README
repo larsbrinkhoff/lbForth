@@ -1,4 +1,5 @@
 base.fth        Numbers in various bases.
+bench.fth       Run some benchmarks.
 bitmap.fth      An array of bits.
 common.fth      Common words.
 cross.fth       Cross compilation.
