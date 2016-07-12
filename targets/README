@@ -3,6 +3,7 @@ Done.
 C		Bootstrap.
 x86		Faster.
 68000		<3
+ARM		Netwinder is cute.
 
 In the works.
 
@@ -18,7 +19,6 @@ x64		Amd64.
 x16		An x86 target with 16-bit cell size.
 JavaScript	Because, like, Web 2.0.  Similar to C?
 JVM/Dalvik	Android?
-ARM		Netwinder is cute.
 
 Long shot.
 
