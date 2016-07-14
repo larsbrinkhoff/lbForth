@@ -6,7 +6,7 @@
 : c@+   dup 1+ swap c@ ;
 : "@+ ( a u -- a' u' c ) >r c@+ r> 1- swap ;
 
-: place ( a u a2 ) over swap c@+ cmove ;
+: place ( a u a2 ) 2dup c!  1+ swap cmove ;
 
 : 2,   , , ;
 : 3,   , , , ;
