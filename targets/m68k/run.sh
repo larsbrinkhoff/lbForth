@@ -1,5 +1,9 @@
 #!/bin/sh
 
-# http://github.com/e8johan/tosemu
-
-../tosemu/bin/tosemu "$@"
+case "$OS" in
+    tos)
+	# http://github.com/e8johan/tosemu
+	../tosemu/bin/tosemu "$@" ;;
+    linux)
+	qemu-m68k "$@" ;;
+esac
