@@ -36,9 +36,18 @@ B7 constant arm64
 
 ( Data types )
 
-: h, ( x -- )   dup c,  8 rshift c, ;
-: w, ( x -- )   , ; \ 32 bits
-: a, ( x -- )   , ; \ 32 or 64 bits
+[defined] t-little-endian [if]
+   t-little-endian [if]
+      1 constant endian
+      : h, ( x -- )   dup c,  8 rshift c, ;
+      : w, ( x -- )   dup h,  10 rshift h, ;
+   [else]
+      2 constant endian
+      : h, ( x -- )   dup 8 rshift c, c, ;
+      : w, ( x -- )   dup 10 rshift h, h, ; \ 32 bits
+   [then]
+[then]
+: a, ( x -- )   w, ; \ 32 or 64 bits
 : zeros, ( u -- )   here swap dup allot erase ;
 
 ( Data structures )
@@ -57,7 +66,7 @@ variable extra  0 extra !
 
 ( ELF header )
 
-: ident,   7F c, ," ELF" 00010101 w, 8 zeros, ;
+: ident,   7F c, ," ELF" 1 c, endian c, 1 c, 0 c, 8 zeros, ;
 : type, ( u -- ) executable h, h, 1 w, ;
 : entry,   0 a, ;
 : tables,   34 h, 20 h, 1 h, 28 h, 4 zeros, ; \ 6 zeros, ;
