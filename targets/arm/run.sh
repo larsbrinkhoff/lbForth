@@ -1,3 +1,3 @@
 #!/bin/sh
 
-qemu-arm-static "$@"
+qemu-arm "$@"

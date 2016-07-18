@@ -7,12 +7,18 @@ env:
   - TARGET=c M32=-m32
   - TARGET=x86 OS=linux M32=
   - TARGET=x86 OS=linux M32=-m32
+  - TARGET=arm OS=linux M32=-m32
+  - TARGET=m68k OS=linux M32=-m32
 matrix:
   exclude:
     - os: osx
       env: TARGET=x86 OS=linux M32=
     - os: osx
       env: TARGET=x86 OS=linux M32=-m32
+    - os: osx
+      env: TARGET=arm OS=linux M32=-m32
+    - os: osx
+      env: TARGET=m68k OS=linux M32=-m32
 install: sh -e install-deps.sh install_${TRAVIS_OS_NAME:-linux}
 script: make check  M32=$M32 TARGET=$TARGET OS=$OS
 notifications:

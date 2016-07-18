@@ -4,6 +4,9 @@ install_linux() {
   sudo apt-get update -yqqm
   sudo apt-get install -ym ${LISP:-sbcl}
   test -z "$M32" || sudo apt-get install -y gcc-multilib
+  case "$TARGET" in
+    arm|m68k) sudo apt-get install qemu-user;;
+  esac
 }
 
 install_yum() {
