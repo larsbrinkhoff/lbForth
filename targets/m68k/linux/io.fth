@@ -7,6 +7,7 @@ code emit
    1 # d3 moveq,
    4 # d0 moveq,
    0 # trap,
+   4 # S .l addq,
    next,
 end-code
 
