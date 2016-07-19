@@ -20,17 +20,33 @@ base @ hex
 
 ( Machine types )
 
-02 constant sparc
-03 constant x86
-04 constant m68k
-14 constant ppc
-15 constant ppc64
-3E constant x64
-28 constant arm
-2B constant sparcv9
-40 constant pdp10
-41 constant pdp11
-B7 constant arm64
+decimal
+002 constant sparc
+003 constant x86
+004 constant m68k
+008 constant mips
+020 constant ppc
+021 constant ppc64
+045 constant arc
+052 constant coldfire
+062 constant x64
+040 constant arm
+043 constant sparcv9
+064 constant pdp10
+065 constant pdp11
+075 constant vax
+083 constant avr
+087 constant v850
+092 constant openrisc
+093 constant arccompact
+094 constant xtensa
+105 constant msp430
+183 constant arm64
+189 constant microblaze
+220 constant z80
+222 constant ft32
+243 constant riscv
+hex
 
 [undefined] >host [if] : >host ; [then]
 
