@@ -1,5 +1,5 @@
 host base @ hex target
-0 [if]
+1 [if]
 : jump! ( a1 a2 -- ) 4EF9 over h!  2 + ! ;
 : call! ( a1 a2 -- ) 4EB9 over h!  2 + ! ;
 : call, ( a -- ) here call!  6 allot ;

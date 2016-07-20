@@ -61,6 +61,7 @@ code dodoes
    body-offset # W .l addq,
    I rpush,
    S ) I .l move,
+   2 # I .l addq,
    W S ) .l move,
    next,
 end-code
