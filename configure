@@ -29,6 +29,7 @@ host_is_target()
     c) TARGET=c ;;
     i?86*|x86*) TARGET=x86 ;;
     m68*) TARGET=m86k ;;
+    arm*) TARGET=arm ;;
     *) echo "Unsupported machine; using the C target"; TARGET=c ;;
   esac
 

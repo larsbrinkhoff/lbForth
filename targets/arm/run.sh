@@ -1,3 +1,6 @@
 #!/bin/sh
 
-qemu-arm "$@"
+case `uname -m` in
+    arm*) "$@" ;;
+    *)    qemu-arm "$@" ;;
+esac
