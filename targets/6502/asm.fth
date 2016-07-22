@@ -148,6 +148,22 @@ E8 0op inx,
 EA 0op nop,
 F8 0op sed,
 
+\ 65C02 extensions.
+\ 12/32/52/72/92/B2/D2/F2 zp ) ora,/and,/eor,/adc,/sta,/lda,/cmp,/sbc,
+\ 7C abs ,x jmp,
+\ 34/3C addr ,x bit,
+\ 89 # bit,
+\ 04/0C tsb,
+\ 14/1C trb,
+\ 64/74/9C/9C stz,
+\ 80 bra,
+\ 1A a inc,
+\ 3A a dec,
+\ 5A phy,
+\ 7A ply,
+\ DA phx,
+\ FA plx,
+
 \ Addressing mode syntax.
 : #   ['] imm-op -addr ;
 : a   ['] accumulator -addr ;
