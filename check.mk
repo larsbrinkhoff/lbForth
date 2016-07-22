@@ -1,5 +1,6 @@
 CHECKS = test-standard test-assembler test-m68k-asm test-msp430-asm \
-         test-arm-asm test-image test-exe test-lib test-copyright test-meta
+         test-arm-asm test-6502-asm test-image test-exe test-lib \
+         test-copyright test-meta
 
 RUNTFORTH = $(TDIR)/run.sh ./$(TFORTH)
 
@@ -28,6 +29,10 @@ test-msp430-asm: test/test-msp430-asm.fth targets/msp430/asm.fth test-smoke
 	$(GREP) Asm-OK $@
 
 test-arm-asm: test/test-arm-asm.fth targets/arm/asm.fth test-smoke
+	echo 'include $< .( Asm-OK )' | $(RUNTFORTH) > $@
+	$(GREP) Asm-OK $@
+
+test-6502-asm: test/test-6502-asm.fth targets/6502/asm.fth test-smoke
 	echo 'include $< .( Asm-OK )' | $(RUNTFORTH) > $@
 	$(GREP) Asm-OK $@
 

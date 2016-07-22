@@ -8,6 +8,7 @@ ARM		Netwinder is cute.
 In the works.
 
 MSP430		Assembler only.
+6502		Assembler only.
 PDP-1		Maybe also PDP-3/4/5/6/7/8/9/10/11/12.
 Emacs		Bytecodes.
 Shell script	For bootstapping without C and Lisp?
@@ -34,7 +35,6 @@ Unlikely.
 Alpha		Forgive me Bob Supnik.
 HD6301		Atari ST keyboard processor; only 128 bytes RAM though.
 1802
-6502
 8086
 6809
 8051
