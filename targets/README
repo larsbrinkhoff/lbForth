@@ -10,6 +10,7 @@ In the works.
 
 MSP430		Assembler only.
 6502		Assembler only.
+AVR		Assembler only.
 PDP-1		Maybe also PDP-3/4/5/6/7/8/9/10/12.
 Emacs		Bytecodes.
 Shell script	For bootstapping without C and Lisp?
