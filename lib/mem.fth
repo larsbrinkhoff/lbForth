@@ -13,25 +13,25 @@
 : w, ( x -- )   here w!  4 allot ;
 
 
-: 2l@   dup 1+ c@ 8 lshift swap c@ + ;
-: 2l!   2dup c!  swap 8 rshift swap 1+ c! ;
-: 2l,   dup c, 8 rshift c, ;
-: 2l+!   tuck 2l@ + swap 2l! ;
+: l2c@   dup 1+ c@ 8 lshift swap c@ + ;
+: l2c!   2dup c!  swap 8 rshift swap 1+ c! ;
+: l2c,   dup c, 8 rshift c, ;
+: l2c+!   tuck l2c@ + swap l2c! ;
 
-: 4l@   dup 2 + 2l@ 16 lshift swap 2l@ + ;
-: 4l!   2dup 2l!  swap 16 rshift swap 2 + 2l! ;
-: 4l,   dup 2l, 16 rshift 2l, ;
-: 4l+!   tuck 4l@ + swap 4l! ;
+: l4c@   dup 2 + l2c@ 16 lshift swap l2c@ + ;
+: l4c!   2dup l2c!  swap 16 rshift swap 2 + l2c! ;
+: l4c,   dup l2c, 16 rshift l2c, ;
+: l4c+!   tuck l4c@ + swap l4c! ;
 
-: 2b@   dup 1+ c@ swap c@ 8 lshift + ;
-: 2b!   2dup 1+ c!  swap 8 rshift swap c! ;
-: 2b,   dup 8 rshift c, c, ;
-: 2b+!   tuck 2b@ + swap 2b! ;
+: b2c@   dup 1+ c@ swap c@ 8 lshift + ;
+: b2c!   2dup 1+ c!  swap 8 rshift swap c! ;
+: b2c,   dup 8 rshift c, c, ;
+: b2c+!   tuck b2c@ + swap b2c! ;
 
-: 4b@   dup 2 + 2b@ swap 2b@ 16 lshift + ;
-: 4b!   2dup 2 + 2b!  swap 16 rshift swap c! ;
-: 4b,   dup 16 rshift 2b, 2b, ;
-: 4b+!   tuck 4b@ + swap 4b! ;
+: b4c@   dup 2 + b2c@ swap b2c@ 16 lshift + ;
+: b4c!   2dup 2 + b2c!  swap 16 rshift swap c! ;
+: b4c,   dup 16 rshift b2c, b2c, ;
+: b4c+!   tuck b4c@ + swap b4c! ;
 
 \ targets/m68k/asm.fth		h w
 \ targes/x16/meta.fth		h
