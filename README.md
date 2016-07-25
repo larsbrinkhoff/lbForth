@@ -10,7 +10,7 @@ executable using using [assembly language code words]
 (targets/x86/nucleus.fth).
 
 There are also ARM and Motorola 68000 targets, and target assemblers
-for 6502 and MSP430.
+for 6502, MSP430, and PDP-11.
 
 ( Continuous integration )
 

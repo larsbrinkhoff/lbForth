@@ -1,6 +1,6 @@
 CHECKS = test-standard test-x86-asm test-m68k-asm test-msp430-asm \
-         test-arm-asm test-6502-asm test-image test-exe test-lib \
-         test-copyright test-meta
+         test-arm-asm test-6502-asm test-pdp11-asm test-image test-exe \
+         test-lib test-copyright test-meta
 
 RUNTFORTH = $(TDIR)/run.sh ./$(TFORTH)
 
