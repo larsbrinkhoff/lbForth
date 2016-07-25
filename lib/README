@@ -1,3 +1,4 @@
+aout.fth        Write a Unix V7 executable.
 base.fth        Numbers in various bases.
 bench.fth       Run some benchmarks.
 bitmap.fth      An array of bits.
