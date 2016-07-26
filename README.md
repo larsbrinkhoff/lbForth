@@ -9,8 +9,8 @@ new [metacompiler written in Forth](lib/meta.fth) generates an x86
 executable using using [assembly language code words]
 (targets/x86/nucleus.fth).
 
-There are also ARM and Motorola 68000 targets, and target assemblers
-for 6502, MSP430, and PDP-11.
+There are also ARM, Motorola 68000, and PDP11 targets, and target
+assemblers for 6502, and MSP430.
 
 ( Continuous integration )
 
