@@ -86,7 +86,7 @@ forward: <
 
 variable state
 
-?: 0<   [ 0 invert 1 rshift invert ] literal nand invert if -1 else 0 then ;
+?: 0<   [ 1 cell 8 * 1 - lshift ] literal nand invert if -1 else 0 then ;
 ?: or   invert swap invert nand ;
 ?: xor   2dup nand 1+ dup + + + ;
 ?: <   2dup xor 0< if drop 0< else - 0< then ;
