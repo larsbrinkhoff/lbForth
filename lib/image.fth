@@ -6,7 +6,9 @@
 \ range.  ORG sets the dictionary pointer, and also creates a new section.
 
 
+[undefined] t-cell [if]
 4 constant t-cell
+[then]
 4000 t-cell * constant t-size
 
 create t-image  t-size allot  t-image t-size erase
