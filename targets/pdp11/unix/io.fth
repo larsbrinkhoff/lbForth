@@ -104,8 +104,21 @@ code read-file ( addr u1 fileid -- u2 ior )
 end-code
 
 code write-file ( addr u1 fileid -- u2 ior )
-   \ 4 {3, 1}
-   halt,
+   r3 clr,
+   S )+ r0 mov,
+   S )+ here 12 + mov,
+   S )+ here 6 + mov,
+   4 # trap,
+   0 ,
+   0 ,
+
+   carry, if,
+     r0 r3 mov,
+     r0 clr,
+   then,
+   r0 push,
+   r3 push,
+
    next,
 end-code
 
