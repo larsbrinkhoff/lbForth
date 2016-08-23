@@ -4,9 +4,11 @@ install_linux() {
   sudo apt-get update -yqqm
   sudo apt-get install -ym ${LISP:-sbcl}
   test -z "$M32" || sudo apt-get install -y gcc-multilib
-  case "$TARGET" in
-    arm|m68k) sudo apt-get install qemu-user;;
-    pdp11) download_apout;;
+  case "$TARGET-$OS" in
+    x86-linux) ;;
+    *-linux) sudo apt-get install qemu-user;;
+    m68k-tos) download_tosemu;;
+    pdp11-unix) download_apout;;
   esac
 }
 
@@ -20,6 +22,11 @@ download_sbcl() {
   wget http://prdownloads.sourceforge.net/sbcl/$sbcl-binary.tar.bz2
   tar xjf $sbcl-binary.tar.bz2
   (export INSTALL_ROOT=$PWD/sbcl && cd $sbcl && sh install.sh)
+}
+
+download_tosemu() {
+  git clone http://github.com/e8johan/tosemu
+  (cd tosemu && make && sudo install bin/tosemu /usr/local/bin)
 }
 
 download_apout() {
