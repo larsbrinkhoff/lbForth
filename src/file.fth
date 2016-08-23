@@ -1,7 +1,8 @@
 ( File Access words. )
 
+?: create-file open-file ;
+
 \ bin
-\ create-file
 \ delete-file
 \ file-position
 \ file-size

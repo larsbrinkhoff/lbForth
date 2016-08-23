@@ -1,4 +1,4 @@
-\ I/O for PDP-11 Unix  Copyright 2016 Lars Brinkhoff.
+\ I/O for PDP-11 Unix V7.  Copyright 2016 Lars Brinkhoff.
 
 decimal
 
@@ -46,6 +46,33 @@ code open-file ( addr u mode -- fileid ior )
    5 # trap,
    tmp ,
    0 ,
+
+   carry, if,
+     r0 r3 mov,
+     r0 clr,
+   then,
+   r0 push,
+   r3 push,
+
+   next,
+end-code
+
+code create-file ( addr u mode -- fileid ior )
+   2 # sp add,
+   S )+ r2 mov,
+   S )+ r0 mov,
+   
+   tmp # r1 mov,
+   begin,
+     r0 )+ r1 )+ movb,
+     1 # r2 sub,
+   0=, until,
+   r1 ) clrb,
+
+   r3 clr,
+   8 # trap,
+   tmp ,
+   octal 777 decimal ,
 
    carry, if,
      r0 r3 mov,

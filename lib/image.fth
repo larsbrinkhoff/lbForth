@@ -65,7 +65,7 @@ variable stop  0 stop !
 variable f
 : ?error   abort" write" ;
 : ?size   target-region nip <> abort" size" ;
-: open-image   s" image" w/o open-file abort" open" f ! ;
+: open-image   s" image" w/o create-file abort" open" f ! ;
 : write-image   target-region f @ write-file ?error ?size ;
 : save-target   open-image write-image f @ close-file ;
 [else]
