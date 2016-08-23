@@ -1,10 +1,12 @@
-CHECKS = test-standard test-x86-asm test-m68k-asm test-msp430-asm \
-         test-arm-asm test-6502-asm test-pdp11-asm test-image test-exe \
-         test-lib test-copyright test-meta
+CHECKS = test-standard test-6502-asm test-pdp11-asm test-image test-meta \
+         test-lib test-copyright
+MORE_CHECKS = test-x86-asm test-m68k-asm test-msp430-asm test-arm-asm test-exe
 
 RUNTFORTH = $(TDIR)/run.sh ./$(TFORTH)
 
-check: $(CHECKS)
+check: check-16-bit $(MORE_CHECKS)
+
+check-16-bit: $(CHECKS)
 
 test-standard: test-errors $(TDIR)/expected-errors
 	test `cat $<` -eq `cat $(TDIR)/expected-errors` && touch $@
