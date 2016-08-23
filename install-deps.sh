@@ -6,6 +6,7 @@ install_linux() {
   test -z "$M32" || sudo apt-get install -y gcc-multilib
   case "$TARGET" in
     arm|m68k) sudo apt-get install qemu-user;;
+    pdp11) download_apout;;
   esac
 }
 
@@ -19,6 +20,13 @@ download_sbcl() {
   wget http://prdownloads.sourceforge.net/sbcl/$sbcl-binary.tar.bz2
   tar xjf $sbcl-binary.tar.bz2
   (export INSTALL_ROOT=$PWD/sbcl && cd $sbcl && sh install.sh)
+}
+
+download_apout() {
+  apout=apout2.3beta1
+  wget http://www.tuhs.org/Archive/PDP-11/Emulators/Apout/$apout.tar.gz
+  tar xzf $apout.tar.gz
+  (cd $apout && make && sudo make install) || echo error ignored
 }
 
 install_osx() {

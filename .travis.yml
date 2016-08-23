@@ -9,6 +9,7 @@ env:
   - TARGET=x86 OS=linux M32=-m32
   - TARGET=arm OS=linux M32=-m32
   - TARGET=m68k OS=linux M32=-m32
+  - TARGET=pdp11 OS=unix M32=-m32 CHECK=check-16-bit
 matrix:
   exclude:
     - os: osx
@@ -19,7 +20,9 @@ matrix:
       env: TARGET=arm OS=linux M32=-m32
     - os: osx
       env: TARGET=m68k OS=linux M32=-m32
+    - os: osx
+      env: TARGET=pdp11 OS=unix M32=-m32 CHECK=check-16-bit
 install: sh -e install-deps.sh install_${TRAVIS_OS_NAME:-linux}
-script: make check  M32=$M32 TARGET=$TARGET OS=$OS
+script: make ${CHECK:-check}  M32=$M32 TARGET=$TARGET OS=$OS
 notifications:
   email: lars@nocrew.org
