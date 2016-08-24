@@ -98,6 +98,7 @@ create voc-link  ' env-words ,
 : is   postpone ['] postpone defer! ; compile-only
 : action-of   ' defer@ ;
 : action-of   postpone ['] postpone defer@ ; compile-only
+: +is ( xt "name" -- ) >r :noname r> compile, ' dup defer@ compile, >r postpone ; r> defer! ;
 
 : holds   bounds swap begin 2dup < while 1- dup c@ hold repeat 2drop ;
 
