@@ -9,6 +9,7 @@ install_linux() {
     *-linux) sudo apt-get install qemu-user;;
     m68k-tos) download_tosemu;;
     pdp11-unix) download_apout;;
+    avr-*) sudo apt-get install simulavr;;
   esac
 }
 
