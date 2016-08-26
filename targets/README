@@ -22,6 +22,7 @@ x64		Amd64.
 x16		An x86 target with 16-bit cell size.
 JavaScript	Because, like, Web 2.0.  Similar to C?
 JVM/Dalvik	Android?
+PIC		8-bit and 16-bit MCUs.
 
 Long shot.
 
