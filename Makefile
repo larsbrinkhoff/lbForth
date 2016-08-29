@@ -21,6 +21,8 @@ b-forth:
 	$(MAKE) -ftargets/c/bootstrap.mk
 	cp $@ forth
 
+tforth: $(TFORTH)
+
 forth: $(TFORTH)
 	rm -f forth.exe
 	cp $< $@
