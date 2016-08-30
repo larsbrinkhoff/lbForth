@@ -6,6 +6,7 @@ only forth also cross definitions
 include lib/image.fth
 include targets/avr/asm.fth
 
+256 t-allot
 
 hex only forth definitions also cross
 

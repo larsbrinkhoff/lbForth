@@ -12,6 +12,7 @@ include targets/msp430/asm.fth
 hex only forth definitions also cross
 
 F800 constant load-address
+256 t-allot
 
 also assembler
 target-image

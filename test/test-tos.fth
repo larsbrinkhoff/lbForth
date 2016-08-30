@@ -14,6 +14,7 @@ hex only forth definitions also cross
 : z", ( a u -- ) move, 0 c, align ;
 
 0 constant load-address
+256 t-allot
 
 also assembler
 target-image

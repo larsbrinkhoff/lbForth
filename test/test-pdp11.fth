@@ -13,6 +13,7 @@ only forth definitions also cross
 : ?padding,   begin here 48 < while 0 c, repeat ;
 
 0 constant load-address
+256 t-allot
 
 also assembler
 target-image

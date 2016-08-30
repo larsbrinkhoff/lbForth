@@ -17,6 +17,7 @@ defer t,
 vocabulary meta
 only forth also meta definitions
 include lib/image.fth
+8000 t-allot
 
 0 value latest
 

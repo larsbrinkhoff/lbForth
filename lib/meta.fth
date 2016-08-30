@@ -70,6 +70,9 @@ include lib/image.fth
 s" " searched
 s" src/" searched
 include params.fth
+
+4000 cell-size * t-allot
+
 : >link   next-offset + ;
 : >code   code-offset + ;
 : >body   body-offset + ;

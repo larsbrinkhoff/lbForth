@@ -3,6 +3,7 @@
 1 constant t-little-endian
 cell constant t-cell
 require lib/image.fth
+10 t-allot
 
 : fail   ." FAIL: " source type cr abort ;
 : check   <> if fail then ;

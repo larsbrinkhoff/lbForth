@@ -10,6 +10,7 @@ require lib/pe.fth
 
 -11 constant std-out-handle
 
+decimal 1024 t-allot
 target-image hex 400000 org
 
 pe-header,

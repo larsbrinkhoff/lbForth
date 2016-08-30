@@ -9,16 +9,16 @@
 [undefined] t-cell [if]
 4 constant t-cell
 [then]
-4000 t-cell * constant t-size
 
-create t-image  t-size allot  t-image t-size erase
+0 value t-size
+0 value t-image
 
 \ The currently active section.
 
 variable prev  0 prev !
 variable start  0 start !
 variable t-dp  0 t-dp !
-variable t-delta  t-image t-delta !
+variable t-delta
 
 \ Store current section and start a new one.
 
@@ -71,6 +71,9 @@ variable f
 [else]
 : save-target   target-region type ;
 [then]
+
+: 0image   t-image t-size erase  t-image t-delta ! ;
+: t-allot ( u -- ) to t-size  here to t-image  t-size allot  0image ;
 
 \ Define a word to cross compile to the target image.
 

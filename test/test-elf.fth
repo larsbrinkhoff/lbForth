@@ -12,6 +12,7 @@ include lib/elf.fth
 hex only forth definitions also cross
 
 08048000 constant load-address
+256 t-allot
 
 also assembler
 target-image
