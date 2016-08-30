@@ -23,7 +23,7 @@ This is documented in [build.md](build.md).
 [INSTALL](INSTALL) \ How to build.  
 [doc](doc) \ Classic (and recent) texts not related to this project.  
 [lib/README](lib/README) \ Information about libraries.  
-[targets/README](targets/README) \ Information about current and possibly future targets.
+[targets/README.md](targets/README.md) \ Information about current and possibly future targets.
 
 ( Implementation guide )
 
