@@ -4,9 +4,10 @@ include lib/intel-hex.fth
 
 vocabulary cross
 only forth also cross definitions
+0 constant t-little-endian
+0 constant t-endian
 include lib/image.fth
 include targets/msp430/asm.fth
-
 
 hex only forth definitions also cross
 
