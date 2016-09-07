@@ -78,4 +78,4 @@ variable f
 \ Define a word to cross compile to the target image.
 
 require lib/cross.fth
-image: target-image  t-cell t-c@ t-c! t-dp t-org
+t-little-endian image: target-image  t-cell t-c@ t-c! t-dp t-org

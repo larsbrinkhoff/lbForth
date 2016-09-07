@@ -12,11 +12,16 @@
 \ org - set dictionary pointer.
 
 
+: split ( u -- u1 u2 ) dup 8 rshift swap 255 and ;
+: lrev ( u1 -- u2 ) 0 t-cell 0 do swap split rot 8 lshift + loop nip ;
+: brev   swap lrev swap ;
+
 \ Redirect the five basic words to the currently active image.
 
 variable 'image
-: image:   create ' , ' , ' , ' , ' ,   does> 'image ! ;
-image: host-image  cell c@ c! dp drop
+: endian,   if ['] noop , ['] lrev , else ['] brev , ['] noop , then ;
+: image:   create ' , ' , ' , ' , ' , endian,  does> 'image ! ;
+t-little-endian image: host-image  cell c@ c! dp drop
 host-image
 
 : redirect:   create dup , cell+  does> @ 'image @ + perform ;
@@ -26,6 +31,8 @@ redirect: c@
 redirect: c!
 redirect: dp
 redirect: org
+redirect: ?brev
+redirect: ?lrev
 drop
 
 
@@ -40,15 +47,8 @@ drop
 : allot   dp +! ;
 : align   here aligned dp ! ;
 
-: mask   0 8 cells 0 do 1 lshift 1 + loop and ;
-: rrotate ( u1 u2 -- u3 ) 2dup rshift -rot 8 cells - negate lshift + ;
-t-little-endian [if]
-  : @   0 swap cell bounds do i c@ + 8 rrotate loop mask ;
-  : !   cell bounds do dup i c! 8 rshift loop drop ;
-[else]
-  : @   0 swap cell bounds do 8 lshift i c@ + loop ;
-  : !   cell bounds do 24 rrotate dup i c! loop drop ;
-[then]
+: !   ?brev cell bounds do dup i c! 8 rshift loop drop ;
+: @   0 swap cell bounds do 8 lshift i c@ + loop ?lrev ;
 
 : c+!   dup >r c@ + r> c! ;
 : c!+   tuck c! 1+ ;
