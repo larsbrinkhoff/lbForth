@@ -3,6 +3,12 @@ OS = .
 
 -include conf.mk
 
+prefix ?= /usr/local
+DESTDIR = $(prefix)
+bindir = $(DESTDIR)/bin
+sharedir = $(DESTDIR)/share
+sysdir ?= $(sharedir)/lbForth
+
 TFORTH = $(TARGET)-forth
 TDIR = targets/$(TARGET)
 TSTAMP = $(TARGET)-$(OS)-stamp
@@ -30,6 +36,16 @@ forth: $(TFORTH)
 $(TSTAMP): $(wildcard conf.mk)
 	rm -f *-stamp
 	touch $@
+
+install: $(TFORTH)
+	install $< $(bindir)/forth
+	install -d $(sysdir)
+	cp src/* $(sysdir)
+	cp -r lib $(sysdir)
+
+uninstall:
+	rm $(bindir)/forth
+	rm -rf $(sysdir)
 
 include $(TDIR)/forth.mk
 

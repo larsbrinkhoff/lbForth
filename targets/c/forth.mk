@@ -32,6 +32,7 @@ threading.fth: targets/ctc.fth $(TSTAMP)
 
 target.fth: $(TDIR)/target.fth $(TSTAMP)
 	cp $< $@
+	echo ": sysdir   s\" src/\" ;" >> $@
 
 t-clean:
 	rm -f *.o kernel.c params* $(PARAMS)

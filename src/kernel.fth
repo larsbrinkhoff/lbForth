@@ -311,7 +311,8 @@ defer quit
    0 included-files !  ['] search-paths included-files cell+ !
    ['] forth dup context ! context cell+ ! 0 context 2 cells + !
 
-   s" src/" searched
+   s" src/" searched \ UGLY HACK
+   sysdir searched
    s" " searched
 
    [compile] [

@@ -15,8 +15,9 @@ threading.fth: targets/itc.fth $(TSTAMP)
 params.fth:$ $(TDIR)/params.fth $(TDIR)/$(OS)/params.fth $(TSTAMP)
 	cat $(TDIR)/params.fth $(TDIR)/$(OS)/params.fth > $@
 
-target.fth: $(TDIR)/target.fth $(TDIR)/$(OS)/target.fth $(TSTAMP)
+target.fth: $(TDIR)/target.fth $(TDIR)/$(OS)/target.fth $(TSTAMP) Makefile
 	cat $(TDIR)/target.fth $(TDIR)/$(OS)/target.fth > $@
+	echo ": sysdir   s\" $(sysdir)/\" ;" >> $@
 
 t-clean:
 	rm -f $(PARAMS)
