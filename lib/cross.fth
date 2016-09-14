@@ -12,18 +12,12 @@
 \ org - set dictionary pointer.
 
 
-: split ( u -- u1 u2 ) dup 8 rshift swap 255 and ;
-: lrev ( u1 -- u2 ) 0 t-cell 0 do swap split rot 8 lshift + loop nip ;
-: brev   swap lrev swap ;
-
 \ Redirect the five basic words to the currently active image.
 
-variable 'image
-: endian,   if ['] noop , ['] lrev , else ['] brev , ['] noop , then ;
-: image:   create ' , ' , ' , ' , ' , endian,  does> 'image ! ;
-t-little-endian image: host-image  cell c@ c! dp drop
-host-image
+\ Save the host versions to stack, for the benefit of host-image below.
+1 here ! here c@  ' drop ' dp ' c! ' c@ ' cell
 
+variable 'image
 : redirect:   create dup , cell+  does> @ 'image @ + perform ;
 0
 redirect: cell
@@ -34,6 +28,16 @@ redirect: org
 redirect: ?brev
 redirect: ?lrev
 drop
+
+: split ( u -- u1 u2 ) dup 8 rshift swap 255 and ;
+: lrev ( u1 -- u2 ) 0 cell 0 do swap split rot 8 lshift + loop nip ;
+: brev   swap lrev swap ;
+
+: endian,   if ['] noop , ['] lrev , else ['] brev , ['] noop , then ;
+: image:   create , , , , , endian,  does> 'image ! ;
+
+image: host-image
+host-image
 
 
 \ Reimplement other memory access and dictionary words in terms of the
