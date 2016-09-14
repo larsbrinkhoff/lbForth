@@ -1,6 +1,15 @@
 which lsb_release && lsb_release -ds
 
 install_linux() {
+  # This server responds with an overly long Via header line.
+  bad=http://us-central1.gce.archive.ubuntu.com/ubuntu/
+  for i in 'main restricted' 'universe' 'multiverse'; do
+    sudo add-apt-repository --remove "$bad $i"
+  done
+  sudo add-apt-repository http://archive.ubuntu.com/ubuntu/
+  sudo add-apt-repository 'http://archive.ubuntu.com/ubuntu/ universe'
+  sudo add-apt-repository 'http://archive.ubuntu.com/ubuntu/ multiverse'
+
   sudo apt-get update -yqqm
   sudo apt-get install -ym ${LISP:-sbcl}
   test -z "$M32" || sudo apt-get install -y gcc-multilib
