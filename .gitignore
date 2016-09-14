@@ -7,6 +7,7 @@ kernel.c
 /jump.fth
 /threading.fth
 /target.fth
+/output.fth
 /test-*
 conf.mk
 *-stamp

@@ -12,8 +12,11 @@ jump.fth: $(TDIR)/jump.fth $(TSTAMP)
 threading.fth: targets/itc.fth $(TSTAMP)
 	cp $< $@
 
-params.fth:$ $(TDIR)/params.fth $(TDIR)/$(OS)/params.fth $(TSTAMP)
-	cat $(TDIR)/params.fth $(TDIR)/$(OS)/params.fth > $@
+params.fth:$ $(TDIR)/params.fth $(TSTAMP)
+	cp $< $@
+
+output.fth:$ $(TDIR)/$(OS)/output.fth $(TSTAMP)
+	cp $< $@
 
 target.fth: $(TDIR)/target.fth $(TDIR)/$(OS)/target.fth $(TSTAMP) Makefile
 	cat $(TDIR)/target.fth $(TDIR)/$(OS)/target.fth > $@

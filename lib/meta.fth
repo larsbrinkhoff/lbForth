@@ -61,15 +61,17 @@ variable leaves
 
 vocabulary meta
 only forth also meta definitions
+
+s" " searched
+s" src/" searched
+include params.fth
 include lib/image.fth
 
 0 value latest
 
 ' , is t,
 
-s" " searched
-s" src/" searched
-include params.fth
+include output.fth
 
 4000 cell-size * t-allot
 

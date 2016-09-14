@@ -21,6 +21,9 @@ kernel.c: b-forth $(DEPS) $(PARAMS) $(META)
 params.fth: params $(TSTAMP)
 	$(RUN) ./$< -forth > $@
 
+output.fth: $(TSTAMP)
+	touch $@
+
 params: $(TDIR)/params.c $(TDIR)/forth.h $(TDIR)/forth.mk
 	$(CC) $(CFLAGS) $(CPPFLAGS) $< -o $@
 
