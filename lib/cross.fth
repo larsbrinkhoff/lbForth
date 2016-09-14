@@ -15,12 +15,13 @@
 \ Redirect the five basic words to the currently active image.
 
 \ Save the host versions to stack, for the benefit of host-image below.
-1 here ! here c@  ' drop ' dp ' c! ' c@ ' cell
+1 here ! here c@  ' drop ' dp ' c! ' c@ cell
 
 variable 'image
+: redirect-constant:   create dup , cell+  does> @ 'image @ + @ ;
 : redirect:   create dup , cell+  does> @ 'image @ + perform ;
 0
-redirect: cell
+redirect-constant: cell
 redirect: c@
 redirect: c!
 redirect: dp

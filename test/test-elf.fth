@@ -7,6 +7,7 @@ only forth also cross definitions
 include lib/image.fth
 include targets/x86/asm.fth
 include lib/elf.fth
+t-little-endian 4 section: target-image
 
 
 hex only forth definitions also cross

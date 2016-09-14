@@ -6,10 +6,6 @@
 \ range.  ORG sets the dictionary pointer, and also creates a new section.
 
 
-[undefined] t-cell [if]
-4 constant t-cell
-[then]
-
 0 value t-size
 0 value t-image
 
@@ -78,4 +74,4 @@ variable f
 \ Define a word to cross compile to the target image.
 
 require lib/cross.fth
-t-little-endian ' t-org ' t-dp ' t-c! ' t-c@ ' t-cell image: target-image
+: section: ( u1 u2 "name" -- ) >r ['] t-org ['] t-dp ['] t-c! ['] t-c@ r> image: ;

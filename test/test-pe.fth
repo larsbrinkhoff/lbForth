@@ -3,8 +3,8 @@ require search.fth
 vocabulary cross
 only forth also cross definitions
 0 constant t-little-endian
-0 constant t-endian
 include lib/image.fth
+t-little-endian 4 section: target-image
 require targets/x86/asm.fth
 require lib/pe.fth
 

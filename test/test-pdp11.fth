@@ -3,8 +3,8 @@ require search.fth
 vocabulary cross
 only forth also cross definitions
 1 constant t-little-endian
-2 constant t-cell
 include lib/image.fth
+t-little-endian 2 section: target-image
 include targets/pdp11/asm.fth
 include lib/aout.fth
 

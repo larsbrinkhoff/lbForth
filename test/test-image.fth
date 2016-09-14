@@ -1,8 +1,8 @@
 \ Test cross compilation to a target image.
 
 1 constant t-little-endian
-cell constant t-cell
 require lib/image.fth
+t-little-endian cell section: target-image
 10 t-allot
 
 : fail   ." FAIL: " source type cr abort ;

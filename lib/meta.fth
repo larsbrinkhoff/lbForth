@@ -66,6 +66,7 @@ s" " searched
 s" src/" searched
 include params.fth
 include lib/image.fth
+t-little-endian cell-size section: target-image
 
 0 value latest
 
