@@ -8,6 +8,8 @@ check: check-16-bit $(MORE_CHECKS)
 
 check-16-bit: $(CHECKS)
 
+recheck: t-clean check
+
 test-standard: test-errors $(TDIR)/expected-errors
 	test `cat $<` -eq `cat $(TDIR)/expected-errors` && touch $@
 
