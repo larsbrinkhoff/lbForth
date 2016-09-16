@@ -52,8 +52,8 @@ hex
 
 ( Data types )
 
-[defined] t-little-endian [if]
-   t-little-endian [if]
+[defined] little-endian? [if]
+   little-endian? [if]
       1 constant endian
       : h, ( x -- )   dup c,  8 rshift c, ;
       : w, ( x -- )   dup h,  10 rshift h, ;

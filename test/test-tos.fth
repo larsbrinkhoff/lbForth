@@ -2,9 +2,8 @@ require search.fth
 
 vocabulary cross
 only forth also cross definitions
-0 constant t-little-endian
 include lib/image.fth
-t-little-endian 4 section: target-image
+false 4 section: target-image
 include targets/m68k/asm.fth
 include lib/gemdos.fth
 

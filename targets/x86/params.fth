@@ -2,3 +2,4 @@
 -4 constant next-offset
 0 constant code-offset
 4 constant body-offset
+1 constant little-endian?

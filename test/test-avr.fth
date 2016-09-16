@@ -2,9 +2,8 @@ require search.fth
 
 vocabulary cross
 only forth also cross definitions
-1 constant t-little-endian
 include lib/image.fth
-t-little-endian 4 section: target-image
+true 4 section: target-image
 include targets/avr/asm.fth
 
 256 t-allot

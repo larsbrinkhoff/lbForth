@@ -1,13 +1,13 @@
 require search.fth
 
-1 constant t-little-endian
+1 constant little-endian?
 
 vocabulary cross
 only forth also cross definitions
 include lib/image.fth
 include targets/x86/asm.fth
 include lib/elf.fth
-t-little-endian 4 section: target-image
+little-endian? 4 section: target-image
 
 
 hex only forth definitions also cross

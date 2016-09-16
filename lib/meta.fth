@@ -66,15 +66,14 @@ s" " searched
 s" src/" searched
 include params.fth
 include lib/image.fth
-t-little-endian cell-size section: target-image
+little-endian? cell-size section: target-image
+4000 cell-size * t-allot
 
 0 value latest
 
 ' , is t,
 
 include output.fth
-
-4000 cell-size * t-allot
 
 : >link   next-offset + ;
 : >code   code-offset + ;
