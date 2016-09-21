@@ -1,6 +1,8 @@
 which lsb_release && lsb_release -ds
 
-install_linux() {
+fix_repos() {
+  which add-apt-repository || return 0
+
   # This server responds with an overly long Via header line.
   bad=http://us-central1.gce.archive.ubuntu.com/ubuntu/
   for i in 'main restricted' 'universe' 'multiverse'; do
@@ -9,6 +11,10 @@ install_linux() {
   sudo add-apt-repository http://archive.ubuntu.com/ubuntu/
   sudo add-apt-repository 'http://archive.ubuntu.com/ubuntu/ universe'
   sudo add-apt-repository 'http://archive.ubuntu.com/ubuntu/ multiverse'
+}
+
+install_linux() {
+  fix_repos
 
   sudo apt-get update -yqqm
   sudo apt-get install -ym ${LISP:-sbcl}
