@@ -34,6 +34,8 @@ include lib/image.fth
 
 ' , is t,
 
+s" " searched
+s" src/" searched
 include params.fth
 : >link   next-offset + ;
 : >code   code-offset + ;

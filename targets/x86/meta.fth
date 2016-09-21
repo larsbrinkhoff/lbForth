@@ -2,5 +2,4 @@
 
 1 constant t-little-endian
 s" targets/x86/" searched
-s" " searched
 include lib/meta.fth

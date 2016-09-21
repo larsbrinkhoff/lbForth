@@ -2,5 +2,4 @@
 
 1 constant t-little-endian
 s" targets/arm/" searched
-s" " searched
 include lib/meta.fth

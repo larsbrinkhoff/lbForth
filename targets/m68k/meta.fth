@@ -2,5 +2,4 @@
 
 0 constant t-little-endian
 s" targets/m68k/" searched
-s" " searched
 include lib/meta.fth
