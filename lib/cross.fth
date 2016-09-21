@@ -52,6 +52,18 @@ host-image
 : allot   dp +! ;
 : align   here aligned dp ! ;
 
+0 [if] \ Work in progress.
+: 1+-   1- ;
+: >end ( a1 u -- a2 u ) tuck + 1- swap ;
+: 1+-   1+ ;
+: >end ( a1 u -- a2 u ) ;
+: 1c!+- ( x1 a1 u1 -- x2 a2 u2 ) >r >r dup r@ c! 8 rshift r> 1+- r> 1- ;
+: nc! ( x a u -- ) >end begin ?dup while 1c!+- repeat 2drop ;
+: 1c@+- ( x1 a1 u1 -- x2 a2 u2 ) >r >r 8 lshift r@ c@ + r> 1+- r> 1- ;
+: nc@ ( a u -- x ) 0 -rot >end begin ?dup while 1c@+- repeat drop ;
+\ : !   cell nc! ;
+\ : @   cell nc@ ;
+[then]
 : !   ?brev cell bounds do dup i c! 8 rshift loop drop ;
 : @   0 swap cell bounds do 8 lshift i c@ + loop ?lrev ;
 
