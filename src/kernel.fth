@@ -189,8 +189,7 @@ create context  9 cells allot
 : <source ( -- char|-1 )   source >in @ dup rot = if
    2drop -1 else + c@  1 >in +! then ;
 
-32 constant bl
-: blank?   dup bl =  over 8 = or  over 9 = or  over 10 = or  swap 13 = or ;
+: blank?   33 < ;
 : skip ( "<blanks>" -- )   begin source? while
    <source blank? 0= until -1 >in +! then ;
 : parse-name ( "<blanks>name<blank>" -- a u )   skip  source drop >in @ +

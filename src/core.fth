@@ -130,6 +130,10 @@ create squote   128 allot
 
 create base  10 ,
 
+: header   parse-name header, reveal ;
+: constant   header docon, , ;
+
+32 constant bl
 : space   bl emit ;
 : ?.-     dup 0< if [char] - emit negate then ;
 : digit   dup 9 > if [ char A 10 - ] literal else [char] 0 then + ;
@@ -154,10 +158,6 @@ create base  10 ,
 
 : chars   ;
 : char+   1 chars + ;
-
-: header   parse-name header, reveal ;
-
-: constant   header docon, , ;
 
 : decimal   10 base ! ;
 
