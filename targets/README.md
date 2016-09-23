@@ -9,12 +9,12 @@
 | MSP430	| Assembler
 | 6502		| Assembler
 | AVR		| Assembler
+| Emacs		| Assembler
 |		|
 | PDP-1		| Research
 | PDP-4/7/9/15	| Research
 | PDP-5/8	| Research
 | PDP-10	| Research
-| Emacs		| Research
 | Shell script	| Research
 | Batch file	| Research
 | 6809		| Research
