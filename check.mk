@@ -1,5 +1,5 @@
 CHECKS = test-standard test-6502-asm test-pdp11-asm test-avr-asm \
-         test-image test-meta test-lib test-copyright
+         test-image test-save-image test-meta test-lib test-copyright
 MORE_CHECKS = test-x86-asm test-m68k-asm test-msp430-asm test-arm-asm test-exe
 
 RUNTFORTH = $(TDIR)/run.sh ./$(TFORTH)
@@ -31,6 +31,14 @@ test-smoke: $(TFORTH)
 test-image: test/test-image.fth lib/image.fth test-smoke
 	echo 'include $< .( Image-OK )' | $(RUNTFORTH) > $@
 	$(GREP) Image-OK $@
+
+test-save-image: test/test-save-image.fth lib/save-image.fth test-smoke
+	echo 'include $<' | $(RUNTFORTH) > /dev/null
+	# This only works with ELF images so far.
+	if [ "$$OS" = linux ]; then \
+	  chmod a+x test-save-image; \
+	  $(TDIR)/run.sh ./test-save-image | $(GREP) Save-Image-OK; \
+	fi
 
 test-exe: test/test-exe.sh test/test-elf.fth test/test-pe.fth targets/x86/asm.fth lib/elf.fth lib/pe.fth test-smoke
 	FORTH="$(RUNTFORTH)" ./test/test-exe.sh > $@
