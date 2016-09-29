@@ -42,6 +42,7 @@ install: $(TFORTH)
 	install -d $(sysdir)
 	cp src/* $(sysdir)
 	cp -r lib $(sysdir)
+	cp -r targets $(sysdir)
 
 uninstall:
 	rm $(bindir)/forth
