@@ -59,6 +59,13 @@ OS: Linux: Ubuntu 12
 File: [`.drone.yml`]
 (https://github.com/larsbrinkhoff/lbForth/blob/master/.drone.yml)
 
+## [GitLab CI](http://gitlab.com/)
+[![GitLab CI](https://gitlab.com/larsbrinkhoff/lbForth/badges/master/build.svg)]
+(https://gitlab.com/larsbrinkhoff/lbForth/commits/master)  
+OS: Linux: Ubuntu 12  
+File: [`.gitlab-ci.yml`]
+(https://github.com/larsbrinkhoff/lbForth/blob/master/.gitlab-ci.yml)
+
 ## [Magnum CI](http://magnum-ci.com/)
 [![Magnum CI](https://magnum-ci.com/status/96ffb83fa700f069024921b0702e76ff.png)]
 (https://magnum-ci.com/projects/1810/history)  

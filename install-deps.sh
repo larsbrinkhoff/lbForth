@@ -13,11 +13,17 @@ fix_repos() {
   sudo add-apt-repository 'http://archive.ubuntu.com/ubuntu/ multiverse'
 }
 
+if test -n "$GITLAB_CI"; then
+  sudo() {
+    "$@"
+  }
+fi
+
 install_linux() {
   fix_repos
 
   sudo apt-get update -yqqm
-  sudo apt-get install -ym ${LISP:-sbcl}
+  sudo apt-get install -ym git make ${LISP:-sbcl}
   test -z "$M32" || sudo apt-get install -y gcc-multilib
   case "$TARGET-$OS" in
     x86-linux) ;;

@@ -1,0 +1,13 @@
+image: ubuntu
+
+variables:
+  M32: -m32
+
+stages:
+  - build
+
+job1:
+  stage: build
+  script:
+    - sh -ex install-deps.sh install_linux
+    - make check M32=$M32 TARGET=x86 OS=linux
