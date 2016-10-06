@@ -493,9 +493,10 @@ T{ 2RND-TEST-BLOCKS 2DUP TL6 SWAP LOAD = -> TRUE }T
         LOAD SWAP LOAD                  \ u2 u1
         R> R> R> R>                     \ u2 u1 rnd2 blk2-addr rnd1' rnd1
     THEN ;
-T{ 2RND-TEST-BLOCKS TL7                 \ run test procedure
+
+T{ .s cr 2RND-TEST-BLOCKS TL7                \ run test procedure
    SWAP DROP SWAP DROP                  \ u2 u1 rnd2 rnd1
-   2= -> TRUE }T
+   2= .s cr -> TRUE }T
 
 \ I would expect LOAD to work on the contents of the buffer cache
 \ and not the block device, but the specification doesn't say.
