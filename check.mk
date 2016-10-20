@@ -1,4 +1,4 @@
-CHECKS = test-standard test-6502-asm test-pdp11-asm test-avr-asm \
+CHECKS = test-standard test-6502-asm test-pdp11-asm test-avr-asm test-z80-asm \
          test-image test-save-image test-meta test-lib test-copyright
 MORE_CHECKS = test-x86-asm test-m68k-asm test-msp430-asm test-arm-asm \
 	      test-riscv-asm test-exe
