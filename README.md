@@ -31,7 +31,8 @@ The Forth kernel contains everything needed to read and compile the
 rest of the system from source code, and not much else.  It's composed
 of two parts: a target-specific file nucleus.fth containing all
 primitive CODE words, and a [target-independent
-kernel.fth](kernel.fth).  These two are compiled by the metacompiler.
+kernel.fth](src/kernel.fth).  These two are compiled by the
+metacompiler.
 
 The [C target nucleus](targets/c/nucleus.fth) used for bootstrapping
 has only twelve proper primitives.  There is also the COLD word which
@@ -39,6 +40,6 @@ compiles to main(), and four I/O words.
 
 When the kernel starts, it jumps to the word called WARM.  This is
 responsible for loading the rest of the system and entering the text
-interpreter.  The first file loaded by WARM is [core.fth](core.fth),
+interpreter.  The first file loaded by WARM is [core.fth](src/core.fth),
 which implements the CORE wordset.  Because the kernel only has a bare
 minimum of words, the start of core.fth looks a little strange.
