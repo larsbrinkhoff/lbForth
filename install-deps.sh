@@ -52,10 +52,9 @@ download_tosemu() {
 }
 
 download_apout() {
-  apout=apout2.3beta1
-  wget http://www.tuhs.org/Archive/PDP-11/Emulators/Apout/$apout.tar.gz
-  tar xzf $apout.tar.gz
-  (cd $apout && make && sudo make install) || echo error ignored
+  apout=http://github.com/DoctorWkt/Apout
+  git clone $apout
+  (cd Apout && make && sudo make install) || echo error ignored
 }
 
 install_osx() {
