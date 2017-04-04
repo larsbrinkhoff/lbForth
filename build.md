@@ -8,16 +8,6 @@ This documents the configuration for all services.  Some services use
 files checked into the repository, others require information entered
 into their web interface.
 
-## [AppHarbor](http://appharbor.com/)
-[(no badge)](https://appharbor.com/applications/lbforth)  
-OS: Windows  
-Files: [`appharbor.sln`]
-(https://github.com/larsbrinkhoff/lbForth/blob/master/appharbor.sln),
-[`packages.config`]
-(https://github.com/larsbrinkhoff/lbForth/blob/master/packages.config), and
-[`build.vcxproj`]
-(https://github.com/larsbrinkhoff/lbForth/blob/master/build.vcxproj)
-
 ## [AppVeyor](http://appveyor.com/)
 [![AppVeyor](https://ci.appveyor.com/api/projects/status/r8wuvf0n0obp3n14)]
 (https://ci.appveyor.com/project/larsbrinkhoff/lbforth/history)  
@@ -39,25 +29,6 @@ Test: `gnumake check M32=`
 OS: Linux: Ubuntu 12  
 File: [`circle.yml`]
 (https://github.com/larsbrinkhoff/lbForth/blob/master/circle.yml)
-
-## [Codeship](http://codeship.io/)
-[![Codeship](https://www.codeship.io/projects/625b1e20-3cdd-0132-2ca6-12c33aebd1cb/status?branch=master)]
-(https://codeship.com/projects/43094)  
-OS: Linux: Ubuntu 14  
-Install: `install-deps.sh download_sbcl`  
-Build:
-
-    export SBCL_HOME=$PWD/sbcl/lib/sbcl
-    export PATH=$PATH:$PWD/sbcl/bin
-    make all M32=
-    make check
-
-## [Drone.io](http://drone.io/)
-[![Drone.io](https://drone.io/github.com/larsbrinkhoff/lbForth/status.png)]
-(https://drone.io/github.com/larsbrinkhoff/lbForth)  
-OS: Linux: Ubuntu 12  
-File: [`.drone.yml`]
-(https://github.com/larsbrinkhoff/lbForth/blob/master/.drone.yml)
 
 ## [GitLab CI](http://gitlab.com/)
 [![GitLab CI](https://gitlab.com/larsbrinkhoff/lbForth/badges/master/build.svg)]
@@ -103,14 +74,6 @@ Post thread:
 OS: Linux  
 File: [`.travis.yml`]
 (https://github.com/larsbrinkhoff/lbForth/blob/master/.travis.yml)
-
-## [Snap CI](http://snap-ci.com/)
-[![Snap CI](https://snap-ci.com/larsbrinkhoff/lbForth/branch/master/build_image)]
-(https://snap-ci.com/larsbrinkhoff/lbForth/branch/master)  
-OS: Linux: CentOS 6.6  
-Install: `install-deps.sh install_yum`  
-Build: `make all M32=$M32`  
-Test: `make check`
 
 ## [Travis CI](http://travis-ci.org/)
 [![Travis CI](https://travis-ci.org/larsbrinkhoff/lbForth.svg?branch=master)]
