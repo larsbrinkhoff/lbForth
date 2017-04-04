@@ -1,11 +1,11 @@
-\ -*- forth -*- Copyright 2013, 2015-2016 Lars Brinkhoff
+\ -*- forth -*- Copyright 2013, 2015-2017 Lars Brinkhoff
 
 code cold \ int main (void)
   extern struct word dp0_word, sp0_word, rp0_word, SP_word, RP_word,
     limit_word, latest0_word, turnkey_word;
   static cell data_stack[110];
   static cell return_stack[256];
-  static cell dictionary[18000];
+  static cell dictionary[19000];
   xt_t *IP = 0, xt = &turnkey_word;
 
   sp0_word.param[0] = (cell)(&data_stack[100]);
