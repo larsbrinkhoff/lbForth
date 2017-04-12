@@ -31,6 +31,7 @@ install_linux() {
     m68k-tos) download_tosemu;;
     pdp11-unix) download_apout;;
     avr-*) sudo apt-get install simulavr;;
+    asmjs-*) sudo apt-get install libmozjs-24-bin;;
   esac
 }
 
