@@ -5,6 +5,7 @@
 | 68000		| Systems: Linux, TOS
 | ARM		| Systems: Linux
 | PDP-11	| Systems: Unix V7
+| asm.js	|
 |		|
 | MSP430	| Assembler
 | 6502		| Assembler

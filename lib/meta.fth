@@ -1,4 +1,4 @@
-\ Metacompiler.  Copyright Lars Brinkhoff 2016.
+\ Metacompiler.  Copyright Lars Brinkhoff 2016-2017.
 
 require search.fth
 
@@ -82,12 +82,24 @@ host also meta definitions
 : ?number,   if 2drop undef fatal else drop t-literal 2drop then ;
 : number, ( a u -- ) 0 0 2over >number nip ?number, ;
 : t-number   ['] number, is number ;
+[defined] t-asmjs [if]
+also target-image
+: >codeid >code @ ;
+previous
 
+t' docol >codeid to 'docol
+t' dovar >codeid to 'dovar
+t' docon >codeid to 'docon
+t' dodef >codeid to 'dodef
+t' dodoes >codeid to 'dodoes
+[else]
 t' docol >body to 'docol
 t' dovar >body to 'dovar
 t' docon >body to 'docon
 t' dodef >body to 'dodef
 t' dodoes >body to 'dodoes
+[then]
+
 
 : h: : ;
 
@@ -128,6 +140,13 @@ h: does>   t-compile (does>) ;
 cell-size t-constant cell
 next-offset t-constant TO_NEXT
 code-offset t-constant TO_CODE
+also forth
+[defined] t-asmjs [if]
+previous
+does-offset t-constant TO_DOES
+[else]
+previous
+[then]
 body-offset t-constant TO_BODY
 
 'docol t-constant 'docol   
