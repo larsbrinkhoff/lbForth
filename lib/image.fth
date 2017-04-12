@@ -51,7 +51,7 @@ variable stop  0 stop !
 : t-c@   >host c@ ;
 : t-c!   >host c! ;
 
-\ Move the target dicionary pointer, and start a new section.
+\ Move the target dictionary pointer, and start a new section.
 
 : delta!   t-dp @ over - t-delta +! ;
 : start!   dup t-dp ! start ! ;

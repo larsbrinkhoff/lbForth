@@ -11,7 +11,7 @@
 \ Control flow:		0branch
 \ Literals:		(literal)
 \ Memory access:	! @ c! c@
-\ Aritmetic/logic:	+ nand
+\ Arithmetic/logic:	+ nand
 \ Return stack:		>r r>
 \ I/O:			emit open-file read-file close-file
 
