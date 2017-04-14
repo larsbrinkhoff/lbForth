@@ -126,9 +126,9 @@ h: [compile]   ' , ;
 h: does>   t-compile (does>) ;
 
 cell-size t-constant cell
-next-offset t-constant TO_NEXT   
-code-offset t-constant TO_CODE   
-body-offset t-constant TO_BODY   
+next-offset t-constant TO_NEXT
+code-offset t-constant TO_CODE
+body-offset t-constant TO_BODY
 
 'docol t-constant 'docol   
 'dovar t-constant 'dovar   
