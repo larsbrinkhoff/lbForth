@@ -41,7 +41,7 @@ test-save-image: test/test-save-image.fth lib/save-image.fth test-smoke
 	fi
 
 test-exe: test/test-exe.sh test/test-elf.fth test/test-pe.fth targets/x86/asm.fth lib/elf.fth lib/pe.fth test-smoke
-	FORTH="$(RUNTFORTH)" ./test/test-exe.sh > $@
+	FORTH="$(RUNTFORTH)" TARGET="$(TARGET)" ./test/test-exe.sh > $@
 	$(GREP) 42 $@
 
 test-lib: lib/README test/test-lib.sh
