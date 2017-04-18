@@ -1,4 +1,4 @@
-\ Copyright 2013-2016 Lars Brinkhoff
+\ Copyright 2013-2017 Lars Brinkhoff
 
 \ Assembler for x86.
 
@@ -285,6 +285,9 @@ FF20 1op-s indirect-jmp,
 reg: al ax eax   reg: cl cx ecx   reg: dl dx edx   reg: bl bx ebx
 reg: ah sp esp   reg: ch bp ebp   reg: dh si esi   reg: bh di edi
 drop
+
+\ Ensure that we can do non-aligned stores.
+: !   4 bounds do dup i c! 8 rshift loop drop ;
 
 \ Resolve jumps.
 : >mark1   here 1- ['] c! here ;
