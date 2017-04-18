@@ -1,6 +1,7 @@
 os:
   - linux
   - osx
+dist: trusty
 language: c
 env:
   - TARGET=c M32=
