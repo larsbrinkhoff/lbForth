@@ -30,11 +30,6 @@ File: [`circle.yml`](https://github.com/larsbrinkhoff/lbForth/blob/master/circle
 OS: Linux: Ubuntu 12  
 File: [`.gitlab-ci.yml`](https://github.com/larsbrinkhoff/lbForth/blob/master/.gitlab-ci.yml)
 
-## [Magnum CI](http://magnum-ci.com/)
-[![Magnum CI](https://magnum-ci.com/status/96ffb83fa700f069024921b0702e76ff.png)](https://magnum-ci.com/projects/1810/history)  
-OS: Linux: Ubuntu 12  
-File: [`.magnum.yml`](https://github.com/larsbrinkhoff/lbForth/blob/master/.magnum.yml)
-
 ## [Scrutinizer](http://scrutinizer-ci.com/)
 [![Scrutinizer](https://scrutinizer-ci.com/g/larsbrinkhoff/lbForth/badges/build.png)](https://scrutinizer-ci.com/g/larsbrinkhoff/lbForth/)  
 OS: Linux: Ubuntu 14  
@@ -56,24 +51,7 @@ Post thread:
 
     git submodule deinit --force .
 
-## [Shippable](http://shippable.com/)
-[![Shippable](https://api.shippable.com/projects/5444c5ecb904a4b21567b0ff/badge?branchName=master)](https://app.shippable.com/projects/5444c5ecb904a4b21567b0ff)  
-OS: Linux  
-File: [`.travis.yml`](https://github.com/larsbrinkhoff/lbForth/blob/master/.travis.yml)
-
 ## [Travis CI](http://travis-ci.org/)
 [![Travis CI](https://travis-ci.org/larsbrinkhoff/lbForth.svg?branch=master)](https://travis-ci.org/larsbrinkhoff/lbForth)  
 OS: Linux: Ubuntu 12, MacOS X  
 File: [`.travis.yml`](https://github.com/larsbrinkhoff/lbForth/blob/master/.travis.yml)
-
-## [Visual Studio Online](http://visualstudio.com/)
-[![Visual Studio Online](https://larsbrinkhoff.visualstudio.com/DefaultCollection/_apis/public/build/definitions/953a34b9-5966-4923-a48a-c41874cfb5f5/1/badge)](https://larsbrinkhoff.visualstudio.com/DefaultCollection/lbForth/_build)  
-OS: Windows  
-Files: [`appharbor.sln`](https://github.com/larsbrinkhoff/lbForth/blob/master/appharbor.sln),
-[`packages.config`](https://github.com/larsbrinkhoff/lbForth/blob/master/packages.config), and
-[`build.vcxproj`](https://github.com/larsbrinkhoff/lbForth/blob/master/build.vcxproj)
-
-## [Wercker](http://wercker.com/)
-[![Wercker](https://app.wercker.com/status/aedf010f682b5b530075e24d9446da26)](https://app.wercker.com/#applications/544dfb8aea87f6374f000ad9)  
-OS: Linux: Ubuntu 12  
-File: [`wercker.yml`](https://github.com/larsbrinkhoff/lbForth/blob/master/wercker.yml)
