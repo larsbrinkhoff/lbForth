@@ -12,7 +12,7 @@ variable scount  0 scount !
 
 : end-code ;
 
-: header   parse-name header, 'dodoes , scount @ , reveal ;
+: header   parse-name header, scount @ , reveal ;
 : .case   ." case " scount ? ." :" cr 1 scount +! ;
 : .break   ."     break;" cr cr ;
 : code   header .case start-code .break ;
