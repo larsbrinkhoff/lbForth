@@ -41,6 +41,9 @@ include params.fth
 : >code   code-offset + ;
 : >body   body-offset + ;
 
+\ Does target have a DOES> field?
+[defined] does-offset constant has-does?
+
 0 value 'docol
 0 value 'dovar
 0 value 'docon
@@ -140,14 +143,8 @@ h: does>   t-compile (does>) ;
 cell-size t-constant cell
 next-offset t-constant TO_NEXT
 code-offset t-constant TO_CODE
-also forth
-[defined] t-asmjs [if]
-previous
-does-offset t-constant TO_DOES
-[else]
-previous
-[then]
 body-offset t-constant TO_BODY
+has-does? [if] does-offset t-constant TO_DOES [then]
 
 'docol t-constant 'docol   
 'dovar t-constant 'dovar   
