@@ -44,6 +44,9 @@ include params.fth
 \ Does target have a DOES> field?
 [defined] does-offset constant has-does?
 
+\ Start of code in a CODE word.  Can be overridden by the target.
+[undefined] code@ [if] : code@ >body ; [then]
+
 0 value 'docol
 0 value 'dovar
 0 value 'docon
@@ -85,24 +88,13 @@ host also meta definitions
 : ?number,   if 2drop undef fatal else drop t-literal 2drop then ;
 : number, ( a u -- ) 0 0 2over >number nip ?number, ;
 : t-number   ['] number, is number ;
-[defined] t-asmjs [if]
-also target-image
-: >codeid >code @ ;
-previous
 
-t' docol >codeid to 'docol
-t' dovar >codeid to 'dovar
-t' docon >codeid to 'docon
-t' dodef >codeid to 'dodef
-t' dodoes >codeid to 'dodoes
-[else]
-t' docol >body to 'docol
-t' dovar >body to 'dovar
-t' docon >body to 'docon
-t' dodef >body to 'dodef
-t' dodoes >body to 'dodoes
-[then]
-
+target-image
+t' docol code@ to 'docol
+t' dovar code@ to 'dovar
+t' docon code@ to 'docon
+t' dodef code@ to 'dodef
+t' dodoes code@ to 'dodoes
 
 : h: : ;
 
