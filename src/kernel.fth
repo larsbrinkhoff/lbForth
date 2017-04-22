@@ -27,7 +27,7 @@ variable RP
 : cell    cell ; \ Metacompiler knows what to do.
 : cell+   cell + ;
 
-?: sp@   SP @ cell + ;
+?: sp@   SP @ ;
 ?: sp!   SP ! ;
 ?: rp@   RP @ cell + ;
 \ rp! in core.fth

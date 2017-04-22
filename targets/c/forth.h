@@ -36,7 +36,21 @@ struct word
 
 extern struct word SP_word, RP_word;
 
-#define POP(TYPE)	((TYPE)(*(*((cell **)SP_word.param))++))
-#define PUSH(X)		(*--(*((cell **)SP_word.param)) = (cell)(X))
-#define RPOP(TYPE)	((TYPE)(*(*((cell **)RP_word.param))++))
-#define RPUSH(X)	(*--(*((cell **)RP_word.param)) = (cell)(X))
+static cell pop (struct word *p)
+{
+  cell a = p->param[0];
+  p->param[0] = a + sizeof (cell);
+  return *(cell *)a;
+}
+
+static void push (struct word *p, cell x)
+{
+  cell a = p->param[0] - sizeof (cell);
+  p->param[0] = a;
+  *(cell *)a = x;
+}
+
+#define POP(TYPE)	(TYPE)pop (&SP_word)
+#define PUSH(X)		push (&SP_word, (cell)(X))
+#define RPOP(TYPE)	(TYPE)pop (&RP_word)
+#define RPUSH(X)	push (&RP_word, (cell)(X))
