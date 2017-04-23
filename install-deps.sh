@@ -31,7 +31,12 @@ install_linux() {
     m68k-tos) download_tosemu;;
     pdp11-unix) download_apout;;
     avr-*) sudo apt-get install simulavr;;
-    asmjs-*) sudo apt-get install libmozjs-24-bin;;
+  esac
+  case "$TARGET-$JS" in
+    asmjs-js24) sudo apt-get install libmozjs-24-bin;;
+    asmjs-nodejs) 
+      wget -qO- https://deb.nodesource.com/setup_7.x | sudo -E bash -
+      sudo apt-get install nodejs;;
   esac
 }
 
