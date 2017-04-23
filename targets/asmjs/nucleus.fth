@@ -15,14 +15,98 @@ var params = {
     rp0: 767 * 1024,
 };
 
-if (typeof console === "undefined") {
+var read_file_async;
+var read_line;
+var bye;
+var gInputLines = [];
+var resume_string = undefined;
+var put_string;
+
+function forth_input(str)
+{
+    str = str.replace(/\n$/, "");
+    gInputLines.push(str);
+    resume("//line");
+}
+
+if (typeof(os) !== "undefined") {
+    /* SpiderMonkey shell */
+
+    read_file_async = function (path, cb) {
+        try {
+            cb(os.file.readFile(path, "utf-8"));
+        } catch (e) {
+            cb();
+        }
+    };
+    read_line = readline;
+    if (typeof console === "undefined") {
+        this.console = {};
+        this.console.log = print;
+    }
+    bye = function () { quit(0); };
+    put_string = this.console.log;
+} else if (typeof(require) !== "undefined") {
+    /* Node.js */
+
+    var fs = require('fs');
+    read_file_async = function (path, cb) {
+        return fs.readFile(path, "utf-8", function (error, str) { return cb(str) });
+    };
+    bye = function () { process.exit(0); };
+
+    var readline = require('readline');
+    var rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+        terminal: false,
+    });
+    rl.on('line', function (data) {
+        gInputLines.push(data);
+        resume("//line");
+    });
+    put_string = console.log;
+} else if (typeof(snarf) !== "undefined") {
+    /* old SpiderMonkey shell */
+
+    read_file_async = function (path, cb) {
+        try {
+            cb(snarf(path, "utf-8"));
+        } catch (e) {
+            cb();
+        }
+    };
+    read_line = readline;
     this.console = {};
     this.console.log = print;
-}
-if (typeof os === "undefined") {
-    this.os = {};
-    this.os.file = {};
-    this.os.file.readFile = snarf;
+    bye = function () { quit(0); };
+    put_string = this.console.log;
+} else if (false && typeof(fetch) !== "undefined") {
+    /* Web */
+
+    read_file_async = function (path, cb) {
+        fetch(path).then(function(x) { return x.text(); }).then(function(str) { return cb(str); }).catch(function (str) { cb() });
+    };
+    put_string = function (str) {
+        forth_output(str + "\n");
+    };
+} else {
+    /* Web */
+
+    read_file_async = function (path, cb) {
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function () {
+            if (req.readyState == 4 && req.status == 200)
+                cb(req.responseText);
+            else if (req.readyState == 4)
+                cb();
+        };
+        req.open("GET", path);
+        req.send();
+    };
+    put_string = function (str) {
+        forth_output(str + "\n");
+    };
 }
 
 var heap = new ArrayBuffer(params.memsize);
@@ -35,13 +119,13 @@ var gLine = "";
 
 function clog(addr) /* unused? */
 {
-    console.log(CStringAt(HEAPU8, addr));
+    put_string(CStringAt(HEAPU8, addr));
 }
 
 function foreign_putchar(c)
 {
     if (c == 10) {
-        console.log(gLine);
+        put_string(gLine);
         gLine = "";
     } else {
         gLine += String.fromCharCode(c);
@@ -89,7 +173,7 @@ var startDate = new Date();
 
 function foreign_bye(c)
 {
-    quit(0);
+    bye();
 }
 
 function foreign_dump(c)
@@ -99,9 +183,10 @@ function foreign_dump(c)
         if (HEAPU32[i])
             s += "HEAPU32["+i+"] = 0x"+HEAPU32[i].toString(16)+";\n";
     }
-    console.log(s);
+    put_string(s);
 }
 
+var loaded = {};
 var load_address = {};
 var next_load_address = params.fsoff;
 var load_size = {};
@@ -109,56 +194,34 @@ var load_size = {};
 function load_file(heapu8, path)
 {
     var str;
-    try {
-        str = os.file.readFile(path, "utf-8");
-        if (str === undefined)
+    var succ;
+    read_file_async(path, function (str) {
+        if (str === undefined || str === null) {
+            loaded[path] = 1;
+            resume(path);
             return;
-    } catch(e) {
-        return;
-    }
-    next_load_address += 31;
-    next_load_address &= -32;
-    load_size[path] = CStringTo(str, heapu8, next_load_address + 32);
-    load_address[path] = next_load_address;;
-    HEAPU32[next_load_address+4>>2] = 0; // position
-    HEAPU32[next_load_address+8>>2] = load_size[path]-1; // size
-    HEAPU32[next_load_address+12>>2] = 1; // call slow_read flag
-    next_load_address += 32 + load_size[path];
+        }
+
+        next_load_address += 31;
+        next_load_address &= -32;
+        load_size[path] = CStringTo(str, heapu8, next_load_address + 32);
+        load_address[path] = next_load_address;;
+        HEAPU32[next_load_address+4>>2] = 0; // position
+        HEAPU32[next_load_address+8>>2] = load_size[path]-1; // size
+        HEAPU32[next_load_address+12>>2] = 1; // call slow_read flag
+        next_load_address += 32 + load_size[path];
+
+        succ = true;
+        loaded[path] = 1;
+        resume(path);
+    });
+
+    if (succ)
+        return true;
+
+    resume_string = path;
+    return;
 }
-
-function load_files(heapu8)
-{
-    load_file(heapu8, "src/load.fth");
-    load_file(heapu8, "src/core.fth");
-    load_file(heapu8, "src/core-ext.fth");
-    load_file(heapu8, "src/string.fth");
-    load_file(heapu8, "src/tools.fth");
-    load_file(heapu8, "src/file.fth");
-
-    load_file(heapu8, "targets/asmjs/meta.fth");
-    load_file(heapu8, "targets/asmjs/params.fth");
-    load_file(heapu8, "threading.fth");
-    load_file(heapu8, "params.fth");
-    load_file(heapu8, "lib/meta.fth");
-    load_file(heapu8, "src/search.fth");
-    load_file(heapu8, "lib/image.fth");
-    load_file(heapu8, "lib/cross.fth");
-    load_file(heapu8, "targets/asmjs/target.fth");
-    load_file(heapu8, "targets/asmjs/asm.fth");
-    load_file(heapu8, "lib/xforward.fth");
-    load_file(heapu8, "targets/asmjs/nucleus.fth");
-    load_file(heapu8, "targets/asmjs/next.fth");
-    load_file(heapu8, "targets/asmjs/jump.fth");
-    load_file(heapu8, "src/kernel.fth");
-    load_file(heapu8, "src/dictionary.fth");
-    load_file(heapu8, "jump.fth");
-    load_file(heapu8, "src/file.fth");
-    load_file(heapu8, "targets/asmjs/cold.fth");
-    load_file(heapu8, "target.fth");
-    load_file(heapu8, "targets/asmjs/dump.fth");
-}
-
-load_files(HEAPU8);
 
 var fhs = {}; /* file handles */
 
@@ -169,8 +232,15 @@ function foreign_open_file(addr, u, mode)
 
     var fileid = 0;
 
-    if (!(path in load_address))
+    if (!loaded[path]) {
+        loaded[path] = .5;
+
         load_file(HEAPU8, path);
+    }
+    if (loaded[path] == .5) {
+        resume_string = path;
+        return -2;
+    }
 
     if (path in load_address) {
         fileid = load_address[path];
@@ -191,8 +261,18 @@ function foreign_read_file(addr, u1, fileid)
            HEAPU8[1023 * 1024 + i] = 0;
        var str;
        do {
-           str = readline();
+           if (gInputLines.length)
+               str = gInputLines.shift();
+           else {
+               if (read_line)
+                   str = read_line();
+               else {
+                   resume_string = "//line";
+                   return -2;
+               }
+           }
        } while (str === "");
+
        if (!str)
           foreign_bye(0);
        var len = CStringTo(str, HEAPU8, fhs[0].offset + 32);
@@ -560,6 +640,16 @@ code open-file
     SP = SP+4|0;
 
     addr = foreign_open_file(c|0, y|0, top|0)|0;
+    if ((addr|0) == -2) {
+        SP = SP-16|0;
+        HEAPU32[SP>>2] = IP|0;
+        SP = SP-4|0;
+        HEAPU32[SP>>2] = RP|0;
+        SP = SP-4|0;
+        HEAPU32[SP>>2] = word|0;
+
+        return SP|0;
+    }
     SP = SP-4|0;
     HEAPU32[SP>>2] = addr|0;
     SP = SP-4|0;
@@ -581,17 +671,27 @@ code read-file
     y = HEAPU32[c+4>>2]|0;
 
     if ((x|0) == (y|0)) {
-       if ((HEAPU32[c+12>>2]|0) != 0)
-           i = 0;
-       else
-           i = foreign_read_file(addr|0, z|0, c|0)|0;
+        if ((HEAPU32[c+12>>2]|0) != 0)
+            i = 0;
+        else
+            i = foreign_read_file(addr|0, z|0, c|0)|0;
+        if ((i|0) == -2) {
+            SP = SP-16|0;
+            HEAPU32[SP>>2] = IP|0;
+            SP = SP-4|0;
+            HEAPU32[SP>>2] = RP|0;
+            SP = SP-4|0;
+            HEAPU32[SP>>2] = word|0;
+
+            return SP|0;
+        }
     } else {
-       if ((z>>>0) > ((x-y)>>>0))
-           z = (x-y)|0;
-       for (i = 0; (i>>>0) < (z>>>0); i = (i+1)|0) {
-           HEAPU8[(addr+i)|0] = HEAPU8[(c+32+y+i)|0]|0;
-       }
-       HEAPU32[c+4>>2] = (y + i)|0;
+        if ((z>>>0) > ((x-y)>>>0))
+            z = (x-y)|0;
+        for (i = 0; (i>>>0) < (z>>>0); i = (i+1)|0) {
+            HEAPU8[(addr+i)|0] = HEAPU8[(c+32+y+i)|0]|0;
+        }
+        HEAPU32[c+4>>2] = (y + i)|0;
     }
 
     SP = SP-4|0;
@@ -605,12 +705,15 @@ start-code
         word = HEAPU32[IP>>2]|0;
         IP = IP + 4|0;
     }
+
+    return 0;
 }
 
     return { asmmain: asmmain };
 }
 
 var asmmodule;
+var global_sp;
 
 function run(turnkey)
 {
@@ -628,9 +731,39 @@ function run(turnkey)
         }, heap);
 
     try {
-        asmmodule.asmmain(turnkey, params.dictoff, params.sp0, params.rp0);
+        return global_sp = asmmodule.asmmain(turnkey, params.dictoff, params.sp0, params.rp0);
     } catch (e) {
-        console.log(e)
+        put_string(e);
+    }
+}
+
+function resume(str)
+{
+    if (str !== resume_string)
+        return;
+
+    if (str === undefined)
+        return;
+
+    resume_string = undefined;
+
+    var sp = global_sp;
+    if (!global_sp)
+        return;
+
+    var word = HEAPU32[sp>>2];
+    sp += 4;
+    var RP = HEAPU32[sp>>2];
+    sp += 4;
+    var IP = HEAPU32[sp>>2];
+    sp += 4;
+    var SP = sp;
+
+    try {
+        global_sp = 0;
+        global_sp = asmmodule.asmmain(word, IP, SP, RP);
+    } catch (e) {
+        put_string(e);
     }
 }
 end-code
