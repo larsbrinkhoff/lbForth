@@ -48,9 +48,14 @@ uninstall:
 	rm $(bindir)/forth
 	rm -rf $(sysdir)
 
+web:
+	make tforth TARGET=asmjs
+	cp asmjs-forth forth.js
+	cp targets/asmjs/forth.html .
+
 include $(TDIR)/forth.mk
 
 include check.mk
 
 clean: t-clean
-	rm -f forth *-forth test-* *-stamp *.exe conf.mk
+	rm -f forth *-forth test-* *-stamp *.exe conf.mk forth.html forth.js
