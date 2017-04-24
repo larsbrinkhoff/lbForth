@@ -294,7 +294,13 @@ function lbForth(stdlib, foreign, buffer)
     "use asm";
     var HEAPU8 = new stdlib.Uint8Array(buffer);
     var HEAPU32 = new stdlib.Uint32Array(buffer);
-    var imul = stdlib.Math.imul;
+    var imul = stdlib.Math.imul || function(a, b) {
+        var ah = (a >>> 16) & 0xffff;
+        var al = a & 0xffff;
+        var bh = (b >>> 16) & 0xffff;
+        var bl = b & 0xffff;
+        return ((al * bl) + (((ah * bl + al * bh) << 16) >>> 0)|0);
+    };
     var foreign_putchar = foreign.putchar;
     var foreign_open_file = foreign.open_file;
     var foreign_read_file = foreign.read_file;
