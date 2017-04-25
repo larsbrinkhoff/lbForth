@@ -14,6 +14,7 @@ env:
   - TARGET=asmjs M32= JS=js24
   - TARGET=asmjs M32=-m32 JS=js24
   - TARGET=asmjs M32=-m32 JS=nodejs
+# - TARGET=asmjs M32=-m32 JS=/System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Resources/jsc
 matrix:
   exclude:
     - os: osx
