@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+  <head>
+    <title>lbForth</title>
+    <script>
+      window.onload = function () {
+          var node = document.getElementById("input");
+          document.getElementsByTagName("form")[0].addEventListener("submit", function (e) {
+              forth_output(node.value + "\n");
+              forth_input(node.value + "\n");
+              node.value = "";
+              e.preventDefault();
+          });
+
+          forth_output("");
+      };
+
+      var output = "";
+
+      function forth_output(str)
+      {
+          output += str;
+
+          var n = document.getElementById("output");
+
+          if (n) n.innerHTML = output;
+      }
+    </script>
+    <script type="application/javascript"
+            src="forth.js">
+    </script>
+  </head>
+  <body>
+    <div style="float: left; width: 70%">
+      <h3>Welcome to lbForth.</h3>
+      <p>This is a self-hosting Forth implementation that has been ported to
+      asm.js.<br>
+      For more information, see <a href="http://github.com/larsbrinkhoff/lbForth">http://github.com/larsbrinkhoff/lbForth</a></p>
+      <pre style="white-space: pre-wrap !important">
+        <div id="output"></div>
+      </pre>
+      <form>
+        <input id="input"/>
+      </form>
+    </div>
+    <div style="float: right; width: 30%">
+      <p>Stack:</p>
+      <div id="stack"><br></div>
+      <p>Free Memory:</p>
+      <div id="unused"><br></div>
+    </div>
+  </body>
+  <script>
+    var stack = document.getElementById("stack");
+  </script>
+</html>
