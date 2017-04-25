@@ -5,7 +5,7 @@
 | 68000		| Systems: Linux, TOS
 | ARM		| Systems: Linux
 | PDP-11	| Systems: Unix V7
-| asm.js	|
+| asm.js	| Engines: SpiderMonkey, V8, JavaScriptCore, IE11
 |		|
 | MSP430	| Assembler
 | 6502		| Assembler
@@ -28,7 +28,6 @@
 | ------------- | ---
 | x64		| Amd64.
 | x16		| An x86 target with 16-bit cell size.
-| JavaScript	| Because, like, Web 2.0.  Similar to C?
 | JVM/Dalvik	| Android?
 
 | LONG SHOT	| |
