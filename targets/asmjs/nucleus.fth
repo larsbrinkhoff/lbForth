@@ -81,6 +81,23 @@ if (typeof(os) !== "undefined") {
     this.console.log = print;
     bye = function () { quit(0); };
     put_string = this.console.log;
+} else if (typeof(readFile) !== "undefined") {
+    /* JavaScriptCore */
+
+    read_file_async = function (path, cb) {
+        try {
+            cb(readFile(path));
+        } catch (e) {
+            cb();
+        }
+    };
+    read_line = readline;
+    if (typeof console === "undefined") {
+        this.console = {};
+        this.console.log = print;
+    }
+    bye = function () { quit(); };
+    put_string = this.console.log;
 } else if (false && typeof(fetch) !== "undefined") {
     /* Web */
 
