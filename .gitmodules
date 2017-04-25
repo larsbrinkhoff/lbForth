@@ -1,3 +1,3 @@
 [submodule "lisp"]
 	path = lisp
-	url = http://github.com/larsbrinkhoff/forth-metacompiler
+	url = https://github.com/larsbrinkhoff/forth-metacompiler
