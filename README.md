@@ -2,12 +2,10 @@
 
 This is a self-hosted implementation of Forth, which can regenerate
 itself from Forth source code.  The bootstrapping process uses a
-[metacompiler written in Lisp]
-(https://github.com/larsbrinkhoff/forth-metacompiler) to target a
+[metacompiler written in Lisp](https://github.com/larsbrinkhoff/forth-metacompiler) to target a
 small inner interpreter and a handful of code words written in C.  A
 new [metacompiler written in Forth](lib/meta.fth) generates an x86
-executable using using [assembly language code words]
-(targets/x86/nucleus.fth).
+executable using using [assembly language code words](targets/x86/nucleus.fth).
 
 There are also ARM, Motorola 68000, PDP-11, and asm.js targets, and
 target assemblers for 6502, AVR, MSP430, and Emacs bytecodes.
