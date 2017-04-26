@@ -1,5 +1,38 @@
 \ Metacompiler.  Copyright Lars Brinkhoff 2016-2017.
 
+(* Use of vocabularies.
+
+ T-WORDS holds the host definition of target words.  When executed,
+ they compile an xt into the target image.  There are no immediate
+ words in this vocabulary.
+
+ Immediate compiling words must be defined in the COMPILER vocabulary.
+
+ Words in FORWARD-REFS compile unresolved forward references to
+ undefined words.  When the build is wrapped up at the end, all
+ forward referenced are resolved in one go.
+
+ The META vocabulary consists mostly of words which access the target
+ image.  Those are memory accesses and defining words.  Much of the
+ metacompiler implementation is put in this vocabulary, but that's for
+ convenience; it's not required by design.
+
+   Search order.
+
+ When interpreting target code, the search order is: FORTH, META, and
+ T-WORDS is current.  This means that defining words in META will be
+ found first, but ordinary words fall back to the regular host words
+ in FORTH.  New words are entered into T-WORDS, but they will not be
+ visible outside colon definitions.
+
+ When compiling, the search order is: FORWARD-REFS, T-WORDS, COMPILER.
+ So the compiling words in the host take precendence over the
+ corresponding words in the target.  And defined words take
+ precendence over forward references.
+
+ The host word TARGET and the target ] set up these search orders.
+ HOST resets the search order back to the host.  *)
+
 require search.fth
 
 vocabulary compiler
