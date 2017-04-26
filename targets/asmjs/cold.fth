@@ -2,12 +2,14 @@ host
 
 also meta t' latest0 previous  constant 'latest0
 also meta t' turnkey previous  constant 'turnkey
+also meta t' limit previous  constant 'limit
 also meta t' sp0 previous  constant 'sp0
 also meta t' rp0 previous  constant 'rp0
 also meta t' dp0 previous  constant 'dp0
 
 : final
    ." HEAPU32[" 'latest0 . ." +28>>2] = " 'turnkey . ." ;" cr
+   ." HEAPU32[" 'limit . ." +28>>2] = params.sp0;" cr
    ." HEAPU32[" 'sp0 . ." +28>>2] = params.sp0;" cr
    ." HEAPU32[" 'rp0 . ." +28>>2] = params.rp0;" cr
    ." HEAPU32[" 'dp0 . ." +28>>2] = params.dictoff;" cr
