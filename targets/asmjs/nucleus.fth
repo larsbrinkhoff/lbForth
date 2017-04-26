@@ -306,6 +306,12 @@ function foreign_read_file(addr, u1, fileid)
     return i;
 }
 
+function foreign_eval(addr, u)
+{
+    eval (StringAt(HEAPU8, addr, u));
+    return 0;
+}
+
 function lbForth(stdlib, foreign, buffer)
 {
     "use asm";
@@ -317,6 +323,7 @@ function lbForth(stdlib, foreign, buffer)
     var foreign_read_file = foreign.read_file;
     var foreign_bye = foreign.bye;
     var foreign_dump = foreign.dump;
+    var foreign_eval = foreign.eval;
 
 function asmmain(word, IP, SP, RP)
 {
@@ -717,6 +724,13 @@ code read-file
     HEAPU32[SP>>2] = 0;
 end-code
 
+code js-eval
+    SP = SP+4|0;
+    x = HEAPU32[SP>>2]|0;
+    SP = SP+4|0;
+    foreign_eval(x|0, top|0)|0;
+end-code
+
 start-code
         }
         word = HEAPU32[IP>>2]|0;
@@ -752,7 +766,8 @@ function run(turnkey)
             open_file: foreign_open_file,
             read_file: foreign_read_file,
             bye: foreign_bye,
-            dump: foreign_dump
+            dump: foreign_dump,
+	    eval: foreign_eval
         }, heap);
 
     try {
