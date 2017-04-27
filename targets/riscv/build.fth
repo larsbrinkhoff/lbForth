@@ -2,4 +2,4 @@
 
 1 constant t-little-endian
 s" targets/riscv/" searched
-include lib/meta.fth
+include src/compile.fth
