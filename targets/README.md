@@ -5,6 +5,7 @@
 | 68000		| Systems: Linux, TOS
 | ARM		| Systems: Linux
 | PDP-11	| Systems: Unix V7
+| Z80		| Systems: CP/M
 | asm.js	| Engines: SpiderMonkey, V8, JavaScriptCore, IE11
 | RISC-V	| Systems: Linux
 |		|
@@ -35,7 +36,6 @@
 | ------------- | ---
 | PowerPC	| I do have that PowerMac.
 | SPARC		| And an ELC.
-| Z80		| Much to my surprise, I found a ZX Spectrum lying around.
 | 56k		| Falcon030 signal processor.
 | MIPS		| OMG are these still around?
 | CLR		| THE DEVIL!

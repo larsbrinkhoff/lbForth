@@ -7,7 +7,7 @@ small inner interpreter and a handful of code words written in C.  A
 new [metacompiler written in Forth](lib/meta.fth) generates an x86
 executable using using [assembly language code words](targets/x86/nucleus.fth).
 
-There are also ARM, RISC-V, Motorola 68000, PDP-11, and asm.js
+There are also ARM, RISC-V, Motorola 68000, PDP-11, Z80, and asm.js
 targets, and target assemblers for 6502, AVR, MSP430, and Emacs
 bytecodes.
 

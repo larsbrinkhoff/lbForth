@@ -16,6 +16,7 @@ install_linux() {
     *-linux) sudo apt-get install qemu-user;;
     m68k-tos) download_tosemu;;
     pdp11-unix) download_apout;;
+    z80-cpm) download_cpm;;
     avr-*) sudo apt-get install simulavr;;
   esac
   case "$TARGET-$JS" in
@@ -54,6 +55,11 @@ download_riscv_qemu() {
   git clone $qemu
   (cd riscv-qemu && git submodule update --init pixman &&
    ./configure --target-list=riscv32-linux-user && make)
+}
+
+download_cpm() {
+  git clone https://github.com/jhallen/cpm
+  (cd cpm && make && sudo cp cpm /usr/local/bin)
 }
 
 install_osx() {
