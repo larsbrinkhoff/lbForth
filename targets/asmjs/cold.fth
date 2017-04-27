@@ -1,11 +1,11 @@
 host
 
-also meta t' latest0 previous  constant 'latest0
-also meta t' turnkey previous  constant 'turnkey
-also meta t' limit previous  constant 'limit
-also meta t' sp0 previous  constant 'sp0
-also meta t' rp0 previous  constant 'rp0
-also meta t' dp0 previous  constant 'dp0
+also meta ' latest0 previous  constant 'latest0
+also meta ' turnkey previous  constant 'turnkey
+also meta ' limit previous  constant 'limit
+also meta ' sp0 previous  constant 'sp0
+also meta ' rp0 previous  constant 'rp0
+also meta ' dp0 previous  constant 'dp0
 
 : final
    ." HEAPU32[" 'latest0 . ." +28>>2] = " 'turnkey . ." ;" cr

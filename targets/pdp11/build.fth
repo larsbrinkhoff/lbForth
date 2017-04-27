@@ -3,4 +3,4 @@
 1 constant t-little-endian
 2 constant t-cell
 s" targets/pdp11/" searched
-include lib/meta.fth
+include src/compile.fth

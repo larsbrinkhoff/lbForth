@@ -2,4 +2,4 @@
 
 0 constant t-little-endian
 s" targets/m68k/" searched
-include lib/meta.fth
+include src/compile.fth

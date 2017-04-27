@@ -4,6 +4,7 @@
 
 include targets/asmjs/next.fth
 
+target
 start-code
 "use strict";
 
