@@ -69,35 +69,6 @@ target-image
 
 ' , is t,
 
-s" " searched
-s" src/" searched
-include params.fth
-: >link   next-offset + ;
-: >code   code-offset + ;
-: >body   body-offset + ;
-
-\ Does target have a DOES> field?
-[defined] does-offset constant has-does?
-
-\ Start of code in a CODE word.  Can be overridden by the target.
-[undefined] code@ [if] : code@ >body ; [then]
-
-0 value 'docol
-0 value 'dovar
-0 value 'docon
-0 value 'dodef
-0 value 'dodoes
-
-: code,   , ;
-
-: link, ( nt -- ) latest ,  to latest ;
-: reveal ;
-
-include target.fth
-
-: header, ( a u -- ) 2dup align here over >xt + t-word header, ;
-: ?code, ( -- ) here cell+ , ;
-
 include lib/xforward.fth
 
 : compile   parse-name postpone sliteral postpone "' postpone , ; compile-only
