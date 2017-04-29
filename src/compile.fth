@@ -2,7 +2,41 @@
 
 include lib/meta.fth
 
+only forth definitions
+
+: h: : ;
+: h-[defined] postpone [defined] ;
+: h-[undefined] postpone [undefined] ;
+
+also meta definitions
+
+s" " searched
+s" src/" searched
+include params.fth
+: >link   next-offset + ;
+: >code   code-offset + ;
+: >body   body-offset + ;
+
+h-[defined] does-offset constant has-does?
+h-[undefined] code@ [if] : code@ >body ; [then]
+
 only forth also meta definitions
+
+0 value 'docol
+0 value 'dovar
+0 value 'docon
+0 value 'dodef
+0 value 'dodoes
+
+: code,   , ;
+: link, ( nt -- ) latest ,  to latest ;
+: reveal ;
+
+include target.fth
+
+: header, ( a u -- ) 2dup align here over >xt + t-word header, ;
+: ?code, ( -- ) here cell+ , ;
+
 include asm.fth
 
 load-address org
@@ -22,8 +56,6 @@ host also meta definitions
 ' docon code@ to 'docon
 ' dodef code@ to 'dodef
 ' dodoes code@ to 'dodoes
-
-: h: : ;
 
 h: :   parse-name header, docol, ] ;
 h: create   parse-name header, dovar, ;
