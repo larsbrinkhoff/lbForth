@@ -179,8 +179,10 @@ reg: x16  reg: x17  reg: x18  reg: x19  reg: x20  reg: x21  reg: x22  reg: x23
 reg: x24  reg: x25  reg: x26  reg: x27  reg: x28  reg: x29  reg: x30  reg: x31
 drop
 
+also forth
 create tmp1  3 cells allot
 create tmp2  3 cells allot
+previous
 
 \ Aliases.
 : nop,   0 # x0 x0 addi, ;

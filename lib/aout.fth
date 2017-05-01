@@ -5,6 +5,7 @@ require lib/common.fth
 also forth
 base @
 octal
+: h] ] ;
 previous
 
 ( Constants )
@@ -19,7 +20,7 @@ decimal
 
 ( Data types )
 
-: dp!   dp [ also forth ] ! [ previous ] ;
+: dp!   dp [ also forth h] ! [ previous h] ;
 
 : w, ( x -- ) dup c, 8 rshift c, ;
 : w! ( x a -- ) here >r dp! w, r> dp! ;
