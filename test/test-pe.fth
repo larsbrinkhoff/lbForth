@@ -1,5 +1,7 @@
 require search.fth
 
+: h-[defined] postpone [defined] ;
+
 vocabulary cross
 only forth also cross definitions
 0 constant t-little-endian

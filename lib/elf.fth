@@ -52,7 +52,7 @@ hex
 
 ( Data types )
 
-[defined] t-little-endian [if]
+h-[defined] t-little-endian [if]
    t-little-endian [if]
       1 constant endian
       : h, ( x -- )   dup c,  8 rshift c, ;
