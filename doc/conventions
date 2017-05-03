@@ -1,0 +1,23 @@
+| |
+| --- | ---
+| 0foo | "zero foo" - clear foo, reset foo
+| foo0 | Initial state of foo
+| +foo | Add to foo
+| -foo | Remove from foo, or disable foo
+| foo! | Store a foo at an address
+| foo@ | Fetch a foo from an address
+| !foo | Set foo, or enable foo
+| @foo | Get foo
+| ?foo | Optionally do foo
+| foo? | Return a boolean value
+| foo' | Accept an address or xt as input
+| 'foo | Address or xt of foo
+| foo" | Parse a string and do foo
+| "foo | Accept a string as input
+| foo, | Compile a foo, or assemble foo instruction
+| #foo | Number of foos
+| foo# | 
+| /foo | Size of foo
+| (foo) | Internal implementation
+| foo: | Define a foo
+| .foo | Print a foo
