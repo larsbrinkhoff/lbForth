@@ -10,6 +10,7 @@
 | MSP430	| Assembler
 | 6502		| Assembler
 | AVR		| Assembler
+| RISC-V	| Assembler
 | Emacs		| Assembler
 |		|
 | PDP-1		| Research
