@@ -12,6 +12,7 @@ install_linux() {
   test -z "$M32" || sudo apt-get install -y gcc-multilib
   case "$TARGET-$OS" in
     x86-linux) ;;
+    riscv-*) download_riscv_qemu;;
     *-linux) sudo apt-get install qemu-user;;
     m68k-tos) download_tosemu;;
     pdp11-unix) download_apout;;
@@ -46,6 +47,13 @@ download_apout() {
   apout=http://github.com/DoctorWkt/Apout
   git clone $apout
   (cd Apout && make && sudo make install) || echo error ignored
+}
+
+download_riscv_qemu() {
+  qemu=http://github.com/riscv/riscv-qemu
+  git clone $qemu
+  (cd riscv-qemu && git submodule update --init pixman &&
+   ./configure --target-list=riscv32-linux-user && make)
 }
 
 install_osx() {
