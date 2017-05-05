@@ -10,6 +10,7 @@ env:
   - TARGET=x86 OS=linux M32=-m32
   - TARGET=arm OS=linux M32=-m32
   - TARGET=m68k OS=linux M32=-m32
+  - TARGET=riscv OS=linux M32=-m32
   - TARGET=pdp11 OS=unix M32=-m32 CHECK=check-16-bit
   - TARGET=asmjs M32= JS=js24
   - TARGET=asmjs M32=-m32 JS=js24
@@ -25,6 +26,8 @@ matrix:
       env: TARGET=arm OS=linux M32=-m32
     - os: osx
       env: TARGET=m68k OS=linux M32=-m32
+    - os: osx
+      env: TARGET=riscv OS=linux M32=-m32
     - os: osx
       env: TARGET=pdp11 OS=unix M32=-m32 CHECK=check-16-bit
     - os: osx
