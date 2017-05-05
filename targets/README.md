@@ -6,11 +6,11 @@
 | ARM		| Systems: Linux
 | PDP-11	| Systems: Unix V7
 | asm.js	| Engines: SpiderMonkey, V8, JavaScriptCore, IE11
+| RISC-V	| Systems: Linux
 |		|
 | MSP430	| Assembler
 | 6502		| Assembler
 | AVR		| Assembler
-| RISC-V	| Assembler
 | Emacs		| Assembler
 |		|
 | PDP-1		| Research
