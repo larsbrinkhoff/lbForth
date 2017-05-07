@@ -44,6 +44,11 @@ code assembler-test
    00F # x1 x2 srli,        00F0D113 check
    01F # x3 x4 srai,        41F1D213 check
 
+   7FF # x1 lui,            000000B7 check
+   800 # x1 lui,            000010B7 check
+   1000 # x10 lui,          00001537 check
+   12345000 # x11 lui,      123455B7 check
+
    x2 ) x1 lb,              00010083 check
    0 x2 )# x1 lh,           00011083 check
    0FFF x2 )# x1 lw,        FFF12083 check

@@ -32,6 +32,8 @@ defer !offset
 : rs2!  014 lshift opcode 01F00000 !bits ;
 : shift!  014 lshift opcode 07F00000 !bits ;
 : imm!   014 lshift opcode FFF00000 !bits ;
+: >liu   dup 0800 and if 01000 + then ;
+: u-type!   >liu opcode FFFFF000 !bits ;
 : store-offset!   dup rd!  014 lshift opcode FE000000 !bits ;
 : jump-offset!   dup 014 lshift opcode 7FE00000 !bits
                  dup 009 lshift opcode 00100000 !bits
@@ -79,6 +81,7 @@ also forth definitions
 : !store   ['] store-offset! is !offset  !reg3 ;
 : !jump   ['] jump-offset! is !offset ;
 : !branch   ['] branch-offset! is !offset  !reg2 ;
+: !u-type   ['] u-type! is imm-op ;
 
 \ Reset assembler state.
 : 0reg   ['] reg1 is reg ;
@@ -104,6 +107,7 @@ format: load   op op ;
 format: store   !store op op ;
 format: jump   !jump op relative ;
 format: branch   !branch op op relative ;
+format: u-type   !u-type op op ;
 
 \ Define registers, condition codes, and shifts.
 : reg:   create dup 001F and , 1+  does> @ ['] reg -addr ;
@@ -152,7 +156,7 @@ previous also assembler definitions
 00002023 store sw,
 00003023 store sd,
 \ 0000002F	amo,
-\ 00000037 u-type lui,
+00000037 u-type lui,
 00000063 branch beq,
 00001063 branch bne,
 00004063 branch blt,
