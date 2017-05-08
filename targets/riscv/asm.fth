@@ -208,6 +208,9 @@ create tmp2  3 cells allot
 : =,   ['] bne, ;
 : <,   ['] bge, ;
 : <>,   ['] beq, ;
+: 0=,   x0 =, ;
+: 0<,   x0 <, ;
+: 0<>,   x0 <>, ;
 : if,   2>r 2>r 2>r >r 0 r> 2r> 2r> 2r> execute >mark ;
 : until,   execute ;
 
