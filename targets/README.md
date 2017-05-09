@@ -12,6 +12,7 @@
 | 6502		| Assembler
 | AVR		| Assembler
 | Emacs		| Assembler
+| 1802		| Assembler
 |		|
 | PDP-1		| Research
 | PDP-4/7/9/15	| Research
