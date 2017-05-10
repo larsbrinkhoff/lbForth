@@ -1,6 +1,6 @@
 | |
 | --- | ---
-| 0foo | "zero foo" - clear foo, reset foo
+| 0foo | "Zero foo" - clear foo, reset foo
 | foo0 | Initial state of foo
 | +foo | Add to foo
 | -foo | Remove from foo, or disable foo
@@ -8,6 +8,7 @@
 | foo@ | Fetch a foo from an address
 | !foo | Set foo, or enable foo
 | @foo | Get foo
+| >foo | Convert to foo, or push onto foo
 | ?foo | Optionally do foo
 | foo? | Return a boolean value
 | foo' | Accept an address or xt as input
@@ -21,3 +22,5 @@
 | (foo) | Internal implementation
 | foo: | Define a foo
 | .foo | Print a foo
+| [foo] | Do foo at compile time
+| (foo) | Internal version of foo, runtime action of foo
