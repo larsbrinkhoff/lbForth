@@ -307,6 +307,11 @@ rp\ : rp!   postpone (literal) RP , postpone ! ; immediate
    u>number 2swap r@ d+- 2swap
    dup r> r@ + = if 2drop 2r> else 2r> 2drop then ;
 
-: (number) ( a u -- )   0 0 2swap >number  ?dup ?undef 2drop  ?literal ;
+create str  0 , 0 ,
+: !str   str 2! ;
+: @str   str 2@ ;
+: 4drop  2drop 2drop ;
+
+: (number) ( a u -- ) !str 0 0 @str >number @str rot ?undef 4drop ?literal ;
 
 ' (number) ' number >body !
