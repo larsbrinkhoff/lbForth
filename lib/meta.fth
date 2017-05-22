@@ -36,8 +36,10 @@
 require search.fth
 
 vocabulary t-words
+defer t-compile,
+defer t-literal
 defer t,
-: t-word ( a u xt -- ) -rot "create , does> @ t, ;
+: t-word ( a u xt -- ) -rot "create , does> @ t-compile, ;
 : fatal   cr source type cr bye ;
 : ?undef   0= if ." Undefined!" fatal then ;
 : t-search   ['] t-words search-wordlist ;
@@ -68,13 +70,15 @@ target-image
 0 value latest
 
 ' , is t,
+' t, is t-compile,
 
 include lib/xforward.fth
 
 : compile   parse-name postpone sliteral postpone "' postpone , ; compile-only
 : [compile]   also compiler ' previous compile, ; compile-only
-: t-literal   compile (literal) , ;
+: (t-literal)   compile (literal) , ;
 also forth
+' (t-literal) is t-literal
 : t-constant   create , does> @ t-literal ;
 previous
 
