@@ -181,6 +181,9 @@ variable leaves
 
 : j   rp@ 3 cells + @ ;
 
+: search-wordlist ( ca u wl -- 0 | xt 1 | xt -1 )
+   (find) ?dup 0= if 2drop 0 then ;
+
 create env-words  0 , ' included-files ,
 : env-query   dup if drop execute -1 then ;
 : environment?   #name min [ ' env-words ] literal search-wordlist env-query ;

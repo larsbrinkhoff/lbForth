@@ -136,8 +136,6 @@ include target.fth
    else drop -1 then ;
 : (find) ( ca u wl -- ca u 0 | xt 1 | xt -1 )
    2>r -1 swap 2r> ['] ?nt>xt traverse-wordlist rot if 0 then ;
-: search-wordlist ( ca u wl -- 0 | xt 1 | xt -1 )
-   (find) ?dup 0= if 2drop 0 then ;
 
 defer abort
 defer (abort")
