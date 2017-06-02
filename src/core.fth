@@ -31,11 +31,11 @@ parse-name : header, docol, ]   parse-name header, docol, ] !csp exit [ reveal
 : postpone,   [ ' literal compile, ' compile, ] literal compile, ;
 \ Same as:    postpone literal  postpone compile, ;
 
-: finders   create ' , ' , ' ,   does> swap 1+ cells + @ execute ;
+: finders   create ' , ' , ' ,   does> >r find-name 1+ cells r> + @ execute ;
 
-finders postpone-xt   postpone, abort compile,
+finders postpone-name   postpone, abort compile,
 
-: postpone   parse-name find-name postpone-xt ; compile-only
+: postpone   parse-name postpone-name ; compile-only
 
 : unresolved   postpone postpone  postpone >mark ; immediate
 : ahead   unresolved branch ; compile-only
@@ -145,7 +145,7 @@ create base  10 ,
 : ."   postpone s"  postpone type ; compile-only
 
 : postpone-number   undef ;
-' postpone-number  ' postpone-xt >body cell+ !
+' postpone-number  ' postpone-name >body cell+ !
 
 : /     /mod nip ;
 : mod   /mod drop ;

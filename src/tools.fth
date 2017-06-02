@@ -108,11 +108,11 @@ is backtrace
 
 : c-o ( xt -- )   alias compile-only ;
 finders ]alias  drop undef c-o
-: com ( a u a u "name" -- )   2drop ] find-name ]alias ;
+: com ( a u a u "name" -- )   2drop ] ]alias ;
 : def ( a u xt "name" -- )   >in @ swap alias >in !  2dup com ;
 : imm ( a u xt "name" -- )   alias immediate 2drop ;
 finders [alias  def com imm
-: [find ( a u "name" -- )   2dup postpone [ find-name [alias ;
+: [find ( a u "name" -- )   2dup postpone [ [alias ;
 : next-name ( -- u1 a u2 )   >in @ parse-name 2drop parse-name 2>r
    >in @ swap >in ! 2r> ;
 : state! ( flag -- )   if ] else postpone [ then ;

@@ -136,7 +136,6 @@ vocabulary does-table  also does-table definitions previous
 only forth definitions
 
 : find-does ( a1 u -- a2 )   also does-table evaluate previous ;
-: host-find-name   get-order n>r  compiler-context find-name  nr> set-order ;
 : target-evaluate   get-order n>r  only target evaluate  nr> set-order ;
 : t-find   get-order n>r  only target find-name  nr> set-order ;
 : target-xt   t-find 0= ?undef  >body @ ;
@@ -240,7 +239,8 @@ only forth definitions also meta-interpreter also host-interpreter
 : ppt   drop postpone sliteral postpone target, ;
 : ppn   drop ppt ;
 finders pp   ppt ppn pph
-: t-postpone   parse-name 2dup host-find-name pp ; immediate
+: host-pp   get-order n>r  compiler-context pp  nr> set-order ;
+: t-postpone   parse-name 2dup host-pp ; immediate
 : code,   target, <code ;
 : postcode   parse-name postpone sliteral postpone code, ; immediate
 

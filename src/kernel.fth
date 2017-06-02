@@ -1,4 +1,4 @@
-\ -*- forth -*- Copyright 2004, 2013-2016 Lars Brinkhoff
+\ -*- forth -*- Copyright 2004, 2013-2017 Lars Brinkhoff
 
 \ This kernel, together with a target-specific nucleus, provides
 \ everything needed to load and compile the rest of the system from
