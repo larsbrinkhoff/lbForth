@@ -16,7 +16,7 @@ File: [`appveyor.yml`](https://github.com/larsbrinkhoff/lbForth/blob/master/appv
 ## [Bitrise](http://bitrise.io/)
 [![Bitrise](https://www.bitrise.io/app/663938c8cb3bee14.svg?token=34FFBj3CLaI1yWXqou5JEg&branch=master)](https://www.bitrise.io/app/663938c8cb3bee14)  
 OS: MacOS X  
-Install: `install-deps.sh install_osx`  
+Install: `test/install-deps.sh install_osx`  
 Build: `gnumake M32=`  
 Test: `gnumake check M32=`
 
@@ -41,7 +41,7 @@ OS: Linux: Ubuntu 14
 Setup:
 
     git submodule update --init
-    install-deps.sh install_linux
+    test/install-deps.sh install_linux
 
 Build:
 

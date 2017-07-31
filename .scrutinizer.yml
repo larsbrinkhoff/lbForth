@@ -1,7 +1,7 @@
 build:
   dependencies:
     override:
-      - 'sh -e install-deps.sh install_linux'
+      - 'sh -e test/install-deps.sh install_linux'
   tests:
     before:
       - 'make check M32= TARGET=x86 OS=linux'
