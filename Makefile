@@ -55,7 +55,7 @@ web:
 
 include $(TDIR)/forth.mk
 
-include check.mk
+include test/check.mk
 
 clean: t-clean
 	rm -f forth *-forth test-* *-stamp *.exe conf.mk forth.html forth.js

@@ -36,7 +36,7 @@ matrix:
       env: TARGET=asmjs M32=-m32 JS=js24
     - os: osx
       env: TARGET=asmjs M32=-m32 JS=nodejs
-install: sh -e install-deps.sh install_${TRAVIS_OS_NAME:-linux}
+install: sh -e test/install-deps.sh install_${TRAVIS_OS_NAME:-linux}
 script: make ${CHECK:-check}  M32=$M32 TARGET=$TARGET OS=$OS
 notifications:
   email: lars@nocrew.org

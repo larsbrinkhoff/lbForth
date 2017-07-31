@@ -4,7 +4,7 @@ general:
 
 dependencies:
   override:
-    - sh install-deps.sh install_linux
+    - sh test/install-deps.sh install_linux
 
 test:
   override:
