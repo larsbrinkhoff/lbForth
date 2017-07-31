@@ -16,9 +16,7 @@ File: [`appveyor.yml`](https://github.com/larsbrinkhoff/lbForth/blob/master/appv
 ## [Bitrise](http://bitrise.io/)
 [![Bitrise](https://www.bitrise.io/app/663938c8cb3bee14.svg?token=34FFBj3CLaI1yWXqou5JEg&branch=master)](https://www.bitrise.io/app/663938c8cb3bee14)  
 OS: MacOS X  
-Install: `test/install-deps.sh install_osx`  
-Build: `gnumake M32=`  
-Test: `gnumake check M32=`
+File: [`bitrise.yml`](https://github.com/larsbrinkhoff/lbForth/blob/master/bitrise.yml)
 
 ## [CircleCI](http://circleci.com/)
 [![CircleCI](https://circleci.com/gh/larsbrinkhoff/lbForth.svg?style=svg)](https://circleci.com/gh/larsbrinkhoff/lbForth)  

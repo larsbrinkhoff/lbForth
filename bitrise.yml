@@ -1,0 +1,50 @@
+---
+format_version: 1.0.0
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+trigger_map:
+- push_branch: primary
+  workflow: primary
+- push_branch: "*"
+  workflow: primary
+- pull_request_source_branch: "*"
+  workflow: primary
+workflows:
+  primary:
+    steps:
+    - activate-ssh-key@3.0.2:
+        title: Activate App SSH key
+        inputs:
+        - ssh_key_save_path: "$HOME/.ssh/steplib_ssh_step_id_rsa"
+    - git-clone@3.0.0: {}
+    - script@0.9.1:
+        title: Install
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+            bash ./test/install-deps.sh install_osx
+        - working_dir: "${BITRISE_SOURCE_DIR}"
+    - script@0.9.1:
+        title: Build
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+            gnumake M32=-m32
+        - working_dir: "${BITRISE_SOURCE_DIR}"
+    - script@0.9.1:
+        title: Test
+        inputs:
+        - content: |-
+            #!/bin/bash
+
+            gnumake check M32=-m32
+        - working_dir: "${BITRISE_SOURCE_DIR}"
+app:
+  envs:
+  - BITRISE_PROJECT_PATH: Makefile
+    opts:
+      is_expand: false
+  - BITRISE_SCHEME: check
+    opts:
+      is_expand: false
