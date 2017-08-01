@@ -34,9 +34,9 @@ test-image: test/test-image.fth lib/image.fth test-smoke
 	$(GREP) Image-OK $@
 
 test-save-image: test/test-save-image.fth lib/save-image.fth test-smoke
-	echo 'include $<' | $(RUNTFORTH) > /dev/null
 	# This only works with ELF images so far.
 	if [ "$$OS" = linux ]; then \
+	  echo 'include $<' | $(RUNTFORTH) > /dev/null; \
 	  chmod a+x test-save-image; \
 	  $(TDIR)/run.sh ./test-save-image | $(GREP) Save-Image-OK; \
 	fi
