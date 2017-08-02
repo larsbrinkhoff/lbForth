@@ -241,8 +241,8 @@ E index: -x
 
 \ Aliases
 : clr,   3dup eor, ;
-: lsl,   3dup adc, ;
-: rol,   3dup add, ;
+: lsl,   3dup add, ;
+: rol,   3dup adc, ;
 
 \ Resolve jumps.
 : >mark-br   here 2 - ['] br! here ;
