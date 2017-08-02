@@ -42,6 +42,11 @@ code assembler-test
    r0 r0 mov,               2C00 check
    r1 r2 mul,               9C21 check
 
+   r2 r0 movw,              0101 check
+   r0 r30 movw,             01F0 check
+   1 # r24 adiw,            9601 check
+   3F # r30 sbiw,           97FF check
+
    0 # r16 cpi,             3000 check
    FF # r17 sbci,           4F1F check
    1 # r18 subi,            5021 check

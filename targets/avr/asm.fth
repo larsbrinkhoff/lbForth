@@ -31,15 +31,17 @@ deadbeef constant -addr
 \ Assembler state.
 variable opcode
 variable word  defer ?word,
+variable rd-mask
 defer reg
 
 \ Set opcode.
 : opcode!   3@ drop >r opcode ! ;
 : field!   opcode swap !bits ;
 : idx!   000F field! ;
-: rd!   4 lshift 01F0 field! ;
+: rd!   4 lshift rd-mask @ field! ;
 : rn!   dup 000F field!  5 lshift 0200 field! ;
 : imm!   dup 000F field!  4 lshift 0F00 field! ;
+: wimm!   dup 000F field!  2 lshift 00C0 field! ;
 : disp!   dup 0003 field!  dup 5 lshift 0C00 field!  8 lshift 2000 field! ;
 
 \ Access instruction fields.
@@ -72,13 +74,15 @@ also forth definitions
 : !reg2   ['] reg2 is reg ;
 : reg1   rd! !reg2 ;
 : idx   idx! ;
+: wimm-op   wimm! ;
 : imm-op   imm! ;
 : addr   ;
 
 \ Reset assembler state.
 : 0reg   ['] reg1 is reg ;
 : 0w   ['] noop is ?word, ;
-: 0asm   0reg 0w ;
+: 0rd   01F0 rd-mask ! ;
+: 0asm   0reg 0w 0rd ;
 
 \ Process one operand.  All operands except a direct address
 \ have the stack picture ( n*x xt -addr ).
@@ -97,6 +101,8 @@ format: 0op ;
 format: 1op   op ;
 format: 2op   op op ;
 format: ds   op !word ;
+format: movw   0F0 rd-mask !  2>r >r 2>r 2/  2r> r> 2/ 2r>  op op ;
+format: adiw   030 rd-mask !  2>r >r >r drop ['] wimm-op  r> r> 18 - 2/ 2r>  op op ;
 format: jump   !jump ;
 format: rjump   !rjump ;
 format: branch   !branch ;
@@ -109,7 +115,7 @@ format: branch   !branch ;
 previous also assembler definitions
 
 0000 0op nop,
-\ 0100 movw,
+0100 movw movw,
 \ 0200 muls,
 \ 0300 mulsu,
 \ 0308 fmul,
@@ -184,8 +190,8 @@ previous also assembler definitions
 \ 940B des,
 940C jump jmp,
 940E jump call,
-\ 9600 adiw,
-\ 9700 sbiw,
+9600 adiw adiw,
+9700 adiw sbiw,
 \ 9800 cbi,
 \ 9900 sbic,
 \ 9A00 sbi,
