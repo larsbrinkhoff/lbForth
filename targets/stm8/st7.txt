@@ -1,0 +1,78 @@
+\ 00 btjt
+\ 01 btjf
+\ 10 bset
+\ 11 bret
+\ 20 jra
+\ 21 jrf
+\ 22 jrugt
+\ 23 jrulr
+\ 24 jrnc
+\ 25 jrc
+\ 26 jrne
+\ 27 jreq
+\ 29 jrnh
+\ 29 jrh
+\ 2A jrpl
+\ 2B jrmi
+\ 2C jrnm
+\ 2D jrm
+\ 2E jril
+\ 2F jrih
+\ 00 neg
+\ 02 mul
+\ 03 cpl
+\ 04 srl
+\ 06 rrc
+\ 07 sra
+\ 08 sll
+\ 09 rlc
+\ 0A dec
+\ 0C inc
+\ 0D tnz
+\ 0E swap
+\ 0F clr
+\ 80 iret
+\ 81 ret
+\ 82 trap
+\ 84 pop a
+\ 85 pop x
+\ 86 pop cc
+\ 88 push a
+\ 89 push x
+\ 8A puch cc
+\ 8E halt
+\ 8F wfi
+\ 90 pdy
+\ 91 piy
+\ 92 pix
+\ 93 ld x,y
+\ 94 ld s,x
+\ 95 ld s,a
+\ 96 ld x,s
+\ 97 ld a,s
+\ 98 rcf
+\ 99 scf
+\ 9A rim
+\ 9B sim
+\ 9C rsp
+\ 9D nop
+\ 9E ld a,s
+\ 9F ld a,x
+\ 80 sub
+\ 81 cp
+\ 82 sbc
+\ 83 cp
+\ 84 and
+\ 85 bcp
+\ 86 ld
+\ 87 ld
+\ 88 xor
+\ 89 adc
+\ 8A or
+\ 8B add
+\ 8C jp
+\ AD callr
+\ 8D call
+\ 8E ld
+\ 8F ld
+
