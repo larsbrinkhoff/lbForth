@@ -12,25 +12,27 @@ These contain a resident compiler.
 
 ## Embedded targets
 
-These only have a cross assembler.  Support for a Forth cross compiler
-is under way.
+Support for a Forth cross compiler is under way:
+http://github.com/larsbrinkhoff/xForth
 
 - 6502
+- 8051
 - AVR
-- Emacs bytecodes.
+- Cortex-M, Thumb instruction set
+- Emacs bytecodes
 - MSP430
+- PDP-8
+- PIC, midrange devices
+- STM8
 
 ## Research
 
+Some notes have been collected about these machines.
+
 - Batch file
 - 6809
-- 8051
 - PDP-1
 - PDP-4/7/9/15
-- PDP-5/8
 - PDP-10
-- PIC
 - Shell script
-- STM8
-- Thumb
 - Xtensa
