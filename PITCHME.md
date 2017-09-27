@@ -67,10 +67,17 @@ http://github.com/larsbrinkhoff/lbForth
 
 ---
 
-## UPCOMING
+# CROSS COMPILER
 
 - Microcontrollers:  
-  AVR, PIC, MSP430, Thumb, Xtensa, STM8, 8051
+  AVR, PIC, MSP430, Thumb, STM8, 8051
+- Retro: 6502, PDP-8
+
+---
+
+# UPCOMING
+
+- Microcontrollers: Xtensa
 - Retro: PDP-10, C64, Z80 CP/M, 6809, 1802
 - Optimizing compiler
 - Run inside Emacs
