@@ -8,8 +8,9 @@ new [metacompiler written in Forth](lib/meta.fth) generates an x86
 executable using using [assembly language code words](targets/x86/nucleus.fth).
 
 There are also ARM, RISC-V, Motorola 68000, PDP-11, and asm.js
-targets, and target assemblers for 6502, AVR, MSP430, and Emacs
-bytecodes.
+targets.  There is a [cross
+compiler](http://github.com/larsbrinkhoff/xForth) for 6502, 8051, AVR,
+Cortex-M, MSP430, PDP-8, PIC, and STM8.
 
 ( Continuous integration )
 
