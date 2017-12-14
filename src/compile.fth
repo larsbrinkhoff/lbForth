@@ -1,12 +1,13 @@
 \ Metacompile the kernel.  Copyright 2017 Lars Brinkhoff.
 
+: h-[defined] postpone [defined] ;
+: h-[undefined] postpone [undefined] ;
+
 include lib/meta.fth
 
 only forth definitions
 
 : h: : ;
-: h-[defined] postpone [defined] ;
-: h-[undefined] postpone [undefined] ;
 
 also meta definitions
 
