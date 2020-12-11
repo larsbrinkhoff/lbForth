@@ -50,10 +50,10 @@ download_apout() {
 }
 
 download_riscv_qemu() {
-  qemu=http://github.com/riscv/riscv-qemu
-  git clone $qemu
-  (cd riscv-qemu && git submodule update --init pixman &&
-   ./configure --target-list=riscv32-linux-user && make)
+  sudo apt-get install ninja-build
+  qemu=http://github.com/qemu/qemu
+  git clone $qemu riscv-qemu
+  (cd riscv-qemu && ./configure --target-list=riscv32-linux-user && make)
 }
 
 install_osx() {
