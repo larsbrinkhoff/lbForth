@@ -1,0 +1,39 @@
+Registermaskin
+
+   +-----------------+
+   |   Processor     |              +----------+
+   |                 |              |          |
+   |  IP  SP         |<------------>|  Minne   |
+   |  R0 ... Rn      |              |          |
+   +-----------------+              +----------+
+
+
+Dubbelstackmaskin
+
+   +-----------------+
+   |   Processor     |              +----------+
+   |                 |              |          |
+   |  TOS       IP   |<------------>|  Minne   |
+   |  SP        RP   |              |          |
+   +-----------------+              +----------+
+      ^         ^
+      |         |
+      v         v
+  +-------+  +--------+
+  | Data- |  | Retur- |
+  | stack |  | stack  |
+  +-------+  +--------+
+
+
+http://forthsalon.appspot.com/
+
+Nucleus - 12 primitives
+Assemblers for x86, m68k, msp430
+
+- Minimalism (eller frånvaro av onödig komplexitet)
+- Interaktivitet
+- Extensibilitet
+- Pragmatiskt verktyg, men med vassa kanter
+- Inte komfortabelt
+- Gör allting själv, från grunden
+- Funktionell programmering: closures, komposition
