@@ -1,0 +1,22 @@
+historia
+
+chuck moore ~1968
+
+Forth Inc, 1973   forth.com
+
+FIG = Forth Interest Group, 1978   forth.org
+
+Forth 77 78 79 83 94 12
+
+
+- Minimalism (eller frånvaro av onödig komplexitet)
+- Interaktivitet
+- Extensibilitet
+- Pragmatiskt verktyg, men med vassa kanter
+- Inte komfortabelt
+- Gör allting själv, från grunden
+- Funktionell programmering: closures, komposition
+
+
+Mark on why Forth: "Primarily: simplicity, efficiency, flexibility;
+secondarily: comprehensibility, security, scalability."
