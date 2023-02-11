@@ -99,6 +99,38 @@ if (typeof(os) !== "undefined") {
     }
     bye = function () { quit(); };
     put_string = this.console.log;
+} else if (typeof(imports) !== "undefined") {
+    /* gjs */
+    const Gio = imports.gi.Gio;
+    const GLib = imports.gi.GLib;
+    const stdin = GLib.IOChannel.unix_new("/dev/stdin");
+    const decoder = new TextDecoder('utf-8');
+
+    read_file_async = function (path, cb) {
+        try {
+            const file = Gio.File.new_for_path(path);
+            const [ok, contents, etag] = file.load_contents(null);
+            const contents_as_string = decoder.decode(contents);
+            cb(contents_as_string);
+        } catch (e) {
+            cb();
+        }
+    }
+
+    read_line = function () {
+        const [return_value, str_return, length, terminator_pos] = stdin.read_line();
+        /* Remove new line character */
+        const line = str_return.substring(0, str_return.length - 1);
+        return line;
+    }
+
+    bye = function () {
+        const System = imports.system;
+        System.exit(0);
+    }
+
+    put_string = console.log;
+
 } else if (false && typeof(fetch) !== "undefined") {
     /* Web */
 
