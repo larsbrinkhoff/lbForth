@@ -104,7 +104,9 @@ if (typeof(os) !== "undefined") {
     const Gio = imports.gi.Gio;
     const GLib = imports.gi.GLib;
     const stdin = GLib.IOChannel.unix_new("/dev/stdin");
+    const stdout = GLib.IOChannel.unix_new("/dev/stdout");
     const decoder = new TextDecoder('utf-8');
+    const encoder = new TextEncoder('utf-8');
 
     read_file_async = function (path, cb) {
         try {
@@ -129,7 +131,12 @@ if (typeof(os) !== "undefined") {
         System.exit(0);
     }
 
-    put_string = console.log;
+    put_string = function (str) {
+        /* console.log adds a noisy prefix before the message */
+        const str_as_bytes = encoder.encode(str + "\n");
+        stdout.write_chars(str_as_bytes, str_as_bytes.length);
+        stdout.flush();
+    }
 
 } else if (false && typeof(fetch) !== "undefined") {
     /* Web */
