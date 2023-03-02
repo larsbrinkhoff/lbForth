@@ -1,0 +1,40 @@
+name: Build
+
+on: [push, pull_request]
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-18.04]
+        target: [c, x86, arm, m68k, riscv, pdp11]
+        include:
+          - target: x86
+            sys: linux
+          - target: arm
+            sys: linux
+          - target: m68k
+            sys: linux
+          - target: riscv
+            sys: linux
+          - target: pdp11
+            sys: unix
+    name: Build
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install
+        env:
+          TARGET: ${{matrix.target}}
+          OS: ${{matrix.sys}}
+          M32: "-m32"
+        run: M32=-m32 sh -e test/install-deps.sh install_linux
+      - name: Build
+        env:
+          TARGET: ${{matrix.target}}
+          OS: ${{matrix.sys}}
+        run: make check M32=-m32 TARGET=$TARGET OS=$OS
